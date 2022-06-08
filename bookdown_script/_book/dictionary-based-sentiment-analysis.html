@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 5 Dictionary-based sentiment analysis | Text Mining for Social Scientists</title>
+  <meta name="description" content="This book is supposed to introduce the reader (i.e., you) to a fundamental technique for computational social science research: the quantitative analysis of text." />
+  <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 5 Dictionary-based sentiment analysis | Text Mining for Social Scientists" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="This book is supposed to introduce the reader (i.e., you) to a fundamental technique for computational social science research: the quantitative analysis of text." />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 5 Dictionary-based sentiment analysis | Text Mining for Social Scientists" />
+  
+  <meta name="twitter:description" content="This book is supposed to introduce the reader (i.e., you) to a fundamental technique for computational social science research: the quantitative analysis of text." />
+  
+
+<meta name="author" content="Felix Lennert" />
+
+
+<meta name="date" content="2022-05-16" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="fightingwords.html"/>
+<link rel="next" href="references.html"/>
+<script src="libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+<link href="libs/vembedr-0.1.5/css/vembedr.css" rel="stylesheet" />
+<script src="libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
+<link href="libs/str_view-0.1.0/str_view.css" rel="stylesheet" />
+<script src="libs/str_view-binding-1.4.0/str_view.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Text Mining for Social Scientists</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#outline"><i class="fa fa-check"></i><b>1.1</b> Outline</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#why-r"><i class="fa fa-check"></i><b>1.2</b> Why R</a>
+<ul>
+<li class="chapter" data-level="1.2.1" data-path="index.html"><a href="index.html#reproducibility"><i class="fa fa-check"></i><b>1.2.1</b> Reproducibility</a></li>
+<li class="chapter" data-level="1.2.2" data-path="index.html"><a href="index.html#its-free-and-community-based"><i class="fa fa-check"></i><b>1.2.2</b> It’s free and community-based</a></li>
+<li class="chapter" data-level="1.2.3" data-path="index.html"><a href="index.html#jobs"><i class="fa fa-check"></i><b>1.2.3</b> Jobs</a></li>
+</ul></li>
+<li class="chapter" data-level="1.3" data-path="index.html"><a href="index.html#further-links"><i class="fa fa-check"></i><b>1.3</b> Further links</a></li>
+<li class="chapter" data-level="1.4" data-path="index.html"><a href="index.html#last-but-not-least"><i class="fa fa-check"></i><b>1.4</b> Last but not least</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html"><i class="fa fa-check"></i><b>2</b> Text Pre-Processing: String manipulation</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#basic-manipulations"><i class="fa fa-check"></i><b>2.1</b> Basic manipulations</a>
+<ul>
+<li class="chapter" data-level="2.1.1" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#changing-the-case-of-the-words"><i class="fa fa-check"></i><b>2.1.1</b> Changing the case of the words</a></li>
+<li class="chapter" data-level="2.1.2" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#determining-a-strings-length"><i class="fa fa-check"></i><b>2.1.2</b> Determining a string’s length</a></li>
+<li class="chapter" data-level="2.1.3" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#extracting-particular-characters"><i class="fa fa-check"></i><b>2.1.3</b> Extracting particular characters</a></li>
+<li class="chapter" data-level="2.1.4" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#concatenating-strings"><i class="fa fa-check"></i><b>2.1.4</b> Concatenating strings</a></li>
+<li class="chapter" data-level="2.1.5" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#repetition"><i class="fa fa-check"></i><b>2.1.5</b> Repetition</a></li>
+<li class="chapter" data-level="2.1.6" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#removing-unnecessary-whitespaces"><i class="fa fa-check"></i><b>2.1.6</b> Removing unnecessary whitespaces</a></li>
+</ul></li>
+<li class="chapter" data-level="2.2" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#regular-expressions"><i class="fa fa-check"></i><b>2.2</b> Regular expressions</a>
+<ul>
+<li class="chapter" data-level="2.2.1" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#literal-characters"><i class="fa fa-check"></i><b>2.2.1</b> Literal characters</a></li>
+<li class="chapter" data-level="2.2.2" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#metacharacters"><i class="fa fa-check"></i><b>2.2.2</b> Metacharacters</a></li>
+<li class="chapter" data-level="2.2.3" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#sets-of-characters"><i class="fa fa-check"></i><b>2.2.3</b> Sets of characters</a></li>
+<li class="chapter" data-level="2.2.4" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#anchors"><i class="fa fa-check"></i><b>2.2.4</b> Anchors</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#more-advanced-string-manipulation"><i class="fa fa-check"></i><b>2.3</b> More advanced string manipulation</a>
+<ul>
+<li class="chapter" data-level="2.3.1" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#detect-matches"><i class="fa fa-check"></i><b>2.3.1</b> Detect matches</a></li>
+<li class="chapter" data-level="2.3.2" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#mutating-strings"><i class="fa fa-check"></i><b>2.3.2</b> Mutating strings</a></li>
+<li class="chapter" data-level="2.3.3" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#extracting-text"><i class="fa fa-check"></i><b>2.3.3</b> Extracting text</a></li>
+<li class="chapter" data-level="2.3.4" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#split-vectors"><i class="fa fa-check"></i><b>2.3.4</b> Split vectors</a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#further-links-1"><i class="fa fa-check"></i><b>2.4</b> Further links</a></li>
+<li class="chapter" data-level="2.5" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#exercises"><i class="fa fa-check"></i><b>2.5</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="texttodata.html"><a href="texttodata.html"><i class="fa fa-check"></i><b>3</b> Text Pre-Processing: Text to Data</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="texttodata.html"><a href="texttodata.html#pre-processing-with-tidytext"><i class="fa fa-check"></i><b>3.1</b> Pre-processing with <code>tidytext</code></a>
+<ul>
+<li class="chapter" data-level="3.1.1" data-path="texttodata.html"><a href="texttodata.html#unnest_tokens"><i class="fa fa-check"></i><b>3.1.1</b> <code>unnest_tokens()</code></a></li>
+<li class="chapter" data-level="3.1.2" data-path="texttodata.html"><a href="texttodata.html#removal-of-unnecessary-content"><i class="fa fa-check"></i><b>3.1.2</b> Removal of unnecessary content</a></li>
+<li class="chapter" data-level="3.1.3" data-path="texttodata.html"><a href="texttodata.html#stemming"><i class="fa fa-check"></i><b>3.1.3</b> Stemming</a></li>
+<li class="chapter" data-level="3.1.4" data-path="texttodata.html"><a href="texttodata.html#in-a-nutshell"><i class="fa fa-check"></i><b>3.1.4</b> In a nutshell</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="texttodata.html"><a href="texttodata.html#preprocessing-with-spacy"><i class="fa fa-check"></i><b>3.2</b> Preprocessing with <code>spaCy</code></a>
+<ul>
+<li class="chapter" data-level="3.2.1" data-path="texttodata.html"><a href="texttodata.html#initializing-spacy"><i class="fa fa-check"></i><b>3.2.1</b> Initializing spacy</a></li>
+<li class="chapter" data-level="3.2.2" data-path="texttodata.html"><a href="texttodata.html#spacy_parse"><i class="fa fa-check"></i><b>3.2.2</b> <code>spacy_parse()</code></a></li>
+<li class="chapter" data-level="3.2.3" data-path="texttodata.html"><a href="texttodata.html#pos-tags-ner-and-nounphrases"><i class="fa fa-check"></i><b>3.2.3</b> POS tags, NER, and nounphrases</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="texttodata.html"><a href="texttodata.html#converting-between-formats"><i class="fa fa-check"></i><b>3.3</b> Converting between formats</a>
+<ul>
+<li class="chapter" data-level="3.3.1" data-path="texttodata.html"><a href="texttodata.html#document-term-matrix"><i class="fa fa-check"></i><b>3.3.1</b> Document-term matrix</a></li>
+<li class="chapter" data-level="3.3.2" data-path="texttodata.html"><a href="texttodata.html#document-feature-matrix"><i class="fa fa-check"></i><b>3.3.2</b> Document-feature matrix</a></li>
+<li class="chapter" data-level="3.3.3" data-path="texttodata.html"><a href="texttodata.html#corpus-objects"><i class="fa fa-check"></i><b>3.3.3</b> Corpus objects</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="texttodata.html"><a href="texttodata.html#further-links-2"><i class="fa fa-check"></i><b>3.4</b> Further links</a></li>
+<li class="chapter" data-level="3.5" data-path="texttodata.html"><a href="texttodata.html#exercises-1"><i class="fa fa-check"></i><b>3.5</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="fightingwords.html"><a href="fightingwords.html"><i class="fa fa-check"></i><b>4</b> “Fighting words”</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="fightingwords.html"><a href="fightingwords.html#counting-words-per-document"><i class="fa fa-check"></i><b>4.1</b> Counting words per document</a>
+<ul>
+<li class="chapter" data-level="4.1.1" data-path="fightingwords.html"><a href="fightingwords.html#naive-approach-raw-counts"><i class="fa fa-check"></i><b>4.1.1</b> Naive approach: raw counts</a></li>
+<li class="chapter" data-level="4.1.2" data-path="fightingwords.html"><a href="fightingwords.html#tf-idf"><i class="fa fa-check"></i><b>4.1.2</b> TF-IDF</a></li>
+<li class="chapter" data-level="4.1.3" data-path="fightingwords.html"><a href="fightingwords.html#odds"><i class="fa fa-check"></i><b>4.1.3</b> Odds</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="fightingwords.html"><a href="fightingwords.html#further-links-3"><i class="fa fa-check"></i><b>4.2</b> Further links</a></li>
+<li class="chapter" data-level="4.3" data-path="fightingwords.html"><a href="fightingwords.html#in-classroom-exercise"><i class="fa fa-check"></i><b>4.3</b> In-classroom exercise</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="dictionary-based-sentiment-analysis.html"><a href="dictionary-based-sentiment-analysis.html"><i class="fa fa-check"></i><b>5</b> Dictionary-based sentiment analysis</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="dictionary-based-sentiment-analysis.html"><a href="dictionary-based-sentiment-analysis.html#sentiment-analysis-using-tidytext-principles"><i class="fa fa-check"></i><b>5.1</b> Sentiment analysis using <code>tidytext</code> principles</a>
+<ul>
+<li class="chapter" data-level="5.1.1" data-path="dictionary-based-sentiment-analysis.html"><a href="dictionary-based-sentiment-analysis.html#available-dictionaries"><i class="fa fa-check"></i><b>5.1.1</b> Available dictionaries</a></li>
+<li class="chapter" data-level="5.1.2" data-path="dictionary-based-sentiment-analysis.html"><a href="dictionary-based-sentiment-analysis.html#step-1-preprocessing"><i class="fa fa-check"></i><b>5.1.2</b> Step 1: Preprocessing</a></li>
+<li class="chapter" data-level="5.1.3" data-path="dictionary-based-sentiment-analysis.html"><a href="dictionary-based-sentiment-analysis.html#step-2-sentiment-analysis-using-dplyrinner_join"><i class="fa fa-check"></i><b>5.1.3</b> Step 2: Sentiment Analysis using <code>dplyr::inner_join()</code></a></li>
+<li class="chapter" data-level="5.1.4" data-path="dictionary-based-sentiment-analysis.html"><a href="dictionary-based-sentiment-analysis.html#step-3-summarize-values"><i class="fa fa-check"></i><b>5.1.4</b> Step 3: Summarize values</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="dictionary-based-sentiment-analysis.html"><a href="dictionary-based-sentiment-analysis.html#exercises-2"><i class="fa fa-check"></i><b>5.2</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i><b>6</b> References</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Text Mining for Social Scientists</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="dictionary-based-sentiment-analysis" class="section level1" number="5">
+<h1><span class="header-section-number">Chapter 5</span> Dictionary-based sentiment analysis</h1>
+<p>So far, you have learned how you can bring text into a representation that allows for systematic analysis (Chapter <a href="texttodata.html#texttodata">3</a>) and how you can discover which terms can be used to discriminate between groups (Chapter <a href="fightingwords.html#fightingwords">4</a>). Performing quantitative social science however also requires to actually measure things. In the remainder of this course, I will put a stronger emphasis on techniques that can be used to accomplish this.</p>
+<p>According to <span class="citation"><a href="#ref-grimmer2022" role="doc-biblioref">Grimmer, Roberts, and Stewart</a> (<a href="#ref-grimmer2022" role="doc-biblioref">2022</a>)</span>, measurement encompasses the following steps for the researcher:</p>
+<ol style="list-style-type: decimal">
+<li>"<em>Define</em> the conceptualization we want to measure.</li>
+<li><em>Locate</em> a source of data that contains implications of the identified concept.</li>
+<li><em>Generate</em> a way to translate data into a latent representation.</li>
+<li><em>Label</em> the representation and connect to the identified concept.</li>
+<li><em>Validate</em> the resulting measure." (p. 173)</li>
+</ol>
+<p>Today, I will start with an easy yet commonly used way to measure the presence of certain conceptualizations in text: dictionary-based text analysis. The intuition of dictionary-based text analysis is that the presence and salience of a construct in a given text can be determined by counting words that are a priori defined to be related to the construct. Probably the most common use case is so-called sentiment analysis. Its goal is to determine whether the tone of a text is positive or negative. A classic application in industry is the automatic determiination of the sentiment of customer reviews.</p>
+<div id="sentiment-analysis-using-tidytext-principles" class="section level2" number="5.1">
+<h2><span class="header-section-number">5.1</span> Sentiment analysis using <code>tidytext</code> principles</h2>
+<p>Today’s example is similar: I will use a data set containing 25,000 IMDb reviews and use <code>tidytext</code> to determine whether they are rather positive or negative. In this case, the movies are not made explicit. Hence, I cannot draw inference on how different movies were perceived by the audience. If I had this information though, it would of course be straight-forward by just averaging the respective values.</p>
+<p>First, I load the required packages and the data.</p>
+<div class="sourceCode" id="cb190"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb190-1"><a href="dictionary-based-sentiment-analysis.html#cb190-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb190-2"><a href="dictionary-based-sentiment-analysis.html#cb190-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidytext)</span>
+<span id="cb190-3"><a href="dictionary-based-sentiment-analysis.html#cb190-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SnowballC)</span>
+<span id="cb190-4"><a href="dictionary-based-sentiment-analysis.html#cb190-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb190-5"><a href="dictionary-based-sentiment-analysis.html#cb190-5" aria-hidden="true" tabindex="-1"></a>imdb_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;data/imdb_reviews.csv&quot;</span>)</span></code></pre></div>
+<pre><code>## Rows: 25000 Columns: 2
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;,&quot;
+## chr (2): text, sentiment
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<div class="sourceCode" id="cb192"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb192-1"><a href="dictionary-based-sentiment-analysis.html#cb192-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(imdb_data)</span></code></pre></div>
+<pre><code>## Rows: 25,000
+## Columns: 2
+## $ text      &lt;chr&gt; &quot;Once again Mr. Costner has dragged out a movie for far long…
+## $ sentiment &lt;chr&gt; &quot;negative&quot;, &quot;negative&quot;, &quot;negative&quot;, &quot;negative&quot;, &quot;negative&quot;, …</code></pre>
+<p>Note that the data also contains a column named “sentiment” which contains the true sentiment value. This will be helpful to assess the validity of my measurement.</p>
+<p>The next step is to bring the documents (each document is a review in this case) into a representation that lends itself well to the automated analysis of the words that are contained, the <code>tidytext</code> format. However, in order for me to bring it into the proper format, I will first look at the dictionaries.</p>
+<div id="available-dictionaries" class="section level3" number="5.1.1">
+<h3><span class="header-section-number">5.1.1</span> Available dictionaries</h3>
+<p>The <code>tidytext</code> package comes with a number of freely available dictionaries. Each dictionary has its own particularities and using the “right” dictionary always depends a bit on the task at hand. The dictionaries are stored in tibbles which contain two columns. <code>word</code> always refers to the word. <code>sentiment</code> refers to a discrete sentiment value (e.g., “positive”) and <code>value</code> to a numeric sentiment value (e.g., for AFINN the positivity/negativity of a word is measured on a scale from -5 – the most negative – to +5 – the most positive). For today’s example, I will use <code>AFINN</code> <span class="citation">(<a href="#ref-nielsen2011" role="doc-biblioref">Nielsen 2011</a>)</span> and <code>bing</code> <span class="citation">(<a href="#ref-hu2004" role="doc-biblioref">Hu and Liu 2004</a>)</span>.</p>
+<div class="sourceCode" id="cb194"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb194-1"><a href="dictionary-based-sentiment-analysis.html#cb194-1" aria-hidden="true" tabindex="-1"></a><span class="fu">walk</span>(<span class="fu">c</span>(<span class="st">&quot;bing&quot;</span>, <span class="st">&quot;loughran&quot;</span>, <span class="st">&quot;afinn&quot;</span>, <span class="st">&quot;nrc&quot;</span>), <span class="sc">~</span><span class="fu">get_sentiments</span>(<span class="at">lexicon =</span> .x) <span class="sc">%&gt;%</span> </span>
+<span id="cb194-2"><a href="dictionary-based-sentiment-analysis.html#cb194-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">head</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb194-3"><a href="dictionary-based-sentiment-analysis.html#cb194-3" aria-hidden="true" tabindex="-1"></a>       <span class="fu">print</span>())</span></code></pre></div>
+<pre><code>## # A tibble: 6 × 2
+##   word       sentiment
+##   &lt;chr&gt;      &lt;chr&gt;    
+## 1 2-faces    negative 
+## 2 abnormal   negative 
+## 3 abolish    negative 
+## 4 abominable negative 
+## 5 abominably negative 
+## 6 abominate  negative 
+## # A tibble: 6 × 2
+##   word         sentiment
+##   &lt;chr&gt;        &lt;chr&gt;    
+## 1 abandon      negative 
+## 2 abandoned    negative 
+## 3 abandoning   negative 
+## 4 abandonment  negative 
+## 5 abandonments negative 
+## 6 abandons     negative 
+## # A tibble: 6 × 2
+##   word       value
+##   &lt;chr&gt;      &lt;dbl&gt;
+## 1 abandon       -2
+## 2 abandoned     -2
+## 3 abandons      -2
+## 4 abducted      -2
+## 5 abduction     -2
+## 6 abductions    -2
+## # A tibble: 6 × 2
+##   word      sentiment
+##   &lt;chr&gt;     &lt;chr&gt;    
+## 1 abacus    trust    
+## 2 abandon   fear     
+## 3 abandon   negative 
+## 4 abandon   sadness  
+## 5 abandoned anger    
+## 6 abandoned fear</code></pre>
+<p>Given this structure of the dictionaries, I can analyze the sentiment of my documents through the following steps:</p>
+<ol style="list-style-type: decimal">
+<li>Clean them and bring them into the <code>tidytext</code> format; the column containing the terms needs to be named “word”</li>
+<li>Use a <code>dplyr::inner_join()</code> to join the dictionary tibble.</li>
+<li>Summarize the sentiment values for each text (if categorical: count occurrences of different categories per document, use the modal value; if numerical: average values)</li>
+</ol>
+</div>
+<div id="step-1-preprocessing" class="section level3" number="5.1.2">
+<h3><span class="header-section-number">5.1.2</span> Step 1: Preprocessing</h3>
+<p>Well, all those things could also be summarized in one nice cleaning pipeline:</p>
+<div class="sourceCode" id="cb196"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb196-1"><a href="dictionary-based-sentiment-analysis.html#cb196-1" aria-hidden="true" tabindex="-1"></a>imdb_tidy <span class="ot">&lt;-</span> imdb_data <span class="sc">%&gt;%</span> </span>
+<span id="cb196-2"><a href="dictionary-based-sentiment-analysis.html#cb196-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rowid_to_column</span>(<span class="st">&quot;doc_id&quot;</span>) <span class="sc">%&gt;%</span> <span class="co"># to identify documents later</span></span>
+<span id="cb196-3"><a href="dictionary-based-sentiment-analysis.html#cb196-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_tokens</span>(<span class="at">output =</span> word, <span class="at">input =</span> text) <span class="sc">%&gt;%</span> </span>
+<span id="cb196-4"><a href="dictionary-based-sentiment-analysis.html#cb196-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">word =</span> <span class="fu">wordStem</span>(word, <span class="at">language =</span> <span class="st">&quot;en&quot;</span>))</span></code></pre></div>
+<p>Now I have created a nice tibble containing the imdb reviews of the 20th century in a tidy format. Note that the words were stemmed. Therefore, I will have to stem the words in the sentiment dictionary as well, since they need to match. I will use both the <code>bing</code> (categorizing words in “positive” and “negative”) and the <code>AFINN</code> (continuous scale ranging from -5 to +5) dictionary.</p>
+<div class="sourceCode" id="cb197"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb197-1"><a href="dictionary-based-sentiment-analysis.html#cb197-1" aria-hidden="true" tabindex="-1"></a>afinn_stemmed <span class="ot">&lt;-</span> <span class="fu">get_sentiments</span>(<span class="st">&quot;afinn&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb197-2"><a href="dictionary-based-sentiment-analysis.html#cb197-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">word =</span> <span class="fu">wordStem</span>(word, <span class="at">language =</span> <span class="st">&quot;en&quot;</span>))</span>
+<span id="cb197-3"><a href="dictionary-based-sentiment-analysis.html#cb197-3" aria-hidden="true" tabindex="-1"></a>bing_stemmed <span class="ot">&lt;-</span> <span class="fu">get_sentiments</span>(<span class="st">&quot;bing&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb197-4"><a href="dictionary-based-sentiment-analysis.html#cb197-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">word =</span> <span class="fu">wordStem</span>(word, <span class="at">language =</span> <span class="st">&quot;en&quot;</span>))</span></code></pre></div>
+</div>
+<div id="step-2-sentiment-analysis-using-dplyrinner_join" class="section level3" number="5.1.3">
+<h3><span class="header-section-number">5.1.3</span> Step 2: Sentiment Analysis using <code>dplyr::inner_join()</code></h3>
+<p>in the next step, I just add the sentiment values to the respective documents. Each matching term will have the respective sentiment value added. Note that I have to change the column name “sentiment” in the original tibble because there is the column “sentiment” present in the dictionary.</p>
+<div class="sourceCode" id="cb198"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb198-1"><a href="dictionary-based-sentiment-analysis.html#cb198-1" aria-hidden="true" tabindex="-1"></a>imdb_afinn <span class="ot">&lt;-</span> imdb_tidy <span class="sc">%&gt;%</span> </span>
+<span id="cb198-2"><a href="dictionary-based-sentiment-analysis.html#cb198-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(afinn_stemmed) </span>
+<span id="cb198-3"><a href="dictionary-based-sentiment-analysis.html#cb198-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb198-4"><a href="dictionary-based-sentiment-analysis.html#cb198-4" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(imdb_afinn)</span></code></pre></div>
+<pre><code>## Rows: 1,079,279
+## Columns: 4
+## $ doc_id    &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, …
+## $ sentiment &lt;chr&gt; &quot;negative&quot;, &quot;negative&quot;, &quot;negative&quot;, &quot;negative&quot;, &quot;negative&quot;, …
+## $ word      &lt;chr&gt; &quot;drag&quot;, &quot;drag&quot;, &quot;drag&quot;, &quot;terrif&quot;, &quot;rescu&quot;, &quot;rescu&quot;, &quot;rescu&quot;,…
+## $ value     &lt;dbl&gt; -1, -1, -1, 4, 2, 2, 2, 2, 2, 2, 2, -1, -1, 2, 2, 2, 2, 2, 2…</code></pre>
+<div class="sourceCode" id="cb200"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb200-1"><a href="dictionary-based-sentiment-analysis.html#cb200-1" aria-hidden="true" tabindex="-1"></a>imdb_bing <span class="ot">&lt;-</span> imdb_tidy <span class="sc">%&gt;%</span> </span>
+<span id="cb200-2"><a href="dictionary-based-sentiment-analysis.html#cb200-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">sentiment_gold =</span> sentiment) <span class="sc">%&gt;%</span>  </span>
+<span id="cb200-3"><a href="dictionary-based-sentiment-analysis.html#cb200-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(bing_stemmed) </span></code></pre></div>
+<pre><code>## Joining, by = &quot;word&quot;</code></pre>
+</div>
+<div id="step-3-summarize-values" class="section level3" number="5.1.4">
+<h3><span class="header-section-number">5.1.4</span> Step 3: Summarize values</h3>
+<p>In the case of numerical sentiment values, this step is rather simple: group by the document and average the values.</p>
+<div class="sourceCode" id="cb202"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb202-1"><a href="dictionary-based-sentiment-analysis.html#cb202-1" aria-hidden="true" tabindex="-1"></a>imdb_afinn_summary <span class="ot">&lt;-</span> imdb_afinn <span class="sc">%&gt;%</span> </span>
+<span id="cb202-2"><a href="dictionary-based-sentiment-analysis.html#cb202-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(doc_id) <span class="sc">%&gt;%</span> </span>
+<span id="cb202-3"><a href="dictionary-based-sentiment-analysis.html#cb202-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">mean_value =</span> <span class="fu">mean</span>(value))</span>
+<span id="cb202-4"><a href="dictionary-based-sentiment-analysis.html#cb202-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb202-5"><a href="dictionary-based-sentiment-analysis.html#cb202-5" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(imdb_afinn_summary)</span></code></pre></div>
+<pre><code>## Rows: 24,997
+## Columns: 2
+## $ doc_id     &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, …
+## $ mean_value &lt;dbl&gt; 0.91428571, -0.73333333, -0.64102564, 0.62068966, 0.4821428…</code></pre>
+<p>In the case of the categorical values, it requires a bit more code. First, I need to replace the categorical values by numerical ones. Then, I can do the same operation as above.</p>
+<div class="sourceCode" id="cb204"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb204-1"><a href="dictionary-based-sentiment-analysis.html#cb204-1" aria-hidden="true" tabindex="-1"></a>imdb_bing_summary <span class="ot">&lt;-</span> imdb_bing <span class="sc">%&gt;%</span> </span>
+<span id="cb204-2"><a href="dictionary-based-sentiment-analysis.html#cb204-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">value =</span> <span class="fu">case_when</span>(sentiment <span class="sc">==</span> <span class="st">&quot;negative&quot;</span> <span class="sc">~</span> <span class="sc">-</span><span class="dv">1</span>,</span>
+<span id="cb204-3"><a href="dictionary-based-sentiment-analysis.html#cb204-3" aria-hidden="true" tabindex="-1"></a>                           sentiment <span class="sc">==</span> <span class="st">&quot;positive&quot;</span> <span class="sc">~</span> <span class="dv">1</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb204-4"><a href="dictionary-based-sentiment-analysis.html#cb204-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(doc_id) <span class="sc">%&gt;%</span> </span>
+<span id="cb204-5"><a href="dictionary-based-sentiment-analysis.html#cb204-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">mean_value =</span> <span class="fu">mean</span>(value, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) </span>
+<span id="cb204-6"><a href="dictionary-based-sentiment-analysis.html#cb204-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb204-7"><a href="dictionary-based-sentiment-analysis.html#cb204-7" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(imdb_bing_summary)</span></code></pre></div>
+<pre><code>## Rows: 25,000
+## Columns: 2
+## $ doc_id     &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, …
+## $ mean_value &lt;dbl&gt; 0.16666667, -0.06493506, -0.29411765, 0.13131313, 0.1340206…</code></pre>
+<p>Et voilà, I have performed a first sentiment classification just using tidy commands. The next step would now be to validate the results, i.e., to check whether my measures come to the same conclusions as the gold standard the data set came with. This will be described in the chapter on Supervised Classification. However, a first basic comparison would be to plot the words that contribute much to the classification into the respective category. The contribution of a word is here operationalized as its sentiment value times its occurrence.</p>
+<div class="sourceCode" id="cb206"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb206-1"><a href="dictionary-based-sentiment-analysis.html#cb206-1" aria-hidden="true" tabindex="-1"></a>imdb_afinn_pos_contribution <span class="ot">&lt;-</span> imdb_afinn <span class="sc">%&gt;%</span> </span>
+<span id="cb206-2"><a href="dictionary-based-sentiment-analysis.html#cb206-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(word) <span class="sc">%&gt;%</span> </span>
+<span id="cb206-3"><a href="dictionary-based-sentiment-analysis.html#cb206-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">contribution =</span> <span class="fu">sum</span>(value)) <span class="sc">%&gt;%</span> </span>
+<span id="cb206-4"><a href="dictionary-based-sentiment-analysis.html#cb206-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(contribution, <span class="at">n =</span> <span class="dv">10</span>)</span>
+<span id="cb206-5"><a href="dictionary-based-sentiment-analysis.html#cb206-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb206-6"><a href="dictionary-based-sentiment-analysis.html#cb206-6" aria-hidden="true" tabindex="-1"></a>imdb_afinn_neg_contribution <span class="ot">&lt;-</span> imdb_afinn <span class="sc">%&gt;%</span> </span>
+<span id="cb206-7"><a href="dictionary-based-sentiment-analysis.html#cb206-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(word) <span class="sc">%&gt;%</span> </span>
+<span id="cb206-8"><a href="dictionary-based-sentiment-analysis.html#cb206-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">contribution =</span> <span class="fu">sum</span>(value)) <span class="sc">%&gt;%</span> </span>
+<span id="cb206-9"><a href="dictionary-based-sentiment-analysis.html#cb206-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_min</span>(contribution, <span class="at">n =</span> <span class="dv">10</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb207"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb207-1"><a href="dictionary-based-sentiment-analysis.html#cb207-1" aria-hidden="true" tabindex="-1"></a>imdb_bing_pos_contribution <span class="ot">&lt;-</span> imdb_bing <span class="sc">%&gt;%</span> </span>
+<span id="cb207-2"><a href="dictionary-based-sentiment-analysis.html#cb207-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">value =</span> <span class="fu">case_when</span>(sentiment <span class="sc">==</span> <span class="st">&quot;negative&quot;</span> <span class="sc">~</span> <span class="sc">-</span><span class="dv">1</span>,</span>
+<span id="cb207-3"><a href="dictionary-based-sentiment-analysis.html#cb207-3" aria-hidden="true" tabindex="-1"></a>                           sentiment <span class="sc">==</span> <span class="st">&quot;positive&quot;</span> <span class="sc">~</span> <span class="dv">1</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb207-4"><a href="dictionary-based-sentiment-analysis.html#cb207-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(word) <span class="sc">%&gt;%</span> </span>
+<span id="cb207-5"><a href="dictionary-based-sentiment-analysis.html#cb207-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">contribution =</span> <span class="fu">sum</span>(value)) <span class="sc">%&gt;%</span> </span>
+<span id="cb207-6"><a href="dictionary-based-sentiment-analysis.html#cb207-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(contribution, <span class="at">n =</span> <span class="dv">10</span>)</span>
+<span id="cb207-7"><a href="dictionary-based-sentiment-analysis.html#cb207-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb207-8"><a href="dictionary-based-sentiment-analysis.html#cb207-8" aria-hidden="true" tabindex="-1"></a>imdb_bing_neg_contribution <span class="ot">&lt;-</span> imdb_bing <span class="sc">%&gt;%</span> </span>
+<span id="cb207-9"><a href="dictionary-based-sentiment-analysis.html#cb207-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">value =</span> <span class="fu">case_when</span>(sentiment <span class="sc">==</span> <span class="st">&quot;negative&quot;</span> <span class="sc">~</span> <span class="sc">-</span><span class="dv">1</span>,</span>
+<span id="cb207-10"><a href="dictionary-based-sentiment-analysis.html#cb207-10" aria-hidden="true" tabindex="-1"></a>                           sentiment <span class="sc">==</span> <span class="st">&quot;positive&quot;</span> <span class="sc">~</span> <span class="dv">1</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb207-11"><a href="dictionary-based-sentiment-analysis.html#cb207-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(word) <span class="sc">%&gt;%</span> </span>
+<span id="cb207-12"><a href="dictionary-based-sentiment-analysis.html#cb207-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">contribution =</span> <span class="fu">sum</span>(value)) <span class="sc">%&gt;%</span> </span>
+<span id="cb207-13"><a href="dictionary-based-sentiment-analysis.html#cb207-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_min</span>(contribution, <span class="at">n =</span> <span class="dv">10</span>)</span></code></pre></div>
+<p>It can be visualized in a smart bar plot:</p>
+<div class="sourceCode" id="cb208"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb208-1"><a href="dictionary-based-sentiment-analysis.html#cb208-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bind_rows</span>(imdb_afinn_pos_contribution <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">dic =</span> <span class="st">&quot;AFINN&quot;</span>),</span>
+<span id="cb208-2"><a href="dictionary-based-sentiment-analysis.html#cb208-2" aria-hidden="true" tabindex="-1"></a>          imdb_afinn_neg_contribution <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">dic =</span> <span class="st">&quot;AFINN&quot;</span>),</span>
+<span id="cb208-3"><a href="dictionary-based-sentiment-analysis.html#cb208-3" aria-hidden="true" tabindex="-1"></a>          imdb_bing_pos_contribution <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">dic =</span> <span class="st">&quot;Bing&quot;</span>),</span>
+<span id="cb208-4"><a href="dictionary-based-sentiment-analysis.html#cb208-4" aria-hidden="true" tabindex="-1"></a>          imdb_bing_neg_contribution <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">dic =</span> <span class="st">&quot;Bing&quot;</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb208-5"><a href="dictionary-based-sentiment-analysis.html#cb208-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">word =</span> <span class="fu">reorder_within</span>(word, contribution, dic)) <span class="sc">%&gt;%</span></span>
+<span id="cb208-6"><a href="dictionary-based-sentiment-analysis.html#cb208-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb208-7"><a href="dictionary-based-sentiment-analysis.html#cb208-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="fu">aes</span>(contribution, word), <span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb208-8"><a href="dictionary-based-sentiment-analysis.html#cb208-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_y_reordered</span>() <span class="sc">+</span></span>
+<span id="cb208-9"><a href="dictionary-based-sentiment-analysis.html#cb208-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_wrap</span>(<span class="fu">vars</span>(dic), <span class="at">scales =</span> <span class="st">&quot;free&quot;</span>)</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-120-1.png" width="672" /></p>
+</div>
+</div>
+<div id="exercises-2" class="section level2" number="5.2">
+<h2><span class="header-section-number">5.2</span> Exercises</h2>
+<p>Take the Twitter data set from last week. Filter out all tweets dealing with abortion.</p>
+<ol style="list-style-type: decimal">
+<li>Which party’s members tweeted more negatively?</li>
+<li>Look at the contributing words. Why is it difficult to draw exact inferences here?</li>
+</ol>
+
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-grimmer2022" class="csl-entry">
+Grimmer, Justin, Margaret Roberts, and Brandon Stewart. 2022. <em>Text as <span>Data</span>: <span>A New Framework</span> for <span>Machine Learning</span> and the <span>Social Sciences</span></em>. <span>Princeton</span>: <span>Princeton University Press</span>.
+</div>
+<div id="ref-hu2004" class="csl-entry">
+Hu, Minqing, and Bing Liu. 2004. <span>“Mining and Summarizing Customer Reviews.”</span> In <em>Proceedings of the 2004 <span>ACM SIGKDD</span> International Conference on <span>Knowledge</span> Discovery and Data Mining - <span>KDD</span> ’04</em>, 168. <span>Seattle, WA, USA</span>: <span>ACM Press</span>. <a href="https://doi.org/10.1145/1014052.1014073">https://doi.org/10.1145/1014052.1014073</a>.
+</div>
+<div id="ref-nielsen2011" class="csl-entry">
+Nielsen, Finn Årup. 2011. <span>“A New <span>ANEW</span>: <span>Evaluation</span> of a Word List for Sentiment Analysis in Microblogs.”</span> <em>arXiv:1103.2903 [Cs]</em>, March. <a href="http://arxiv.org/abs/1103.2903">http://arxiv.org/abs/1103.2903</a>.
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="fightingwords.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="references.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/USERNAME/REPO/edit/BRANCH/04-dictionary_based_sentiment_analysis.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["_main.pdf", "_main.epub"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

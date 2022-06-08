@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 4 “Fighting words” | Text Mining for Social Scientists</title>
+  <meta name="description" content="This book is supposed to introduce the reader (i.e., you) to a fundamental technique for computational social science research: the quantitative analysis of text." />
+  <meta name="generator" content="bookdown 0.26 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 4 “Fighting words” | Text Mining for Social Scientists" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="This book is supposed to introduce the reader (i.e., you) to a fundamental technique for computational social science research: the quantitative analysis of text." />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 4 “Fighting words” | Text Mining for Social Scientists" />
+  
+  <meta name="twitter:description" content="This book is supposed to introduce the reader (i.e., you) to a fundamental technique for computational social science research: the quantitative analysis of text." />
+  
+
+<meta name="author" content="Felix Lennert" />
+
+
+<meta name="date" content="2022-06-01" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="texttodata.html"/>
+<link rel="next" href="sentimentanalysis.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+<link href="libs/vembedr-0.1.5/css/vembedr.css" rel="stylesheet" />
+<script src="libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
+<link href="libs/str_view-0.1.0/str_view.css" rel="stylesheet" />
+<script src="libs/str_view-binding-1.4.0/str_view.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Text Mining for Social Scientists</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#outline"><i class="fa fa-check"></i><b>1.1</b> Outline</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#why-r"><i class="fa fa-check"></i><b>1.2</b> Why R</a>
+<ul>
+<li class="chapter" data-level="1.2.1" data-path="index.html"><a href="index.html#reproducibility"><i class="fa fa-check"></i><b>1.2.1</b> Reproducibility</a></li>
+<li class="chapter" data-level="1.2.2" data-path="index.html"><a href="index.html#its-free-and-community-based"><i class="fa fa-check"></i><b>1.2.2</b> It’s free and community-based</a></li>
+<li class="chapter" data-level="1.2.3" data-path="index.html"><a href="index.html#jobs"><i class="fa fa-check"></i><b>1.2.3</b> Jobs</a></li>
+</ul></li>
+<li class="chapter" data-level="1.3" data-path="index.html"><a href="index.html#further-links"><i class="fa fa-check"></i><b>1.3</b> Further links</a></li>
+<li class="chapter" data-level="1.4" data-path="index.html"><a href="index.html#last-but-not-least"><i class="fa fa-check"></i><b>1.4</b> Last but not least</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html"><i class="fa fa-check"></i><b>2</b> Text Pre-Processing: String manipulation</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#basic-manipulations"><i class="fa fa-check"></i><b>2.1</b> Basic manipulations</a>
+<ul>
+<li class="chapter" data-level="2.1.1" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#changing-the-case-of-the-words"><i class="fa fa-check"></i><b>2.1.1</b> Changing the case of the words</a></li>
+<li class="chapter" data-level="2.1.2" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#determining-a-strings-length"><i class="fa fa-check"></i><b>2.1.2</b> Determining a string’s length</a></li>
+<li class="chapter" data-level="2.1.3" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#extracting-particular-characters"><i class="fa fa-check"></i><b>2.1.3</b> Extracting particular characters</a></li>
+<li class="chapter" data-level="2.1.4" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#concatenating-strings"><i class="fa fa-check"></i><b>2.1.4</b> Concatenating strings</a></li>
+<li class="chapter" data-level="2.1.5" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#repetition"><i class="fa fa-check"></i><b>2.1.5</b> Repetition</a></li>
+<li class="chapter" data-level="2.1.6" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#removing-unnecessary-whitespaces"><i class="fa fa-check"></i><b>2.1.6</b> Removing unnecessary whitespaces</a></li>
+</ul></li>
+<li class="chapter" data-level="2.2" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#regular-expressions"><i class="fa fa-check"></i><b>2.2</b> Regular expressions</a>
+<ul>
+<li class="chapter" data-level="2.2.1" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#literal-characters"><i class="fa fa-check"></i><b>2.2.1</b> Literal characters</a></li>
+<li class="chapter" data-level="2.2.2" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#metacharacters"><i class="fa fa-check"></i><b>2.2.2</b> Metacharacters</a></li>
+<li class="chapter" data-level="2.2.3" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#sets-of-characters"><i class="fa fa-check"></i><b>2.2.3</b> Sets of characters</a></li>
+<li class="chapter" data-level="2.2.4" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#anchors"><i class="fa fa-check"></i><b>2.2.4</b> Anchors</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#more-advanced-string-manipulation"><i class="fa fa-check"></i><b>2.3</b> More advanced string manipulation</a>
+<ul>
+<li class="chapter" data-level="2.3.1" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#detect-matches"><i class="fa fa-check"></i><b>2.3.1</b> Detect matches</a></li>
+<li class="chapter" data-level="2.3.2" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#mutating-strings"><i class="fa fa-check"></i><b>2.3.2</b> Mutating strings</a></li>
+<li class="chapter" data-level="2.3.3" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#extracting-text"><i class="fa fa-check"></i><b>2.3.3</b> Extracting text</a></li>
+<li class="chapter" data-level="2.3.4" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#split-vectors"><i class="fa fa-check"></i><b>2.3.4</b> Split vectors</a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#further-links-1"><i class="fa fa-check"></i><b>2.4</b> Further links</a></li>
+<li class="chapter" data-level="2.5" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#exercises"><i class="fa fa-check"></i><b>2.5</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="texttodata.html"><a href="texttodata.html"><i class="fa fa-check"></i><b>3</b> Text Pre-Processing: Text to Data</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="texttodata.html"><a href="texttodata.html#pre-processing-with-tidytext"><i class="fa fa-check"></i><b>3.1</b> Pre-processing with <code>tidytext</code></a>
+<ul>
+<li class="chapter" data-level="3.1.1" data-path="texttodata.html"><a href="texttodata.html#unnest_tokens"><i class="fa fa-check"></i><b>3.1.1</b> <code>unnest_tokens()</code></a></li>
+<li class="chapter" data-level="3.1.2" data-path="texttodata.html"><a href="texttodata.html#removal-of-unnecessary-content"><i class="fa fa-check"></i><b>3.1.2</b> Removal of unnecessary content</a></li>
+<li class="chapter" data-level="3.1.3" data-path="texttodata.html"><a href="texttodata.html#stemming"><i class="fa fa-check"></i><b>3.1.3</b> Stemming</a></li>
+<li class="chapter" data-level="3.1.4" data-path="texttodata.html"><a href="texttodata.html#in-a-nutshell"><i class="fa fa-check"></i><b>3.1.4</b> In a nutshell</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="texttodata.html"><a href="texttodata.html#preprocessing-with-spacy"><i class="fa fa-check"></i><b>3.2</b> Preprocessing with <code>spaCy</code></a>
+<ul>
+<li class="chapter" data-level="3.2.1" data-path="texttodata.html"><a href="texttodata.html#initializing-spacy"><i class="fa fa-check"></i><b>3.2.1</b> Initializing spacy</a></li>
+<li class="chapter" data-level="3.2.2" data-path="texttodata.html"><a href="texttodata.html#spacy_parse"><i class="fa fa-check"></i><b>3.2.2</b> <code>spacy_parse()</code></a></li>
+<li class="chapter" data-level="3.2.3" data-path="texttodata.html"><a href="texttodata.html#pos-tags-ner-and-nounphrases"><i class="fa fa-check"></i><b>3.2.3</b> POS tags, NER, and nounphrases</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="texttodata.html"><a href="texttodata.html#converting-between-formats"><i class="fa fa-check"></i><b>3.3</b> Converting between formats</a>
+<ul>
+<li class="chapter" data-level="3.3.1" data-path="texttodata.html"><a href="texttodata.html#document-term-matrix"><i class="fa fa-check"></i><b>3.3.1</b> Document-term matrix</a></li>
+<li class="chapter" data-level="3.3.2" data-path="texttodata.html"><a href="texttodata.html#document-feature-matrix"><i class="fa fa-check"></i><b>3.3.2</b> Document-feature matrix</a></li>
+<li class="chapter" data-level="3.3.3" data-path="texttodata.html"><a href="texttodata.html#corpus-objects"><i class="fa fa-check"></i><b>3.3.3</b> Corpus objects</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="texttodata.html"><a href="texttodata.html#further-links-2"><i class="fa fa-check"></i><b>3.4</b> Further links</a></li>
+<li class="chapter" data-level="3.5" data-path="texttodata.html"><a href="texttodata.html#exercises-1"><i class="fa fa-check"></i><b>3.5</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="fightingwords.html"><a href="fightingwords.html"><i class="fa fa-check"></i><b>4</b> “Fighting words”</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="fightingwords.html"><a href="fightingwords.html#counting-words-per-document"><i class="fa fa-check"></i><b>4.1</b> Counting words per document</a>
+<ul>
+<li class="chapter" data-level="4.1.1" data-path="fightingwords.html"><a href="fightingwords.html#naive-approach-raw-counts"><i class="fa fa-check"></i><b>4.1.1</b> Naive approach: raw counts</a></li>
+<li class="chapter" data-level="4.1.2" data-path="fightingwords.html"><a href="fightingwords.html#tf-idf"><i class="fa fa-check"></i><b>4.1.2</b> TF-IDF</a></li>
+<li class="chapter" data-level="4.1.3" data-path="fightingwords.html"><a href="fightingwords.html#odds"><i class="fa fa-check"></i><b>4.1.3</b> Odds</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="fightingwords.html"><a href="fightingwords.html#further-links-3"><i class="fa fa-check"></i><b>4.2</b> Further links</a></li>
+<li class="chapter" data-level="4.3" data-path="fightingwords.html"><a href="fightingwords.html#exercise"><i class="fa fa-check"></i><b>4.3</b> Exercise</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="sentimentanalysis.html"><a href="sentimentanalysis.html"><i class="fa fa-check"></i><b>5</b> Dictionary-based sentiment analysis</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="sentimentanalysis.html"><a href="sentimentanalysis.html#sentiment-analysis-using-tidytext-principles"><i class="fa fa-check"></i><b>5.1</b> Sentiment analysis using <code>tidytext</code> principles</a>
+<ul>
+<li class="chapter" data-level="5.1.1" data-path="sentimentanalysis.html"><a href="sentimentanalysis.html#available-dictionaries"><i class="fa fa-check"></i><b>5.1.1</b> Available dictionaries</a></li>
+<li class="chapter" data-level="5.1.2" data-path="sentimentanalysis.html"><a href="sentimentanalysis.html#step-1-preprocessing"><i class="fa fa-check"></i><b>5.1.2</b> Step 1: Preprocessing</a></li>
+<li class="chapter" data-level="5.1.3" data-path="sentimentanalysis.html"><a href="sentimentanalysis.html#step-2-sentiment-analysis-using-dplyrinner_join"><i class="fa fa-check"></i><b>5.1.3</b> Step 2: Sentiment Analysis using <code>dplyr::inner_join()</code></a></li>
+<li class="chapter" data-level="5.1.4" data-path="sentimentanalysis.html"><a href="sentimentanalysis.html#step-3-summarize-values"><i class="fa fa-check"></i><b>5.1.4</b> Step 3: Summarize values</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="sentimentanalysis.html"><a href="sentimentanalysis.html#further-links-4"><i class="fa fa-check"></i><b>5.2</b> Further links</a></li>
+<li class="chapter" data-level="5.3" data-path="sentimentanalysis.html"><a href="sentimentanalysis.html#exercises-2"><i class="fa fa-check"></i><b>5.3</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="supervisedml.html"><a href="supervisedml.html"><i class="fa fa-check"></i><b>6</b> Supervised Classification</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="supervisedml.html"><a href="supervisedml.html#split-data"><i class="fa fa-check"></i><b>6.1</b> Split data</a></li>
+<li class="chapter" data-level="6.2" data-path="supervisedml.html"><a href="supervisedml.html#pre-processing-and-featurization"><i class="fa fa-check"></i><b>6.2</b> Pre-processing and featurization</a>
+<ul>
+<li class="chapter" data-level="6.2.1" data-path="supervisedml.html"><a href="supervisedml.html#textrecipes-basic-example"><i class="fa fa-check"></i><b>6.2.1</b> <code>textrecipes</code> – basic example</a></li>
+<li class="chapter" data-level="6.2.2" data-path="supervisedml.html"><a href="supervisedml.html#textrecipes-further-preprocessing-steps"><i class="fa fa-check"></i><b>6.2.2</b> <code>textrecipes</code> – further preprocessing steps</a></li>
+</ul></li>
+<li class="chapter" data-level="6.3" data-path="supervisedml.html"><a href="supervisedml.html#model-specification"><i class="fa fa-check"></i><b>6.3</b> Model specification</a></li>
+<li class="chapter" data-level="6.4" data-path="supervisedml.html"><a href="supervisedml.html#model-training-workflows"><i class="fa fa-check"></i><b>6.4</b> Model training – <code>workflows</code></a></li>
+<li class="chapter" data-level="6.5" data-path="supervisedml.html"><a href="supervisedml.html#model-evaluation"><i class="fa fa-check"></i><b>6.5</b> Model evaluation</a>
+<ul>
+<li class="chapter" data-level="6.5.1" data-path="supervisedml.html"><a href="supervisedml.html#hyperparameter-tuning"><i class="fa fa-check"></i><b>6.5.1</b> Hyperparameter tuning</a></li>
+</ul></li>
+<li class="chapter" data-level="6.6" data-path="supervisedml.html"><a href="supervisedml.html#final-fit"><i class="fa fa-check"></i><b>6.6</b> Final fit</a></li>
+<li class="chapter" data-level="6.7" data-path="supervisedml.html"><a href="supervisedml.html#further-links-5"><i class="fa fa-check"></i><b>6.7</b> Further links</a></li>
+<li class="chapter" data-level="6.8" data-path="supervisedml.html"><a href="supervisedml.html#exercises-3"><i class="fa fa-check"></i><b>6.8</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i><b>7</b> References</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Text Mining for Social Scientists</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="fightingwords" class="section level1 hasAnchor" number="4">
+<h1><span class="header-section-number">Chapter 4</span> “Fighting words”<a href="fightingwords.html#fightingwords" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div class="vembedr">
+<div>
+<iframe src="https://www.youtube.com/embed/ZouUHSmc7og" width="533" height="300" frameborder="0" allowfullscreen="" data-external="1"></iframe>
+</div>
+</div>
+<p>A common task in the quantitative analysis of text is to determine how documents differ from each other concerning word usage. This is usually achieved by identifying words that are particular for one document but not for another. These words are referred to by <span class="citation">Monroe, Colaresi, and Quinn (<a href="#ref-monroe2008" role="doc-biblioref">2008</a>)</span> as <em>fighting words</em> or, by <span class="citation">Grimmer, Roberts, and Stewart (<a href="#ref-grimmer2022" role="doc-biblioref">2022</a>)</span>, <em>discriminating words</em>. To use the techniques that will be presented today, an already existing organization of the documents is assumed.</p>
+<p>In the following, I will present multiple methods according to which you can identify words that are related to different groups and can be used to distinguish them. I will present the methods and their implementation in R ordered from rather simple to more complicated. The order is inspired by <span class="citation">Monroe, Colaresi, and Quinn (<a href="#ref-monroe2008" role="doc-biblioref">2008</a>)</span>. The methods have in common that, at their heart, they determine how often a word appears in a group of documents. Thereafter, the “importance” of a word in distinguishing the groups is determined through several weighting procedures.</p>
+<div id="counting-words-per-document" class="section level2 hasAnchor" number="4.1">
+<h2><span class="header-section-number">4.1</span> Counting words per document<a href="fightingwords.html#counting-words-per-document" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The most simple approach to determine which words are more correlated to a certain group of documents is by merely counting them and determining their proportion in the document groups. For illustratory purposes, I use fairytales from H.C. Andersen which are contained in the <code>hcandersenr</code> package.</p>
+<div class="sourceCode" id="cb166"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb166-1"><a href="fightingwords.html#cb166-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb166-2"><a href="fightingwords.html#cb166-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span></code></pre></div>
+<pre><code>## 
+## Attaching package: &#39;lubridate&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     date, intersect, setdiff, union</code></pre>
+<div class="sourceCode" id="cb169"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb169-1"><a href="fightingwords.html#cb169-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidytext)</span>
+<span id="cb169-2"><a href="fightingwords.html#cb169-2" aria-hidden="true" tabindex="-1"></a>fairytales <span class="ot">&lt;-</span> hcandersenr<span class="sc">::</span>hcandersen_en <span class="sc">%&gt;%</span> </span>
+<span id="cb169-3"><a href="fightingwords.html#cb169-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(book <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;The princess and the pea&quot;</span>,</span>
+<span id="cb169-4"><a href="fightingwords.html#cb169-4" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;The little mermaid&quot;</span>,</span>
+<span id="cb169-5"><a href="fightingwords.html#cb169-5" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;The emperor&#39;s new suit&quot;</span>))</span>
+<span id="cb169-6"><a href="fightingwords.html#cb169-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb169-7"><a href="fightingwords.html#cb169-7" aria-hidden="true" tabindex="-1"></a>fairytales_tidy <span class="ot">&lt;-</span> fairytales <span class="sc">%&gt;%</span> </span>
+<span id="cb169-8"><a href="fightingwords.html#cb169-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_tokens</span>(<span class="at">output =</span> token, <span class="at">input =</span> text)</span></code></pre></div>
+<div id="naive-approach-raw-counts" class="section level3 hasAnchor" number="4.1.1">
+<h3><span class="header-section-number">4.1.1</span> Naive approach: raw counts<a href="fightingwords.html#naive-approach-raw-counts" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>For a first, naive analysis, I can merely count the times the terms appear in the texts. Since the text is in <code>tidytext</code> format, I can do so using means from traditional <code>tidyverse</code> packages. I will then visualize the results with a bar plot.</p>
+<div class="sourceCode" id="cb170"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb170-1"><a href="fightingwords.html#cb170-1" aria-hidden="true" tabindex="-1"></a>fairytales_top10 <span class="ot">&lt;-</span> fairytales_tidy <span class="sc">%&gt;%</span> </span>
+<span id="cb170-2"><a href="fightingwords.html#cb170-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(book) <span class="sc">%&gt;%</span> </span>
+<span id="cb170-3"><a href="fightingwords.html#cb170-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(token) <span class="sc">%&gt;%</span> </span>
+<span id="cb170-4"><a href="fightingwords.html#cb170-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(n, <span class="at">n =</span> <span class="dv">10</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb171"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb171-1"><a href="fightingwords.html#cb171-1" aria-hidden="true" tabindex="-1"></a>fairytales_top10 <span class="sc">%&gt;%</span> </span>
+<span id="cb171-2"><a href="fightingwords.html#cb171-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>()  <span class="sc">+</span></span>
+<span id="cb171-3"><a href="fightingwords.html#cb171-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="fu">aes</span>(<span class="at">x =</span> n, <span class="at">y =</span> <span class="fu">reorder_within</span>(token, n, book))) <span class="sc">+</span></span>
+<span id="cb171-4"><a href="fightingwords.html#cb171-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_reordered</span>() <span class="sc">+</span></span>
+<span id="cb171-5"><a href="fightingwords.html#cb171-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">&quot;token&quot;</span>) <span class="sc">+</span></span>
+<span id="cb171-6"><a href="fightingwords.html#cb171-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="fu">vars</span>(book), <span class="at">scales =</span> <span class="st">&quot;free&quot;</span>) <span class="sc">+</span></span>
+<span id="cb171-7"><a href="fightingwords.html#cb171-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">strip.text.x =</span> <span class="fu">element_blank</span>())</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-95-1.png" width="672" /></p>
+<p>It is quite hard to draw inferences on which plot belongs to which book since the plots are crowded with stopwords. However, there are pre-made stopword lists I can harness to remove the noise and perhaps catch a bit more signal for determining the books.</p>
+<div class="sourceCode" id="cb172"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb172-1"><a href="fightingwords.html#cb172-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stopwords)</span>
+<span id="cb172-2"><a href="fightingwords.html#cb172-2" aria-hidden="true" tabindex="-1"></a>fairytales_top10_nostop <span class="ot">&lt;-</span> fairytales_tidy <span class="sc">%&gt;%</span> </span>
+<span id="cb172-3"><a href="fightingwords.html#cb172-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">anti_join</span>(<span class="fu">get_stopwords</span>(), <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;token&quot;</span> <span class="ot">=</span> <span class="st">&quot;word&quot;</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb172-4"><a href="fightingwords.html#cb172-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(book) <span class="sc">%&gt;%</span> </span>
+<span id="cb172-5"><a href="fightingwords.html#cb172-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(token) <span class="sc">%&gt;%</span> </span>
+<span id="cb172-6"><a href="fightingwords.html#cb172-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(n, <span class="at">n =</span> <span class="dv">10</span>, <span class="at">with_ties =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb173"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb173-1"><a href="fightingwords.html#cb173-1" aria-hidden="true" tabindex="-1"></a>fairytales_top10_nostop <span class="sc">%&gt;%</span> </span>
+<span id="cb173-2"><a href="fightingwords.html#cb173-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>()  <span class="sc">+</span></span>
+<span id="cb173-3"><a href="fightingwords.html#cb173-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="fu">aes</span>(<span class="at">x =</span> n, <span class="at">y =</span> <span class="fu">reorder_within</span>(token, n, book))) <span class="sc">+</span></span>
+<span id="cb173-4"><a href="fightingwords.html#cb173-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_reordered</span>() <span class="sc">+</span></span>
+<span id="cb173-5"><a href="fightingwords.html#cb173-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">&quot;token&quot;</span>) <span class="sc">+</span></span>
+<span id="cb173-6"><a href="fightingwords.html#cb173-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="fu">vars</span>(book), <span class="at">scales =</span> <span class="st">&quot;free&quot;</span>) <span class="sc">+</span></span>
+<span id="cb173-7"><a href="fightingwords.html#cb173-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> scales<span class="sc">::</span><span class="fu">pretty_breaks</span>()) <span class="sc">+</span></span>
+<span id="cb173-8"><a href="fightingwords.html#cb173-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">strip.text.x =</span> <span class="fu">element_blank</span>())</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-97-1.png" width="672" /></p>
+<p>This already looks quite nice, it is quite easy to see which plot belongs to the respective book.</p>
+</div>
+<div id="tf-idf" class="section level3 hasAnchor" number="4.1.2">
+<h3><span class="header-section-number">4.1.2</span> TF-IDF<a href="fightingwords.html#tf-idf" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>A better explanation for words that are particular to a group of documents is the ones that appear often in one group but rarely in the other one(s). So far, the measure of term frequency only accounts for how often terms are used in the respective document. I can take into account how often it appears in other documents by including the inverse document frequency. The resulting measure is called tf-idf and describes “the frequency of a term adjusted for how rarely it is used.” <span class="citation">(<a href="#ref-silge2016" role="doc-biblioref">Silge and Robinson 2016</a>: 31)</span> If a term is rarely used overall but appears comparably often in a singular document, it might be safe to assume that it plays a bigger role in that document.</p>
+<p>The tf-idf of a word in a document is commonly<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a> calculated as follows:</p>
+<p><span class="math display">\[w_{i,j}=tf_{i,j}\times ln(\frac{N}{df_{i}})\]</span></p>
+<p>–&gt; <span class="math inline">\(tf_{i,j}\)</span>: number of occurrences of term <span class="math inline">\(i\)</span> in document <span class="math inline">\(j\)</span></p>
+<p>–&gt; <span class="math inline">\(df_{i}\)</span>: number of documents containing <span class="math inline">\(i\)</span></p>
+<p>–&gt; <span class="math inline">\(N\)</span>: total number of documents</p>
+<p>Note that the <span class="math inline">\(ln\)</span> is included so that words that appear in all documents – and do therefore not have discriminatory power – will automatically get a value of 0. This is because <span class="math inline">\(ln(1) = 0\)</span>. On the other hand, if a term appears in, say, 4 out of 20 documents, its idf is <span class="math inline">\(ln(20/4) = ln(5) = 1.6\)</span>.</p>
+<p>The <code>tidytext</code> package provides a neat implementation for calculating the tf-idf called <code>bind_tfidf()</code>. It takes as input the columns containing the <code>term</code>, the <code>document</code>, and the document-term counts <code>n</code>.</p>
+<div class="sourceCode" id="cb174"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb174-1"><a href="fightingwords.html#cb174-1" aria-hidden="true" tabindex="-1"></a>fairytales_top10_tfidf <span class="ot">&lt;-</span> fairytales_tidy <span class="sc">%&gt;%</span> </span>
+<span id="cb174-2"><a href="fightingwords.html#cb174-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(book) <span class="sc">%&gt;%</span> </span>
+<span id="cb174-3"><a href="fightingwords.html#cb174-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(token) <span class="sc">%&gt;%</span> </span>
+<span id="cb174-4"><a href="fightingwords.html#cb174-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_tf_idf</span>(token, book, n) <span class="sc">%&gt;%</span> </span>
+<span id="cb174-5"><a href="fightingwords.html#cb174-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(tf_idf, <span class="at">n =</span> <span class="dv">10</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb175"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb175-1"><a href="fightingwords.html#cb175-1" aria-hidden="true" tabindex="-1"></a>fairytales_top10_tfidf <span class="sc">%&gt;%</span> </span>
+<span id="cb175-2"><a href="fightingwords.html#cb175-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>()  <span class="sc">+</span></span>
+<span id="cb175-3"><a href="fightingwords.html#cb175-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="fu">aes</span>(<span class="at">x =</span> tf_idf, <span class="at">y =</span> <span class="fu">reorder_within</span>(token, tf_idf, book))) <span class="sc">+</span></span>
+<span id="cb175-4"><a href="fightingwords.html#cb175-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_reordered</span>() <span class="sc">+</span></span>
+<span id="cb175-5"><a href="fightingwords.html#cb175-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">&quot;token&quot;</span>) <span class="sc">+</span></span>
+<span id="cb175-6"><a href="fightingwords.html#cb175-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="fu">vars</span>(book), <span class="at">scales =</span> <span class="st">&quot;free&quot;</span>) <span class="sc">+</span></span>
+<span id="cb175-7"><a href="fightingwords.html#cb175-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">strip.text.x =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb175-8"><a href="fightingwords.html#cb175-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.title.x =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb175-9"><a href="fightingwords.html#cb175-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text.x =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb175-10"><a href="fightingwords.html#cb175-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.ticks.x =</span> <span class="fu">element_blank</span>())</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-99-1.png" width="672" /></p>
+<p>Pretty good already! All the fairytales can be clearly identified. A problem with this representation is that I cannot straightforwardly interpret the x-axis values (they can be removed by uncommenting the last three lines). A way to mitigate this is using odds.</p>
+<p>Another shortcoming becomes visible when I take the terms with the highest TF-IDF as compared to all other fairytales.</p>
+<div class="sourceCode" id="cb176"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb176-1"><a href="fightingwords.html#cb176-1" aria-hidden="true" tabindex="-1"></a>tfidf_vs_full <span class="ot">&lt;-</span> hcandersenr<span class="sc">::</span>hcandersen_en <span class="sc">%&gt;%</span> </span>
+<span id="cb176-2"><a href="fightingwords.html#cb176-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_tokens</span>(<span class="at">output =</span> token, <span class="at">input =</span> text) <span class="sc">%&gt;%</span> </span>
+<span id="cb176-3"><a href="fightingwords.html#cb176-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(token, book) <span class="sc">%&gt;%</span> </span>
+<span id="cb176-4"><a href="fightingwords.html#cb176-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_tf_idf</span>(book, token, n) <span class="sc">%&gt;%</span> </span>
+<span id="cb176-5"><a href="fightingwords.html#cb176-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(book <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;The princess and the pea&quot;</span>,</span>
+<span id="cb176-6"><a href="fightingwords.html#cb176-6" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;The little mermaid&quot;</span>,</span>
+<span id="cb176-7"><a href="fightingwords.html#cb176-7" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;The emperor&#39;s new suit&quot;</span>)) </span>
+<span id="cb176-8"><a href="fightingwords.html#cb176-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb176-9"><a href="fightingwords.html#cb176-9" aria-hidden="true" tabindex="-1"></a>plot_tf_idf <span class="ot">&lt;-</span> <span class="cf">function</span>(df, group_var){</span>
+<span id="cb176-10"><a href="fightingwords.html#cb176-10" aria-hidden="true" tabindex="-1"></a>  df <span class="sc">%&gt;%</span> </span>
+<span id="cb176-11"><a href="fightingwords.html#cb176-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>({{ group_var }}) <span class="sc">%&gt;%</span> </span>
+<span id="cb176-12"><a href="fightingwords.html#cb176-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">slice_max</span>(tf_idf, <span class="at">n =</span> <span class="dv">10</span>, <span class="at">with_ties =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb176-13"><a href="fightingwords.html#cb176-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>()  <span class="sc">+</span></span>
+<span id="cb176-14"><a href="fightingwords.html#cb176-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_col</span>(<span class="fu">aes</span>(<span class="at">x =</span> tf_idf, <span class="at">y =</span> <span class="fu">reorder_within</span>(token, tf_idf, {{ group_var }}))) <span class="sc">+</span></span>
+<span id="cb176-15"><a href="fightingwords.html#cb176-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_y_reordered</span>() <span class="sc">+</span></span>
+<span id="cb176-16"><a href="fightingwords.html#cb176-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">&quot;token&quot;</span>) <span class="sc">+</span></span>
+<span id="cb176-17"><a href="fightingwords.html#cb176-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_wrap</span>(<span class="fu">vars</span>({{ group_var }}), <span class="at">scales =</span> <span class="st">&quot;free&quot;</span>) <span class="sc">+</span></span>
+<span id="cb176-18"><a href="fightingwords.html#cb176-18" aria-hidden="true" tabindex="-1"></a>    <span class="co">#theme(strip.text.x = element_blank()) +</span></span>
+<span id="cb176-19"><a href="fightingwords.html#cb176-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">axis.title.x=</span><span class="fu">element_blank</span>(),</span>
+<span id="cb176-20"><a href="fightingwords.html#cb176-20" aria-hidden="true" tabindex="-1"></a>          <span class="at">axis.text.x=</span><span class="fu">element_blank</span>(),</span>
+<span id="cb176-21"><a href="fightingwords.html#cb176-21" aria-hidden="true" tabindex="-1"></a>          <span class="at">axis.ticks.x=</span><span class="fu">element_blank</span>())</span>
+<span id="cb176-22"><a href="fightingwords.html#cb176-22" aria-hidden="true" tabindex="-1"></a>} </span>
+<span id="cb176-23"><a href="fightingwords.html#cb176-23" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb176-24"><a href="fightingwords.html#cb176-24" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_tf_idf</span>(tfidf_vs_full, book)</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-100-1.png" width="672" /></p>
+<p>The tokens are far too specific to make any sense. Introducing a lower threshold (i.e., limiting the analysis to terms that appear at least x times in the document) might mitigate that. Yet, this threshold is of course arbitrary.</p>
+<div class="sourceCode" id="cb177"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb177-1"><a href="fightingwords.html#cb177-1" aria-hidden="true" tabindex="-1"></a>tfidf_vs_full <span class="sc">%&gt;%</span> </span>
+<span id="cb177-2"><a href="fightingwords.html#cb177-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(token) <span class="sc">%&gt;%</span> </span>
+<span id="cb177-3"><a href="fightingwords.html#cb177-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(n <span class="sc">&gt;</span> <span class="dv">3</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb177-4"><a href="fightingwords.html#cb177-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb177-5"><a href="fightingwords.html#cb177-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_tf_idf</span>(book)</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-101-1.png" width="672" /></p>
+<p>This looks a bit better already, yet the threshold is of course arbitrary and not generalizable. Choosing a higher threshold will take away more specific terms, lower thresholds might make the results overly specific.</p>
+</div>
+<div id="odds" class="section level3 hasAnchor" number="4.1.3">
+<h3><span class="header-section-number">4.1.3</span> Odds<a href="fightingwords.html#odds" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Another approach to tackle the question of which words distinguish the documents nicely is to think about it as “which words have the highest odds of appearing in one document?” These words shall then be the ones that are presumably very descriptive for the document.</p>
+<p>The formula for the odds of word <span class="math inline">\(w\)</span> appearing in document <span class="math inline">\(i\)</span> looks as follows:</p>
+<p><span class="math display">\[O_{iw} = \frac{f_{iw}}{1-f_{iw}}\]</span>
+<span class="math inline">\(f_{iw}\)</span> stands for the share a word takes within a document.</p>
+<p>By logging this measure I ensure that the values are comparable across words and documents. A quick example would be the word “and” which appears 14 times in “The princess and the pea” (out of 382 words). Hence, the odds of a word being “and” in this document are 14 to 382, the total number of words in the document, minus 14; <span class="math inline">\(O_{and, j}\frac{14/382}{1-14/382}\)</span> which is 0.0380435. The odds of “and” not being the word are 368 to 14, <span class="math inline">\(\frac{368/382}{1-368/382}\)</span> – 26.2857143. However, if we log both values, they become symmetric – <span class="math inline">\(ln(0.03804348) = -3.27\)</span> and <span class="math inline">\(ln(26.28571) = 3.27\)</span>.</p>
+<p>If I were to compare the usage of a word <span class="math inline">\(w\)</span> between documents <span class="math inline">\(i\)</span> and <span class="math inline">\(j\)</span>, I can use the log odds ratio.</p>
+<p><span class="math display">\[log \frac{O_{iw}}{O_{jw}} = log(\frac{\frac{f_{iw}}{1-f_{iw}}}{\frac{f_{jw}}{1-f_{jw}}}) = log(\frac{f_{iw}}{1-f_{iw}})-log(\frac{f_{jw}}{1-f_{jw}})\]</span></p>
+<p>In R we can use the <code>tidylo</code> package to calculate them. The function <code>bind_log_odds()</code> works analogously to <code>bind_tf_idf()</code>. For the basic implementation of the log-odds approach, I set <code>uninformative = TRUE</code>. In technical terms, this means that I use an uninformative prior for the respective tokens. This implies that it does not account for the basic usage of the respective tokens in a background corpus that we have. Therefore, some common words might be overstressed just because they are more common in the text at hand. By default, the function returns a tibble containing the feature (here: token), the set (here: book), the number of appearances the feature makes in a respective set, as well as the weighted log-odds of the feature making an appearance in the set. Weighted here means z-standardized so that we can compare it across sets (documents). Interpretation of the absolute values, however, is not straightforward. Positive log odds imply that the group is more likely to use the word as compared to others.</p>
+<div class="sourceCode" id="cb178"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb178-1"><a href="fightingwords.html#cb178-1" aria-hidden="true" tabindex="-1"></a><span class="co">#install.packages(&quot;tidylo&quot;)</span></span>
+<span id="cb178-2"><a href="fightingwords.html#cb178-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidylo)</span>
+<span id="cb178-3"><a href="fightingwords.html#cb178-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb178-4"><a href="fightingwords.html#cb178-4" aria-hidden="true" tabindex="-1"></a>log_odds_uninformative <span class="ot">&lt;-</span> fairytales_tidy <span class="sc">%&gt;%</span> </span>
+<span id="cb178-5"><a href="fightingwords.html#cb178-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(token, book) <span class="sc">%&gt;%</span> </span>
+<span id="cb178-6"><a href="fightingwords.html#cb178-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_log_odds</span>(book, token, n, <span class="at">uninformative =</span> <span class="cn">TRUE</span>, <span class="at">unweighted =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb178-7"><a href="fightingwords.html#cb178-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb178-8"><a href="fightingwords.html#cb178-8" aria-hidden="true" tabindex="-1"></a>plot_log_odds <span class="ot">&lt;-</span> <span class="cf">function</span>(df, <span class="at">x_var =</span> log_odds_weighted, group_var){</span>
+<span id="cb178-9"><a href="fightingwords.html#cb178-9" aria-hidden="true" tabindex="-1"></a>  df <span class="sc">%&gt;%</span> </span>
+<span id="cb178-10"><a href="fightingwords.html#cb178-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>({{ group_var }}) <span class="sc">%&gt;%</span> </span>
+<span id="cb178-11"><a href="fightingwords.html#cb178-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>({{ x_var }}, <span class="at">n =</span> <span class="dv">10</span>, <span class="at">with_ties =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb178-12"><a href="fightingwords.html#cb178-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">token =</span> <span class="fu">reorder_within</span>(token, {{ x_var }}, {{ group_var }})) <span class="sc">%&gt;%</span> </span>
+<span id="cb178-13"><a href="fightingwords.html#cb178-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>()   <span class="sc">+</span></span>
+<span id="cb178-14"><a href="fightingwords.html#cb178-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="fu">aes</span>(<span class="at">x =</span> {{ x_var }}, <span class="at">y =</span> token)) <span class="sc">+</span></span>
+<span id="cb178-15"><a href="fightingwords.html#cb178-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_reordered</span>() <span class="sc">+</span></span>
+<span id="cb178-16"><a href="fightingwords.html#cb178-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">&quot;token&quot;</span>) <span class="sc">+</span></span>
+<span id="cb178-17"><a href="fightingwords.html#cb178-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="fu">vars</span>({{ group_var }}), <span class="at">scales =</span> <span class="st">&quot;free_y&quot;</span>) <span class="co">#+</span></span>
+<span id="cb178-18"><a href="fightingwords.html#cb178-18" aria-hidden="true" tabindex="-1"></a>  <span class="co">#theme(strip.text.x = element_blank())</span></span>
+<span id="cb178-19"><a href="fightingwords.html#cb178-19" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb178-20"><a href="fightingwords.html#cb178-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb178-21"><a href="fightingwords.html#cb178-21" aria-hidden="true" tabindex="-1"></a>log_odds_uninformative <span class="sc">%&gt;%</span> <span class="fu">plot_log_odds</span>(<span class="at">group_var =</span> book)</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-102-1.png" width="672" /></p>
+<p>Right now, there are still a bunch of uninformative words in the plot (e.g., did, is, you, of, etc.). I can specify the usage of an informative prior. This prior accounts for general usage of the word and shrinks the counts toward how often the word appears in the background corpus. Therefore, I can also see differences in common words (something that could not be done with TF-IDF as their TF-IDF score will become 0 if they appear in every document).</p>
+<div class="sourceCode" id="cb179"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb179-1"><a href="fightingwords.html#cb179-1" aria-hidden="true" tabindex="-1"></a>log_odds_informative <span class="ot">&lt;-</span> fairytales_tidy <span class="sc">%&gt;%</span> </span>
+<span id="cb179-2"><a href="fightingwords.html#cb179-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(token, book) <span class="sc">%&gt;%</span> </span>
+<span id="cb179-3"><a href="fightingwords.html#cb179-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_log_odds</span>(book, token, n, <span class="at">uninformative =</span> <span class="cn">FALSE</span>, <span class="at">unweighted =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb179-4"><a href="fightingwords.html#cb179-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb179-5"><a href="fightingwords.html#cb179-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_log_odds</span>(log_odds_informative, <span class="at">group_var =</span> book)</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-103-1.png" width="672" /></p>
+<p>This will look different, however, when I calculate the measure for the full corpus of H. C. Andersen fairytales and then just use the ones in question.</p>
+<div class="sourceCode" id="cb180"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb180-1"><a href="fightingwords.html#cb180-1" aria-hidden="true" tabindex="-1"></a>log_odds_vs_full_informative <span class="ot">&lt;-</span> hcandersenr<span class="sc">::</span>hcandersen_en <span class="sc">%&gt;%</span> </span>
+<span id="cb180-2"><a href="fightingwords.html#cb180-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_tokens</span>(<span class="at">output =</span> token, <span class="at">input =</span> text) <span class="sc">%&gt;%</span> </span>
+<span id="cb180-3"><a href="fightingwords.html#cb180-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(token, book) <span class="sc">%&gt;%</span> </span>
+<span id="cb180-4"><a href="fightingwords.html#cb180-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_log_odds</span>(book, token, n, <span class="at">uninformative =</span> <span class="cn">FALSE</span>, <span class="at">unweighted =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb180-5"><a href="fightingwords.html#cb180-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(book <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;The princess and the pea&quot;</span>,</span>
+<span id="cb180-6"><a href="fightingwords.html#cb180-6" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;The little mermaid&quot;</span>,</span>
+<span id="cb180-7"><a href="fightingwords.html#cb180-7" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;The emperor&#39;s new suit&quot;</span>))</span>
+<span id="cb180-8"><a href="fightingwords.html#cb180-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb180-9"><a href="fightingwords.html#cb180-9" aria-hidden="true" tabindex="-1"></a>log_odds_vs_full_uninformative <span class="ot">&lt;-</span> hcandersenr<span class="sc">::</span>hcandersen_en <span class="sc">%&gt;%</span> </span>
+<span id="cb180-10"><a href="fightingwords.html#cb180-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_tokens</span>(<span class="at">output =</span> token, <span class="at">input =</span> text) <span class="sc">%&gt;%</span> </span>
+<span id="cb180-11"><a href="fightingwords.html#cb180-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(token, book) <span class="sc">%&gt;%</span> </span>
+<span id="cb180-12"><a href="fightingwords.html#cb180-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_log_odds</span>(book, token, n, <span class="at">uninformative =</span> <span class="cn">TRUE</span>, <span class="at">unweighted =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb180-13"><a href="fightingwords.html#cb180-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(book <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;The princess and the pea&quot;</span>,</span>
+<span id="cb180-14"><a href="fightingwords.html#cb180-14" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;The little mermaid&quot;</span>,</span>
+<span id="cb180-15"><a href="fightingwords.html#cb180-15" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;The emperor&#39;s new suit&quot;</span>))</span>
+<span id="cb180-16"><a href="fightingwords.html#cb180-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb180-17"><a href="fightingwords.html#cb180-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb180-18"><a href="fightingwords.html#cb180-18" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_log_odds</span>(log_odds_vs_full_informative, <span class="at">group_var =</span> book)</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-104-1.png" width="672" /></p>
+<div class="sourceCode" id="cb181"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb181-1"><a href="fightingwords.html#cb181-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_log_odds</span>(log_odds_vs_full_uninformative, <span class="at">group_var =</span> book)</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-104-2.png" width="672" /></p>
+<p>This all looks quite specific and good, except for “The princess and the pea.”</p>
+<p>Let’s wrap it up by comparing how different methods lead to different results.</p>
+<div class="sourceCode" id="cb182"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb182-1"><a href="fightingwords.html#cb182-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb182-2"><a href="fightingwords.html#cb182-2" aria-hidden="true" tabindex="-1"></a><span class="fu">wrap_plots</span>(</span>
+<span id="cb182-3"><a href="fightingwords.html#cb182-3" aria-hidden="true" tabindex="-1"></a>  tfidf_vs_full <span class="sc">%&gt;%</span> <span class="fu">plot_tf_idf</span>(book),</span>
+<span id="cb182-4"><a href="fightingwords.html#cb182-4" aria-hidden="true" tabindex="-1"></a>  tfidf_vs_full <span class="sc">%&gt;%</span> <span class="fu">filter</span>(n <span class="sc">&gt;</span> <span class="dv">3</span>) <span class="sc">%&gt;%</span> <span class="fu">plot_tf_idf</span>(book),</span>
+<span id="cb182-5"><a href="fightingwords.html#cb182-5" aria-hidden="true" tabindex="-1"></a>  log_odds_vs_full_uninformative <span class="sc">%&gt;%</span> <span class="fu">plot_log_odds</span>(<span class="at">group_var =</span> book),</span>
+<span id="cb182-6"><a href="fightingwords.html#cb182-6" aria-hidden="true" tabindex="-1"></a>  log_odds_vs_full_informative <span class="sc">%&gt;%</span> <span class="fu">plot_log_odds</span>(<span class="at">group_var =</span> book)</span>
+<span id="cb182-7"><a href="fightingwords.html#cb182-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-105-1.png" width="672" /></p>
+</div>
+</div>
+<div id="further-links-3" class="section level2 hasAnchor" number="4.2">
+<h2><span class="header-section-number">4.2</span> Further links<a href="fightingwords.html#further-links-3" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<ul>
+<li>Chapter on TF-IDF in<a href="https://www.tidytextmining.com/tfidf.html">Tidy text mining with R</a>.</li>
+<li>Introduction to <a href="https://juliasilge.com/blog/introducing-tidylo/">tidylo</a>.</li>
+<li><a href="https://bookdown.org/Maxine/tidy-text-mining/analyzing-word-and-document-frequency.html">More on the rationale behind log-odds by Qiushi Yan</a></li>
+</ul>
+</div>
+<div id="exercise" class="section level2 hasAnchor" number="4.3">
+<h2><span class="header-section-number">4.3</span> Exercise<a href="fightingwords.html#exercise" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The following code was used to download the latest 200 tweets of the members of the U.S. Congress.</p>
+<div class="sourceCode" id="cb183"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb183-1"><a href="fightingwords.html#cb183-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb183-2"><a href="fightingwords.html#cb183-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rvest)</span>
+<span id="cb183-3"><a href="fightingwords.html#cb183-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rtweet)</span>
+<span id="cb183-4"><a href="fightingwords.html#cb183-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
+<span id="cb183-5"><a href="fightingwords.html#cb183-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb183-6"><a href="fightingwords.html#cb183-6" aria-hidden="true" tabindex="-1"></a>rep_overview <span class="ot">&lt;-</span> <span class="fu">read_html</span>(<span class="st">&quot;https://pressgallery.house.gov/member-data/members-official-twitter-handles&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb183-7"><a href="fightingwords.html#cb183-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_table</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb183-8"><a href="fightingwords.html#cb183-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pluck</span>(<span class="dv">1</span>)</span>
+<span id="cb183-9"><a href="fightingwords.html#cb183-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb183-10"><a href="fightingwords.html#cb183-10" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(rep_overview) <span class="ot">&lt;-</span> rep_overview[<span class="dv">1</span>, ]</span>
+<span id="cb183-11"><a href="fightingwords.html#cb183-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb183-12"><a href="fightingwords.html#cb183-12" aria-hidden="true" tabindex="-1"></a>rep_overview <span class="ot">&lt;-</span> <span class="fu">slice</span>(rep_overview, <span class="sc">-</span><span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb183-13"><a href="fightingwords.html#cb183-13" aria-hidden="true" tabindex="-1"></a>  janitor<span class="sc">::</span><span class="fu">clean_names</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb183-14"><a href="fightingwords.html#cb183-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">twitter_handle =</span> <span class="fu">str_remove</span>(twitter_handle, <span class="st">&quot;</span><span class="sc">\\</span><span class="st">@&quot;</span>))</span>
+<span id="cb183-15"><a href="fightingwords.html#cb183-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb183-16"><a href="fightingwords.html#cb183-16" aria-hidden="true" tabindex="-1"></a>tweet_overview_us_rep <span class="ot">&lt;-</span> <span class="fu">map</span>(</span>
+<span id="cb183-17"><a href="fightingwords.html#cb183-17" aria-hidden="true" tabindex="-1"></a>  rep_overview<span class="sc">$</span>twitter_handle, </span>
+<span id="cb183-18"><a href="fightingwords.html#cb183-18" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span>{</span>
+<span id="cb183-19"><a href="fightingwords.html#cb183-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">Sys.sleep</span>(<span class="dv">5</span>)</span>
+<span id="cb183-20"><a href="fightingwords.html#cb183-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_timeline</span>(.x, <span class="at">n =</span> <span class="dv">200</span>)</span>
+<span id="cb183-21"><a href="fightingwords.html#cb183-21" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb183-22"><a href="fightingwords.html#cb183-22" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb183-23"><a href="fightingwords.html#cb183-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb183-24"><a href="fightingwords.html#cb183-24" aria-hidden="true" tabindex="-1"></a>tweets_relevant <span class="ot">&lt;-</span> tweet_overview_us_rep <span class="sc">%&gt;%</span> <span class="fu">bind_rows</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb183-25"><a href="fightingwords.html#cb183-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">date =</span> <span class="fu">date</span>(created_at)) <span class="sc">%&gt;%</span> </span>
+<span id="cb183-26"><a href="fightingwords.html#cb183-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(date <span class="sc">&gt;</span> <span class="fu">ymd</span>(<span class="st">&quot;2022-05-01&quot;</span>))</span>
+<span id="cb183-27"><a href="fightingwords.html#cb183-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb183-28"><a href="fightingwords.html#cb183-28" aria-hidden="true" tabindex="-1"></a>tweets_2022 <span class="ot">&lt;-</span> tweet_overview_us_rep <span class="sc">%&gt;%</span> <span class="fu">bind_rows</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb183-29"><a href="fightingwords.html#cb183-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">date =</span> <span class="fu">date</span>(created_at)) <span class="sc">%&gt;%</span> </span>
+<span id="cb183-30"><a href="fightingwords.html#cb183-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(date <span class="sc">&gt;=</span> <span class="fu">ymd</span>(<span class="st">&quot;2022-01-01&quot;</span>))</span></code></pre></div>
+<p>The tweets can be found in the file <code>congress_tweets_2022.csv</code>.</p>
+<ul>
+<li><p>On May 2, 2022, documents from the supreme court were leaked that show an upcoming decision on one of the major hot-button issues in American politics. Which topic? Can you figure that out from the data? (Hints: Create two groups with Tweets that were posted before and on/after May 2nd; don’t use the full date but reduce them to say April 20 to May 1 for group “before”; perhaps remove hashtags and infrequent words (words with n &lt;= 15)?; use some of the methods outlined above (note that for log-odds, you need to remove all Inf values using <code>filter(is.finite(log_odds_weighted))</code> before plotting); try to identify the issue)</p></li>
+<li><p>As we are talking hot-button issue here, how did the language Republican and Democratic House members used differ? [You can get an overview of the name, the Twitter handle, and the party leaning of the House members by running the following code (note that you may have to install <code>rvest</code> and <code>janitor</code> first).]</p></li>
+</ul>
+<div class="sourceCode" id="cb184"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb184-1"><a href="fightingwords.html#cb184-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb184-2"><a href="fightingwords.html#cb184-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rvest)</span></code></pre></div>
+<pre><code>## 
+## Attaching package: &#39;rvest&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:readr&#39;:
+## 
+##     guess_encoding</code></pre>
+<div class="sourceCode" id="cb187"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb187-1"><a href="fightingwords.html#cb187-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor)</span></code></pre></div>
+<pre><code>## 
+## Attaching package: &#39;janitor&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     chisq.test, fisher.test</code></pre>
+<div class="sourceCode" id="cb190"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb190-1"><a href="fightingwords.html#cb190-1" aria-hidden="true" tabindex="-1"></a>rep_overview <span class="ot">&lt;-</span> <span class="fu">read_html</span>(<span class="st">&quot;https://pressgallery.house.gov/member-data/members-official-twitter-handles&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb190-2"><a href="fightingwords.html#cb190-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_table</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb190-3"><a href="fightingwords.html#cb190-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pluck</span>(<span class="dv">1</span>)</span>
+<span id="cb190-4"><a href="fightingwords.html#cb190-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb190-5"><a href="fightingwords.html#cb190-5" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(rep_overview) <span class="ot">&lt;-</span> rep_overview[<span class="dv">1</span>, ]</span>
+<span id="cb190-6"><a href="fightingwords.html#cb190-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb190-7"><a href="fightingwords.html#cb190-7" aria-hidden="true" tabindex="-1"></a>rep_overview <span class="ot">&lt;-</span> <span class="fu">slice</span>(rep_overview, <span class="sc">-</span><span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb190-8"><a href="fightingwords.html#cb190-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clean_names</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb190-9"><a href="fightingwords.html#cb190-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">twitter_handle =</span> <span class="fu">str_remove</span>(twitter_handle, <span class="st">&quot;</span><span class="sc">\\</span><span class="st">@&quot;</span>))</span></code></pre></div>
+<ul>
+<li><p>Try to select tweets that are about the issue at hand (i.e., abortion and the leak). Come up with keywords that help you select all relevant tweets. Note that due to the issue and the language concerning it being so partisan, your choice might skew your sample. Focus on tweets posted after the leak. You can check whether you see abortion-related tweets spike using the following code:
+<code>tweets_abortion %&gt;%     count(date) %&gt;%    ggplot() +   geom_line(aes(date, n))</code></p></li>
+<li><p>Group your resulting data according to party affiliation. Are there party-specific language differences you can uncover using the methods above? Try both <code>informative = TRUE</code> and <code>informative = FALSE</code>.</p></li>
+</ul>
+<details>
+<summary>
+Solution. Click to expand!
+</summary>
+<div class="sourceCode" id="cb191"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb191-1"><a href="fightingwords.html#cb191-1" aria-hidden="true" tabindex="-1"></a>tweets <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;data/congress_tweets_2022.csv&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb191-2"><a href="fightingwords.html#cb191-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">date_group =</span> <span class="fu">case_when</span>(date <span class="sc">&gt;=</span> <span class="fu">ymd</span>(<span class="st">&quot;2022-05-02&quot;</span>) <span class="sc">~</span> <span class="st">&quot;after&quot;</span>,</span>
+<span id="cb191-3"><a href="fightingwords.html#cb191-3" aria-hidden="true" tabindex="-1"></a>                                <span class="fu">between</span>(date, <span class="fu">ymd</span>(<span class="st">&quot;2022-04-15&quot;</span>), <span class="fu">ymd</span>(<span class="st">&quot;2022-05-01&quot;</span>)) <span class="sc">~</span> <span class="st">&quot;before&quot;</span>)) </span>
+<span id="cb191-4"><a href="fightingwords.html#cb191-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb191-5"><a href="fightingwords.html#cb191-5" aria-hidden="true" tabindex="-1"></a>tf_idf_min15 <span class="ot">&lt;-</span> tweets <span class="sc">%&gt;%</span> </span>
+<span id="cb191-6"><a href="fightingwords.html#cb191-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">#mutate(text = str_remove_all(text, &quot;\\#.* &quot;)) %&gt;% </span></span>
+<span id="cb191-7"><a href="fightingwords.html#cb191-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(date_group) <span class="sc">%&gt;%</span> </span>
+<span id="cb191-8"><a href="fightingwords.html#cb191-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_tokens</span>(token, text) <span class="sc">%&gt;%</span> </span>
+<span id="cb191-9"><a href="fightingwords.html#cb191-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(token, date_group) <span class="sc">%&gt;%</span> </span>
+<span id="cb191-10"><a href="fightingwords.html#cb191-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(n <span class="sc">&gt;</span> <span class="dv">15</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb191-11"><a href="fightingwords.html#cb191-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_tf_idf</span>(token, date_group, n)</span>
+<span id="cb191-12"><a href="fightingwords.html#cb191-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb191-13"><a href="fightingwords.html#cb191-13" aria-hidden="true" tabindex="-1"></a>tf_idf_min15 <span class="sc">%&gt;%</span> <span class="fu">plot_tf_idf</span>(date_group)</span>
+<span id="cb191-14"><a href="fightingwords.html#cb191-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb191-15"><a href="fightingwords.html#cb191-15" aria-hidden="true" tabindex="-1"></a>log_odds <span class="ot">&lt;-</span> tweets <span class="sc">%&gt;%</span> </span>
+<span id="cb191-16"><a href="fightingwords.html#cb191-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">text =</span> <span class="fu">str_remove_all</span>(text, <span class="st">&quot;</span><span class="sc">\\</span><span class="st">#.* &quot;</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb191-17"><a href="fightingwords.html#cb191-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_tokens</span>(token, text) <span class="sc">%&gt;%</span> </span>
+<span id="cb191-18"><a href="fightingwords.html#cb191-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(token, date_group) <span class="sc">%&gt;%</span> </span>
+<span id="cb191-19"><a href="fightingwords.html#cb191-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_log_odds</span>(token, date_group, n) <span class="sc">%&gt;%</span> </span>
+<span id="cb191-20"><a href="fightingwords.html#cb191-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(date_group)</span>
+<span id="cb191-21"><a href="fightingwords.html#cb191-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb191-22"><a href="fightingwords.html#cb191-22" aria-hidden="true" tabindex="-1"></a>log_odds <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="fu">is.finite</span>(log_odds_weighted) <span class="sc">&amp;</span> n <span class="sc">&gt;</span> <span class="dv">20</span>) <span class="sc">%&gt;%</span> <span class="fu">plot_log_odds</span>(<span class="at">group_var =</span> date_group)</span>
+<span id="cb191-23"><a href="fightingwords.html#cb191-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb191-24"><a href="fightingwords.html#cb191-24" aria-hidden="true" tabindex="-1"></a><span class="co">#--&gt; TF-IDF performed way better</span></span>
+<span id="cb191-25"><a href="fightingwords.html#cb191-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb191-26"><a href="fightingwords.html#cb191-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb191-27"><a href="fightingwords.html#cb191-27" aria-hidden="true" tabindex="-1"></a>tweets_w_party <span class="ot">&lt;-</span> tweets <span class="sc">%&gt;%</span> </span>
+<span id="cb191-28"><a href="fightingwords.html#cb191-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(rep_overview <span class="sc">%&gt;%</span> <span class="fu">select</span>(twitter_handle, party))</span>
+<span id="cb191-29"><a href="fightingwords.html#cb191-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb191-30"><a href="fightingwords.html#cb191-30" aria-hidden="true" tabindex="-1"></a>keywords <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;abortion&quot;</span>, <span class="st">&quot;prolife&quot;</span>, <span class="st">&quot; roe &quot;</span>, <span class="st">&quot;wade &quot;</span>, <span class="st">&quot;roevswade&quot;</span>, <span class="st">&quot;baby&quot;</span>, <span class="st">&quot;fetus&quot;</span>, <span class="st">&quot;womb&quot;</span>, <span class="st">&quot;prochoice&quot;</span>, <span class="st">&quot;leak&quot;</span>)</span>
+<span id="cb191-31"><a href="fightingwords.html#cb191-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb191-32"><a href="fightingwords.html#cb191-32" aria-hidden="true" tabindex="-1"></a>tweets_abortion <span class="ot">&lt;-</span> tweets_w_party <span class="sc">%&gt;%</span> </span>
+<span id="cb191-33"><a href="fightingwords.html#cb191-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">str_detect</span>(text, <span class="at">pattern =</span> <span class="fu">str_c</span>(keywords, <span class="at">collapse =</span> <span class="st">&quot;|&quot;</span>)) <span class="sc">&amp;</span> </span>
+<span id="cb191-34"><a href="fightingwords.html#cb191-34" aria-hidden="true" tabindex="-1"></a>           party <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;D&quot;</span>, <span class="st">&quot;R&quot;</span>))</span>
+<span id="cb191-35"><a href="fightingwords.html#cb191-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb191-36"><a href="fightingwords.html#cb191-36" aria-hidden="true" tabindex="-1"></a>tweets_abortion <span class="sc">%&gt;%</span> </span>
+<span id="cb191-37"><a href="fightingwords.html#cb191-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(party)</span>
+<span id="cb191-38"><a href="fightingwords.html#cb191-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb191-39"><a href="fightingwords.html#cb191-39" aria-hidden="true" tabindex="-1"></a>tweets_abortion <span class="sc">%&gt;%</span> </span>
+<span id="cb191-40"><a href="fightingwords.html#cb191-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(date) <span class="sc">%&gt;%</span> </span>
+<span id="cb191-41"><a href="fightingwords.html#cb191-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb191-42"><a href="fightingwords.html#cb191-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(date, n))</span>
+<span id="cb191-43"><a href="fightingwords.html#cb191-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb191-44"><a href="fightingwords.html#cb191-44" aria-hidden="true" tabindex="-1"></a>tweets_abortion_new <span class="ot">&lt;-</span> tweets_w_party <span class="sc">%&gt;%</span> </span>
+<span id="cb191-45"><a href="fightingwords.html#cb191-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">str_detect</span>(text, <span class="at">pattern =</span> <span class="fu">str_c</span>(keywords, <span class="at">collapse =</span> <span class="st">&quot;|&quot;</span>)) <span class="sc">&amp;</span> </span>
+<span id="cb191-46"><a href="fightingwords.html#cb191-46" aria-hidden="true" tabindex="-1"></a>           date <span class="sc">&gt;</span> <span class="fu">ymd</span>(<span class="st">&quot;2022-05-01&quot;</span>) <span class="sc">&amp;</span> </span>
+<span id="cb191-47"><a href="fightingwords.html#cb191-47" aria-hidden="true" tabindex="-1"></a>           party <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;D&quot;</span>, <span class="st">&quot;R&quot;</span>))</span>
+<span id="cb191-48"><a href="fightingwords.html#cb191-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb191-49"><a href="fightingwords.html#cb191-49" aria-hidden="true" tabindex="-1"></a>tweets_abortion_new <span class="sc">%&gt;%</span> </span>
+<span id="cb191-50"><a href="fightingwords.html#cb191-50" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(party)</span>
+<span id="cb191-51"><a href="fightingwords.html#cb191-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb191-52"><a href="fightingwords.html#cb191-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb191-53"><a href="fightingwords.html#cb191-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb191-54"><a href="fightingwords.html#cb191-54" aria-hidden="true" tabindex="-1"></a>tf_idf_abortion <span class="ot">&lt;-</span> tweets_abortion_new <span class="sc">%&gt;%</span> </span>
+<span id="cb191-55"><a href="fightingwords.html#cb191-55" aria-hidden="true" tabindex="-1"></a>  <span class="co">#mutate(text = str_remove_all(text, &quot;\\#.* &quot;)) %&gt;% </span></span>
+<span id="cb191-56"><a href="fightingwords.html#cb191-56" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(party <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;D&quot;</span>, <span class="st">&quot;R&quot;</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb191-57"><a href="fightingwords.html#cb191-57" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_tokens</span>(token, text) <span class="sc">%&gt;%</span> </span>
+<span id="cb191-58"><a href="fightingwords.html#cb191-58" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(token, party) <span class="sc">%&gt;%</span> </span>
+<span id="cb191-59"><a href="fightingwords.html#cb191-59" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_tf_idf</span>(token, party, n) </span>
+<span id="cb191-60"><a href="fightingwords.html#cb191-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb191-61"><a href="fightingwords.html#cb191-61" aria-hidden="true" tabindex="-1"></a>tf_idf_abortion <span class="sc">%&gt;%</span> <span class="fu">plot_tf_idf</span>(party)</span>
+<span id="cb191-62"><a href="fightingwords.html#cb191-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb191-63"><a href="fightingwords.html#cb191-63" aria-hidden="true" tabindex="-1"></a>log_odds_abortion <span class="ot">&lt;-</span> tweets_abortion_new <span class="sc">%&gt;%</span> </span>
+<span id="cb191-64"><a href="fightingwords.html#cb191-64" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">text =</span> <span class="fu">str_remove_all</span>(text, <span class="st">&quot;https.* &quot;</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb191-65"><a href="fightingwords.html#cb191-65" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(party <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;D&quot;</span>, <span class="st">&quot;R&quot;</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb191-66"><a href="fightingwords.html#cb191-66" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_tokens</span>(token, text) <span class="sc">%&gt;%</span> </span>
+<span id="cb191-67"><a href="fightingwords.html#cb191-67" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">str_detect</span>(token, <span class="st">&quot;[:digit:]&quot;</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb191-68"><a href="fightingwords.html#cb191-68" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(token, party) <span class="sc">%&gt;%</span> </span>
+<span id="cb191-69"><a href="fightingwords.html#cb191-69" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_log_odds</span>(token, party, n, <span class="at">uninformative =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb191-70"><a href="fightingwords.html#cb191-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb191-71"><a href="fightingwords.html#cb191-71" aria-hidden="true" tabindex="-1"></a>log_odds_abortion <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="fu">is.finite</span>(log_odds_weighted)) <span class="sc">%&gt;%</span> </span>
+<span id="cb191-72"><a href="fightingwords.html#cb191-72" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_log_odds</span>(<span class="at">group_var =</span> party)</span></code></pre></div>
+</details>
+
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-grimmer2022" class="csl-entry">
+Grimmer, Justin, Margaret Roberts, and Brandon Stewart. 2022. <em>Text as <span>Data</span>: <span>A New Framework</span> for <span>Machine Learning</span> and the <span>Social Sciences</span></em>. <span>Princeton</span>: <span>Princeton University Press</span>.
+</div>
+<div id="ref-manning2008" class="csl-entry">
+Manning, Christopher D, Prabhakar Raghavan, and Hinrich Schütze. 2008. <em>Introduction to Information Retrieval</em>. <span>New York</span>: <span>Cambridge University Press</span>.
+</div>
+<div id="ref-monroe2008" class="csl-entry">
+Monroe, Burt L., Michael P. Colaresi, and Kevin M. Quinn. 2008. <span>“Fightin’ <span>Words</span>: <span>Lexical Feature Selection</span> and <span>Evaluation</span> for <span>Identifying</span> the <span>Content</span> of <span>Political Conflict</span>.”</span> <em>Political Analysis</em> 16 (4): 372–403. <a href="https://doi.org/10.1093/pan/mpn018">https://doi.org/10.1093/pan/mpn018</a>.
+</div>
+<div id="ref-silge2016" class="csl-entry">
+Silge, Julia, and David Robinson. 2016. <span>“Tidytext: <span>Text Mining</span> and <span>Analysis Using Tidy Data Principles</span> in <span>R</span>.”</span> <em>The Journal of Open Source Software</em> 1 (3): 37. <a href="https://doi.org/10.21105/joss.00037">https://doi.org/10.21105/joss.00037</a>.
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol start="3">
+<li id="fn3"><p>Note that multiple implementations exist, for an overview see, ofr instance, <span class="citation">Manning, Raghavan, and Schütze (<a href="#ref-manning2008" role="doc-biblioref">2008</a>)</span><a href="fightingwords.html#fnref3" class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="texttodata.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="sentimentanalysis.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/USERNAME/REPO/edit/BRANCH/03-fighting_words.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["_main.pdf", "_main.epub"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

@@ -1,0 +1,17 @@
+# Day 1: Scraping the web -- in an automated fashion {#day2}
+
+Notes: 
+* examples need to be adapted
+* RSelenium?
+* How to teach this without Regexes?
+
+Structure:
+
+* make calls to web pages 
+* sessions, forms -- cookies etc.
+* apis
+* in the end: Etienne comes in, showing them RSelenium
+
+
+![](https://raw.githubusercontent.com/yusuzech/r-web-scraping-cheat-sheet/master/resources/functions_and_classes.png)
+

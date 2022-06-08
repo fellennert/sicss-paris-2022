@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Text Mining for Social Scientists</title>
+  <meta name="description" content="This book is supposed to introduce the reader (i.e., you) to a fundamental technique for computational social science research: the quantitative analysis of text." />
+  <meta name="generator" content="bookdown 0.26 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Text Mining for Social Scientists" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="This book is supposed to introduce the reader (i.e., you) to a fundamental technique for computational social science research: the quantitative analysis of text." />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Text Mining for Social Scientists" />
+  
+  <meta name="twitter:description" content="This book is supposed to introduce the reader (i.e., you) to a fundamental technique for computational social science research: the quantitative analysis of text." />
+  
+
+<meta name="author" content="Felix Lennert" />
+
+
+<meta name="date" content="2022-06-01" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+
+<link rel="next" href="text-pre-processing-string-manipulation.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+<link href="libs/vembedr-0.1.5/css/vembedr.css" rel="stylesheet" />
+<script src="libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
+<link href="libs/str_view-0.1.0/str_view.css" rel="stylesheet" />
+<script src="libs/str_view-binding-1.4.0/str_view.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Text Mining for Social Scientists</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#outline"><i class="fa fa-check"></i><b>1.1</b> Outline</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#why-r"><i class="fa fa-check"></i><b>1.2</b> Why R</a>
+<ul>
+<li class="chapter" data-level="1.2.1" data-path="index.html"><a href="index.html#reproducibility"><i class="fa fa-check"></i><b>1.2.1</b> Reproducibility</a></li>
+<li class="chapter" data-level="1.2.2" data-path="index.html"><a href="index.html#its-free-and-community-based"><i class="fa fa-check"></i><b>1.2.2</b> It’s free and community-based</a></li>
+<li class="chapter" data-level="1.2.3" data-path="index.html"><a href="index.html#jobs"><i class="fa fa-check"></i><b>1.2.3</b> Jobs</a></li>
+</ul></li>
+<li class="chapter" data-level="1.3" data-path="index.html"><a href="index.html#further-links"><i class="fa fa-check"></i><b>1.3</b> Further links</a></li>
+<li class="chapter" data-level="1.4" data-path="index.html"><a href="index.html#last-but-not-least"><i class="fa fa-check"></i><b>1.4</b> Last but not least</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html"><i class="fa fa-check"></i><b>2</b> Text Pre-Processing: String manipulation</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#basic-manipulations"><i class="fa fa-check"></i><b>2.1</b> Basic manipulations</a>
+<ul>
+<li class="chapter" data-level="2.1.1" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#changing-the-case-of-the-words"><i class="fa fa-check"></i><b>2.1.1</b> Changing the case of the words</a></li>
+<li class="chapter" data-level="2.1.2" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#determining-a-strings-length"><i class="fa fa-check"></i><b>2.1.2</b> Determining a string’s length</a></li>
+<li class="chapter" data-level="2.1.3" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#extracting-particular-characters"><i class="fa fa-check"></i><b>2.1.3</b> Extracting particular characters</a></li>
+<li class="chapter" data-level="2.1.4" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#concatenating-strings"><i class="fa fa-check"></i><b>2.1.4</b> Concatenating strings</a></li>
+<li class="chapter" data-level="2.1.5" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#repetition"><i class="fa fa-check"></i><b>2.1.5</b> Repetition</a></li>
+<li class="chapter" data-level="2.1.6" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#removing-unnecessary-whitespaces"><i class="fa fa-check"></i><b>2.1.6</b> Removing unnecessary whitespaces</a></li>
+</ul></li>
+<li class="chapter" data-level="2.2" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#regular-expressions"><i class="fa fa-check"></i><b>2.2</b> Regular expressions</a>
+<ul>
+<li class="chapter" data-level="2.2.1" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#literal-characters"><i class="fa fa-check"></i><b>2.2.1</b> Literal characters</a></li>
+<li class="chapter" data-level="2.2.2" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#metacharacters"><i class="fa fa-check"></i><b>2.2.2</b> Metacharacters</a></li>
+<li class="chapter" data-level="2.2.3" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#sets-of-characters"><i class="fa fa-check"></i><b>2.2.3</b> Sets of characters</a></li>
+<li class="chapter" data-level="2.2.4" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#anchors"><i class="fa fa-check"></i><b>2.2.4</b> Anchors</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#more-advanced-string-manipulation"><i class="fa fa-check"></i><b>2.3</b> More advanced string manipulation</a>
+<ul>
+<li class="chapter" data-level="2.3.1" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#detect-matches"><i class="fa fa-check"></i><b>2.3.1</b> Detect matches</a></li>
+<li class="chapter" data-level="2.3.2" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#mutating-strings"><i class="fa fa-check"></i><b>2.3.2</b> Mutating strings</a></li>
+<li class="chapter" data-level="2.3.3" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#extracting-text"><i class="fa fa-check"></i><b>2.3.3</b> Extracting text</a></li>
+<li class="chapter" data-level="2.3.4" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#split-vectors"><i class="fa fa-check"></i><b>2.3.4</b> Split vectors</a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#further-links-1"><i class="fa fa-check"></i><b>2.4</b> Further links</a></li>
+<li class="chapter" data-level="2.5" data-path="text-pre-processing-string-manipulation.html"><a href="text-pre-processing-string-manipulation.html#exercises"><i class="fa fa-check"></i><b>2.5</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="texttodata.html"><a href="texttodata.html"><i class="fa fa-check"></i><b>3</b> Text Pre-Processing: Text to Data</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="texttodata.html"><a href="texttodata.html#pre-processing-with-tidytext"><i class="fa fa-check"></i><b>3.1</b> Pre-processing with <code>tidytext</code></a>
+<ul>
+<li class="chapter" data-level="3.1.1" data-path="texttodata.html"><a href="texttodata.html#unnest_tokens"><i class="fa fa-check"></i><b>3.1.1</b> <code>unnest_tokens()</code></a></li>
+<li class="chapter" data-level="3.1.2" data-path="texttodata.html"><a href="texttodata.html#removal-of-unnecessary-content"><i class="fa fa-check"></i><b>3.1.2</b> Removal of unnecessary content</a></li>
+<li class="chapter" data-level="3.1.3" data-path="texttodata.html"><a href="texttodata.html#stemming"><i class="fa fa-check"></i><b>3.1.3</b> Stemming</a></li>
+<li class="chapter" data-level="3.1.4" data-path="texttodata.html"><a href="texttodata.html#in-a-nutshell"><i class="fa fa-check"></i><b>3.1.4</b> In a nutshell</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="texttodata.html"><a href="texttodata.html#preprocessing-with-spacy"><i class="fa fa-check"></i><b>3.2</b> Preprocessing with <code>spaCy</code></a>
+<ul>
+<li class="chapter" data-level="3.2.1" data-path="texttodata.html"><a href="texttodata.html#initializing-spacy"><i class="fa fa-check"></i><b>3.2.1</b> Initializing spacy</a></li>
+<li class="chapter" data-level="3.2.2" data-path="texttodata.html"><a href="texttodata.html#spacy_parse"><i class="fa fa-check"></i><b>3.2.2</b> <code>spacy_parse()</code></a></li>
+<li class="chapter" data-level="3.2.3" data-path="texttodata.html"><a href="texttodata.html#pos-tags-ner-and-nounphrases"><i class="fa fa-check"></i><b>3.2.3</b> POS tags, NER, and nounphrases</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="texttodata.html"><a href="texttodata.html#converting-between-formats"><i class="fa fa-check"></i><b>3.3</b> Converting between formats</a>
+<ul>
+<li class="chapter" data-level="3.3.1" data-path="texttodata.html"><a href="texttodata.html#document-term-matrix"><i class="fa fa-check"></i><b>3.3.1</b> Document-term matrix</a></li>
+<li class="chapter" data-level="3.3.2" data-path="texttodata.html"><a href="texttodata.html#document-feature-matrix"><i class="fa fa-check"></i><b>3.3.2</b> Document-feature matrix</a></li>
+<li class="chapter" data-level="3.3.3" data-path="texttodata.html"><a href="texttodata.html#corpus-objects"><i class="fa fa-check"></i><b>3.3.3</b> Corpus objects</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="texttodata.html"><a href="texttodata.html#further-links-2"><i class="fa fa-check"></i><b>3.4</b> Further links</a></li>
+<li class="chapter" data-level="3.5" data-path="texttodata.html"><a href="texttodata.html#exercises-1"><i class="fa fa-check"></i><b>3.5</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="fightingwords.html"><a href="fightingwords.html"><i class="fa fa-check"></i><b>4</b> “Fighting words”</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="fightingwords.html"><a href="fightingwords.html#counting-words-per-document"><i class="fa fa-check"></i><b>4.1</b> Counting words per document</a>
+<ul>
+<li class="chapter" data-level="4.1.1" data-path="fightingwords.html"><a href="fightingwords.html#naive-approach-raw-counts"><i class="fa fa-check"></i><b>4.1.1</b> Naive approach: raw counts</a></li>
+<li class="chapter" data-level="4.1.2" data-path="fightingwords.html"><a href="fightingwords.html#tf-idf"><i class="fa fa-check"></i><b>4.1.2</b> TF-IDF</a></li>
+<li class="chapter" data-level="4.1.3" data-path="fightingwords.html"><a href="fightingwords.html#odds"><i class="fa fa-check"></i><b>4.1.3</b> Odds</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="fightingwords.html"><a href="fightingwords.html#further-links-3"><i class="fa fa-check"></i><b>4.2</b> Further links</a></li>
+<li class="chapter" data-level="4.3" data-path="fightingwords.html"><a href="fightingwords.html#exercise"><i class="fa fa-check"></i><b>4.3</b> Exercise</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="sentimentanalysis.html"><a href="sentimentanalysis.html"><i class="fa fa-check"></i><b>5</b> Dictionary-based sentiment analysis</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="sentimentanalysis.html"><a href="sentimentanalysis.html#sentiment-analysis-using-tidytext-principles"><i class="fa fa-check"></i><b>5.1</b> Sentiment analysis using <code>tidytext</code> principles</a>
+<ul>
+<li class="chapter" data-level="5.1.1" data-path="sentimentanalysis.html"><a href="sentimentanalysis.html#available-dictionaries"><i class="fa fa-check"></i><b>5.1.1</b> Available dictionaries</a></li>
+<li class="chapter" data-level="5.1.2" data-path="sentimentanalysis.html"><a href="sentimentanalysis.html#step-1-preprocessing"><i class="fa fa-check"></i><b>5.1.2</b> Step 1: Preprocessing</a></li>
+<li class="chapter" data-level="5.1.3" data-path="sentimentanalysis.html"><a href="sentimentanalysis.html#step-2-sentiment-analysis-using-dplyrinner_join"><i class="fa fa-check"></i><b>5.1.3</b> Step 2: Sentiment Analysis using <code>dplyr::inner_join()</code></a></li>
+<li class="chapter" data-level="5.1.4" data-path="sentimentanalysis.html"><a href="sentimentanalysis.html#step-3-summarize-values"><i class="fa fa-check"></i><b>5.1.4</b> Step 3: Summarize values</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="sentimentanalysis.html"><a href="sentimentanalysis.html#further-links-4"><i class="fa fa-check"></i><b>5.2</b> Further links</a></li>
+<li class="chapter" data-level="5.3" data-path="sentimentanalysis.html"><a href="sentimentanalysis.html#exercises-2"><i class="fa fa-check"></i><b>5.3</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="supervisedml.html"><a href="supervisedml.html"><i class="fa fa-check"></i><b>6</b> Supervised Classification</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="supervisedml.html"><a href="supervisedml.html#split-data"><i class="fa fa-check"></i><b>6.1</b> Split data</a></li>
+<li class="chapter" data-level="6.2" data-path="supervisedml.html"><a href="supervisedml.html#pre-processing-and-featurization"><i class="fa fa-check"></i><b>6.2</b> Pre-processing and featurization</a>
+<ul>
+<li class="chapter" data-level="6.2.1" data-path="supervisedml.html"><a href="supervisedml.html#textrecipes-basic-example"><i class="fa fa-check"></i><b>6.2.1</b> <code>textrecipes</code> – basic example</a></li>
+<li class="chapter" data-level="6.2.2" data-path="supervisedml.html"><a href="supervisedml.html#textrecipes-further-preprocessing-steps"><i class="fa fa-check"></i><b>6.2.2</b> <code>textrecipes</code> – further preprocessing steps</a></li>
+</ul></li>
+<li class="chapter" data-level="6.3" data-path="supervisedml.html"><a href="supervisedml.html#model-specification"><i class="fa fa-check"></i><b>6.3</b> Model specification</a></li>
+<li class="chapter" data-level="6.4" data-path="supervisedml.html"><a href="supervisedml.html#model-training-workflows"><i class="fa fa-check"></i><b>6.4</b> Model training – <code>workflows</code></a></li>
+<li class="chapter" data-level="6.5" data-path="supervisedml.html"><a href="supervisedml.html#model-evaluation"><i class="fa fa-check"></i><b>6.5</b> Model evaluation</a>
+<ul>
+<li class="chapter" data-level="6.5.1" data-path="supervisedml.html"><a href="supervisedml.html#hyperparameter-tuning"><i class="fa fa-check"></i><b>6.5.1</b> Hyperparameter tuning</a></li>
+</ul></li>
+<li class="chapter" data-level="6.6" data-path="supervisedml.html"><a href="supervisedml.html#final-fit"><i class="fa fa-check"></i><b>6.6</b> Final fit</a></li>
+<li class="chapter" data-level="6.7" data-path="supervisedml.html"><a href="supervisedml.html#further-links-5"><i class="fa fa-check"></i><b>6.7</b> Further links</a></li>
+<li class="chapter" data-level="6.8" data-path="supervisedml.html"><a href="supervisedml.html#exercises-3"><i class="fa fa-check"></i><b>6.8</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i><b>7</b> References</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Text Mining for Social Scientists</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="header">
+<h1 class="title">Text Mining for Social Scientists</h1>
+<p class="author"><em>Felix Lennert</em></p>
+<p class="date"><em>2022-06-01</em></p>
+</div>
+<div id="introduction" class="section level1 hasAnchor" number="1">
+<h1><span class="header-section-number">Chapter 1</span> Introduction<a href="index.html#introduction" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>Dear student,</p>
+<p>if you read this script, you are either participating in one of my courses on digital methods for the social sciences, or at least interested in this topic. If you have any questions or remarks regarding this script, hit me up at <a href="mailto:felix.lennert@ensae.fr" class="email">felix.lennert@ensae.fr</a>.</p>
+<div id="outline" class="section level2 hasAnchor" number="1.1">
+<h2><span class="header-section-number">1.1</span> Outline<a href="index.html#outline" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>This script will introduce you to the quantitative analysis of text using R. Through the last decades, more and more text has become readily available. Think for example of Social Networking Platforms, online fora, Google Books, newspaper articles, the fact that YouTube can generate subtitles for all of its videos, or the fact that administrative records are increasingly digitized. Social scientists of course have decades of experience analyzing these things, yet they used to be constrained by data availability and, hence, their data sets used to be way smaller and could be processed by humans. To make the most out of the newly available data sets I mentioned above and to repurpose them for social scientific research, we need to use tools from the information and computer sciences. Some are fairly old such as basic dictionary-based sentiment analysis whose precursors were introduced in the 1960s, others are as recent as the early 2000s (LDA) or even 2014 (word2vec).</p>
+<p>In specific, this script will cover the pre-processing of text, the implementation of supervised and unsupervised approaches to text, and in the end, I will briefly touch upon word embeddings and how social science can use them for inquiry.</p>
+<p>The following chapters draw heavily on packages from the <code>tidyverse</code> <span class="citation">(<a href="#ref-wickham2019c" role="doc-biblioref">Wickham et al. 2019</a>)</span>, <code>tidytext</code> <span class="citation">(<a href="#ref-silge2016" role="doc-biblioref">Silge and Robinson 2016</a>)</span>, and <code>tidymodels</code> <span class="citation">(<a href="#ref-kuhn2020" role="doc-biblioref">Kuhn and Wickham 2020</a>)</span>, as well as the two excellent books “Text Mining with R: A Tidy Approach” <span class="citation">(<a href="#ref-silge2017" role="doc-biblioref">Silge and Robinson 2017</a>)</span> and “Supervised Machine Learning for Text Analysis in R” <span class="citation">(<a href="#ref-hvitfeldt2022" role="doc-biblioref">Hvitfeldt and Silge 2022</a>)</span>. Examples and inspiration are often drawn from blog posts and/or other tutorials, and I will give credit wherever credit is due. Moreover, you will find further readings at the end of each section as well as exercises at the end of the respective chapter.</p>
+<p>Not that you haven’t made it here anyway, but let me briefly dwell on why you should hone your R.</p>
+</div>
+<div id="why-r" class="section level2 hasAnchor" number="1.2">
+<h2><span class="header-section-number">1.2</span> Why R<a href="index.html#why-r" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>You may wonder why it makes sense for you to learn R and there are many people with way brighter minds and better ways with words than I who have thought and written about this topic. I will just briefly dwell upon the points that I find most interesting from a research perspective (I would consider myself a computational social scientist of sorts) and then link to resources that point out how R can contribute to your research/career development/pursuit of happiness/you name it depending on your background and your goals.</p>
+<div id="reproducibility" class="section level3 hasAnchor" number="1.2.1">
+<h3><span class="header-section-number">1.2.1</span> Reproducibility<a href="index.html#reproducibility" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>In science, we are facing what has been famously coined the <a href="https://www.wired.com/story/social-science-reproducibility/">“replication crisis”</a>. One way to overcome it is maximum transparency <span class="citation">(<a href="#ref-munafo2017" role="doc-biblioref">Munafò et al. 2017</a>)</span>. Here, R can help transparency as it allows researchers to simply publish their code to make it easy for their colleagues to comprehend what sorts of analyses have exactly been performed. Moreover, publishing (R) code decisively facilitates replicating the actual analyses with different data to assess the transportability and generalizability of the results.</p>
+</div>
+<div id="its-free-and-community-based" class="section level3 hasAnchor" number="1.2.2">
+<h3><span class="header-section-number">1.2.2</span> It’s free and community-based<a href="index.html#its-free-and-community-based" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>While licenses for applications such as Stata and IBM SPSS are costly for schools and companies, R comes at no cost<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>. Moreover, the useRs (how R users call themselves) community is constantly developing further packages to extend Rs functionality <em>for free</em>. Also, you can write your packages or functions if you want to extend your R’s functionality – and then publish them to contribute to the community. Hence, there will not be any need to pay for an R extension or update ever.</p>
+</div>
+<div id="jobs" class="section level3 hasAnchor" number="1.2.3">
+<h3><span class="header-section-number">1.2.3</span> Jobs<a href="index.html#jobs" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Data scientist has been considered the <a href="https://hbr.org/2012/10/data-scientist-the-sexiest-job-of-the-21st-century">“sexiest job of the 21st century”</a> and one of their sharpest tools in the shed are R. The following graphs stem from a <a href="http://r4stats.com/articles/popularity/">blog entry by the statistician Robert Muenchen</a>.</p>
+<p><img src="https://i2.wp.com/r4stats.com/wp-content/uploads/2019/05/Fig-1a-IndeedJobs-2019-1.png" /></p>
+<p>Moreover, the demand for R has been constantly growing throughout the last couple of years.</p>
+<p><img src="https://i2.wp.com/r4stats.com/wp-content/uploads/2019/05/Fig-1c-IndeedJobs-2019.png" /></p>
+<p>Note that stuff such as <a href="https://tensorflow.rstudio.com">Tensorflow</a> and <a href="https://keras.rstudio.com">Keras</a> are also implemented in R, so R definitely will give you an edge on the job market.</p>
+<p>And also if your goal is to stay in academia, the tendency appears to be clear:</p>
+<p><img src="https://i2.wp.com/r4stats.com/wp-content/uploads/2017/06/Fig_2d_ScholarlyImpact2016.png" /></p>
+</div>
+</div>
+<div id="further-links" class="section level2 hasAnchor" number="1.3">
+<h2><span class="header-section-number">1.3</span> Further links<a href="index.html#further-links" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Each chapter will contain a <em>Further links</em> section, where I include useful online resources which you can consume to delve deeper into the matters discussed in the respective chapter.</p>
+<ul>
+<li>Not convinced yet? If you strive for a career in business analytics, let <a href="https://www.business-science.io/business/2020/12/17/six-reasons-to-use-R-for-business-2021.html">this article</a> sink in.</li>
+<li>If you worry about R being too complex as you’re no computer scientist, read <a href="https://www.dezyre.com/article/why-is-now-the-time-to-learn-r-programming/178">here</a>.</li>
+<li>From an academia point of view, R is very likely to entirely take over the, at least, social sciences and you will be very likely to <a href="https://campus.sagepub.com/blog/why-universities-are-switching-to-r-for-social-science">encounter it in the future</a>.</li>
+<li>Further material for learning covering each section of this script can be found on the <a href="https://rstudio.cloud/learn/primers">RStudio website</a>.</li>
+<li>A more accessible guide to singular tidyverse packages can be found in the <code>introverse</code> R package. Find instructions for how to install and use it <a href="https://spielmanlab.github.io/introverse/index.html">online</a>.</li>
+</ul>
+</div>
+<div id="last-but-not-least" class="section level2 hasAnchor" number="1.4">
+<h2><span class="header-section-number">1.4</span> Last but not least<a href="index.html#last-but-not-least" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Learning R – and programming in general – is tough. More often than not, things will not go the way you want them to go. Mostly, this is due to minor typos or the fact that R is case-sensitive. However, don’t fret. Only practice makes perfect. It is perfectly normal to not comprehend error messages. The following video illustrates this:</p>
+<div class="vembedr">
+<div>
+<iframe src="https://www.youtube.com/embed/HluANRwPyNo" width="533" height="300" frameborder="0" allowfullscreen="" data-external="1"></iframe>
+</div>
+</div>
+<p>If questions arise that a google search cannot answer, I am always only one <a href="mailto:%20felix.lennert@ensae.fr">email</a> away – and will probably just hit google right away, too, to figure something out for you.</p>
+
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-hvitfeldt2022" class="csl-entry">
+Hvitfeldt, Emil, and Julia Silge. 2022. <em>Supervised Machine Learning for Text Analysis in <span>R</span></em>. First edition. Data Science Series. <span>Boca Raton London New York</span>: <span>CRC Press, Taylor &amp; Francis Group</span>.
+</div>
+<div id="ref-kuhn2020" class="csl-entry">
+Kuhn, Max, and Hadley Wickham. 2020. <span>“Tidymodels: A Collection of Packages for Modeling and Machine Learning Using Tidyverse Principles.”</span>
+</div>
+<div id="ref-munafo2017" class="csl-entry">
+Munafò, Marcus R., Brian A. Nosek, Dorothy V. M. Bishop, Katherine S. Button, Christopher D. Chambers, Nathalie Percie du Sert, Uri Simonsohn, Eric-Jan Wagenmakers, Jennifer J. Ware, and John P. A. Ioannidis. 2017. <span>“A Manifesto for Reproducible Science.”</span> <em>Nature Human Behaviour</em> 1 (1): 0021. <a href="https://doi.org/10.1038/s41562-016-0021">https://doi.org/10.1038/s41562-016-0021</a>.
+</div>
+<div id="ref-silge2016" class="csl-entry">
+Silge, Julia, and David Robinson. 2016. <span>“Tidytext: <span>Text Mining</span> and <span>Analysis Using Tidy Data Principles</span> in <span>R</span>.”</span> <em>The Journal of Open Source Software</em> 1 (3): 37. <a href="https://doi.org/10.21105/joss.00037">https://doi.org/10.21105/joss.00037</a>.
+</div>
+<div id="ref-silge2017" class="csl-entry">
+———. 2017. <em>Text Mining with <span>R</span>: A Tidy Approach</em>. First edition. <span>Beijing ; Boston</span>: <span>O’Reilly</span>.
+</div>
+<div id="ref-wickham2019c" class="csl-entry">
+Wickham, Hadley, Mara Averick, Jennifer Bryan, Winston Chang, Lucy McGowan, Romain François, Garrett Grolemund, et al. 2019. <span>“Welcome to the <span>Tidyverse</span>.”</span> <em>Journal of Open Source Software</em> 4 (43): 1686. <a href="https://doi.org/10.21105/joss.01686">https://doi.org/10.21105/joss.01686</a>.
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol start="1">
+<li id="fn1"><p>RStudio charges companies from the private sector yet is free for educational institutions and private users<a href="index.html#fnref1" class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+
+<a href="text-pre-processing-string-manipulation.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/USERNAME/REPO/edit/BRANCH/index.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["_main.pdf", "_main.epub"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

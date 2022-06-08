@@ -1,0 +1,263 @@
+---
+title: "Day 2 -- Scraping part #1"
+author: "Felix Lennert"
+date: "2022-06-21"
+output: html_document
+---
+
+```{r}
+# scrape uk mps
+library(tidyverse)
+library(rvest)
+library(janitor)
+
+mp_table <- read_html("https://en.wikipedia.org/wiki/List_of_MPs_elected_in_the_2019_United_Kingdom_general_election") %>% 
+  html_element("#elected-mps") %>% 
+  html_table() %>% 
+  select(-2, -6) %>% 
+  slice(-651) %>% 
+  clean_names()
+  
+mp_names <- read_html("https://en.wikipedia.org/wiki/List_of_MPs_elected_in_the_2019_United_Kingdom_general_election") %>% 
+  html_elements("#elected-mps b a") %>% 
+  html_attr("href")
+
+table_w_link <- mp_table %>% 
+  mutate(link = mp_names %>% 
+           url_absolute("https://en.wikipedia.org/"))
+
+#scrape_page <- function(link){
+#  Sys.sleep(0.5)
+#  
+#  read_html(link) %>% 
+#    html_elements("p") %>% 
+#    html_text2() %>% 
+#    str_c(collapse = " ") %>% 
+#    enframe(name = NULL, value = "wiki_article") %>% 
+#    mutate(link = link)
+#}
+
+#mp_wiki_entries <- table_w_link$link %>% 
+#  map(~{scrape_page(.x)})
+
+mp_wiki_entries_tbl <- table_w_link %>% 
+  left_join(mp_wiki_entries %>% bind_rows())
+
+#write_csv(mp_wiki_entries_tbl, "data/mp_wiki_tbl.csv")
+
+mp_wiki_entries_tbl <- read_csv("data/mp_wiki_tbl.csv")
+
+# meta data from everypolitician
+library(tidyverse)
+library(rvest)
+
+page <- read_html("https://everypolitician.org/uk/commons/term-table/57.html#facet=social")
+name_twitter <- page %>% 
+  html_elements(".person-card__name , tr:nth-child(1) a") %>% 
+  html_text()
+
+name_twitter %>% head()
+twitter_handles <- which(name_twitter %>% str_detect("^\\@"))
+names <- twitter_handles-1
+mp_names <- name_twitter[names]
+mp_handles <- name_twitter[twitter_handles]
+mp_tibble <- tibble(
+  name = mp_names,
+  twitter_handle = mp_handles
+)
+  
+meta_data <- page %>% 
+  html_elements(".person-card__primary") %>% 
+  html_text2() %>% 
+  str_split_fixed("\\n", n = 2)
+
+meta_tbl <- tibble(
+  name = meta_data[,1],
+  rest = meta_data[,2]
+) %>% 
+  mutate(party = str_extract(rest, "Labour|Conservative|Scottish National Party|Labour\\/Co-operative|Sinn Féin|Liberal Democrat|DUP|Plaid Cymru|Independent|Green|Speaker"))
+
+mp_meta <- mp_tibble %>% left_join(meta_tbl)
+
+
+```
+
+
+```{r}
+library(rtweet)
+
+mp_list <- lists_members(list_id = "217199644")
+
+#mp_timelines <- map(
+#  mp_list$screen_name, 
+#  ~get_timeline(user = .x, n = 1000)
+#) 
+#
+#timelines <- vector(mode = "list", length = length(mp_list$screen_name))
+#
+#for(i in seq_along(mp_list$screen_name)){
+#  timelines[[i]] <- get_timeline(user = mp_list$screen_name[[i]], n = 1000)
+#  if ((i %% 10) == 0) print(i)
+#}
+#
+#timeline_tbl <- timelines %>% bind_rows()
+#
+#write_csv(timeline_tbl, "data/timelines.csv")
+```
+
+```{r}
+library(lubridate)
+timelines <- read_csv("data/timelines.csv") %>% 
+  left_join(mp_meta %>% mutate(twitter_handle = twitter_handle %>% str_remove("@")), by = c("screen_name" = "twitter_handle")) %>%
+  filter(is_retweet == FALSE) %>% 
+  drop_na(party) %>% 
+  select(twitter_handle = screen_name, name = name.y, party, date = created_at, text) %>% 
+  mutate(date = date(date))
+
+timelines %>% 
+  count(date) %>% 
+  ggplot()+
+  geom_line(aes(x = date, y = n))
+
+timelines_2022 <- timelines %>% 
+  filter(date > ymd("2021-12-31"))
+```
+
+Exercises:
+
+0. tokenize
+1. remove stopwords and numbers
+2. stem
+3. check most frequent words - shall there be more words removed?
+4. wordclouds wrt party
+a. tf weighting
+b. tf-idf weighting
+5. predict partisanship
+a. lasso
+b. random forest
+c. xgboost
+
+```{r}
+library(tidytext)
+library(SnowballC)
+library(stopwords)
+library(ggwordcloud)
+
+timelines_party <- timelines_2022 %>% 
+  mutate(party = case_when(str_detect(party, "Labour") ~ "Labour",
+                           TRUE ~ party) %>% 
+           fct_lump(n = 2)) %>% 
+  filter(party != "Other") %>% 
+  drop_na(party, text) %>% 
+  select(party, text) %>% 
+  mutate(party = as.character(party),
+         text = str_replace_all(text, "[^[:alpha:]]", " "))
+
+task1_2 <- timelines_2022 %>% 
+  unnest_tokens(output = word, input = text) %>% #0
+  anti_join(get_stopwords()) %>% #1
+  filter(!str_detect(word, "[:digit:]")) %>% #1
+  mutate(word = wordStem(word, language = "en")) #2
+
+task1_2 %>% count(word) %>% arrange(-n)
+
+for_removal <- c("t.co", "https", "amp", "http")
+task3 <- task1_2 %>% filter(!word %in% for_removal)
+
+tf4 <- timelines_party %>%
+  unnest_tokens(word, text) %>% 
+  group_by(party) %>% 
+  count(word)
+tfidf4 <- timelines_party %>%
+  unnest_tokens(word, text) %>% 
+  group_by(party) %>% 
+  count(word) %>% 
+  bind_tf_idf(word, party, n)
+
+tf4 %>% 
+  group_by(party) %>% 
+  slice_max(n, n = 20) %>% 
+  ggplot(aes(label = word, size = sqrt(n))) +
+  geom_text_wordcloud_area(rm_outside = TRUE) +
+  #scale_size_area(max_size = 10) +
+  #theme_minimal() +
+  facet_wrap(vars(party))
+
+tfidf4 %>% 
+  group_by(party) %>% 
+  slice_max(tf_idf, n = 20) %>% 
+  ggplot(aes(label = word, size = sqrt(n))) +
+  geom_text_wordcloud_area(rm_outside = TRUE) +
+  #scale_size_area(max_size = 10) +
+  #theme_minimal() +
+  facet_wrap(vars(party))
+  
+```
+
+```{r}
+library(tidymodels)
+library(textrecipes)
+library(workflows)
+library(yardstick)
+library(parsnip)
+library(discrim)
+library(ranger)
+
+set.seed(1)
+timelines_party <- timelines_2022 %>% 
+  mutate(party = case_when(str_detect(party, "Labour") ~ "Labour",
+                           TRUE ~ party) %>% 
+           fct_lump(n = 2)) %>% 
+  filter(party != "Other") %>% 
+  drop_na(party, text) %>% 
+  select(party, text) %>% 
+  mutate(party = as.character(party),
+         text = str_replace_all(text, "[^[:alpha:]]", " "))
+
+
+timelines_party %>% count(party)
+
+
+split <- initial_split(timelines_party, prop = 0.3, strata = party)
+
+party_tweets_train <- training(split)
+party_tweets_test <- testing(split)
+
+party_tweets_basic_recipe <- recipe(party ~ text, data = party_tweets_train) %>% 
+  step_tokenize(text) %>% # tokenize text
+  step_tokenfilter(text, max_tokens = 1000) %>%
+  step_tfidf(text) 
+
+t <- party_tweets_basic_recipe %>% 
+  prep() %>% 
+  bake(new_data = NULL)
+
+nb_spec <- naive_Bayes() %>% 
+  set_mode("classification") %>% 
+  set_engine("naivebayes")
+
+rf_spec <- rand_forest(trees = 100) %>%
+  set_engine("ranger") %>%
+  set_mode("classification") 
+
+party_nb_workflow <- workflow() %>% 
+  add_recipe(party_tweets_basic_recipe) %>% 
+  add_model(nb_spec)
+
+party_rf_workflow <- workflow() %>% 
+  add_recipe(party_tweets_basic_recipe) %>% 
+  add_model(rf_spec)
+
+party_nb <- party_nb_workflow %>% fit(data = party_tweets_train)
+party_rf <- party_rf_workflow %>% fit(data = party_tweets_train)
+
+accuracy_check <- augment(party_rf, party_tweets_test)
+mean(accuracy_check$party == accuracy_check$.pred_class)
+
+```
+
+
+```{r}
+read
+```
+

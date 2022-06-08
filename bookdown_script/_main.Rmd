@@ -1,0 +1,2183 @@
+--- 
+title: "Text Mining for Social Scientists"
+author: "Felix Lennert"
+date: "`r Sys.Date()`"
+site: bookdown::bookdown_site
+documentclass: book
+bibliography: tm-course.bib
+# url: your book url like https://bookdown.org/yihui/bookdown
+# cover-image: path to the social sharing image like images/cover.jpg
+description: |
+  This book is supposed to introduce the reader (i.e., you) to a fundamental technique for computational social science research: the quantitative analysis of text.
+link-citations: yes
+always_allow_html: true
+---
+
+# Introduction
+
+Dear student, 
+
+if you read this script, you are either participating in one of my courses on digital methods for the social sciences, or at least interested in this topic. If you have any questions or remarks regarding this script, hit me up at <felix.lennert@ensae.fr>. 
+
+## Outline
+
+This script will introduce you to the quantitative analysis of text using R. Through the last decades, more and more text has become readily available. Think for example of Social Networking Platforms, online fora, Google Books, newspaper articles, the fact that YouTube can generate subtitles for all of its videos, or the fact that administrative records are increasingly digitized. Social scientists of course have decades of experience analyzing these things, yet they used to be constrained by data availability and, hence, their data sets used to be way smaller and could be processed by humans. To make the most out of the newly available data sets I mentioned above and to repurpose them for social scientific research, we need to use tools from the information and computer sciences. Some are fairly old such as basic dictionary-based sentiment analysis whose precursors were introduced in the 1960s, others are as recent as the early 2000s (LDA) or even 2014 (word2vec).
+
+In specific, this script will cover the pre-processing of text, the implementation of supervised and unsupervised approaches to text, and in the end, I will briefly touch upon word embeddings and how social science can use them for inquiry.
+
+The following chapters draw heavily on packages from the `tidyverse` [@wickham2019c], `tidytext` [@silge2016], and `tidymodels` [@kuhn2020], as well as the two excellent books "Text Mining with R: A Tidy Approach" [@silge2017] and "Supervised Machine Learning for Text Analysis in R" [@hvitfeldt2022]. Examples and inspiration are often drawn from blog posts and/or other tutorials, and I will give credit wherever credit is due. Moreover, you will find further readings at the end of each section as well as exercises at the end of the respective chapter.
+
+Not that you haven't made it here anyway, but let me briefly dwell on why you should hone your R.
+
+## Why R
+
+You may wonder why it makes sense for you to learn R and there are many people with way brighter minds and better ways with words than I who have thought and written about this topic. I will just briefly dwell upon the points that I find most interesting from a research perspective (I would consider myself a computational social scientist of sorts) and then link to resources that point out how R can contribute to your research/career development/pursuit of happiness/you name it depending on your background and your goals.
+
+### Reproducibility
+
+In science, we are facing what has been famously coined the ["replication crisis"](https://www.wired.com/story/social-science-reproducibility/). One way to overcome it is maximum transparency [@munafo2017]. Here, R can help transparency as it allows researchers to simply publish their code to make it easy for their colleagues to comprehend what sorts of analyses have exactly been performed. Moreover, publishing (R) code decisively facilitates replicating the actual analyses with different data to assess the transportability and generalizability of the results. 
+
+### It's free and community-based
+
+While licenses for applications such as Stata and IBM SPSS are costly for schools and companies, R comes at no cost^[RStudio charges companies from the private sector yet is free for educational institutions and private users]. Moreover, the useRs (how R users call themselves) community is constantly developing further packages to extend Rs functionality *for free*. Also, you can write your packages or functions if you want to extend your R's functionality -- and then publish them to contribute to the community. Hence, there will not be any need to pay for an R extension or update ever. 
+
+### Jobs 
+
+Data scientist has been considered the ["sexiest job of the 21st century"](https://hbr.org/2012/10/data-scientist-the-sexiest-job-of-the-21st-century) and one of their sharpest tools in the shed are R. The following graphs stem from a [blog entry by the statistician Robert Muenchen](http://r4stats.com/articles/popularity/).
+
+![](https://i2.wp.com/r4stats.com/wp-content/uploads/2019/05/Fig-1a-IndeedJobs-2019-1.png)
+
+Moreover, the demand for R has been constantly growing throughout the last couple of years. 
+
+![](https://i2.wp.com/r4stats.com/wp-content/uploads/2019/05/Fig-1c-IndeedJobs-2019.png)
+
+Note that stuff such as [Tensorflow](https://tensorflow.rstudio.com) and [Keras](https://keras.rstudio.com) are also implemented in R, so R definitely will give you an edge on the job market. 
+
+And also if your goal is to stay in academia, the tendency appears to be clear:
+
+![](https://i2.wp.com/r4stats.com/wp-content/uploads/2017/06/Fig_2d_ScholarlyImpact2016.png)
+
+## Further links
+
+Each chapter will contain a *Further links* section, where I include useful online resources which you can consume to delve deeper into the matters discussed in the respective chapter.
+
+* Not convinced yet? If you strive for a career in business analytics, let [this article](https://www.business-science.io/business/2020/12/17/six-reasons-to-use-R-for-business-2021.html) sink in. 
+* If you worry about R being too complex as you're no computer scientist, read [here](https://www.dezyre.com/article/why-is-now-the-time-to-learn-r-programming/178). 
+* From an academia point of view, R is very likely to entirely take over the, at least, social sciences and you will be very likely to [encounter it in the future](https://campus.sagepub.com/blog/why-universities-are-switching-to-r-for-social-science).
+* Further material for learning covering each section of this script can be found on the [RStudio website](https://rstudio.cloud/learn/primers).
+* A more accessible guide to singular tidyverse packages can be found in the `introverse` R package. Find instructions for how to install and use it [online](https://spielmanlab.github.io/introverse/index.html).
+
+## Last but not least
+
+Learning R -- and programming in general -- is tough. More often than not, things will not go the way you want them to go. Mostly, this is due to minor typos or the fact that R is case-sensitive. However, don't fret. Only practice makes perfect. It is perfectly normal to not comprehend error messages. The following video illustrates this:
+
+```{r echo=FALSE}
+vembedr::embed_youtube("HluANRwPyNo")
+```
+
+If questions arise that a google search cannot answer, I am always only one [email](mailto: felix.lennert@ensae.fr) away -- and will probably just hit google right away, too, to figure something out for you.
+
+<!--chapter:end:index.Rmd-->
+
+# Text Pre-Processing: String manipulation
+
+```{r echo=FALSE}
+vembedr::embed_youtube("GShnUE8r4Io")
+```
+
+
+When working with data, a significant number of variables will be in some sort of text format. When you want to manipulate these variables, an easy approach would be exporting the data to MS Excel and then just performing those manipulations by hand. This is very time-consuming, though, and, hence, I rather recommend the R way which scales well and works fast for data sets of varying sizes.
+
+Quick reminder: a string is an element of a character vector and can be created by simply wrapping some text in quotation marks:
+
+```{r}
+string <- "Hi, how are you doing?"
+vector_of_strings <- c("Hi, how are you doing?", "I'm doing well, HBY?", "Me too, thanks for asking.")
+```
+
+Note that you can either wrap your text in double quotation marks and use single ones in the string and vice versa:
+
+```{r}
+single_ones <- "what's up"
+double_ones <- 'he said: "I am fine"'
+```
+
+The `stringr` package [@wickham2019b] contains a multitude of commands (49 in total) that can be used to achieve a couple of things, mainly manipulating character vectors, and finding and matching patterns. Basically, these goals can also be achieved with base R functions, but `stringr`'s advantage is its consistency. The makers of `stringr` describe it as
+
+> A consistent, simple and easy to use set of wrappers around the fantastic `stringi` package. All function and argument names (and positions) are consistent, all functions deal with `NA`'s and zero-length vectors in the same way, and the output from one function is easy to feed into the input of another.
+
+Every `stringr` function starts with `str_` -- which facilitates finding the proper command: just type `str_` and RStudio's auto-suggest function should take care of the rest (if it doesn't pop up by itself, you can trigger it by hitting the tab key). Also, they take a vector of strings as their first argument, which facilitates using them in a ` %>% `-pipeline and adding them to a `mutate()`-call. 
+
+One important component of `stringr` functions is regular expressions which will be introduced later as well. 
+
+## Basic manipulations
+
+In the following, I will introduce you to a number of different operations that can be performed on strings.
+
+### Changing the case of the words
+
+A basic operation is changing words' cases.
+
+```{r}
+library(tidyverse) #stringr is part of the core tidyverse
+library(stringr)
+str_to_lower(vector_of_strings)
+str_to_upper(vector_of_strings)
+str_to_title(vector_of_strings)
+str_to_sentence(vector_of_strings)
+```
+
+### Determining a string's length
+
+Determining the string's number of characters goes as follows: 
+
+```{r}
+str_length(vector_of_strings)
+```
+
+### Extracting particular characters
+
+Characters can be extracted (by position) using `str_sub`
+
+```{r}
+str_sub(vector_of_strings, start = 1, end = 5) # extracting first to fifth character
+str_sub(vector_of_strings, start = -5, end = -1) # extracting fifth-to-last to last character
+```
+
+You can also use `str_sub()` to replace strings. E.g., to replace the last character by a full stop, you can do the following:
+
+```{r}
+str_sub(vector_of_strings, start = -1) <- "."
+vector_of_strings
+```
+
+However, in everyday use, you would probably go with `str_replace()` and regular expressions.
+
+### Concatenating strings
+
+Similar to how `c()` puts together different elements (or vectors of length 1) and other vectors into a single vector, `str_c()` can be used to concatenate several strings into a single string. This can, for instance, be used to write some birthday invitations.
+
+```{r}
+names <- c("Inger", "Peter", "Kalle", "Ingrid")
+
+str_c("Hi", names, "I hope you're doing well. As per this letter, I invite you to my birthday party.")
+```
+
+Well, this looks kind of ugly, as there are no spaces, and commas are lacking as well. You can fix that by determining a separator using the `sep` argument. 
+
+```{r}
+str_c("Hi", names, "I hope you're doing well. As per this letter, I invite you to my birthday party.", sep = ", ")
+```
+
+You could also collapse the strings contained in a vector together into one single string using the `collapse` argument. 
+
+```{r}
+str_c(names, collapse = ", ")
+```
+
+This can also be achieved using the `str_flatten()` function.
+
+```{r}
+str_flatten(names, collapse = ", ")
+```
+
+### Repetition
+
+Repeating (or duplicating) strings is performed using `str_dup()`. The function takes two arguments: the string to be duplicated and the number of times.
+
+```{r}
+str_dup("felix", 2)
+str_dup("felix", 1:3)
+str_dup(names, 2)
+str_dup(names, 1:4)
+```
+
+### Removing unnecessary whitespaces
+
+Often text contains unnecessary whitespaces. 
+```{r}
+unnecessary_whitespaces <- c("    on the left", "on the right    ", "    on both sides   ", "   literally    everywhere  ")
+```
+
+Removing the ones at the beginning of the end of a string can be accomplished using `str_trim()`.
+
+```{r}
+str_trim(unnecessary_whitespaces, side = "left")
+str_trim(unnecessary_whitespaces, side = "right")
+str_trim(unnecessary_whitespaces, side = "both") # the default option
+```
+
+`str_trim()` could not fix the last string though, where unnecessary whitespaces were also present in between words. Here, `str_squish` is more appropriate. It removes leading or trailing whitespaces as well as duplicated ones in between words.
+
+```{r}
+str_squish(unnecessary_whitespaces)
+```
+
+## Regular expressions
+
+```{r echo=FALSE}
+vembedr::embed_youtube("EAxIcgbGWaw")
+```
+
+Up to now, you have been introduced to the more basic functions of the `stringr` package. Those are useful, for sure, yet limited. However, to make use of the full potential of `stringr`, you will first have to acquaint yourself with regular expressions (also often abbreviated as "regex" with plural "regexes"). 
+
+Those regular expressions are patterns that can be used to describe certain strings. Exemplary use cases of regexes are the identification of phone numbers, email addresses, or whether a password you choose on a web page consists of enough characters, an uppercase character, and at least one special character. Hence, if you want to replace certain words with another one, you can write the proper regex and it will identify the strings you want to replace, and the `stringr` functions (i.e., `str_replace()`) will take care of the rest.
+
+Before you dive into regexes, beware that they are quite complicated at the beginning (honestly, I was quite overwhelmed when I encountered them first). Yet, mastering them is very rewarding and will definitely pay off in the future.
+
+### Literal characters
+
+The most basic regex patterns consist of literal characters only. `str_view()` tells you which parts of a string match a pattern is present in the element. 
+
+```{r}
+five_largest_cities <- c("Stockholm", "Göteborg", "Malmö", "Uppsala", "Västerås")
+```
+
+```{r eval=FALSE, include=FALSE}
+str_c(five_largest_cities, collapse = "\n") %>% cat()
+```
+
+Note that regexes are case-sensitive.
+
+```{r}
+str_view(five_largest_cities, "stockholm")
+```
+
+```{r}
+str_view(five_largest_cities, "Stockholm")
+```
+
+They also match parts of words:
+
+```{r}
+str_view(five_largest_cities, "borg")
+```
+
+Moreover, they are "greedy," they only match the first occurrence (in "Stockholm"):
+
+```{r}
+str_view(five_largest_cities, "o")
+```
+
+This can be addressed in the `stringr` package by using `str_._all()` functions -- but more on that later.
+
+If you want to match multiple literal characters (or words, for that sake), you can connect them using the `|` meta character (more on meta characters later).
+
+```{r}
+str_view(five_largest_cities, "Stockholm|Göteborg")
+```
+
+Every letter of the English alphabet (or number/or combination of those) can serve as a literal character. Those literal characters *match themselves*. This is, however, not the case with the other sort of characters, so-called meta characters.
+
+### Metacharacters
+
+When using regexes, the following characters are considered meta characters and have a special meaning:
+
+`. \ | ( ) { } [ ] ^ $ - * + ?`
+
+#### The wildcard
+
+Did you notice how I used the dot to refer to the entirety of the `str_._all()` functions? This is basically what the `.` meta-character does: it matches every character except for a new line. The first call extracts all function names from the `stringr` package, the second one shows the matches (i.e., the elements of the vector where it can find the pattern).
+
+```{r}
+stringr_functions <- ls("package:stringr")
+
+str_detect(stringr_functions, "str_._all")
+```
+
+```{r eval=FALSE, include=FALSE}
+str_c(stringr_functions, collapse = "\n") %>% cat()
+```
+
+Well, as you can see, there are none. This is due to the fact that the `.` can only replace one character. We need some sort of multiplier to find them. The ones available are:
+
+* `?` -- zero or one
+* `*` -- zero or more
+* `+` -- one or more
+* `{n}` -- exactly n
+* `{n,}` -- n or more
+* `{n,m}` -- between n and m
+
+In our case, the appropriate one is `+`:
+
+```{r}
+str_detect(stringr_functions, "str_.+_all")
+```
+
+However, if you want to match the character dot? This problem may arise when searching for clock time. A naive regex might look like this:
+
+```{r}
+vectors_with_time <- c("13500", "13M00", "13.00")
+
+str_detect(vectors_with_time, "13.00")
+```
+
+```{r eval=FALSE, include=FALSE}
+str_c(vectors_with_time, collapse = "\n") %>% cat()
+```
+
+Yet, it matches everything. We need some sort of literal dot. Here, the metacharacter `\` comes in handy. By putting it in front of the metacharacter, it no longer has its special meaning and is interpreted as a literal character. This procedure is referred to as "escaping." Hence, `\` is also referred to as the "escape character." Note that you will need to escape `\` as well, and therefore it will look like this: `\\.`. 
+
+```{r}
+str_detect(vectors_with_time, "13\\.00")
+```
+
+### Sets of characters
+
+You can also define sets of multiple characters using the `[ ]` meta characters. This can be used to define multiple possible characters that can appear in the same place. 
+
+```{r}
+sp_ce <- c("spice", "space")
+
+str_view(sp_ce, "sp[ai]ce")
+```
+
+```{r eval=FALSE, include=FALSE}
+str_c(sp_ce, collapse = "\n") %>% cat()
+```
+
+You can also define certain ranges of characters using the `-` metacharacter:
+
+Same holds for numbers:
+
+```{r}
+american_phone_number <- "(555) 555-1234"
+
+str_view(american_phone_number, "\\([:digit:]{3}\\) [0-9]{3}-[0-9]{4}")
+```
+
+There are also predefined sets of characters, for instance, digits or letters, which are called *character classes*. You can find them on the [`stringr` cheatsheet](https://github.com/rstudio/cheatsheets/blob/master/strings.pdf). 
+
+Furthermore, you can put almost every meta character inside the square brackets without escaping them. This does not apply to the caret (`^`) in the first position, the dash `-`, the closing square bracket `]`, and the backslash `\`.
+
+```{r}
+str_view(vector_of_strings, "[.]")
+```
+
+```{r eval=FALSE, include=FALSE}
+str_c(vector_of_strings, collapse = "\n") %>% cat()
+```
+
+#### Negating sets of characters
+
+Sometimes you will also want to exclude certain sets of characters or words. In order to achieve this, you can use the `^` meta character at the beginning of the range or set you are defining. 
+
+```{r}
+str_view(sp_ce, "sp[^i]ce")
+```
+
+### Anchors
+
+There is also a way to define whether you want the pattern to be present in the beginning `^` or at the end `$` of a string. `sentences` are a couple of (i.e., 720) predefined example sentences. If I were now interested in the number of sentences that begin with a "the," I could write the following regex:
+
+```{r}
+shortened_sentences <- sentences[1:10]
+
+str_view(shortened_sentences, "^The") 
+```
+
+```{r eval=FALSE, include=FALSE}
+str_c(shortened_sentences, collapse = "\n") %>% cat()
+```
+
+If I wanted to know how many start with a "The" and end with a full stop, I could do this one:
+
+```{r}
+str_view(shortened_sentences, "^The.+\\.$") 
+```
+
+#### Boundaries
+
+Note that right now, the regex also matches the sentence which starts with a "These." In order to address this, I need to tell the machine that it should only accept a "The" if there starts a new word thereafter. In regex syntax, this is done using so-called boundaries. Those are defined as `\b` as a word boundary and `\B` as no word boundary. (Note that you will need an additional escape character as you will have to escape the escape character itself.)
+
+In my example, I would include the former if I were to search for sentences that begin with a single "The" and the latter if I were to search for sentences that begin with a word that starts with a "The" but are not "The" -- such as "These."
+
+```{r}
+str_view(shortened_sentences, "^The\\b.+\\.$") 
+str_view(shortened_sentences, "^The\\B.+\\.$") 
+```
+
+#### Lookarounds
+
+A final common task is to extract certain words or values based on what comes before or after them. Look at the following example:
+
+```{r}
+heights <- c("1m30cm", "2m01cm", "3m10cm")
+```
+
+```{r eval=FALSE, include=FALSE}
+str_c(heights, collapse = "\n") %>% cat()
+```
+
+Here, in order to identify the height in meters, the first task is to identify all the numbers that are followed by an "m". The regex syntax for this looks like this: `A(?=pattern)` with `A` being the entity that is supposed to be found (hence, in this case, [0-9]+).
+
+```{r}
+str_view(heights, "[0-9]+(?=m)")
+```
+
+The second step now is to identify the centimeters. This could of course be achieved using the same regex and replacing `m` with `cm`. However, we can also harness a so-called negative look ahead `A(?!pattern)`, a so-called look behind `(?<=pattern)A`. The negative counterpart, the negative look behind `(?<!pattern)A` could be used to extract the meters.
+
+The negative lookahead basically returns everything that is not followed by the defined pattern. The look behind returns everything that is preceded by the pattern, the negative look behind returns everything that is not preceded by the pattern.
+
+In the following, I demonstrate how you could extract the centimeters using negative look ahead and look behind.
+
+```{r}
+str_view(heights, "[0-9]+(?!m)") # negative look ahead
+```
+
+```{r}
+str_view(heights, "(?<=m)[0-9]+") # look behind
+```
+
+## More advanced string manipulation
+
+Now that you have learned about regexes, you can unleash the full power of `stringr`.
+
+The basic syntax of a `stringr` function looks as follows: `str_.*(string, regex(""))`. Some `stringr` functions also have the suffix `_all` which implies that they perform the operation not only on the first match ("greedy") but on every match.
+
+In order to demonstrate the different functions, I will again rely on the subset of example sentences.
+
+### Detect matches
+
+`str_detect` can be used to determine whether a certain pattern is present in the string.
+
+```{r}
+str_detect(shortened_sentences, "The\\b")
+```
+
+This also works very well in a `dplyr::filter()` call. Finding all action movies in the IMDB data set can be solved like this:
+
+```{r}
+imdb_raw <- read_csv("data/imdb2006-2016.csv")
+imdb_raw %>% 
+  filter(str_detect(Genre, "Action"))
+```
+
+If you want to know whether there are multiple matches present in each string, you can use `str_count`. Here, it might by advisable to set the `ignore_case` option to `TRUE`:
+
+```{r}
+str_count(shortened_sentences, regex("the\\b", ignore_case = TRUE))
+```
+
+If you want to locate the match in the string, use `str_locate`. This returns a matrix, which is basically a vector of multiple dimensions.
+
+```{r}
+str_locate(shortened_sentences, regex("The\\b", ignore_case = TRUE))
+```
+
+Moreover, this is a good example for the greediness of `stringr` functions. Hence, it is advisable to use `str_locate_all` which returns a list with one matrix for each element of the original vector:
+
+```{r}
+str_locate_all(shortened_sentences, regex("The\\b", ignore_case = TRUE))
+```
+
+### Mutating strings
+
+Mutating strings usually implies the replacement of certain elements (e.g., words) with other elements (or removing them, which is basically a special case of replacing them). In `stringr` this is performed using `str_replace(string, pattern, replacement)` and `str_replace_all(string, pattern, replacement)`. 
+
+If I wanted, for instance, to replace the first occurrence of "m" letters with "meters," I would go about this the following way:
+
+```{r}
+str_replace(heights, "m", "meters")
+```
+
+Note that `str_replace_all` would have lead to the following outcome:
+
+```{r}
+str_replace_all(heights, "m", "meters")
+```
+
+However, I also want to replace the "cm" with "centimeters," hence, I can harness another feature of `str_replace_all()`:
+
+```{r}
+str_replace_all(heights, c("m" = "meters", "cm" = "centimeters"))
+```
+
+What becomes obvious is that a "simple" regex containing just literal characters more often than not does not suffice. It will be your task to fix this. And while on it, you can also address the meter/meters problem -- a "1" needs meter instead of meters. Another feature is that the replacements are performed in order. You can harness this for solving the problem.
+
+<details>
+  <summary>Solution. Click to expand!</summary>
+Solution:
+```{r}
+str_replace_all(heights, c("(?<=[2-9]{1})m" = "meters", "(?<=[0-9]{2})m" = "meters", "(?<=1)m" = "meter", "(?<=01)cm$" = "centimeter", "cm$" = "centimeters"))
+```
+</details>
+
+### Extracting text
+
+`str_extract(_all)()` can be used to extract matching strings. In the `mtcars` data set, the first word describes the car brand. Here, I harness another regexp, the `\\w` which stands for any word character. Its opponent is `\\W` for any non-word character.
+
+```{r}
+mtcars %>% 
+  rownames_to_column(var = "car_model") %>% 
+  transmute(manufacturer = str_extract(car_model, "^\\w+\\b"))
+```
+
+### Split vectors
+
+Another use case here would have been to split it into two columns: manufacturer and model. One approach would be to use `str_split()`. This function splits the string at every occurrence of the predefined pattern. In this example, I use a word boundary as the pattern:
+
+```{r}
+manufacturer_model <- rownames(mtcars)
+str_split(manufacturer_model, "\\b") %>% 
+  head()
+```
+
+This outputs a list containing the different singular words/special characters. This doesn't make sense in this case. Here, however, the structure of the string is always roughly the same: "\\[manufacturer\\]\\[ \\]\\[model description\\]". Moreover, the manufacturer is only one word. Hence, the task can be fixed by splitting the string after the first word, which should indicate the manufacturer. This can be accomplished using `str_split_fixed()`. Fixed means that the number of splits is predefined. This returns a matrix that can easily become a tibble.
+
+```{r}
+str_split_fixed(manufacturer_model, "(?<=\\w)\\b", n = 2) %>% 
+  as_tibble() %>% 
+  rename(manufacturer = V1,
+         model = V2) %>% 
+  mutate(model = str_squish(model))
+```
+
+## Further links
+
+* The [`stringr` cheatsheet](https://github.com/rstudio/cheatsheets/blob/master/strings.pdf).
+* A [YouTube video](https://www.youtube.com/watch?v=NvHjYOilOf8) on regexes by Johns Hopkins professor Roger Peng.
+* And a [chapter](https://bookdown.org/rdpeng/rprogdatascience/regular-expressions.html#the-stringr-package) by Roger Peng.
+* A [website for practicing regexes](https://regexone.com).
+* You can also consult the `introverse` package if you need help with the packages covered here -- `introverse::show_topics("stringr")` will give you an overview of the `stringr` package's functions, and `get_help("name of function")` will help you with the respective function.
+
+## Exercises
+
+1. Find all Mercedes in the `mtcars` data set.
+2. Write regexes that correctly determine the country of origin of different phone numbers. 
+  a. By country code -- +46 for Sweden, +49 for Germany, +33 for France. (Examples: "+46 71-738 25 33" (Swedish), "+33 6 51 95 24 27" (France -- note that mobile numbers in France always start with 6 or 7), "+49 173 7462526"
+  b. When the country code is missing, by format. (Examples: "0 71-738 25 33" (Swedish -- always start with 7 after leading 0 or country code), "0 6 51 95 24 27" (France -- always start with 6 or 7 after leading 0 or country code), "0173 7462526" (Germany -- always start with 1 after leading 0 or country code). Test yourself by determining the country of origin of the following numbers: 0178 5693445, 0 76-426 49 14, 0160 90609495, 0 7 43 34 23 23. 
+  c. Replace the leading zeroes in b. with the correct country codes. 
+3. Remember the vector of heights? 
+    a. How can you extract the meters using the negative look behind?
+    b. Bring it into numeric format (i.e., `your_solution == c(1.3, 2.01, 3.1)`) using regexes and `stringr` commands -- and, subsequently, `as.numeric()`.
+4. For the advanced folks: Write a function that determines if a password is safe. It's supposed to return "high safety" if the password contains at least one uppercase letter, lowercase letter(s), and a  number, "medium safety" if two of the former criteria are met, and "low safety" if it contains only lowercase letters. Passwords need to be of length 8, otherwise, the function needs to state "unacceptable".
+```{r}
+test_numbers_nocountrycode <- c("0178 5693445", "0 76-426 49 14", "0160 90609495", "0 7 43 34 23 23")
+```
+
+```{r eval=FALSE}
+high_safety <- "Password1234"
+medium_safety <- "password1234"
+low_safety <- "password"
+not_accepted <- "1jj2345"
+```
+
+5. Take the [IMDb file](https://www.dropbox.com/s/81o3zzdkw737vt0/imdb2006-2016.csv?dl=0) and split the `Genre` column into different columns (hint: look at the `tidyr::separate()` function). How would you do it if `Genre` were a vector using `str_split_fixed()`?
+
+<details>
+  <summary>Solution. Click to expand!</summary>
+
+```{r eval=FALSE}
+#1
+mtcars %>% 
+  rownames_to_column("model") %>% 
+  filter(str_detect(model, "Merc"))
+
+#2
+#a
+phone_numbers_countrycode <- c("+46 71-738 25 33", "+33 6 51 95 24 27", "+49 173 7462526")
+swedish <- phone_numbers_countrycode[str_detect(phone_numbers_countrycode, "^\\+46")]
+german <- phone_numbers_countrycode[str_detect(phone_numbers_countrycode, "^\\+49")]
+french <- phone_numbers_countrycode[str_detect(phone_numbers_countrycode, "^\\+33")]
+
+#b
+phone_numbers_no_countrycode <- c("0178 5693445", "0 76-426 49 14", "0160 90609495", "0 7 43 34 23 23")
+swedish <- phone_numbers_no_countrycode[str_detect(phone_numbers_no_countrycode, "0 7[0-9]\\-[0-9]{3} [0-9]{2} [0-9]{2}")]
+german <- phone_numbers_no_countrycode[str_detect(phone_numbers_no_countrycode, "01[0-9]{2,3} [0-9]{6}")]
+french <- phone_numbers_no_countrycode[str_detect(phone_numbers_no_countrycode, "0 [67] [0-9]{2} [0-9]{2} [0-9]{2} [0-9]{2}")]
+
+#c 
+replace_countrycode <- function(phone_number){
+  if(str_detect(phone_number, "0 7[0-9]\\-[0-9]{3} [0-9]{2} [0-9]{2}")) return(str_replace(phone_number, "^0", "+46"))
+  if(str_detect(phone_number, "01[0-9]{2,3} [0-9]{6}")) return(str_replace(phone_number, "^0", "+49 "))
+  if(str_detect(phone_number, "0 [67] [0-9]{2} [0-9]{2} [0-9]{2} [0-9]{2}")) return(str_replace(phone_number, "^0", "+33"))
+}
+
+#check it
+map_chr(phone_numbers_no_countrycode, replace_countrycode)
+
+#3
+heights <- c("1m30cm", "2m01cm", "3m10cm")
+
+#a
+meters <- str_extract(heights, "(?<!m)[0-9]")
+
+#b
+for_test <- heights %>% 
+  str_replace("(?<=[0-9])m", "\\.") %>% 
+  str_replace("cm", "") %>% 
+  as.numeric() 
+
+for_test == c(1.3, 2.01, 3.1)
+
+#4
+high_safety <- "Password1234"
+medium_safety <- "password1234"
+low_safety <- "password"
+not_accepted <- "12345"
+
+return_safety <- function(password){
+  if(str_length(password) < 8) return("unacceptable")
+  if(str_detect(password, "[0-9]") & 
+     str_detect(password, "[A-Z]") & 
+     str_detect(password, "[a-z]")) {
+    return("high safety")
+  }
+  if(str_detect(password, "[0-9]") & str_detect(password, "[a-z]") |
+     str_detect(password, "[A-Z]") & str_detect(password, "[a-z]")) {
+    return("medium safety")
+  }
+  if(str_detect(password, "[a-z]")) return("low safety")
+}
+
+#return_safety(high_safety)
+#return_safety(medium_safety)
+#return_safety(low_safety)
+#return_safety(unacceptable)
+
+#5
+imdb <- read_csv("imdb2006-2016.csv")
+
+imdb %>% 
+  separate(Genre, sep = ",", into = c("genre_1", "genre_2", "genre_3"))
+
+imdb$Genre %>% 
+  str_split_fixed(pattern = ",", 3)
+```
+
+</details>
+
+<!--chapter:end:01-preprocessing-string_manipulation.Rmd-->
+
+# Text Pre-Processing: Text to Data {#texttodata}
+
+```{r echo=FALSE}
+vembedr::embed_youtube("c0BSrLCuZS8")
+```
+
+After having learned about the basics of string manipulation, I am now turning to how you can turn your collection of documents, your corpus, into a representation that lends itself nicely to quantitative analyses of text. There are a couple of packages around which you can use for text mining, such as `quanteda` [@benoit2018], `tm` [@feinerer2008], and `tidytext` [@silge2016], the latter being probably the most recent addition to them. A larger overview of relevant packages can be found on this [CRAN Task View](https://cran.r-project.org/web/views/NaturalLanguageProcessing.html).
+
+As you could probably tell from its name, `tidytext` obeys the tidy data principles. "Every observation is a row" translates here to "every token has its own row" -- "token" not necessarily relating to a singular term, but also to so-called n-grams. In the following, I will demonstrate what text mining using tidy principles can look like in R. For this, I will first cover the preprocessing of text using tidy data principles. Thereafter, I will delve into more advanced preprocessing such as the lemmatization of words and part-of-speech (POS) tagging using `spaCy` [@benoit2020]. Finally, different R packages are using different representations of text data. Depending on the task at hand, you will therefore have to be able to transform the data into the proper format. This will be covered in the final part.
+
+## Pre-processing with `tidytext`
+
+The `sotu` package contains all of the so-called "State of the Union" addresses -- the president gives them to the congress annually -- since 1790.
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(sotu)
+sotu_raw <- sotu_meta %>% 
+  bind_cols(sotu_text) %>% 
+  rename(text = `...6`) %>% 
+  distinct(text, .keep_all = TRUE)
+
+sotu_raw %>% glimpse()
+```
+
+Now that the data are read in, I need to put them into the proper format and clean them. For this purpose, I take a look at the first entry of the tibble.
+
+```{r}
+sotu_raw %>% slice(1) %>% pull(text) %>% str_sub(1, 500)
+```
+
+### `unnest_tokens()`
+
+I will focus on the 20th-century SOTUs. Here, the `dplyr::between()` function comes in handy.
+
+```{r}
+sotu_20cent_raw <- sotu_raw %>% 
+  filter(between(year, 1900, 2000))
+```
+
+In a first step, I bring the data into a form that facilitates manipulation: a tibble. For this, I use `tidytext`'s `unnest_tokens()` function. It basically breaks the corpus up into tokens -- the respective words. In English, words are separated by whitespace. Therefore, tokenization could also be achieved doing `str_split(sep = " ")`.
+`
+```{r}
+library(tidytext)
+toy_example <- tibble(
+  text = "Look, this is a brief example for how tokenization works."
+)
+
+toy_example %>% 
+  pull(text) %>% 
+  str_split(pattern = " ") 
+
+toy_example %>% 
+  unnest_tokens(output = token, 
+                input = text)
+```
+
+Note that `unnest_tokens()` already reduces complexity for us by removing the comma and the full-stop and making everything lower-case.
+
+```{r}
+is_equal <- function(x, y) x == y
+is_equal(
+  toy_example %>% 
+    pull(text) %>% 
+    str_split(pattern = " ") %>% 
+    reduce(c) %>% 
+    str_remove_all("[:punct:]") %>% 
+    str_to_lower(),
+  toy_example %>% 
+    unnest_tokens(output = token, 
+                  input = text) %>% 
+  pull(token)
+)
+```
+
+```{r}
+sotu_20cent_tokenized <- sotu_20cent_raw %>% 
+  unnest_tokens(output = token, input = text)
+glimpse(sotu_20cent_tokenized)
+```
+
+The new tibble consists of `r sotu_20cent_tokenized %>% nrow()` rows. Please note that usually, you have to put some sort of id column into your original tibble before tokenizing it, e.g., by giving each case -- representing a document, or chapter, or whatever -- a separate id (e.g., using `tibble::rowid_to_column()`). This does not apply here, because my original tibble came with a bunch of metadata (president, year, party) which serve as sufficient identifiers.
+
+### Removal of unnecessary content
+
+The next step is to remove stop words -- they are not necessary for the analyses I want to perform. The `stopwords` package has a nice list for English.
+
+```{r}
+library(stopwords)
+stopwords_vec <- stopwords(language = "en")
+#stopwords(language = "de") # the german equivalent
+#stopwords_getlanguages() # find the languages that are available
+```
+
+Removing the stop words now is straight-forward:
+
+```{r}
+sotu_20cent_tokenized_nostopwords <- sotu_20cent_tokenized %>% 
+  filter(!token %in% stopwords_vec)
+```
+
+Another thing I forgot to remove are digits. They do not matter for the analyses either:
+
+```{r}
+sotu_20cent_tokenized_nostopwords_nonumbers <- sotu_20cent_tokenized_nostopwords %>% 
+  filter(!str_detect(token, "[:digit:]"))
+```
+
+The corpus now contains `r sotu_20cent_tokenized_nostopwords_nonumbers %>% distinct(token) %>% nrow()` different tokens, the so-called "vocabulary." `r (sotu_20cent_tokenized %>% distinct(token) %>% nrow()) - (sotu_20cent_tokenized_nostopwords_nonumbers %>% distinct(token) %>% nrow())` tokens were removed from the vocuabulary. This translates to a signifiant reduction in corpus size though, the new tibble only consists of `r sotu_20cent_tokenized_nostopwords_nonumbers %>% nrow()` rows, basically a 50 percent reduction. 
+
+
+### Stemming
+
+To decrease the complexity of the vocabulary even further, we can reduce the tokens to their stem using the `SnowballC` package and its function `wordStem()`:
+
+```{r}
+library(SnowballC)
+sotu_20cent_tokenized_nostopwords_nonumbers_stemmed <- sotu_20cent_tokenized_nostopwords_nonumbers %>% 
+  mutate(token = wordStem(token, language = "en"))
+
+#SnowballC::getStemLanguages() # if you want to know the abbreviations for other languages as well
+```
+
+Maybe I should also remove insignificant words, i.e., ones that appear less than 0.5 percent of the time. 
+
+```{r}
+sotu_20cent_tokenized_nostopwords_nonumbers_stemmed %>% 
+  group_by(token) %>% 
+  filter(n() > nrow(.)/200)
+```
+
+These steps have brought down the vocabulary from `r sotu_20cent_tokenized_nostopwords_nonumbers %>% distinct(token) %>% nrow()` to `r sotu_20cent_tokenized_nostopwords_nonumbers_stemmed %>% distinct(token) %>% nrow()`.
+
+### In a nutshell
+
+Well, all those things could also be summarized in one nice cleaning pipeline:
+
+```{r}
+sotu_20cent_clean <- sotu_raw %>% 
+  filter(between(year, 1900, 2000)) %>% 
+  unnest_tokens(output = token, input = text) %>% 
+  anti_join(get_stopwords(), by = c("token" = "word")) %>% 
+  filter(!str_detect(token, "[:digit:]")) %>% 
+  mutate(token = wordStem(token, language = "en")) %>% 
+  group_by(token) %>% 
+  filter(n() > nrow(.)/200)
+```
+
+Now I have created a nice tibble containing the SOTU addresses of the 20th century in a tidy format. This is a great point of departure for subsequent analyses.
+
+## Preprocessing with `spaCy`
+
+Similar things (and more!) can also be achieved with `spaCy` [@benoit2020]. `spacyr` is an R wrapper around the `spaCy` Python package and, therefore, a bit tricky to install at first, you can find instructions [here](https://spacyr.quanteda.io/articles/using_spacyr.html). 
+
+The functionalities `spacyr` offers you are the following^[overview copied from the webpage]: 
+
+* parsing texts into tokens or sentences;
+* lemmatizing tokens;
+* parsing dependencies (to identify the grammatical structure of the sentence); and
+* identifying, extracting, or consolidating token sequences that form named entities or noun phrases.
+
+In brief, preprocessing with `spacyr` is computationally more expensive than using, for instance, `tidytext`, but will give you more [accurate lemmatization instead of "stupid," rule-based stemming.](https://stackoverflow.com/questions/1787110/what-is-the-difference-between-lemmatization-vs-stemming). Also, it allows you to break up documents into smaller entities, sentences, which might be more suitable, e.g., as input for classifiers (since sentences tend to be about one topic, they allow for more fine-grained analyses). Part-of-speech (POS) tagging basically provides you with the functions of the different terms within the sentence. This might prove useful for tasks such as sentiment analysis. The final task `spacyr` can help you with is Named Entity Recognition (NER) which can be used for tasks such as sampling relevant documents. 
+
+### Initializing spacy
+
+Before using `spacyr`, it needs to be initialized. What happens during this process is that R basically opens a connection to Python so that it can then run the `spacyr` functions in Python's `spaCy`. Once you have set up everything properly (see [instructions](https://spacyr.quanteda.io/articles/using_spacyr.html)), you can initialize it using `spacy_initialize(model)`. Different language models can be specified and an overview can be found [here](https://spacy.io/usage/models#languages). Note that a process of `spaCy` is started when you `spacy_initialize()` and continues running in the background. Hence, once you don't need it anymore, or want to load a different model, you should `spacy_finalize()`. 
+```{r}
+library(spacyr)
+spacy_initialize(model = "en_core_web_sm")
+
+# to download new model -- here: French
+#spacy_finalize()
+#spacy_download_langmodel(model = "fr_core_news_sm")
+#spacy_initialize(model = "fr_core_news_sm") #check that it has worked
+
+#spacy_finalize()
+#spacy_initialize(model = "de_core_web_sm") # for German
+```
+
+### `spacy_parse()`
+
+`spacyr`'s main function is `spacy_parse()`. It takes a character vector or [TIF-compliant data frame](https://github.com/ropensci/tif). The latter is basically a tibble containing at least two columns, one named `doc_id` with unique document ids and one named `text`, containing the respective documents.
+
+```{r}
+#devtools::install_github("ropensci/tif")
+library(tif)
+
+tif_toy_example <- tibble(
+  doc_id = "doc1",
+  text = "Look, this is a brief example for how tokenization works. This second sentence allows me to demonstrate another functionality of spacy."
+)
+tif_is_corpus_df(tif_toy_example)
+
+toy_example_vec <- tif_toy_example$text
+```
+
+The output of `spacy_parse()` looks as follows:
+
+```{r}
+sotu_speeches_tif <- sotu_20cent_raw %>% 
+  mutate(doc_id = str_c("sotu", year, sep = "_"))
+
+sotu_parsed <- spacy_parse(sotu_speeches_tif %>% slice(1:3),
+                           pos = TRUE,
+                           tag = TRUE,
+                           lemma = TRUE,
+                           entity = TRUE,
+                           dependency = TRUE,
+                           nounphrase = TRUE,
+                           multithread = TRUE)
+
+```
+
+Note that this is already fairly similar to the output of `tidytext`'s `unnest_tokens()` function. The advantages are that the lemmas are more accurate, that we have a new sub-entity -- sentences --, and that there is now more information on the type and meanings of the words. 
+
+### POS tags, NER, and nounphrases
+
+The abbreviations in the `pos` column follow the format of [Universal POS tags](https://universaldependencies.org/u/pos/all.html). Entities can be extracted by passing the parsed object on to `entity_extract()`.
+
+```{r}
+entity_extract(sotu_parsed, type = "all")
+```
+
+The following entities are recognized (overview taken from [this article](https://towardsdatascience.com/explorations-in-named-entity-recognition-and-was-eleanor-roosevelt-right-671271117218)):
+
+* PERSON: People, including fictional.
+* NORP: Nationalities or religious or political groups.
+* FAC: Buildings, airports, highways, bridges, etc.
+* ORG: Companies, agencies, institutions, etc.
+* GPE: Countries, cities, states.
+* LOC: Non-GPE locations, mountain ranges, bodies of water.
+* PRODUCT: Objects, vehicles, foods, etc. (Not services.)
+* EVENT: Named hurricanes, battles, wars, sports events, etc.
+* WORK_OF_ART: Titles of books, songs, etc.
+* LAW: Named documents made into laws.
+* LANGUAGE: Any named language.
+* DATE: Absolute or relative dates or periods.
+* TIME: Times smaller than a day.
+* PERCENT: Percentage, including "%".
+* MONEY: Monetary values, including unit.
+* QUANTITY: Measurements, as of weight or distance.
+* ORDINAL: "first," "second," etc.
+* CARDINAL: Numerals that do not fall under another type.
+
+To properly represent entities in our corpus, you can use `entity_consolidate()`. This collapses words that belong to the same entity into single tokens (e.g., "the" "white" "house" becomes "the_white_house"). 
+
+```{r}
+entity_consolidate(sotu_parsed)
+```
+
+The same can be performed with noun phrases. 
+
+```{r}
+nounphrase_extract(sotu_parsed)
+```
+
+Usually, entities and noun phrases can give you a good idea of what texts are about. Therefore, you might want to only extract them without parsing the entire text.
+
+```{r}
+spacy_extract_entity(sotu_speeches_tif %>% slice(1:3))
+spacy_extract_nounphrases(sotu_speeches_tif %>% slice(1:3))
+```
+
+The `spacyr` package of course has some more functions such as dependency parsing. However, they will not be touched upon in the rest of the course and I will therefore leave them out for now. 
+
+## Converting between formats
+
+While the `tidytext` format lends itself nicely to "basic" operations and visualizations, you will have to use different representations of text data for other applications such as topic models or word embeddings. On the other hand, you might want to harness, for instance, the `ggplot2` package for visualization. In this case, you will need to project the data into a tidy format. The former operations are performed using multiple `cast_.*()` functions, the latter using the `tidy()` function from the `broom` package whose purpose is to bring data from foreign structures to tidy representations.
+
+In the following, I will briefly explain common representations and the packages that use them. Thereby, I draw heavily on the [chapter in Tidy Text Mining with R that is dedicated to the topic](https://www.tidytextmining.com/dtm.html).  
+
+### Document-term matrix
+
+A document-term matrix contains rows that represent a document and columns that represent terms. The values usually correspond to how often the term appears in the respective document.
+
+In R, a common implementation of DTMs is the `DocumentTermMatrix` class in the `tm` package. The `topicmodels` package which we will use for performing LDA comes with a collection of example data.
+
+```{r}
+library(topicmodels)
+data("AssociatedPress")
+
+class(AssociatedPress)
+AssociatedPress
+```
+
+This data set contains 2246 Associated Press articles which consist of 10,473 different terms. Moreover, the matrix is 99% sparse, meaning that 99% of word-document pairs are zero. The weighting is by term frequency, hence the values correspond to the number of appearances a word has in an article.
+
+```{r}
+AssociatedPress %>% 
+  head(2) %>% 
+  as.matrix() %>% 
+  .[, 1:10]
+```
+
+Bringing these data into a tidy format is performed as follows:
+
+```{r}
+associated_press_tidy <- tidy(AssociatedPress)
+
+glimpse(associated_press_tidy)
+```
+
+Transforming the data set into a DTM, the opposite operation, is achieved using `cast_dtm(data, document, term, value)`:
+
+```{r}
+associated_press_dfm <- associated_press_tidy %>% 
+  cast_dtm(document, term, count)
+
+associated_press_dfm %>% 
+  head(2) %>% 
+  as.matrix() %>% 
+  .[, 1:10]
+```
+
+### Document-feature matrix
+
+The so-called document-feature matrix is the data format used in the `quanteda` package. It is basically a document-term matrix, but the authors of the `quanteda` package chose the term feature over term to be more accurate: 
+
+> "We call them 'features' rather than terms, because features are more general than terms: they can be defined as raw terms, stemmed terms, the parts of speech of terms, terms after stopwords have been removed, or a dictionary class to which a term belongs. Features can be entirely general, such as ngrams or syntactic dependencies, and we leave this open-ended." 
+
+```{r}
+data("data_corpus_inaugural", package = "quanteda")
+inaug_dfm <- data_corpus_inaugural %>%
+  quanteda::tokens() %>%
+  quanteda::dfm(verbose = FALSE)
+
+inaug_dfm
+```
+
+This, again, can just be `tidy()`ed.
+
+```{r}
+inaug_tidy <- tidy(inaug_dfm)
+
+glimpse(inaug_tidy)
+```
+
+Of course, the resulting tibble can now be cast back into the DFM format using `cast_dfm(data, document, term, value)`. Here, the value corresponds to the number of appearances of the term in the respective document.
+
+```{r}
+inaug_tidy %>% 
+  cast_dfm(document, term, count)
+```
+
+### Corpus objects
+
+Another common way of storing data is in so-called corpora. This is usually a collection of raw documents and metadata. An example would be the collection of State of the Union speeches we worked with earlier. The `tm` package has a class for corpora. 
+
+```{r}
+data("acq", package = "tm")
+
+acq
+
+#str(acq %>% head(1))
+```
+
+It is basically a list containing different elements that refer to metadata or the content. This is a nice and effective framework for storing documents, yet it does not lend itself nicely for analysis with tidy tools. You can use `tidy()` to clean it up a bit:
+
+```{r}
+acq_tbl <- acq %>% 
+  tidy()
+```
+
+This results in a tibble that contains the relevant metadata and a `text` column. A good point of departure for subsequent tidy analyses.
+
+## Further links
+
+* [Tidy text mining with R](https://www.tidytextmining.com/index.html).
+* A more general [introduction by Christopher Bail](https://cbail.github.io/textasdata/Text_as_Data.html).
+* [A guide to Using spacyr](https://spacy.io/api/token#attributes).
+
+## Exercises
+
+1. Use data from the `friends` R package. Take data from the first season. Preprocess them as we did earlier, each document should be one utterance. 
+```{r eval=FALSE}
+#install.packages("friends")
+library(friends)
+
+dplyr::glimpse(friends)
+```
+
+  a. What are the 20 most used words (hint: use `count()` and `slice_max()` from the `dplyr` package)?
+  b. Who said the most words?
+  c. Remove stopwords. How does it change your results from a?
+  d. Are there any other words in your 20 most used words you would consider stopwords as they do not convey any bigger meaning? How does removing them alter your results?
+  e. Preprocess the remaining seasons and perform the analysis you did above. Could you visualize the results in a neat bar plot comparing the 5 most-used words in the different seasons? (We will learn more on this next week!)
+
+2. Use `spacyr` to investigate which countries were mentioned the most in the SOTU addresses over time in the 20th century. Do you find patterns? (step-by-step: take the SOTUs; filter them (1900--2000); spacyr::spacy_extract_entity(), filter geographical units, normalize them -- str_replace_all + pattern; plot them in ggplot2 with date on x-axis, count on y-axis, colored by country)
+
+<details>
+  <summary>Solution. Click to expand!</summary>
+
+```{r eval=FALSE}
+#1
+season_1_tokens <- friends %>% 
+  filter(season == 1) %>% 
+  unnest_tokens(token, text)
+
+#a
+season_1_tokens %>% 
+  count(token) %>% 
+  slice_max(n, n = 20)
+
+#b
+season_1_tokens %>% 
+  count(speaker) %>% 
+  arrange(-n)
+
+#c
+season_1_tokens %>% 
+  filter(!token %in% stopwords_vec) %>% 
+  count(token) %>% 
+  slice_max(n, n = 20)
+
+#d
+stopwords_friends_specific <- c("oh", "just", "know", "like", "yeah", "uh", "well", "okay", "hey", "right", "gonna", "ok")
+season_1_tokens %>% 
+  filter(!token %in% stopwords_vec) %>% 
+  filter(!token %in% stopwords_friends_specific) %>% 
+  count(token) %>% 
+  slice_max(n, n = 20)
+
+#e
+friends %>% 
+  unnest_tokens(token, text) %>% 
+  count(token, season) %>% 
+  filter(!token %in% stopwords_vec) %>% 
+  filter(!token %in% stopwords_friends_specific) %>% 
+  group_by(season) %>% 
+  slice_max(n, n = 5) %>% 
+  ungroup() %>% 
+  mutate(token = reorder_within(token, n, season)) %>% 
+  ggplot() +
+  geom_col(aes(x = n, y = token)) +
+  facet_wrap(vars(season), scales = "free") + 
+  scale_y_reordered()
+
+# 2
+spacy_initialize("en_core_web_sm")
+
+sotu_entities <- sotu_meta %>% 
+  bind_cols(sotu_text) %>% 
+  rename(text = `...6`) %>% 
+  distinct(text, .keep_all = TRUE) %>% 
+  filter(between(year, 1900, 2000)) %>% 
+  group_by(president, year) %>% 
+  summarize(text = str_c(text, collapse = " ")) %>% 
+  ungroup() %>% 
+  mutate(doc_id = str_replace(president, " ", "_") %>% 
+           str_c(., year, sep = "_")) %>% 
+  select(doc_id, text) %>% 
+  spacyr::spacy_extract_entity()
+
+replacement_pattern <- c(
+  "^America$" = "United States",
+  "^States$" = "United States",
+  "Washington" = "United States",
+  "U.S." = "United States",
+  "Viet-Nam" = "Vietnam",
+  "AMERICA" = "United States",
+  "^Britain$" = "Great Britain",
+  "^BRITAIN$" = "Great Britain",
+  "Alaska" = "US State/City",
+  "District of Columbia" = "US State/City",
+  "Hawaii" = "US State/City",
+  "California" = "US State/City",
+  "New York" = "US State/City",
+  "Mississippi" = "US State/City",
+  "Texas" = "US State/City",
+  "Chicago" = "US State/City",
+  "United States of America" = "United States",
+  "Berlin" = "Germany"
+)
+
+countries <- sotu_entities %>% 
+  filter(ent_type == "GPE") %>% 
+  mutate(country = str_remove_all(text, "The |the |a ") %>% 
+           str_replace_all(replacement_pattern),
+         year = str_extract(doc_id, "[0-9]{4}$") %>% 
+           as.numeric()) %>% 
+  filter(country != "United States",
+         country != "US State/City") %>% 
+  add_count(country) %>% 
+  filter(n >= 50) %>% 
+  count(country, year)
+
+ggplot(countries) +
+  geom_point(aes(year, n, color = country)) +
+  scale_x_continuous(breaks = c(1900, 1920, 1940, 1960, 1980, 2000))
+
+spacy_finalize()
+
+```
+
+</details>
+
+<!--chapter:end:02-preprocessing-text_to_data.Rmd-->
+
+# "Fighting words" {#fightingwords}
+
+```{r echo=FALSE}
+vembedr::embed_youtube("ZouUHSmc7og")
+```
+
+A common task in the quantitative analysis of text is to determine how documents differ from each other concerning word usage. This is usually achieved by identifying words that are particular for one document but not for another. These words are referred to by @monroe2008 as *fighting words* or, by @grimmer2022, *discriminating words*. To use the techniques that will be presented today, an already existing organization of the documents is assumed.
+
+In the following, I will present multiple methods according to which you can identify words that are related to different groups and can be used to distinguish them. I will present the methods and their implementation in R ordered from rather simple to more complicated. The order is inspired by @monroe2008. The methods have in common that, at their heart, they determine how often a word appears in a group of documents. Thereafter, the "importance" of a word in distinguishing the groups is determined through several weighting procedures.
+
+## Counting words per document
+
+The most simple approach to determine which words are more correlated to a certain group of documents is by merely counting them and determining their proportion in the document groups. For illustratory purposes, I use fairytales from H.C. Andersen which are contained in the `hcandersenr` package.
+
+```{r}
+library(tidyverse)
+library(lubridate)
+library(tidytext)
+fairytales <- hcandersenr::hcandersen_en %>% 
+  filter(book %in% c("The princess and the pea",
+                     "The little mermaid",
+                     "The emperor's new suit"))
+
+fairytales_tidy <- fairytales %>% 
+  unnest_tokens(output = token, input = text)
+```
+
+### Naive approach: raw counts
+
+For a first, naive analysis, I can merely count the times the terms appear in the texts. Since the text is in `tidytext` format, I can do so using means from traditional `tidyverse` packages. I will then visualize the results with a bar plot. 
+
+```{r}
+fairytales_top10 <- fairytales_tidy %>% 
+  group_by(book) %>% 
+  count(token) %>% 
+  slice_max(n, n = 10)
+```
+
+```{r}
+fairytales_top10 %>% 
+  ggplot()  +
+  geom_col(aes(x = n, y = reorder_within(token, n, book))) +
+  scale_y_reordered() +
+  labs(y = "token") +
+  facet_wrap(vars(book), scales = "free") +
+  theme(strip.text.x = element_blank())
+```
+
+It is quite hard to draw inferences on which plot belongs to which book since the plots are crowded with stopwords. However, there are pre-made stopword lists I can harness to remove the noise and perhaps catch a bit more signal for determining the books.
+
+```{r}
+library(stopwords)
+fairytales_top10_nostop <- fairytales_tidy %>% 
+  anti_join(get_stopwords(), by = c("token" = "word")) %>% 
+  group_by(book) %>% 
+  count(token) %>% 
+  slice_max(n, n = 10, with_ties = FALSE)
+```
+
+```{r}
+fairytales_top10_nostop %>% 
+  ggplot()  +
+  geom_col(aes(x = n, y = reorder_within(token, n, book))) +
+  scale_y_reordered() +
+  labs(y = "token") +
+  facet_wrap(vars(book), scales = "free") +
+  scale_x_continuous(breaks = scales::pretty_breaks()) +
+  theme(strip.text.x = element_blank())
+```
+
+This already looks quite nice, it is quite easy to see which plot belongs to the respective book. 
+
+### TF-IDF
+
+A better explanation for words that are particular to a group of documents is the ones that appear often in one group but rarely in the other one(s). So far, the measure of term frequency only accounts for how often terms are used in the respective document. I can take into account how often it appears in other documents by including the inverse document frequency. The resulting measure is called tf-idf and describes "the frequency of a term adjusted for how rarely it is used." [@silge2016: 31] If a term is rarely used overall but appears comparably often in a singular document, it might be safe to assume that it plays a bigger role in that document.
+
+The tf-idf of a word in a document is commonly^[Note that multiple implementations exist, for an overview see, ofr instance, @manning2008] calculated as follows:
+
+$$w_{i,j}=tf_{i,j}\times ln(\frac{N}{df_{i}})$$
+
+--\> $tf_{i,j}$: number of occurrences of term $i$ in document $j$
+
+--\> $df_{i}$: number of documents containing $i$
+
+--\> $N$: total number of documents
+
+Note that the $ln$ is included so that words that appear in all documents -- and do therefore not have discriminatory power -- will automatically get a value of 0. This is because $ln(1) = 0$. On the other hand, if a term appears in, say, 4 out of 20 documents, its idf is $ln(20/4) = ln(5) = 1.6$.
+
+The `tidytext` package provides a neat implementation for calculating the tf-idf called `bind_tfidf()`. It takes as input the columns containing the `term`, the `document`, and the document-term counts `n`.
+
+```{r}
+fairytales_top10_tfidf <- fairytales_tidy %>% 
+  group_by(book) %>% 
+  count(token) %>% 
+  bind_tf_idf(token, book, n) %>% 
+  slice_max(tf_idf, n = 10)
+```
+
+```{r}
+fairytales_top10_tfidf %>% 
+  ggplot()  +
+  geom_col(aes(x = tf_idf, y = reorder_within(token, tf_idf, book))) +
+  scale_y_reordered() +
+  labs(y = "token") +
+  facet_wrap(vars(book), scales = "free") +
+  theme(strip.text.x = element_blank(),
+        axis.title.x = element_blank(),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank())
+```
+
+Pretty good already! All the fairytales can be clearly identified. A problem with this representation is that I cannot straightforwardly interpret the x-axis values (they can be removed by uncommenting the last three lines). A way to mitigate this is using odds.
+
+Another shortcoming becomes visible when I take the terms with the highest TF-IDF as compared to all other fairytales.
+
+```{r}
+tfidf_vs_full <- hcandersenr::hcandersen_en %>% 
+  unnest_tokens(output = token, input = text) %>% 
+  count(token, book) %>% 
+  bind_tf_idf(book, token, n) %>% 
+  filter(book %in% c("The princess and the pea",
+                     "The little mermaid",
+                     "The emperor's new suit")) 
+
+plot_tf_idf <- function(df, group_var){
+  df %>% 
+    group_by({{ group_var }}) %>% 
+    slice_max(tf_idf, n = 10, with_ties = FALSE) %>% 
+    ggplot()  +
+    geom_col(aes(x = tf_idf, y = reorder_within(token, tf_idf, {{ group_var }}))) +
+    scale_y_reordered() +
+    labs(y = "token") +
+    facet_wrap(vars({{ group_var }}), scales = "free") +
+    #theme(strip.text.x = element_blank()) +
+    theme(axis.title.x=element_blank(),
+          axis.text.x=element_blank(),
+          axis.ticks.x=element_blank())
+} 
+  
+plot_tf_idf(tfidf_vs_full, book)
+```
+
+The tokens are far too specific to make any sense. Introducing a lower threshold (i.e., limiting the analysis to terms that appear at least x times in the document) might mitigate that. Yet, this threshold is of course arbitrary.
+
+```{r}
+tfidf_vs_full %>% 
+  group_by(token) %>% 
+  filter(n > 3) %>% 
+  ungroup() %>% 
+  plot_tf_idf(book)
+```
+
+This looks a bit better already, yet the threshold is of course arbitrary and not generalizable. Choosing a higher threshold will take away more specific terms, lower thresholds might make the results overly specific.
+
+### Odds
+
+Another approach to tackle the question of which words distinguish the documents nicely is to think about it as "which words have the highest odds of appearing in one document?" These words shall then be the ones that are presumably very descriptive for the document. 
+
+The formula for the odds of word $w$ appearing in document $i$ looks as follows:
+
+$$O_{iw} = \frac{f_{iw}}{1-f_{iw}}$$
+$f_{iw}$ stands for the share a word takes within a document.
+
+By logging this measure I ensure that the values are comparable across words and documents. A quick example would be the word "and" which appears `r fairytales_tidy %>% filter(book == "The princess and the pea") %>% count(token) %>% filter(token == "and") %>% pull(n)` times in "The princess and the pea" (out of `r fairytales_tidy %>% filter(book == "The princess and the pea") %>% nrow()` words). Hence, the odds of a word being "and" in this document are 14 to 382, the total number of words in the document, minus 14; $O_{and, j}\frac{14/382}{1-14/382}$ which is `r (14/382)/(1-14/382)`. The odds of "and" not being the word are 368 to 14, $\frac{368/382}{1-368/382}$ -- `r (368/382)/(1-368/382)`. However, if we log both values, they become symmetric -- $ln(0.03804348) = -3.27$ and $ln(26.28571) = 3.27$.
+
+If I were to compare the usage of a word $w$ between documents $i$ and $j$, I can use the log odds ratio. 
+
+$$log \frac{O_{iw}}{O_{jw}} = log(\frac{\frac{f_{iw}}{1-f_{iw}}}{\frac{f_{jw}}{1-f_{jw}}}) = log(\frac{f_{iw}}{1-f_{iw}})-log(\frac{f_{jw}}{1-f_{jw}})$$
+
+In R we can use the `tidylo` package to calculate them. The function `bind_log_odds()` works analogously to `bind_tf_idf()`. For the basic implementation of the log-odds approach, I set `uninformative = TRUE`. In technical terms, this means that I use an uninformative prior for the respective tokens. This implies that it does not account for the basic usage of the respective tokens in a background corpus that we have. Therefore, some common words might be overstressed just because they are more common in the text at hand. By default, the function returns a tibble containing the feature (here: token), the set (here: book), the number of appearances the feature makes in a respective set, as well as the weighted log-odds of the feature making an appearance in the set. Weighted here means z-standardized so that we can compare it across sets (documents). Interpretation of the absolute values, however, is not straightforward. Positive log odds imply that the group is more likely to use the word as compared to others.  
+
+
+```{r}
+#install.packages("tidylo")
+library(tidylo)
+
+log_odds_uninformative <- fairytales_tidy %>% 
+  count(token, book) %>% 
+  bind_log_odds(book, token, n, uninformative = TRUE, unweighted = TRUE)
+  
+plot_log_odds <- function(df, x_var = log_odds_weighted, group_var){
+  df %>% 
+  group_by({{ group_var }}) %>% 
+  slice_max({{ x_var }}, n = 10, with_ties = FALSE) %>% 
+  mutate(token = reorder_within(token, {{ x_var }}, {{ group_var }})) %>% 
+  ggplot()   +
+  geom_col(aes(x = {{ x_var }}, y = token)) +
+  scale_y_reordered() +
+  labs(y = "token") +
+  facet_wrap(vars({{ group_var }}), scales = "free_y") #+
+  #theme(strip.text.x = element_blank())
+}
+
+log_odds_uninformative %>% plot_log_odds(group_var = book)
+```
+
+Right now, there are still a bunch of uninformative words in the plot (e.g., did, is, you, of, etc.). I can specify the usage of an informative prior. This prior accounts for general usage of the word and shrinks the counts toward how often the word appears in the background corpus. Therefore, I can also see differences in common words (something that could not be done with TF-IDF as their TF-IDF score will become 0 if they appear in every document). 
+
+```{r}
+log_odds_informative <- fairytales_tidy %>% 
+  count(token, book) %>% 
+  bind_log_odds(book, token, n, uninformative = FALSE, unweighted = TRUE)
+
+plot_log_odds(log_odds_informative, group_var = book)
+```
+
+This will look different, however, when I calculate the measure for the full corpus of H. C. Andersen fairytales and then just use the ones in question.
+
+```{r}
+log_odds_vs_full_informative <- hcandersenr::hcandersen_en %>% 
+  unnest_tokens(output = token, input = text) %>% 
+  count(token, book) %>% 
+  bind_log_odds(book, token, n, uninformative = FALSE, unweighted = TRUE) %>% 
+  filter(book %in% c("The princess and the pea",
+                     "The little mermaid",
+                     "The emperor's new suit"))
+
+log_odds_vs_full_uninformative <- hcandersenr::hcandersen_en %>% 
+  unnest_tokens(output = token, input = text) %>% 
+  count(token, book) %>% 
+  bind_log_odds(book, token, n, uninformative = TRUE, unweighted = TRUE) %>% 
+  filter(book %in% c("The princess and the pea",
+                     "The little mermaid",
+                     "The emperor's new suit"))
+
+
+plot_log_odds(log_odds_vs_full_informative, group_var = book)
+plot_log_odds(log_odds_vs_full_uninformative, group_var = book)
+```
+
+This all looks quite specific and good, except for "The princess and the pea." 
+
+Let's wrap it up by comparing how different methods lead to different results. 
+
+```{r}
+library(patchwork)
+wrap_plots(
+  tfidf_vs_full %>% plot_tf_idf(book),
+  tfidf_vs_full %>% filter(n > 3) %>% plot_tf_idf(book),
+  log_odds_vs_full_uninformative %>% plot_log_odds(group_var = book),
+  log_odds_vs_full_informative %>% plot_log_odds(group_var = book)
+)
+```
+
+## Further links
+
+* Chapter on TF-IDF in[Tidy text mining with R](https://www.tidytextmining.com/tfidf.html).
+* Introduction to [tidylo](https://juliasilge.com/blog/introducing-tidylo/).
+* [More on the rationale behind log-odds by Qiushi Yan](https://bookdown.org/Maxine/tidy-text-mining/analyzing-word-and-document-frequency.html)
+
+## Exercise
+
+The following code was used to download the latest 200 tweets of the members of the U.S. Congress. 
+
+```{r eval=FALSE}
+library(tidyverse)
+library(rvest)
+library(rtweet)
+library(lubridate)
+
+rep_overview <- read_html("https://pressgallery.house.gov/member-data/members-official-twitter-handles") %>% 
+  html_table() %>% 
+  pluck(1)
+
+colnames(rep_overview) <- rep_overview[1, ]
+
+rep_overview <- slice(rep_overview, -1) %>%
+  janitor::clean_names() %>% 
+  mutate(twitter_handle = str_remove(twitter_handle, "\\@"))
+
+tweet_overview_us_rep <- map(
+  rep_overview$twitter_handle, 
+  ~{
+  Sys.sleep(5)
+  get_timeline(.x, n = 200)
+  }
+)
+
+tweets_relevant <- tweet_overview_us_rep %>% bind_rows() %>% 
+  mutate(date = date(created_at)) %>% 
+  filter(date > ymd("2022-05-01"))
+
+tweets_2022 <- tweet_overview_us_rep %>% bind_rows() %>% 
+  mutate(date = date(created_at)) %>% 
+  filter(date >= ymd("2022-01-01"))
+```
+
+The tweets can be found in the file `congress_tweets_2022.csv`. 
+
+* On May 2, 2022, documents from the supreme court were leaked that show an upcoming decision on one of the major hot-button issues in American politics. Which topic? Can you figure that out from the data? (Hints: Create two groups with Tweets that were posted before and on/after May 2nd; don't use the full date but reduce them to say April 20 to May 1 for group "before"; perhaps remove hashtags and infrequent words (words with n <= 15)?; use some of the methods outlined above (note that for log-odds, you need to remove all Inf values using `filter(is.finite(log_odds_weighted))` before plotting); try to identify the issue)
+
+* As we are talking hot-button issue here, how did the language Republican and Democratic House members used differ? [You can get an overview of the name, the Twitter handle, and the party leaning of the House members by running the following code (note that you may have to install `rvest` and `janitor` first).]
+
+```{r}
+library(tidyverse)
+library(rvest)
+library(janitor)
+
+rep_overview <- read_html("https://pressgallery.house.gov/member-data/members-official-twitter-handles") %>% 
+  html_table() %>% 
+  pluck(1)
+
+colnames(rep_overview) <- rep_overview[1, ]
+
+rep_overview <- slice(rep_overview, -1) %>%
+  clean_names() %>% 
+  mutate(twitter_handle = str_remove(twitter_handle, "\\@"))
+```
+
+  + Try to select tweets that are about the issue at hand (i.e., abortion and the leak). Come up with keywords that help you select all relevant tweets. Note that due to the issue and the language concerning it being so partisan, your choice might skew your sample. Focus on tweets posted after the leak. You can check whether you see abortion-related tweets spike using the following code: 
+  `tweets_abortion %>%  
+  count(date) %>% 
+  ggplot() +
+  geom_line(aes(date, n))`
+  
+  + Group your resulting data according to party affiliation. Are there party-specific language differences you can uncover using the methods above? Try both `informative = TRUE` and `informative = FALSE`.
+
+
+<details>
+  <summary>Solution. Click to expand!</summary>
+
+```{r eval=FALSE}
+tweets <- read_csv("data/congress_tweets_2022.csv") %>% 
+  mutate(date_group = case_when(date >= ymd("2022-05-02") ~ "after",
+                                between(date, ymd("2022-04-15"), ymd("2022-05-01")) ~ "before")) 
+
+tf_idf_min15 <- tweets %>% 
+  #mutate(text = str_remove_all(text, "\\#.* ")) %>% 
+  drop_na(date_group) %>% 
+  unnest_tokens(token, text) %>% 
+  count(token, date_group) %>% 
+  filter(n > 15) %>% 
+  bind_tf_idf(token, date_group, n)
+
+tf_idf_min15 %>% plot_tf_idf(date_group)
+
+log_odds <- tweets %>% 
+  mutate(text = str_remove_all(text, "\\#.* ")) %>% 
+  unnest_tokens(token, text) %>% 
+  count(token, date_group) %>% 
+  bind_log_odds(token, date_group, n) %>% 
+  drop_na(date_group)
+
+log_odds %>% filter(is.finite(log_odds_weighted) & n > 20) %>% plot_log_odds(group_var = date_group)
+
+#--> TF-IDF performed way better
+
+
+tweets_w_party <- tweets %>% 
+  left_join(rep_overview %>% select(twitter_handle, party))
+
+keywords <- c("abortion", "prolife", " roe ", "wade ", "roevswade", "baby", "fetus", "womb", "prochoice", "leak")
+
+tweets_abortion <- tweets_w_party %>% 
+  filter(str_detect(text, pattern = str_c(keywords, collapse = "|")) & 
+           party %in% c("D", "R"))
+
+tweets_abortion %>% 
+  count(party)
+
+tweets_abortion %>% 
+  count(date) %>% 
+  ggplot() +
+  geom_line(aes(date, n))
+
+tweets_abortion_new <- tweets_w_party %>% 
+  filter(str_detect(text, pattern = str_c(keywords, collapse = "|")) & 
+           date > ymd("2022-05-01") & 
+           party %in% c("D", "R"))
+
+tweets_abortion_new %>% 
+  count(party)
+
+
+
+tf_idf_abortion <- tweets_abortion_new %>% 
+  #mutate(text = str_remove_all(text, "\\#.* ")) %>% 
+  filter(party %in% c("D", "R")) %>% 
+  unnest_tokens(token, text) %>% 
+  count(token, party) %>% 
+  bind_tf_idf(token, party, n) 
+
+tf_idf_abortion %>% plot_tf_idf(party)
+
+log_odds_abortion <- tweets_abortion_new %>% 
+  mutate(text = str_remove_all(text, "https.* ")) %>% 
+  filter(party %in% c("D", "R")) %>% 
+  unnest_tokens(token, text) %>% 
+  filter(!str_detect(token, "[:digit:]")) %>% 
+  count(token, party) %>% 
+  bind_log_odds(token, party, n, uninformative = TRUE)
+
+log_odds_abortion %>% filter(is.finite(log_odds_weighted)) %>% 
+  plot_log_odds(group_var = party)
+```
+
+
+
+</details>
+
+<!--chapter:end:03-fighting_words.Rmd-->
+
+# Dictionary-based sentiment analysis {#sentimentanalysis}
+
+```{r echo=FALSE}
+vembedr::embed_youtube("HJygpR1WiWk")
+```
+
+
+So far, you have learned how you can bring text into a representation that allows for systematic analysis (Chapter \@ref(texttodata)) and how you can discover which terms can be used to discriminate between groups (Chapter \@ref(fightingwords)). Performing quantitative social science however also requires actually measuring things. In the remainder of this course, I will put a stronger emphasis on techniques that can be used to accomplish this.
+
+According to @grimmer2022, measurement encompasses the following steps for the researcher:
+
+1. "*Define* the conceptualization we want to measure.
+2. *Locate* a source of data that contains implications of the identified concept.
+3. *Generate* a way to translate data into a latent representation.
+4. *Label* the representation and connect it to the identified concept.
+5. *Validate* the resulting measure." (p. 173)
+
+Today, I will start with an easy yet commonly used way to measure the presence of certain conceptualizations in text: dictionary-based text analysis. The intuition of dictionary-based text analysis is that the presence and salience of a conceptualization in a given text can be determined by counting words that are a priori defined to be related to the conceptualization. Probably the most common use case is so-called sentiment analysis. Its goal is to determine whether the tone of a text is positive or negative. A classic application in the industry is the automatic determination of the sentiment of customer reviews. 
+
+## Sentiment analysis using `tidytext` principles
+
+Today's example is similar: I will use a data set containing 25,000 IMDb reviews and use `tidytext` to determine whether they are rather positive or negative. In this case, the movie titles are not included. Hence, I cannot draw inferences on how different movies were perceived by the audience. If I had this information though, it would of course be straightforward by just averaging the respective values.
+
+First, I load the required packages and the data.
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(tidytext)
+library(SnowballC)
+
+imdb_data <- read_csv("data/imdb_reviews.csv")
+
+glimpse(imdb_data)
+```
+
+Note that the data also contains a column named "sentiment" which contains the true sentiment value. This will be helpful to assess the validity of my measurement later. 
+
+The next step is to bring the documents (each document is a review in this case) into a representation that lends itself well to the automated analysis of the words that are contained, the `tidytext` format. However, in order for me to bring it into the proper format, I will first look at the dictionaries. 
+
+### Available dictionaries
+
+The `tidytext` package comes with a number of freely available dictionaries. Each dictionary has its own particularities and using the "right" dictionary always depends a bit on the task at hand. The dictionaries are stored in tibbles which contain two columns. `word` always refers to the word. `sentiment` refers to a discrete sentiment value (e.g., "positive"), and `value` to a numeric sentiment value (e.g., for AFINN the positivity/negativity of a word is measured on a scale from -5 -- the most negative -- to +5 -- the most positive). For today's example, I will use `AFINN` [@nielsen2011] and `bing` [@hu2004].
+
+```{r}
+walk(c("bing", "loughran", "afinn", "nrc"), ~get_sentiments(lexicon = .x) %>% 
+       head() %>% 
+       print())
+```
+
+Given this structure of the dictionaries, I can analyze the sentiment of my documents by taking the following steps:
+
+1. Clean the data and bring them into the `tidytext` format; the column containing the terms needs to be named "word" for easier joining.
+2. Use a `dplyr::inner_join()` to join the dictionary tibble. 
+3. Summarize the sentiment values for each text (if categorical: count occurrences of different categories per document, use the modal value; if numerical: average values) 
+
+### Step 1: Preprocessing
+
+Well, all those things could also be summarized in one nice cleaning pipeline:
+
+```{r}
+imdb_tidy <- imdb_data %>% 
+  rowid_to_column("doc_id") %>% # to identify documents later
+  unnest_tokens(output = word, input = text) %>% 
+  mutate(word = wordStem(word, language = "en"))
+
+imdb_tidy %>% glimpse()
+```
+
+Now I have created a nice tibble containing the IMDb reviews of the 20th century in a tidy format. Note that the words were stemmed. Therefore, I will have to stem the words in the sentiment dictionary as well, since they need to match. I will use both the `bing` (categorizing words in "positive" and "negative") and the `AFINN` (continuous scale ranging from -5 to +5) dictionary.
+
+```{r}
+afinn_stemmed <- get_sentiments("afinn") %>% 
+  mutate(word = wordStem(word, language = "en"))
+bing_stemmed <- get_sentiments("bing") %>% 
+  mutate(word = wordStem(word, language = "en"))
+```
+
+### Step 2: Sentiment Analysis using `dplyr::inner_join()`
+
+in the next step, I just add the sentiment values to the respective documents. Each matching term will have the respective sentiment value added. Note that I have to change the column name "sentiment" in the original tibble because there is the column "sentiment" present in the dictionary.
+
+```{r message=FALSE, warning=FALSE}
+imdb_afinn <- imdb_tidy %>% 
+  rename(sentiment_gold = sentiment) %>% 
+  inner_join(afinn_stemmed) 
+
+glimpse(imdb_afinn)
+```
+
+```{r}
+imdb_bing <- imdb_tidy %>% 
+  rename(sentiment_gold = sentiment) %>%  
+  inner_join(bing_stemmed) 
+
+glimpse(imdb_bing)
+```
+
+### Step 3: Summarize values
+
+In the case of numerical sentiment values, this step is rather simple: group by the document and average the values.
+
+```{r}
+imdb_afinn_summary <- imdb_afinn %>% 
+  group_by(doc_id) %>% 
+  summarize(mean_value = mean(value))
+
+glimpse(imdb_afinn_summary)
+```
+
+In the case of the categorical values, it requires a bit more code. First, I need to replace the categorical values with numerical ones. Then, I can do the same operation as above.
+
+```{r}
+imdb_bing_summary <- imdb_bing %>% 
+  mutate(value = case_when(sentiment == "negative" ~ -1,
+                           sentiment == "positive" ~ 1)) %>% 
+  group_by(doc_id) %>% 
+  summarize(mean_value = mean(value, na.rm = TRUE)) 
+
+glimpse(imdb_bing_summary)
+```
+
+Et voilà, I have performed a first sentiment classification just using tidy commands. The next step would now be to validate the results, i.e., to check whether my measures come to the same conclusions as to the gold standard the data set came with. This will be described in the chapter on Supervised Classification. However, a first basic comparison would be to plot the words that contribute much to the classification into the respective category. The contribution of a word is here operationalized as its sentiment value times its occurrence.
+
+```{r}
+imdb_afinn_pos_contribution <- imdb_afinn %>% 
+  group_by(word) %>% 
+  summarize(contribution = sum(value)) %>% 
+  slice_max(contribution, n = 10)
+
+imdb_afinn_neg_contribution <- imdb_afinn %>% 
+  group_by(word) %>% 
+  summarize(contribution = sum(value)) %>% 
+  slice_min(contribution, n = 10)
+```
+
+```{r}
+imdb_bing_pos_contribution <- imdb_bing %>% 
+  mutate(value = case_when(sentiment == "negative" ~ -1,
+                           sentiment == "positive" ~ 1)) %>% 
+  group_by(word) %>% 
+  summarize(contribution = sum(value)) %>% 
+  slice_max(contribution, n = 10)
+
+imdb_bing_neg_contribution <- imdb_bing %>% 
+  mutate(value = case_when(sentiment == "negative" ~ -1,
+                           sentiment == "positive" ~ 1)) %>% 
+  group_by(word) %>% 
+  summarize(contribution = sum(value)) %>% 
+  slice_min(contribution, n = 10)
+```
+
+It can be visualized in a smart bar plot:
+
+```{r}
+bind_rows(imdb_afinn_pos_contribution %>% mutate(dic = "AFINN"),
+          imdb_afinn_neg_contribution %>% mutate(dic = "AFINN"),
+          imdb_bing_pos_contribution %>% mutate(dic = "Bing"),
+          imdb_bing_neg_contribution %>% mutate(dic = "Bing")) %>% 
+  mutate(word = reorder_within(word, contribution, dic)) %>%
+  ggplot() +
+  geom_col(aes(contribution, word), show.legend = FALSE) +
+  scale_y_reordered() +
+  facet_wrap(vars(dic), scales = "free")
+```
+
+## Further links
+
+* [Sentiment analysis with `tidytext`](https://www.tidytextmining.com/sentiment.html).
+* [Tutorial by Chris Bail](https://cbail.github.io/SICSS_Dictionary-Based_Text_Analysis.html) -- also on [YouTube](https://www.youtube.com/watch?v=wSIi2ZRKjaE).
+* [German Emotion Dictionary](http://www.romanklinger.de/emotion/)
+* A [list of (German) dictionaries](https://sites.google.com/site/iggsahome/downloads).
+
+## Exercises
+
+Take the Twitter data set from last week. Filter out all tweets dealing with abortion.
+
+1. Which party's members tweeted more negatively? Try two strategies:
+  a. take the average of the overall terms depending on the party.
+  b. determine individual Tweets' sentiment and then compare shares between parties. 
+  c. do the results differ?
+  
+2. Look at the contributing words. Why is it difficult to draw exact inferences here?
+
+<details>
+  <summary>Solution. Click to expand!</summary>
+
+```{r eval=FALSE}
+library(tidyverse)
+library(rvest)
+library(janitor)
+library(tidytext)
+
+rep_overview <- read_html("https://pressgallery.house.gov/member-data/members-official-twitter-handles") %>% 
+  html_table() %>% 
+  pluck(1)
+
+colnames(rep_overview) <- rep_overview[1, ]
+
+rep_overview <- slice(rep_overview, -1) %>%
+  clean_names() %>% 
+  mutate(twitter_handle = str_remove(twitter_handle, "\\@"))
+
+keywords <- c("abortion", "prolife", " roe ", " wade ", "roevswade", "baby", "fetus", "womb", "prochoice")
+
+tweets_abortion <- read_csv("data/congress_tweets_2022.csv") %>% 
+  left_join(rep_overview %>% select(twitter_handle, party)) %>% 
+  filter(str_detect(text, pattern = str_c(keywords, collapse = "|")) & 
+         party %in% c("D", "R"))
+
+tweets_abortion_tidy <- tweets_abortion %>% 
+  select(date, text, party) %>% 
+  rowid_to_column("doc_id") %>% 
+  unnest_tokens(word, text)
+#1
+#a
+sent_per_party <- tweets_abortion_tidy %>% 
+  inner_join(get_sentiments("afinn")) %>% 
+  mutate(word_sent = case_when(value > 0 ~ "positive",
+                                value < 0 ~ "negative"))
+sent_per_party %>% 
+  ggplot() +
+  geom_bar(aes(word_sent)) +
+  facet_wrap(vars(party))         
+         
+#b
+sent_per_doc <- tweets_abortion_tidy %>% 
+  inner_join(get_sentiments("afinn")) %>% 
+  group_by(doc_id, party) %>% 
+  summarize(mean_sent = mean(value)) %>% 
+  mutate(tweet_sent = case_when(mean_sent > 0 ~ "positive",
+                                mean_sent < 0 ~ "negative",
+                                TRUE ~ "neutral"))
+
+sent_per_doc %>% 
+  ggplot() +
+  geom_bar(aes(tweet_sent)) +
+  facet_wrap(vars(party))
+
+
+#2
+tweets_abortion_tidy_contribution <- tweets_abortion_tidy %>% 
+  inner_join(get_sentiments("afinn")) %>% 
+  group_by(party, word) %>%
+  summarize(contribution = sum(value))
+
+bind_rows(
+  tweets_abortion_tidy_contribution %>% 
+    filter(party == "D") %>% 
+    slice_max(contribution, n = 10, with_ties = FALSE) %>% 
+    mutate(type = "pos"),
+  tweets_abortion_tidy_contribution %>% 
+    filter(party == "D") %>% 
+    slice_min(contribution, n = 10, with_ties = FALSE) %>% 
+    mutate(type = "neg"),
+  tweets_abortion_tidy_contribution %>% 
+    filter(party == "R") %>% 
+    slice_max(contribution, n = 10, with_ties = FALSE) %>% 
+    mutate(type = "pos"),
+  tweets_abortion_tidy_contribution %>% 
+    filter(party == "R") %>% 
+    slice_min(contribution, n = 10, with_ties = FALSE) %>% 
+    mutate(type = "neg")
+) %>% 
+  mutate(word = reorder_within(word, contribution, party)) %>%
+  ggplot() +
+  geom_col(aes(contribution, word), show.legend = FALSE) +
+    scale_y_reordered() +
+    facet_wrap(vars(party, type), scales = "free")
+  
+```
+</details>
+
+<!--chapter:end:04-dictionary_based_sentiment_analysis.Rmd-->
+
+# Supervised Classification {#supervisedml}
+
+```{r echo=FALSE}
+#vembedr::embed_youtube()
+```
+
+In the following script, I will introduce you to the supervised classification of text. Supervised means that I will need to "show" the machine a data set that already contains the value or label I want to predict (the "dependent variable") as well as all the variables that are used to predict the class/value (the independent variables or, in ML lingo, *features*). In the examples I will showcase, the features are the tokens that are contained in a document. Dependent variables are in my example sentiment.
+
+Overall, the process of supervised classification using text in R encompasses the following steps: 
+
+1. Split data into training and test set
+2. Pre-processing and featurization
+3. Training
+4. Evaluation and tuning (through cross-validation)
+(… repeat 2.-4. as often as necessary)
+5. Applying the model to the held-out test set
+6. Final evaluation
+
+This is mirrored in the `workflow()` function from the `workflow` [@vaughan2022] package. There, you define the pre-processing procedure (`add_recipe()` -- created through the `recipe()` function from the `recipes` [@kuhn2022] and/or `textrecipes` [@hvitfeldt2022a] package(s)), the model specification with `add_spec()` -- taking a model specification as created by the `parsnip` [@kuhn2022a] package.
+
+![Workflow overview](figures/workflow.png)
+
+In the next part, other approaches such as Support Vector Machines (SVM), penalized logistic regression models (penalized here means, loosely speaking, that insignificant predictors which contribute little will be shrunk and ignored -- as the text contains many tokens that might not contribute much, those models lend themselves nicely to such tasks), random forest models, or XGBoost will be introduced. Those approaches are not to be explained in-depth, third-party articles will be linked though, but their intuition and the particularities of their implementation will be described. Since I use the `tidymodels` [@kuhn2020] framework for implementation, trying out different approaches is straightforward. Also, the pre-processing differs, `recipes` and `textrecipes` facilitate this task decisively. Third, the evaluation of different classifiers will be described. Finally, the entire workflow will be demonstrated using the abortion Tweet data set.
+
+## Split data 
+
+The example for today's session is the IMDb data set. First, I load a whole bunch of packages and the data set.
+
+```{r message=FALSE, warning=FALSE}
+library(tidymodels)
+library(textrecipes)
+library(workflows)
+library(discrim)
+library(glmnet)
+library(tidytext)
+library(tidyverse)
+
+imdb_data <- read_csv("data/imdb_reviews.csv")
+```
+
+The first step is to divide the data into training and test sets using `initial_split()`. You need to make sure that the test and training set are fairly balanced which is achieved by using `strata =`. `prop =` refers to the proportion of rows that make it into the training set.
+
+```{r}
+split <- initial_split(imdb_data, prop = 0.8, strata = sentiment)
+
+imdb_train <- training(split)
+imdb_test <- testing(split)
+
+glimpse(imdb_train)
+imdb_train %>% count(sentiment)
+```
+
+## Pre-processing and featurization
+
+In the `tidymodels` framework, pre-processing and featurization are performed through so-called `recipes`. For text data, so-called `textrecipes` are available. 
+
+### `textrecipes` -- basic example
+
+In the initial call, the formula needs to be provided. In my example, I want to predict the sentiment ("positive" or "negative") using the text in the review. Then, different steps for pre-processing are added. Similar to what you have learned in the prior chapters containing measures based on the bag of words assumption, the first step is usually tokenization, achieved through `step_tokenize()`. In the end, the features need to be quantified, either through `step_tf()`, for raw term frequencies, or `step_tfidf()`, for TF-IDF. In between, various pre-processing steps such as word normalization (i.e., stemming or lemmatization), and removal of rare or common words Hence, a recipe for a very basic model just using raw frequencies and the 1,000 most common words would look as follows:
+
+```{r}
+imdb_basic_recipe <- recipe(sentiment ~ text, data = imdb_train) %>% 
+  step_tokenize(text) %>% # tokenize text
+  step_tokenfilter(text, max_tokens = 1000) %>% # only retain 1000 most common words
+  # additional pre-processing steps can be added, see next chapter
+  step_tf(text) # final step: add term frequencies
+```
+
+In case you want to know what the data set for the classification task looks like, you can `prep()` and finally `bake()` the recipe. Note that I need to specify the data set I want to pre-process in the recipe's manner. In my case, I want to perform the operations on the data specified in the `basic_recipe` and, hence, need to specify `new_data = NULL`.
+
+```{r}
+imdb_basic_recipe %>% 
+  prep() %>% 
+  bake(new_data = NULL)
+```
+
+### `textrecipes` -- further preprocessing steps
+
+More steps exist. These always follow the same structure: their first two arguments are the recipe (which in practice does not matter, because they are generally used in a "pipeline") and the variable that is affected (in my example "text" because it is the one to be modified). The rest of the arguments depends on the function. In the following, I will briefly list them and their most important arguments. [add link to vignette]
+
+* `step_tokenfilter()`: filters tokens
+  + `max_times =` upper threshold for how often a term can appear (removes common words)
+  + `min_times =` lower threshold for how often a term can appear (removes rare words)
+  + `max_tokens =` maximum number of tokens to be retained; will only keep the ones that appear the most often
+  + you should filter before using `step_tf` or `step_tfidf` to limit the number of variables that are created
+* `step_lemma()`: allows you to extract the lemma
+  + in case you want to use it, make sure you tokenize via `spacyr` (by using `step_tokenize(text, engine = "spacyr"))`
+* `step_pos_filter()`: adds the Part-of-speech tags
+  + `keep_tags =` character vector that specifies the types of tags to retain (default is "NOUN", for more details see [here](https://github.com/explosion/spaCy/blob/master/spacy/glossary.py) or consult chapter \@ref(texttodata))
+  + in case you want to use it, make sure you tokenize via `spacyr` (by using `step_tokenize(text, engine = "spacyr"))`
+* `step_stem()`: stems tokens 
+  + `custom_stem =` specifies the stemming function. Defaults to `SnowballC`. Custom functions can be provided.
+  + `options =` can be used to provide arguments (stored as named elements of a list) to the stemming function. E.g., `step_stem(text, custom_stem = "SnowballC", options = list(language = "russian"))`
+* `step_stopwords()`: removes stopwords
+  + `source =` alternative stopword lists can be used; potential values are contained in `stopwords::stopwords_getsources()`
+  + `custom_stopword_source =` provide your own stopword list
+  + `language =` specify language of stop word list; potential values can be found in `stopwords::stopwords_getlanguages()`
+* `step_ngram()`: takes into account order of terms, provides more context
+  + `num_tokens =` number of tokens in n-gram -- defaults to 3 -- trigrams
+  + `min_num_tokens =` minimal number of tokens in n-gram -- `step_ngram(text, num_tokens = 3, min_num_tokens = 1)` will return all uni-, bi-, and trigrams.
+* `step_word_embeddings()`: use pre-trained embeddings for words
+  + `embeddings()`: tibble of pre-trained embeddings
+* `step_normalize()`: performs unicode normalization as a preprocessing step
+  + `normalization_form =` which Unicode Normalization to use, overview in [`stringi::stri_trans_nfc()`](https://www.rdocumentation.org/packages/stringi/versions/1.7.6/topics/stri_trans_nfc)
+* `themis::step_upsample()` takes care of unbalanced dependent variables (which need to be specified in the call)
+  + `over_ratio =` ratio of desired minority-to-minority frequencies
+
+## Model specification
+
+Now that the data is ready, the model can be specified. The `parsnip` package is used for this. It contains a model specification, the type, and the engine. For Naïve Bayes, this would look like the following (note that you will need to install the relevant packages -- here: `discrim` -- before using them): 
+
+```{r}
+nb_spec <- naive_Bayes() %>% # the initial function, coming from the parsnip package
+  set_mode("classification") %>% # classification for discrete values, regression for continuous ones
+  set_engine("naivebayes") # needs to be installed
+```
+
+Other model specifications you might deem relevant:
+
+* Logistic regression
+
+```{r}
+lr_spec <- logistic_reg() %>%
+  set_engine("glm") %>%
+  set_mode("classification")
+```
+
+* Logistic regression (penalized with Lasso):
+
+```{r}
+lasso_spec <- logistic_reg(mixture = 1) %>%
+  set_engine("glm") %>%
+  set_mode("classification") 
+```
+
+* SVM (here, `step_normalize(all_predictors())` needs to be the last step in the recipe)
+
+```{r}
+svm_spec <- svm_linear() %>%
+  set_mode("regression") %>% # can also be "classification"
+  set_engine("LiblineaR")
+```
+
+* Random Forest (with 1000 decision trees):
+
+```{r}
+rf_spec <- rand_forest(trees = 1000) %>%
+  set_engine("ranger") %>%
+  set_mode("regression") # can also be "classification"
+```
+
+* xgBoost (with 20 decision trees):
+
+```{r}
+xg_spec <- boost_tree(trees = 20) %>% 
+  set_engine("xgboost") %>%
+  set_mode("regression") # can also be classification
+```
+
+## Model training -- `workflows`
+
+A workflow can be defined to train the model. It will contain the recipe, hence taking care of the pre-processing, and the model specification. In the end, it can be used to fit the model.
+
+```{r}
+imdb_nb_wf <- workflow() %>% 
+  add_recipe(imdb_basic_recipe) %>% 
+  add_model(nb_spec)
+```
+
+It can then be fit using `fit()`.
+
+```{r}
+imdb_nb_basic <- imdb_nb_wf %>% fit(data = imdb_train)
+```
+
+
+## Model evaluation
+
+Now that a first model has been trained, its performance can be evaluated. In theory, I have a test set for this. However, the test set is precious and should only be used once I am sure that I have found a good model. Hence, for these intermediary tuning steps, I need to come up with another solution. So-called cross-validation lends itself nicely to this task. The rationale behind it is that chunks from the training set are used as test sets. So, in the case of 10-fold cross-validation, the test set is divided into 10 distinctive chunks of data. Then, 10 models are trained on the respective 9/10 of the training set that is not used for evaluation. Finally, each model is evaluated against the respective held-out "test set" and the performance metrics averaged.
+
+![Graph taken from https://scikit-learn.org/stable/modules/cross_validation.html/](https://scikit-learn.org/stable/_images/grid_search_cross_validation.png)
+
+First, the folds need to be determined. I set a seed in the beginning to ensure reproducibility.
+```{r}
+library(tune)
+set.seed(123)
+imdb_folds <- vfold_cv(imdb_train)
+```
+
+`fit_resamples()` trains models on the respective samples. (Note that for this to work, no model must have been fit to this workflow before. Hence, you either need to define a new workflow first or restart the session and skip the fit-line from before.)
+
+```{r}
+imdb_nb_resampled <- fit_resamples(
+  imdb_nb_wf,
+  imdb_folds,
+  control = control_resamples(save_pred = TRUE),
+  metrics = metric_set(accuracy, recall, precision)
+)
+```
+
+`collect_metrics()` can be used to evaluate the results. 
+
+* Accuracy tells me the share of correct predictions overall
+* Precision tells me the number of correct positive predictions
+* Recall tells me how many actual positives are predicted properly
+
+In all cases, values close to 1 are better. 
+
+`collect_predictions()` will give you the predicted values. 
+
+```{r}
+nb_rs_metrics <- collect_metrics(imdb_nb_resampled)
+nb_rs_predictions <- collect_predictions(imdb_nb_resampled)
+```
+
+This can also be used to create the confusion matrix by hand.
+
+```{r}
+confusion_mat <- nb_rs_predictions %>% 
+  group_by(id) %>% 
+  mutate(confusion_class = case_when(.pred_class == "positive" & sentiment == "positive" ~ "TP",
+                                     .pred_class == "positive" & sentiment == "negative" ~ "FP",
+                                     .pred_class == "negative" & sentiment == "negative" ~ "TN",
+                                     .pred_class == "negative" & sentiment == "positive" ~ "FN")) %>% 
+  count(confusion_class) %>% 
+  ungroup() %>% 
+  pivot_wider(names_from = confusion_class, values_from = n)
+```
+
+Now you can go back and adapt the pre-processing recipe, fit a new model, or try a different classifier, and evaluate it against the same set of folds. Once you are satisfied, you can proceed to check the workflow on the held-out test data. 
+
+### Hyperparameter tuning
+
+Some models also require the tuning of hyperparameters (for instance, lasso regression). If I wanted to tune these values, I could do so using the `tune` package. There, the parameter that needs to be tuned gets a placeholder in the model specification. Through variation of the placeholder, the optimal solution can be empirically determined.
+
+So, in the first example, I will try to determine a good penalty value for LASSO regression. 
+
+```{r}
+lasso_tune_spec <- logistic_reg(penalty = tune(), mixture = 1) %>%
+  set_mode("classification") %>%
+  set_engine("glmnet")
+```
+
+I will also play with the numbers of tokens to be included:
+
+```{r}
+imdb_tune_basic_recipe <- recipe(sentiment ~ text, data = imdb_train) %>% 
+  step_tokenize(text) %>%
+  step_tokenfilter(text, max_tokens = tune()) %>% 
+  step_tf(text)
+```
+
+The `dials` [@kuhn2022b] package provides the handy `grid_regular()` function which chooses suitable values for certain parameters. 
+
+```{r}
+lambda_grid <- grid_regular(
+  penalty(range = c(-4, 0)), 
+  max_tokens(range = c(1e3, 2e3)),
+  levels = c(penalty = 3, max_tokens = 2)
+)
+```
+
+Then, I need to define a new workflow, too. 
+
+```{r}
+lasso_tune_wf <- workflow() %>% 
+  add_recipe(imdb_tune_basic_recipe) %>%
+  add_model(lasso_tune_spec)
+```
+
+For the resampling, I can use tune_grid() which will use the workflow, a set of folds (I use the ones I created earlier), and a grid containing the different parameters. 
+
+```{r eval=FALSE}
+set.seed(123)
+tune_lasso_rs <- tune_grid(
+  lasso_tune_wf,
+  imdb_folds,
+  grid = lambda_grid,
+  metrics = metric_set(accuracy, sensitivity, specificity)
+)
+```
+
+```{r include=FALSE}
+tune_lasso_rs <- read_rds("data/tuned_lasso.rds")
+```
+
+
+Again, I can access the resulting metrics using `collect_metrics()`:
+
+```{r}
+collect_metrics(tune_lasso_rs)
+```
+
+`autoplot()` can be used to visualize them:
+
+```{r}
+autoplot(tune_lasso_rs) +
+  labs(
+    title = "Lasso model performance across 3 regularization penalties"
+  )
+```
+
+Also, I can use `show_best()` to look at the best result. Subsequently, `select_best()` allows me to choose it. In real life, I would choose the best trade-off between a model as simple and as good as possible. Using `select_by_pct_loss()`, I choose the one that performs still more or less on par with the best option (i.e., within 2 percent accuracy) but is considerably simpler. Finally, once I am satisfied with the outcome, I can `finalize_workflow()` and fit the final model to the test data.
+
+```{r}
+show_best(tune_lasso_rs, "accuracy")
+
+final_lasso_imdb <- finalize_workflow(lasso_tune_wf, select_by_pct_loss(tune_lasso_rs, metric = "accuracy", -penalty))
+```
+
+## Final fit
+
+Now I can finally fit my model to the training data and predict on the test data. `last_fit()` is the way to go. It takes the workflow and the split (as defined by `initial_split()`) as parameters.
+
+```{r}
+final_fitted <- last_fit(final_lasso_imdb, split)
+
+collect_metrics(final_fitted)
+
+collect_predictions(final_fitted) %>%
+  conf_mat(truth = sentiment, estimate = .pred_class) %>%
+  autoplot(type = "heatmap")
+```
+
+## Further links
+
+* Check out the [SMLTAR book](https://smltar.com)
+* More on [tidymodels](https://www.tidymodels.org)
+* Basic [descriptions of ML models](https://www.simplilearn.com/10-algorithms-machine-learning-engineers-need-to-know-article)
+* More on prediction with text using [tidymodels](https://www.tidymodels.org/learn/work/tune-text/)
+
+## Exercises
+
+1. "fake prediction challenge": use the Twitter data provided on Moodle ("twitter-set") and train a model that predicts partisanship. Play around with different parameters such as the inclusion of n-grams, stemming/lemmatization, different numbers of tokens, and tf-idf weighting. Use different classification models such as Random Forest, Naive Bayes, SVM (don't forget to `step_normalize()`!), and xgBoost. How well do your models perform on the test set? Form groups of 2 or 3, use seed "123" for training/test set splitting to ensure replicability and try to get the highest accuracy scores in cross-validation. Never touch the test set, as I will do this. The winner group gets a surprise gift in our last session.
+
+```{r eval=FALSE}
+tweets <- read_csv(tweets, "data/twitter-set.csv")
+
+set.seed(123)
+split_tweets <- initial_split(tweets, strata = party)
+tweets_training <- training(split_tweets)
+#tweets_testing <- testing(split_tweets)
+```
+
+  
+2. Do the same task as before, but now only take into account tweets that deal with abortion (the ones that are `TRUE` in the column `abortion`). You will have to split the set yourself. How well does your adapted model perform now? What does this mean? 
+
+
+<!--chapter:end:05-supervised_ml.Rmd-->
+
+# References
+
+::: {#refs}
+:::
+
+<!--chapter:end:06-references.Rmd-->
+

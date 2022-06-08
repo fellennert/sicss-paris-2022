@@ -1,0 +1,1181 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{book}
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{ifxetex,ifluatex}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={Text Mining for Social Scientists},
+  pdfauthor={Felix Lennert},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{5}
+\usepackage{booktabs}
+\ifluatex
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\usepackage[]{natbib}
+\bibliographystyle{plainnat}
+
+\title{Text Mining for Social Scientists}
+\author{Felix Lennert}
+\date{2022-04-07}
+
+\begin{document}
+\maketitle
+
+{
+\setcounter{tocdepth}{1}
+\tableofcontents
+}
+\hypertarget{introduction}{%
+\chapter{Introduction}\label{introduction}}
+
+Dear student,
+
+if you read this script, you are either participating in one of my courses on digital methods for the social sciences, or at least interested in this topic. If you have any questions or remarks regarding this script, hit me up at \href{mailto:felix.lennert@ensae.fr}{\nolinkurl{felix.lennert@ensae.fr}}.
+
+\hypertarget{outline}{%
+\section{Outline}\label{outline}}
+
+This script will introduce you to the quantitative analysis of text using R. Through the last decades, more and more text has been readily available. Think for example of Social Networking Platforms, online fora, Google Books, newspaper articles, or the fact that YouTube can generate subtitles for all of its videos or the fact that administrative records are increasingly digitized. Social scientists of course have decades of experience analyzing these things, yet they used to be constrained by data availability and, hence, their data sets used to be way smaller and could be processed by humans. In order to make the most out of the newly available data sets I mentioned above and to repurpose them for social scientific research, we need to use tools from the information and computer sciences. Some are fairly old such as basic dictionary-based sentiment analysis whose precursors were introduced in the 1960s, others as recent as early 2000s (LDA) or even 2014 (word2vec).
+
+In specific, this script will cover the pre-processing of text, the implementation of supervised and unsupervised approaches to text, and in the end I will briefly touch upon word embeddings and how social science can use them for inquiry.
+
+The following chapters draw heavily on packages from the \texttt{tidyverse} \citep{wickham2019c}, \texttt{tidytext} \citep{silge2016}, and \texttt{tidymodels} \citep{kuhn2020}, as well as the two excellent books ``Text Mining with R: A Tidy Approach'' \citep{silge2017} and ``Supervised Machine Learning for Text Analysis in R'' \citep{hvitfeldt2022}. Examples and inspiration is often drawn from blog posts and/or other tutorials, and I will give credit wherever credit is due. Moreover, you will find further readings at the end of each section as well as exercises at the end of the respective chapter.
+
+Not that you haven't made it here anyway, but let me briefly dwell on why you should hone your R.
+
+\hypertarget{why-r}{%
+\section{Why R}\label{why-r}}
+
+You may wonder why it makes sense for you to learn R and there are many people with way brighter minds and better ways with words than I who have thought and written about this topic. I will just briefly dwell upon the points that I find most interesting from a research perspective (I would consider myself a computational social scientist of sorts) and then link to resources which point out how R can contribute to your research/career development/pursuit of happiness/you name it depending on your background and your goals.
+
+\hypertarget{reproducibility}{%
+\subsection{Reproducibility}\label{reproducibility}}
+
+In science, we are facing what has been famously coined the \href{https://www.wired.com/story/social-science-reproducibility/}{``replication crisis''}. One way to overcome it is maximum transparency \citep{munafo2017}. Here, R can help transparency as it allows researchers to simply publish their code to make it easy for their colleagues to comprehend what sorts of analyses have exactly been performed. Moreover, publishing (R) code decisively facilitates replicating the actual analyses with different data to assess the transportability and generalizability of the results.
+
+\hypertarget{its-free-and-community-based}{%
+\subsection{It's free and community-based}\label{its-free-and-community-based}}
+
+While licences for applications such as Stata and IBM SPSS are costly for schools and companies, R comes at no cost\footnote{RStudio charges companies from the private sector yet is free for educational institutions and private users}. Moreover, the useRs (how R users call themselves) community is constantly developing further packages to extend Rs functionality \emph{for free}. Also, you can write your own packages or functions if you want to extend your R's functionality -- and then publish them to contribute to the community. Hence, there will not be any need to pay for an R extension or update ever.
+
+\hypertarget{jobs}{%
+\subsection{Jobs}\label{jobs}}
+
+Data scientist has been considered the \href{https://hbr.org/2012/10/data-scientist-the-sexiest-job-of-the-21st-century}{``sexiest job of the 21st century''} and one of their sharpest tools in the shed is R. The following graphs stem from a \href{http://r4stats.com/articles/popularity/}{blog entry by the statistician Robert Muenchen}.
+
+\includegraphics{https://i2.wp.com/r4stats.com/wp-content/uploads/2019/05/Fig-1a-IndeedJobs-2019-1.png}
+
+Moreover, the demand for R has been constantly growing throughout the last couple of years.
+
+\includegraphics{https://i2.wp.com/r4stats.com/wp-content/uploads/2019/05/Fig-1c-IndeedJobs-2019.png}
+
+Note that stuff such as \href{https://tensorflow.rstudio.com}{Tensorflow} and \href{https://keras.rstudio.com}{Keras} are also implemented in R, so R definitely will give you an edge on the job market.
+
+And also if your goal is to stay in academia, the tendency appears to be clear:
+
+\includegraphics{https://i2.wp.com/r4stats.com/wp-content/uploads/2017/06/Fig_2d_ScholarlyImpact2016.png}
+
+\hypertarget{further-links}{%
+\section{Further links}\label{further-links}}
+
+Each chapter will contain a \emph{Further links} section, where I include useful online resources which you can consume to delve deeper into the matters discussed in the respective chapter.
+
+\begin{itemize}
+\tightlist
+\item
+  Not convinced yet? If you strive for a career in business analytics, let \href{https://www.business-science.io/business/2020/12/17/six-reasons-to-use-R-for-business-2021.html}{this article} sink in.
+\item
+  If you worry about R being too complex as you're no computer scientist, read \href{https://www.dezyre.com/article/why-is-now-the-time-to-learn-r-programming/178}{here}.
+\item
+  From an academia point of view, R is very likely to entirely take over the, at least, social sciences and you will be very likely to \href{https://campus.sagepub.com/blog/why-universities-are-switching-to-r-for-social-science}{encounter it in the future}.
+\item
+  Further material for learning covering basically each section of this script can be found on the \href{https://rstudio.cloud/learn/primers}{RStudio website}.
+\item
+  A more accessible guide to singular tidyverse packages can be found in the \texttt{introverse} R package. Find instructions for how to install and use it \href{https://spielmanlab.github.io/introverse/index.html}{online}.
+\end{itemize}
+
+\hypertarget{last-but-not-least}{%
+\section{Last but not least}\label{last-but-not-least}}
+
+Learning R -- and programming in general -- is tough. More often than not, things will not go the way you want them to go. Mostly, this is due to minor typos or the fact that R is case-sensitive. However, don't fret. Only practice makes perfekt. It is perfectly normal to not comprehend error messages. The following video illustrates this:
+
+If questions arise that a google search cannot answer, I am always only one \href{mailto:\%20felix.lennert@ensae.fr}{email} away -- and will probably just hit google right away, too, to figure something out for you.
+
+\hypertarget{text-pre-processing-string-manipulation}{%
+\chapter{Text Pre-Processing: String manipulation}\label{text-pre-processing-string-manipulation}}
+
+When working with data, a significant number of variables will be in some sort of text format. When you want to manipulate those variables, an easy approach would be exporting the data to MS Excel and then just performing those manipulations by hand. This is very time-consuming, though, and, hence, I rather recommend the R way which scales well and works fast for data sets of varying sizes.
+
+Quick reminder: a string is an element of a character vector and can be created by simply wrapping some text in back ticks:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{string }\OtherTok{\textless{}{-}} \StringTok{"Hi, how are you doing?"}
+\NormalTok{vector\_of\_strings }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"Hi, how are you doing?"}\NormalTok{, }\StringTok{"I\textquotesingle{}m doing well, HBY?"}\NormalTok{, }\StringTok{"Me too, thanks for asking."}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+The \texttt{stringr} package \citep{wickham2019b} contains a multitude of commands (49 in total) which can be used to achieve a couple of things: manipulating character vectors; operations which are sensitive to different locales; matching patterns. Basically, those goals can also be achieved with base R functions, but \texttt{stringr}'s advantage is its consistency. The makers of \texttt{stringr} describe it as
+
+\begin{quote}
+A consistent, simple and easy to use set of wrappers around the fantastic `stringi' package. All function and argument names (and positions) are consistent, all functions deal with ``NA'''s and zero length vectors in the same way, and the output from one function is easy to feed into the input of another.
+\end{quote}
+
+Every \texttt{stringr} function starts with \texttt{str\_} -- which facilitates finding the proper command: just type \texttt{str\_} and RStudio's auto-suggest function should take care of the rest (if it doesn't pop up by itself, you can trigger it by hitting the tab-key). Also, they take a vector of strings as their first argument, which facilitates using them in a \texttt{\%\textgreater{}\%}-pipeline and adding them to a \texttt{mutate()}-call.
+
+One important component of \texttt{stringr} functions is regular expressions which will be introduced later as well.
+
+\hypertarget{basic-manipulations}{%
+\section{Basic manipulations}\label{basic-manipulations}}
+
+In the following, I will introduce you to a number of different operations that can be performed on strings.
+
+\hypertarget{changing-the-case-of-the-words}{%
+\subsection{Changing the case of the words}\label{changing-the-case-of-the-words}}
+
+A basic operation is changing words' case.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(tidyverse) }\CommentTok{\#stringr is part of the core tidyverse}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --
+\end{verbatim}
+
+\begin{verbatim}
+## v ggplot2 3.3.5     v purrr   0.3.4
+## v tibble  3.1.6     v dplyr   1.0.7
+## v tidyr   1.2.0     v stringr 1.4.0
+## v readr   2.1.2     v forcats 0.5.1
+\end{verbatim}
+
+\begin{verbatim}
+## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{str\_to\_lower}\NormalTok{(vector\_of\_strings)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "hi, how are you doing?"     "i'm doing well, hby?"      
+## [3] "me too, thanks for asking."
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{str\_to\_upper}\NormalTok{(vector\_of\_strings)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "HI, HOW ARE YOU DOING?"     "I'M DOING WELL, HBY?"      
+## [3] "ME TOO, THANKS FOR ASKING."
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{str\_to\_title}\NormalTok{(vector\_of\_strings)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "Hi, How Are You Doing?"     "I'm Doing Well, Hby?"      
+## [3] "Me Too, Thanks For Asking."
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{str\_to\_sentence}\NormalTok{(vector\_of\_strings)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "Hi, how are you doing?"     "I'm doing well, hby?"      
+## [3] "Me too, thanks for asking."
+\end{verbatim}
+
+\hypertarget{determining-a-strings-length}{%
+\subsection{Determining a string's length}\label{determining-a-strings-length}}
+
+Determining the string's number of characters goes as follows:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{str\_length}\NormalTok{(vector\_of\_strings)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 22 20 26
+\end{verbatim}
+
+\hypertarget{extracting-particular-characters}{%
+\subsection{Extracting particular characters}\label{extracting-particular-characters}}
+
+Characters can be extracted (by position) using \texttt{str\_sub}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{str\_sub}\NormalTok{(vector\_of\_strings, }\AttributeTok{start =} \DecValTok{1}\NormalTok{, }\AttributeTok{end =} \DecValTok{5}\NormalTok{) }\CommentTok{\# extracting first to fifth character}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "Hi, h" "I'm d" "Me to"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{str\_sub}\NormalTok{(vector\_of\_strings, }\AttributeTok{start =} \SpecialCharTok{{-}}\DecValTok{5}\NormalTok{, }\AttributeTok{end =} \SpecialCharTok{{-}}\DecValTok{1}\NormalTok{) }\CommentTok{\# extracting fifth{-}to{-}last to last character}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "oing?" " HBY?" "king."
+\end{verbatim}
+
+You can also use \texttt{str\_sub()} to replace strings. E.g., to replace the last character by a full stop, you can do the following:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{str\_sub}\NormalTok{(vector\_of\_strings, }\AttributeTok{start =} \SpecialCharTok{{-}}\DecValTok{1}\NormalTok{) }\OtherTok{\textless{}{-}} \StringTok{"."}
+\NormalTok{vector\_of\_strings}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "Hi, how are you doing."     "I'm doing well, HBY."      
+## [3] "Me too, thanks for asking."
+\end{verbatim}
+
+However, in everyday use you would probably go with \texttt{str\_replace()} and regular expressions.
+
+\hypertarget{concatenating-strings}{%
+\subsection{Concatenating strings}\label{concatenating-strings}}
+
+Similar to how \texttt{c()} puts together different elements (or vectors of length 1) into a single vector, \texttt{str\_c()} can be used to concatenate several strings into a single string. This can, for instance, be used to write some birthday invitations.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{names }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"Inger"}\NormalTok{, }\StringTok{"Peter"}\NormalTok{, }\StringTok{"Kalle"}\NormalTok{, }\StringTok{"Ingrid"}\NormalTok{)}
+
+\FunctionTok{str\_c}\NormalTok{(}\StringTok{"Hi"}\NormalTok{, names, }\StringTok{"I hope you\textquotesingle{}re doing well. As per this letter, I invite you to my birthday party."}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "HiIngerI hope you're doing well. As per this letter, I invite you to my birthday party." 
+## [2] "HiPeterI hope you're doing well. As per this letter, I invite you to my birthday party." 
+## [3] "HiKalleI hope you're doing well. As per this letter, I invite you to my birthday party." 
+## [4] "HiIngridI hope you're doing well. As per this letter, I invite you to my birthday party."
+\end{verbatim}
+
+Well, this looks kind of ugly, as there are no spaces and commas are lacking as well. You can fix that by determining a separator using the \texttt{sep} argument.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{str\_c}\NormalTok{(}\StringTok{"Hi"}\NormalTok{, names, }\StringTok{"I hope you\textquotesingle{}re doing well. As per this letter, I invite you to my birthday party."}\NormalTok{, }\AttributeTok{sep =} \StringTok{", "}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "Hi, Inger, I hope you're doing well. As per this letter, I invite you to my birthday party." 
+## [2] "Hi, Peter, I hope you're doing well. As per this letter, I invite you to my birthday party." 
+## [3] "Hi, Kalle, I hope you're doing well. As per this letter, I invite you to my birthday party." 
+## [4] "Hi, Ingrid, I hope you're doing well. As per this letter, I invite you to my birthday party."
+\end{verbatim}
+
+You could also collapse the strings contained in a vector together into one single string using the \texttt{collapse} argument.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{str\_c}\NormalTok{(names, }\AttributeTok{collapse =} \StringTok{", "}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "Inger, Peter, Kalle, Ingrid"
+\end{verbatim}
+
+This can also be achieved using the \texttt{str\_flatten()} function.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{str\_flatten}\NormalTok{(names, }\AttributeTok{collapse =} \StringTok{", "}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "Inger, Peter, Kalle, Ingrid"
+\end{verbatim}
+
+\hypertarget{repetition}{%
+\subsection{Repetition}\label{repetition}}
+
+Repeating (or duplicating) strings is performed using \texttt{str\_dup()}. The function takes two arguments: the string to be duplicated and the number of times.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{str\_dup}\NormalTok{(}\StringTok{"felix"}\NormalTok{, }\DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "felixfelix"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{str\_dup}\NormalTok{(}\StringTok{"felix"}\NormalTok{, }\DecValTok{1}\SpecialCharTok{:}\DecValTok{3}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "felix"           "felixfelix"      "felixfelixfelix"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{str\_dup}\NormalTok{(names, }\DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "IngerInger"   "PeterPeter"   "KalleKalle"   "IngridIngrid"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{str\_dup}\NormalTok{(names, }\DecValTok{1}\SpecialCharTok{:}\DecValTok{4}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "Inger"                    "PeterPeter"              
+## [3] "KalleKalleKalle"          "IngridIngridIngridIngrid"
+\end{verbatim}
+
+\hypertarget{removing-unnecessary-whitespaces}{%
+\subsection{Removing unnecessary whitespaces}\label{removing-unnecessary-whitespaces}}
+
+Often text contains unnecessary whitespaces.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{unnecessary\_whitespaces }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"    on the left"}\NormalTok{, }\StringTok{"on the right    "}\NormalTok{, }\StringTok{"    on both sides   "}\NormalTok{, }\StringTok{"   literally    everywhere  "}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Removing the ones at the beginning or the end of a string can be accomplished using \texttt{str\_trim()}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{str\_trim}\NormalTok{(unnecessary\_whitespaces, }\AttributeTok{side =} \StringTok{"left"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "on the left"               "on the right    "         
+## [3] "on both sides   "          "literally    everywhere  "
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{str\_trim}\NormalTok{(unnecessary\_whitespaces, }\AttributeTok{side =} \StringTok{"right"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "    on the left"            "on the right"              
+## [3] "    on both sides"          "   literally    everywhere"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{str\_trim}\NormalTok{(unnecessary\_whitespaces, }\AttributeTok{side =} \StringTok{"both"}\NormalTok{) }\CommentTok{\# the default option}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "on the left"             "on the right"           
+## [3] "on both sides"           "literally    everywhere"
+\end{verbatim}
+
+\texttt{str\_trim()} could not fix the last string though, where unnecessary whitespaces were also present in between words. Here, \texttt{str\_squish} is more appropriate. It removes leading or trailing whitespaces as well as duplicated ones in between words.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{str\_squish}\NormalTok{(unnecessary\_whitespaces)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "on the left"          "on the right"         "on both sides"       
+## [4] "literally everywhere"
+\end{verbatim}
+
+\hypertarget{regular-expressions}{%
+\section{Regular expressions}\label{regular-expressions}}
+
+Up to now, you have been introduced to the more basic functions of the \texttt{stringr} package. Those are useful, for sure, yet limited. However, to make use of the full potential of \texttt{stringr}, you will first have to get acquainted to regular expressions (also often abbreviated as ``regex'' with plural ``regexes'').
+
+Those regular expressions are patterns that can be used to describe certain strings. Hence, if you want to replace certain words with another one, you can write the proper regex and it will identify the strings you want to replace and the \texttt{stringr} function (i.e., \texttt{str\_replace()}) will take care of the rest. Exemplary use cases of regexes are the identification of phone numbers, email addresses, or whether a password you choose on a web page consists of enough characters, an upper-case character, and at least one special character.
+
+Before you dive into regexes, beware that they are quite complicated in the beginning (honestly, I was quite overwhelmed when I encountered them first). Yet, mastering them is very rewarding and will definitely pay off in the future.
+
+\hypertarget{literal-characters}{%
+\subsection{Literal characters}\label{literal-characters}}
+
+The most basic regex patterns consist of literal characters only. \texttt{str\_view()} tells you which parts of a string match a pattern is present in the element.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{five\_largest\_cities }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"Stockholm"}\NormalTok{, }\StringTok{"Göteborg"}\NormalTok{, }\StringTok{"Malmö"}\NormalTok{, }\StringTok{"Uppsala"}\NormalTok{, }\StringTok{"Västerås"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Note that regexes are case-sensitive.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{str\_view}\NormalTok{(five\_largest\_cities, }\StringTok{"stockholm"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## PhantomJS not found. You can install it with webshot::install_phantomjs(). If it is installed, please make sure the phantomjs executable can be found via the PATH variable.
+\end{verbatim}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-17-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{str\_view}\NormalTok{(five\_largest\_cities, }\StringTok{"Stockholm"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-18-1.pdf}
+
+They also match parts of words:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{str\_view}\NormalTok{(five\_largest\_cities, }\StringTok{"borg"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-19-1.pdf}
+
+Moreover, they are ``greedy,'' they only match the first occurrence (in ``Stockholm''):
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{str\_view}\NormalTok{(five\_largest\_cities, }\StringTok{"o"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-20-1.pdf}
+
+This can be addressed in the \texttt{stringr} package by using \texttt{str\_.\_all()} function -- but more on that later.
+
+If you want to match multiple literal characters (or words, for that sake), you can connect them using the \texttt{\textbar{}} meta character (more on meta characters later).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{str\_view}\NormalTok{(five\_largest\_cities, }\StringTok{"Stockholm|Göteborg"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-21-1.pdf}
+
+Every letter of the English alphabet (or number/or combination of those) can serve as a literal character. Those literal characters \emph{match themselves}. This is, however, not the case with the other sort of characters, so-called meta characters.
+
+\hypertarget{metacharacters}{%
+\subsection{Metacharacters}\label{metacharacters}}
+
+When using regexes, the following characters are considered meta characters and have a special meaning:
+
+\texttt{.\ \textbackslash{}\ \textbar{}\ (\ )\ \{\ \}\ {[}\ {]}\ \^{}\ \$\ -\ *\ +\ ?}
+
+\hypertarget{the-wildcard}{%
+\subsubsection{The wildcard}\label{the-wildcard}}
+
+Did you notice how I used the dot to refer to the entirety of the \texttt{str\_.\_all()} functions? This is basically what the \texttt{.} meta-character does: it matches every character except for a new line. The first call extracts all function names from the \texttt{stringr} package, the second one shows the matches (i.e., the elements of the vector where it can find the pattern).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{stringr\_functions }\OtherTok{\textless{}{-}} \FunctionTok{ls}\NormalTok{(}\StringTok{"package:stringr"}\NormalTok{)}
+
+\FunctionTok{str\_detect}\NormalTok{(stringr\_functions, }\StringTok{"str\_.\_all"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  [1] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+## [13] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+## [25] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+## [37] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+## [49] FALSE FALSE FALSE FALSE
+\end{verbatim}
+
+Well, as you can see, there are none. This is due to the fact that the \texttt{.} can only replace one character. We need some sort of multiplier to find them. The ones available are:
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{?} -- zero or one
+\item
+  \texttt{*} -- zero or more
+\item
+  \texttt{+} -- one or more
+\item
+  \texttt{\{n\}} -- exactly n
+\item
+  \texttt{\{n,\}} -- n or more
+\item
+  \texttt{\{n,m\}} -- between n and m
+\end{itemize}
+
+In our case, the appropriate one is \texttt{+}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{str\_detect}\NormalTok{(stringr\_functions, }\StringTok{"str\_.+\_all"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  [1] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+## [13] FALSE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE FALSE
+## [25]  TRUE FALSE FALSE FALSE  TRUE FALSE  TRUE FALSE FALSE FALSE FALSE FALSE
+## [37] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE
+## [49] FALSE FALSE FALSE FALSE
+\end{verbatim}
+
+However, if you want to match the character dot? This problem may arise when searching for clock time. A naive regex might look like this:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{vectors\_with\_time }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"13500"}\NormalTok{, }\StringTok{"13M00"}\NormalTok{, }\StringTok{"13.00"}\NormalTok{)}
+
+\FunctionTok{str\_detect}\NormalTok{(vectors\_with\_time, }\StringTok{"13.00"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] TRUE TRUE TRUE
+\end{verbatim}
+
+Yet, it matches everything. We need some sort of literal dot. Here, the meta character \texttt{\textbackslash{}} comes in handy. By putting it in front of the meta character, it does no longer has its special meaning, and is interpreted as a literal character. This procedure is referred to as ``escaping.'' Hence, \texttt{\textbackslash{}} is also referred to as the ``escape character.'' Note that you will need to escape \texttt{\textbackslash{}} as well, and therefore it will look like this: \texttt{\textbackslash{}\textbackslash{}.}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{str\_detect}\NormalTok{(vectors\_with\_time, }\StringTok{"13}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{.00"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] FALSE FALSE  TRUE
+\end{verbatim}
+
+\hypertarget{sets-of-characters}{%
+\subsection{Sets of characters}\label{sets-of-characters}}
+
+You can also define sets of multiple characters using the \texttt{{[}\ {]}} meta characters. This can be used to define multiple possible characters that can appear in the same place.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{sp\_ce }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"spice"}\NormalTok{, }\StringTok{"space"}\NormalTok{)}
+
+\FunctionTok{str\_view}\NormalTok{(sp\_ce, }\StringTok{"sp[ai]ce"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-28-1.pdf}
+
+You can also define certain ranges of characters using the \texttt{-} meta character:
+
+Same holds for numbers:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{american\_phone\_number }\OtherTok{\textless{}{-}} \StringTok{"(555) 555{-}1234"}
+
+\FunctionTok{str\_view}\NormalTok{(american\_phone\_number, }\StringTok{"}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{([:digit:]\{3\}}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{) [0{-}9]\{3\}{-}[0{-}9]\{4\}"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-30-1.pdf}
+
+There are also predefined sets of characters, for instance digits or letters, which are called \emph{character classes}. You can find them on the \href{https://github.com/rstudio/cheatsheets/blob/master/strings.pdf}{\texttt{stringr} cheatsheet}.
+
+Furthermore, you can put almost every meta character inside the square brackets without escaping them. This does not apply to the the caret (\texttt{\^{}}) in first position, the dash \texttt{-}, the closing square bracket \texttt{{]}}, and the backslash \texttt{\textbackslash{}}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{str\_view}\NormalTok{(vector\_of\_strings, }\StringTok{"[.]"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-31-1.pdf}
+
+\hypertarget{negating-sets-of-characters}{%
+\subsubsection{Negating sets of characters}\label{negating-sets-of-characters}}
+
+Sometimes you will also want to exclude certain sets of characters or words. In order to achieve this, you can use the \texttt{\^{}} meta character at the beginning of the range or set you are defining.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{str\_view}\NormalTok{(sp\_ce, }\StringTok{"sp[\^{}i]ce"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-33-1.pdf}
+
+\hypertarget{anchors}{%
+\subsection{Anchors}\label{anchors}}
+
+There is also a way to define whether you want the pattern to be present in the beginning \texttt{\^{}} or at the end \texttt{\$} of a string. \texttt{sentences} are a couple of (i.e., 720) predefined example sentences. If I were now interested in the number of sentences that begin with a ``the,'' I could write the following regex:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{shortened\_sentences }\OtherTok{\textless{}{-}}\NormalTok{ sentences[}\DecValTok{1}\SpecialCharTok{:}\DecValTok{10}\NormalTok{]}
+
+\FunctionTok{str\_view}\NormalTok{(shortened\_sentences, }\StringTok{"\^{}The"}\NormalTok{) }
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-34-1.pdf}
+
+If I wanted to know how many start with a ``The'' and end with a full stop, I could do this one:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{str\_view}\NormalTok{(shortened\_sentences, }\StringTok{"\^{}The.+}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{.$"}\NormalTok{) }
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-36-1.pdf}
+
+\hypertarget{boundaries}{%
+\subsubsection{Boundaries}\label{boundaries}}
+
+Note that right now, the regex also matches the sentence which starts with a ``These.'' In order to address this, I need to tell the machine that it should only accept a ``The'' if there starts a new word thereafter. In regex syntax, this is done using so-called boundaries. Those are defined as \texttt{\textbackslash{}b} as a word boundary and \texttt{\textbackslash{}B} as no word boundary. (Note that you will need an additional escape character as you will have to escape the escape character itself.)
+
+In my example, I would include the former if I were to search for sentences that begin with a single ``The'' and the latter if I were to search for sentences that begin with a word that starts with a ``The'' but are not ``The'' -- such as ``These.''
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{str\_view}\NormalTok{(shortened\_sentences, }\StringTok{"\^{}The}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{b.+}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{.$"}\NormalTok{) }
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-37-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{str\_view}\NormalTok{(shortened\_sentences, }\StringTok{"\^{}The}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{B.+}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{.$"}\NormalTok{) }
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-37-2.pdf}
+
+\hypertarget{lookarounds}{%
+\subsubsection{Lookarounds}\label{lookarounds}}
+
+A final common task is to extract certain words or values based on what comes before or after them. Look at the following example:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{heights }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"1m30cm"}\NormalTok{, }\StringTok{"2m01cm"}\NormalTok{, }\StringTok{"3m10cm"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Here, in order to identify the height in meters, the first task is to identify all the numbers that are followed by an ``m''. The regex syntax for this looks like this: \texttt{A(?=pattern)} with \texttt{A} being the entity that is supposed to be found (hence, in this case, {[}0-9{]}+).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{str\_view}\NormalTok{(heights, }\StringTok{"[0{-}9]+(?=m)"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-40-1.pdf}
+
+The second step now is to identify the centimeters. This could of course be achieved using the same regex and replacing \texttt{m} by \texttt{cm}. However, we can also harness a so-called negative look ahead \texttt{A(?!pattern)}, a so-called look behind \texttt{(?\textless{}=pattern)A}. The negative counterpart, the negative look behind \texttt{(?\textless{}!pattern)A} could be used to extract the meters.
+
+The negative look ahead basically returns everything that is not followed by the defined pattern. The look behind returns everything that is preceded by the pattern, the negative look behind returns everything that is not preceded by the pattern.
+
+In the following, I demonstrate how you could extract the centimeters using negative look ahead and look behind.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{str\_view}\NormalTok{(heights, }\StringTok{"[0{-}9]+(?!m)"}\NormalTok{) }\CommentTok{\# negative look ahead}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-41-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{str\_view}\NormalTok{(heights, }\StringTok{"(?\textless{}=m)[0{-}9]+"}\NormalTok{) }\CommentTok{\# look behind}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{_main_files/figure-latex/unnamed-chunk-42-1.pdf}
+
+\hypertarget{more-advanced-string-manipulation}{%
+\section{More advanced string manipulation}\label{more-advanced-string-manipulation}}
+
+Now that you have learned about regexes, you can unleash the full power of \texttt{stringr}.
+
+The basic syntax of a \texttt{stringr} function looks as follows: \texttt{str\_.*(string,\ regex(""))}. Some \texttt{stringr} functions also have the suffix \texttt{\_all} which implies that they perform the operation not only on the first match (``greedy'') but on every match.
+
+In order to demonstrate the different functions, I will again rely on the subset of example sentences.
+
+\hypertarget{detect-matches}{%
+\subsection{Detect matches}\label{detect-matches}}
+
+\texttt{str\_detect} can be used to determine whether a certain pattern is present in the string.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{str\_detect}\NormalTok{(shortened\_sentences, }\StringTok{"The}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{b"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  [1]  TRUE FALSE FALSE FALSE FALSE  TRUE  TRUE  TRUE FALSE FALSE
+\end{verbatim}
+
+This also works very well in a \texttt{dplyr::filter()} call. Finding all action movies in the IMDB data set can be solved like this:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{imdb\_raw }\OtherTok{\textless{}{-}} \FunctionTok{read\_csv}\NormalTok{(}\StringTok{"data/imdb2006{-}2016.csv"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Rows: 1000 Columns: 12
+## -- Column specification --------------------------------------------------------
+## Delimiter: ","
+## chr (5): Title, Genre, Description, Director, Actors
+## dbl (7): Rank, Year, Runtime (Minutes), Rating, Votes, Revenue (Millions), M...
+## 
+## i Use `spec()` to retrieve the full column specification for this data.
+## i Specify the column types or set `show_col_types = FALSE` to quiet this message.
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{imdb\_raw }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{filter}\NormalTok{(}\FunctionTok{str\_detect}\NormalTok{(Genre, }\StringTok{"Action"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 303 x 12
+##     Rank Title   Genre Description Director Actors  Year `Runtime (Minu~` Rating
+##    <dbl> <chr>   <chr> <chr>       <chr>    <chr>  <dbl>            <dbl>  <dbl>
+##  1     1 Guardi~ Acti~ A group of~ James G~ Chris~  2014              121    8.1
+##  2     5 Suicid~ Acti~ A secret g~ David A~ Will ~  2016              123    6.2
+##  3     6 The Gr~ Acti~ European m~ Yimou Z~ Matt ~  2016              103    6.1
+##  4     9 The Lo~ Acti~ A true-lif~ James G~ Charl~  2016              141    7.1
+##  5    13 Rogue ~ Acti~ The Rebel ~ Gareth ~ Felic~  2016              133    7.9
+##  6    15 Coloss~ Acti~ Gloria is ~ Nacho V~ Anne ~  2016              109    6.4
+##  7    18 Jason ~ Acti~ The CIA's ~ Paul Gr~ Matt ~  2016              123    6.7
+##  8    25 Indepe~ Acti~ Two decade~ Roland ~ Liam ~  2016              120    5.3
+##  9    27 Bahuba~ Acti~ In ancient~ S.S. Ra~ Prabh~  2015              159    8.3
+## 10    30 Assass~ Acti~ When Callu~ Justin ~ Micha~  2016              115    5.9
+## # ... with 293 more rows, and 3 more variables: Votes <dbl>,
+## #   `Revenue (Millions)` <dbl>, Metascore <dbl>
+\end{verbatim}
+
+If you want to know whether there are multiple matches present in each string, you can use \texttt{str\_count}. Here, it might by advisable to set the \texttt{ignore\_case} option to \texttt{TRUE}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{str\_count}\NormalTok{(shortened\_sentences, }\FunctionTok{regex}\NormalTok{(}\StringTok{"the}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{b"}\NormalTok{, }\AttributeTok{ignore\_case =} \ConstantTok{TRUE}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  [1] 2 2 1 0 0 1 2 1 0 0
+\end{verbatim}
+
+If you want to locate the match in the string, use \texttt{str\_locate}. This returns a matrix, which is basically a vector of multiple dimensions.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{str\_locate}\NormalTok{(shortened\_sentences, }\FunctionTok{regex}\NormalTok{(}\StringTok{"The}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{b"}\NormalTok{, }\AttributeTok{ignore\_case =} \ConstantTok{TRUE}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##       start end
+##  [1,]     1   3
+##  [2,]     6   8
+##  [3,]    19  21
+##  [4,]    NA  NA
+##  [5,]    NA  NA
+##  [6,]     1   3
+##  [7,]     1   3
+##  [8,]     1   3
+##  [9,]    NA  NA
+## [10,]    NA  NA
+\end{verbatim}
+
+Moreover, this is a good example for the greediness of \texttt{stringr} functions. Hence, it is advisable to use \texttt{str\_locate\_all} which returns a list with one matrix for each element of the original vector:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{str\_locate\_all}\NormalTok{(shortened\_sentences, }\FunctionTok{regex}\NormalTok{(}\StringTok{"The}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{b"}\NormalTok{, }\AttributeTok{ignore\_case =} \ConstantTok{TRUE}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [[1]]
+##      start end
+## [1,]     1   3
+## [2,]    25  27
+## 
+## [[2]]
+##      start end
+## [1,]     6   8
+## [2,]    19  21
+## 
+## [[3]]
+##      start end
+## [1,]    19  21
+## 
+## [[4]]
+##      start end
+## 
+## [[5]]
+##      start end
+## 
+## [[6]]
+##      start end
+## [1,]     1   3
+## 
+## [[7]]
+##      start end
+## [1,]     1   3
+## [2,]    27  29
+## 
+## [[8]]
+##      start end
+## [1,]     1   3
+## 
+## [[9]]
+##      start end
+## 
+## [[10]]
+##      start end
+\end{verbatim}
+
+\hypertarget{mutating-strings}{%
+\subsection{Mutating strings}\label{mutating-strings}}
+
+Mutating strings usually implies the replacement of certain elements (e.g., words) with other elements (or removing them, which is basically a special case of replacing them). In \texttt{stringr} this is performed using \texttt{str\_replace(string,\ pattern,\ replacement)} and \texttt{str\_replace\_all(string,\ pattern,\ replacement)}.
+
+If I wanted, for instance, replace the first occurrence of ``m'' letters by ``meters,'' I would go about this the following way:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{str\_replace}\NormalTok{(heights, }\StringTok{"m"}\NormalTok{, }\StringTok{"meters"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "1meters30cm" "2meters01cm" "3meters10cm"
+\end{verbatim}
+
+Note that \texttt{str\_replace\_all} would have lead to the following outcome:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{str\_replace\_all}\NormalTok{(heights, }\StringTok{"m"}\NormalTok{, }\StringTok{"meters"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "1meters30cmeters" "2meters01cmeters" "3meters10cmeters"
+\end{verbatim}
+
+However, I also want to replace the ``cm'' with ``centimeters,'' hence, I can harness another feature of \texttt{str\_replace\_all()}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{str\_replace\_all}\NormalTok{(heights, }\FunctionTok{c}\NormalTok{(}\StringTok{"m"} \OtherTok{=} \StringTok{"meters"}\NormalTok{, }\StringTok{"cm"} \OtherTok{=} \StringTok{"centimeters"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "1meters30centimeterseters" "2meters01centimeterseters"
+## [3] "3meters10centimeterseters"
+\end{verbatim}
+
+What becomes obvious is that a ``simple'' regex containing just literal characters more often than not does not suffice. It will be your task to fix this. And while on it, you can also address the meter/meters problem -- a ``1'' needs meter instead of meters. Another feature is that the replacements are performed in order. You can harness this for solving the problem.
+
+Solution. Click to expand!
+
+Solution:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{str\_replace\_all}\NormalTok{(heights, }\FunctionTok{c}\NormalTok{(}\StringTok{"(?\textless{}=[2{-}9]\{1\})m"} \OtherTok{=} \StringTok{"meters"}\NormalTok{, }\StringTok{"(?\textless{}=[0{-}9]\{2\})m"} \OtherTok{=} \StringTok{"meters"}\NormalTok{, }\StringTok{"(?\textless{}=1)m"} \OtherTok{=} \StringTok{"meter"}\NormalTok{, }\StringTok{"(?\textless{}=01)cm$"} \OtherTok{=} \StringTok{"centimeter"}\NormalTok{, }\StringTok{"cm$"} \OtherTok{=} \StringTok{"centimeters"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "1meter30centimeters"  "2meters01centimeter"  "3meters10centimeters"
+\end{verbatim}
+
+\hypertarget{extracting-text}{%
+\subsection{Extracting text}\label{extracting-text}}
+
+\texttt{str\_extract(\_all)()} can be used to extract matching strings. In the \texttt{mtcars} data set, the first word describes the car brand. Here, I harness another regexp, the \texttt{\textbackslash{}\textbackslash{}w} which stands for any word character. Its opponent is \texttt{\textbackslash{}\textbackslash{}W} for any non-word character.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mtcars }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{rownames\_to\_column}\NormalTok{(}\AttributeTok{var =} \StringTok{"car\_model"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{transmute}\NormalTok{(}\AttributeTok{manufacturer =} \FunctionTok{str\_extract}\NormalTok{(car\_model, }\StringTok{"\^{}}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{w+}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{b"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    manufacturer
+## 1         Mazda
+## 2         Mazda
+## 3        Datsun
+## 4        Hornet
+## 5        Hornet
+## 6       Valiant
+## 7        Duster
+## 8          Merc
+## 9          Merc
+## 10         Merc
+## 11         Merc
+## 12         Merc
+## 13         Merc
+## 14         Merc
+## 15     Cadillac
+## 16      Lincoln
+## 17     Chrysler
+## 18         Fiat
+## 19        Honda
+## 20       Toyota
+## 21       Toyota
+## 22        Dodge
+## 23          AMC
+## 24       Camaro
+## 25      Pontiac
+## 26         Fiat
+## 27      Porsche
+## 28        Lotus
+## 29         Ford
+## 30      Ferrari
+## 31     Maserati
+## 32        Volvo
+\end{verbatim}
+
+\hypertarget{split-vectors}{%
+\subsection{Split vectors}\label{split-vectors}}
+
+Another use case here would have been to split it into two columns: manufacturer and model. One approach would be to use \texttt{str\_split()}. This function splits the string at every occurrence of the predefined pattern. In this example, I use a word boundary as the pattern:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{manufacturer\_model }\OtherTok{\textless{}{-}} \FunctionTok{rownames}\NormalTok{(mtcars)}
+\FunctionTok{str\_split}\NormalTok{(manufacturer\_model, }\StringTok{"}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{b"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{head}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [[1]]
+## [1] ""      "Mazda" " "     "RX4"   ""     
+## 
+## [[2]]
+## [1] ""      "Mazda" " "     "RX4"   " "     "Wag"   ""     
+## 
+## [[3]]
+## [1] ""       "Datsun" " "      "710"    ""      
+## 
+## [[4]]
+## [1] ""       "Hornet" " "      "4"      " "      "Drive"  ""      
+## 
+## [[5]]
+## [1] ""           "Hornet"     " "          "Sportabout" ""          
+## 
+## [[6]]
+## [1] ""        "Valiant" ""
+\end{verbatim}
+
+This outputs a list containing the different singular words/special characters. This doesn't make sense in this case. Here, however, the structure of the string is always roughly the same: ``\textbackslash{[}manufacturer\textbackslash{]}\textbackslash{[} \textbackslash{]}\textbackslash{[}model description\textbackslash{]}''. Moreover, the manufacturer is only one word. Hence, the task can be fixed by splitting the string after the first word, which should indicate the manufacturer. This can be accomplished using \texttt{str\_split\_fixed()}. Fixed means that the number of splits is predefined. This returns a matrix that can easily become a tibble.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{str\_split\_fixed}\NormalTok{(manufacturer\_model, }\StringTok{"(?\textless{}=}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{w)}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{b"}\NormalTok{, }\AttributeTok{n =} \DecValTok{2}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{as\_tibble}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{rename}\NormalTok{(}\AttributeTok{manufacturer =}\NormalTok{ V1,}
+         \AttributeTok{model =}\NormalTok{ V2) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{model =} \FunctionTok{str\_squish}\NormalTok{(model))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: The `x` argument of `as_tibble.matrix()` must have unique column names if `.name_repair` is omitted as of tibble 2.0.0.
+## Using compatibility `.name_repair`.
+## This warning is displayed once every 8 hours.
+## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated.
+\end{verbatim}
+
+\begin{verbatim}
+## # A tibble: 32 x 2
+##    manufacturer model       
+##    <chr>        <chr>       
+##  1 Mazda        "RX4"       
+##  2 Mazda        "RX4 Wag"   
+##  3 Datsun       "710"       
+##  4 Hornet       "4 Drive"   
+##  5 Hornet       "Sportabout"
+##  6 Valiant      ""          
+##  7 Duster       "360"       
+##  8 Merc         "240D"      
+##  9 Merc         "230"       
+## 10 Merc         "280"       
+## # ... with 22 more rows
+\end{verbatim}
+
+\hypertarget{further-links-1}{%
+\section{Further links}\label{further-links-1}}
+
+\begin{itemize}
+\tightlist
+\item
+  The \href{https://github.com/rstudio/cheatsheets/blob/master/strings.pdf}{\texttt{stringr} cheatsheet}.
+\item
+  A \href{https://www.youtube.com/watch?v=NvHjYOilOf8}{YouTube video} on regexes by Johns Hopkins professor Roger Peng.
+\item
+  And a \href{https://bookdown.org/rdpeng/rprogdatascience/regular-expressions.html\#the-stringr-package}{chapter} by Roger Peng.
+\item
+  A \href{https://regexone.com}{website for practicing regexes}.
+\item
+  You can also consult the \texttt{introverse} package if you need help with the packages covered here -- \texttt{introverse::show\_topics("stringr")} will give you an overview of the \texttt{stringr} package's functions, and \texttt{get\_help("name\ of\ function")} will help you with the respective function.
+\end{itemize}
+
+  \bibliography{tm-course.bib}
+
+\end{document}

@@ -1,0 +1,494 @@
+# Text Pre-Processing: Text to Data {#texttodata}
+
+```{r echo=FALSE}
+vembedr::embed_youtube("c0BSrLCuZS8")
+```
+
+After having learned about the basics of string manipulation, I am now turning to how you can turn your collection of documents, your corpus, into a representation that lends itself nicely to quantitative analyses of text. There are a couple of packages around which you can use for text mining, such as `quanteda` [@benoit2018], `tm` [@feinerer2008], and `tidytext` [@silge2016], the latter being probably the most recent addition to them. A larger overview of relevant packages can be found on this [CRAN Task View](https://cran.r-project.org/web/views/NaturalLanguageProcessing.html).
+
+As you could probably tell from its name, `tidytext` obeys the tidy data principles. "Every observation is a row" translates here to "every token has its own row" -- "token" not necessarily relating to a singular term, but also to so-called n-grams. In the following, I will demonstrate what text mining using tidy principles can look like in R. For this, I will first cover the preprocessing of text using tidy data principles. Thereafter, I will delve into more advanced preprocessing such as the lemmatization of words and part-of-speech (POS) tagging using `spaCy` [@benoit2020]. Finally, different R packages are using different representations of text data. Depending on the task at hand, you will therefore have to be able to transform the data into the proper format. This will be covered in the final part.
+
+## Pre-processing with `tidytext`
+
+The `sotu` package contains all of the so-called "State of the Union" addresses -- the president gives them to the congress annually -- since 1790.
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(sotu)
+sotu_raw <- sotu_meta %>% 
+  bind_cols(sotu_text) %>% 
+  rename(text = `...6`) %>% 
+  distinct(text, .keep_all = TRUE)
+
+sotu_raw %>% glimpse()
+```
+
+Now that the data are read in, I need to put them into the proper format and clean them. For this purpose, I take a look at the first entry of the tibble.
+
+```{r}
+sotu_raw %>% slice(1) %>% pull(text) %>% str_sub(1, 500)
+```
+
+### `unnest_tokens()`
+
+I will focus on the 20th-century SOTUs. Here, the `dplyr::between()` function comes in handy.
+
+```{r}
+sotu_20cent_raw <- sotu_raw %>% 
+  filter(between(year, 1900, 2000))
+```
+
+In a first step, I bring the data into a form that facilitates manipulation: a tibble. For this, I use `tidytext`'s `unnest_tokens()` function. It basically breaks the corpus up into tokens -- the respective words. In English, words are separated by whitespace. Therefore, tokenization could also be achieved doing `str_split(sep = " ")`.
+`
+```{r}
+library(tidytext)
+toy_example <- tibble(
+  text = "Look, this is a brief example for how tokenization works."
+)
+
+toy_example %>% 
+  pull(text) %>% 
+  str_split(pattern = " ") 
+
+toy_example %>% 
+  unnest_tokens(output = token, 
+                input = text)
+```
+
+Note that `unnest_tokens()` already reduces complexity for us by removing the comma and the full-stop and making everything lower-case.
+
+```{r}
+is_equal <- function(x, y) x == y
+is_equal(
+  toy_example %>% 
+    pull(text) %>% 
+    str_split(pattern = " ") %>% 
+    reduce(c) %>% 
+    str_remove_all("[:punct:]") %>% 
+    str_to_lower(),
+  toy_example %>% 
+    unnest_tokens(output = token, 
+                  input = text) %>% 
+  pull(token)
+)
+```
+
+```{r}
+sotu_20cent_tokenized <- sotu_20cent_raw %>% 
+  unnest_tokens(output = token, input = text)
+glimpse(sotu_20cent_tokenized)
+```
+
+The new tibble consists of `r sotu_20cent_tokenized %>% nrow()` rows. Please note that usually, you have to put some sort of id column into your original tibble before tokenizing it, e.g., by giving each case -- representing a document, or chapter, or whatever -- a separate id (e.g., using `tibble::rowid_to_column()`). This does not apply here, because my original tibble came with a bunch of metadata (president, year, party) which serve as sufficient identifiers.
+
+### Removal of unnecessary content
+
+The next step is to remove stop words -- they are not necessary for the analyses I want to perform. The `stopwords` package has a nice list for English.
+
+```{r}
+library(stopwords)
+stopwords_vec <- stopwords(language = "en")
+#stopwords(language = "de") # the german equivalent
+#stopwords_getlanguages() # find the languages that are available
+```
+
+Removing the stop words now is straight-forward:
+
+```{r}
+sotu_20cent_tokenized_nostopwords <- sotu_20cent_tokenized %>% 
+  filter(!token %in% stopwords_vec)
+```
+
+Another thing I forgot to remove are digits. They do not matter for the analyses either:
+
+```{r}
+sotu_20cent_tokenized_nostopwords_nonumbers <- sotu_20cent_tokenized_nostopwords %>% 
+  filter(!str_detect(token, "[:digit:]"))
+```
+
+The corpus now contains `r sotu_20cent_tokenized_nostopwords_nonumbers %>% distinct(token) %>% nrow()` different tokens, the so-called "vocabulary." `r (sotu_20cent_tokenized %>% distinct(token) %>% nrow()) - (sotu_20cent_tokenized_nostopwords_nonumbers %>% distinct(token) %>% nrow())` tokens were removed from the vocuabulary. This translates to a signifiant reduction in corpus size though, the new tibble only consists of `r sotu_20cent_tokenized_nostopwords_nonumbers %>% nrow()` rows, basically a 50 percent reduction. 
+
+
+### Stemming
+
+To decrease the complexity of the vocabulary even further, we can reduce the tokens to their stem using the `SnowballC` package and its function `wordStem()`:
+
+```{r}
+library(SnowballC)
+sotu_20cent_tokenized_nostopwords_nonumbers_stemmed <- sotu_20cent_tokenized_nostopwords_nonumbers %>% 
+  mutate(token = wordStem(token, language = "en"))
+
+#SnowballC::getStemLanguages() # if you want to know the abbreviations for other languages as well
+```
+
+Maybe I should also remove insignificant words, i.e., ones that appear less than 0.5 percent of the time. 
+
+```{r}
+sotu_20cent_tokenized_nostopwords_nonumbers_stemmed %>% 
+  group_by(token) %>% 
+  filter(n() > nrow(.)/200)
+```
+
+These steps have brought down the vocabulary from `r sotu_20cent_tokenized_nostopwords_nonumbers %>% distinct(token) %>% nrow()` to `r sotu_20cent_tokenized_nostopwords_nonumbers_stemmed %>% distinct(token) %>% nrow()`.
+
+### In a nutshell
+
+Well, all those things could also be summarized in one nice cleaning pipeline:
+
+```{r}
+sotu_20cent_clean <- sotu_raw %>% 
+  filter(between(year, 1900, 2000)) %>% 
+  unnest_tokens(output = token, input = text) %>% 
+  anti_join(get_stopwords(), by = c("token" = "word")) %>% 
+  filter(!str_detect(token, "[:digit:]")) %>% 
+  mutate(token = wordStem(token, language = "en")) %>% 
+  group_by(token) %>% 
+  filter(n() > nrow(.)/200)
+```
+
+Now I have created a nice tibble containing the SOTU addresses of the 20th century in a tidy format. This is a great point of departure for subsequent analyses.
+
+## Preprocessing with `spaCy`
+
+Similar things (and more!) can also be achieved with `spaCy` [@benoit2020]. `spacyr` is an R wrapper around the `spaCy` Python package and, therefore, a bit tricky to install at first, you can find instructions [here](https://spacyr.quanteda.io/articles/using_spacyr.html). 
+
+The functionalities `spacyr` offers you are the following^[overview copied from the webpage]: 
+
+* parsing texts into tokens or sentences;
+* lemmatizing tokens;
+* parsing dependencies (to identify the grammatical structure of the sentence); and
+* identifying, extracting, or consolidating token sequences that form named entities or noun phrases.
+
+In brief, preprocessing with `spacyr` is computationally more expensive than using, for instance, `tidytext`, but will give you more [accurate lemmatization instead of "stupid," rule-based stemming.](https://stackoverflow.com/questions/1787110/what-is-the-difference-between-lemmatization-vs-stemming). Also, it allows you to break up documents into smaller entities, sentences, which might be more suitable, e.g., as input for classifiers (since sentences tend to be about one topic, they allow for more fine-grained analyses). Part-of-speech (POS) tagging basically provides you with the functions of the different terms within the sentence. This might prove useful for tasks such as sentiment analysis. The final task `spacyr` can help you with is Named Entity Recognition (NER) which can be used for tasks such as sampling relevant documents. 
+
+### Initializing spacy
+
+Before using `spacyr`, it needs to be initialized. What happens during this process is that R basically opens a connection to Python so that it can then run the `spacyr` functions in Python's `spaCy`. Once you have set up everything properly (see [instructions](https://spacyr.quanteda.io/articles/using_spacyr.html)), you can initialize it using `spacy_initialize(model)`. Different language models can be specified and an overview can be found [here](https://spacy.io/usage/models#languages). Note that a process of `spaCy` is started when you `spacy_initialize()` and continues running in the background. Hence, once you don't need it anymore, or want to load a different model, you should `spacy_finalize()`. 
+```{r}
+library(spacyr)
+spacy_initialize(model = "en_core_web_sm")
+# to download new model -- here: French
+#spacy_finalize()
+#spacy_download_langmodel(model = "fr_core_news_sm")
+#spacy_initialize(model = "fr_core_news_sm") #check that it has worked
+
+#spacy_finalize()
+#spacy_initialize(model = "de_core_web_sm") # for German
+```
+
+### `spacy_parse()`
+
+`spacyr`'s main function is `spacy_parse()`. It takes a character vector or [TIF-compliant data frame](https://github.com/ropensci/tif). The latter is basically a tibble containing at least two columns, one named `doc_id` with unique document ids and one named `text`, containing the respective documents.
+
+```{r}
+#devtools::install_github("ropensci/tif")
+library(tif)
+
+tif_toy_example <- tibble(
+  doc_id = "doc1",
+  text = "Look, this is a brief example for how tokenization works. This second sentence allows me to demonstrate another functionality of spacy."
+)
+tif_is_corpus_df(tif_toy_example)
+
+toy_example_vec <- tif_toy_example$text
+```
+
+The output of `spacy_parse()` looks as follows:
+
+```{r}
+sotu_speeches_tif <- sotu_20cent_raw %>% 
+  mutate(doc_id = str_c("sotu", year, sep = "_"))
+
+sotu_parsed <- spacy_parse(sotu_speeches_tif %>% slice(1:3),
+                           pos = TRUE,
+                           tag = TRUE,
+                           lemma = TRUE,
+                           entity = TRUE,
+                           dependency = TRUE,
+                           nounphrase = TRUE,
+                           multithread = TRUE)
+
+```
+
+Note that this is already fairly similar to the output of `tidytext`'s `unnest_tokens()` function. The advantages are that the lemmas are more accurate, that we have a new sub-entity -- sentences --, and that there is now more information on the type and meanings of the words. 
+
+### POS tags, NER, and nounphrases
+
+The abbreviations in the `pos` column follow the format of [Universal POS tags](https://universaldependencies.org/u/pos/all.html). Entities can be extracted by passing the parsed object on to `entity_extract()`.
+
+```{r}
+entity_extract(sotu_parsed, type = "all")
+```
+
+The following entities are recognized (overview taken from [this article](https://towardsdatascience.com/explorations-in-named-entity-recognition-and-was-eleanor-roosevelt-right-671271117218)):
+
+* PERSON: People, including fictional.
+* NORP: Nationalities or religious or political groups.
+* FAC: Buildings, airports, highways, bridges, etc.
+* ORG: Companies, agencies, institutions, etc.
+* GPE: Countries, cities, states.
+* LOC: Non-GPE locations, mountain ranges, bodies of water.
+* PRODUCT: Objects, vehicles, foods, etc. (Not services.)
+* EVENT: Named hurricanes, battles, wars, sports events, etc.
+* WORK_OF_ART: Titles of books, songs, etc.
+* LAW: Named documents made into laws.
+* LANGUAGE: Any named language.
+* DATE: Absolute or relative dates or periods.
+* TIME: Times smaller than a day.
+* PERCENT: Percentage, including "%".
+* MONEY: Monetary values, including unit.
+* QUANTITY: Measurements, as of weight or distance.
+* ORDINAL: "first," "second," etc.
+* CARDINAL: Numerals that do not fall under another type.
+
+To properly represent entities in our corpus, you can use `entity_consolidate()`. This collapses words that belong to the same entity into single tokens (e.g., "the" "white" "house" becomes "the_white_house"). 
+
+```{r}
+entity_consolidate(sotu_parsed)
+```
+
+The same can be performed with noun phrases. 
+
+```{r}
+nounphrase_extract(sotu_parsed)
+```
+
+Usually, entities and noun phrases can give you a good idea of what texts are about. Therefore, you might want to only extract them without parsing the entire text.
+
+```{r}
+spacy_extract_entity(sotu_speeches_tif %>% slice(1:3))
+spacy_extract_nounphrases(sotu_speeches_tif %>% slice(1:3))
+```
+
+The `spacyr` package of course has some more functions such as dependency parsing. However, they will not be touched upon in the rest of the course and I will therefore leave them out for now. 
+
+## Converting between formats
+
+While the `tidytext` format lends itself nicely to "basic" operations and visualizations, you will have to use different representations of text data for other applications such as topic models or word embeddings. On the other hand, you might want to harness, for instance, the `ggplot2` package for visualization. In this case, you will need to project the data into a tidy format. The former operations are performed using multiple `cast_.*()` functions, the latter using the `tidy()` function from the `broom` package whose purpose is to bring data from foreign structures to tidy representations.
+
+In the following, I will briefly explain common representations and the packages that use them. Thereby, I draw heavily on the [chapter in Tidy Text Mining with R that is dedicated to the topic](https://www.tidytextmining.com/dtm.html).  
+
+### Document-term matrix
+
+A document-term matrix contains rows that represent a document and columns that represent terms. The values usually correspond to how often the term appears in the respective document.
+
+In R, a common implementation of DTMs is the `DocumentTermMatrix` class in the `tm` package. The `topicmodels` package which we will use for performing LDA comes with a collection of example data.
+
+```{r}
+library(topicmodels)
+data("AssociatedPress")
+
+class(AssociatedPress)
+AssociatedPress
+```
+
+This data set contains 2246 Associated Press articles which consist of 10,473 different terms. Moreover, the matrix is 99% sparse, meaning that 99% of word-document pairs are zero. The weighting is by term frequency, hence the values correspond to the number of appearances a word has in an article.
+
+```{r}
+AssociatedPress %>% 
+  head(2) %>% 
+  as.matrix() %>% 
+  .[, 1:10]
+```
+
+Bringing these data into a tidy format is performed as follows:
+
+```{r}
+associated_press_tidy <- tidy(AssociatedPress)
+
+glimpse(associated_press_tidy)
+```
+
+Transforming the data set into a DTM, the opposite operation, is achieved using `cast_dtm(data, document, term, value)`:
+
+```{r}
+associated_press_dfm <- associated_press_tidy %>% 
+  cast_dtm(document, term, count)
+
+associated_press_dfm %>% 
+  head(2) %>% 
+  as.matrix() %>% 
+  .[, 1:10]
+```
+
+### Document-feature matrix
+
+The so-called document-feature matrix is the data format used in the `quanteda` package. It is basically a document-term matrix, but the authors of the `quanteda` package chose the term feature over term to be more accurate: 
+
+> "We call them 'features' rather than terms, because features are more general than terms: they can be defined as raw terms, stemmed terms, the parts of speech of terms, terms after stopwords have been removed, or a dictionary class to which a term belongs. Features can be entirely general, such as ngrams or syntactic dependencies, and we leave this open-ended." 
+
+```{r}
+data("data_corpus_inaugural", package = "quanteda")
+inaug_dfm <- data_corpus_inaugural %>%
+  quanteda::tokens() %>%
+  quanteda::dfm(verbose = FALSE)
+
+inaug_dfm
+```
+
+This, again, can just be `tidy()`ed.
+
+```{r}
+inaug_tidy <- tidy(inaug_dfm)
+
+glimpse(inaug_tidy)
+```
+
+Of course, the resulting tibble can now be cast back into the DFM format using `cast_dfm(data, document, term, value)`. Here, the value corresponds to the number of appearances of the term in the respective document.
+
+```{r}
+inaug_tidy %>% 
+  cast_dfm(document, term, count)
+```
+
+### Corpus objects
+
+Another common way of storing data is in so-called corpora. This is usually a collection of raw documents and metadata. An example would be the collection of State of the Union speeches we worked with earlier. The `tm` package has a class for corpora. 
+
+```{r}
+data("acq", package = "tm")
+
+acq
+
+#str(acq %>% head(1))
+```
+
+It is basically a list containing different elements that refer to metadata or the content. This is a nice and effective framework for storing documents, yet it does not lend itself nicely for analysis with tidy tools. You can use `tidy()` to clean it up a bit:
+
+```{r}
+acq_tbl <- acq %>% 
+  tidy()
+```
+
+This results in a tibble that contains the relevant metadata and a `text` column. A good point of departure for subsequent tidy analyses.
+
+## Further links
+
+* [Tidy text mining with R](https://www.tidytextmining.com/index.html).
+* A more general [introduction by Christopher Bail](https://cbail.github.io/textasdata/Text_as_Data.html).
+* [A guide to Using spacyr](https://spacy.io/api/token#attributes).
+
+## Exercises
+
+1. Use data from the `friends` R package. Take data from the first season. Preprocess them as we did earlier, each document should be one utterance. 
+```{r eval=FALSE}
+#install.packages("friends")
+library(friends)
+
+dplyr::glimpse(friends)
+```
+
+  a. What are the 20 most used words (hint: use `count()` and `slice_max()` from the `dplyr` package)?
+  b. Who said the most words?
+  c. Remove stopwords. How does it change your results from a?
+  d. Are there any other words in your 20 most used words you would consider stopwords as they do not convey any bigger meaning? How does removing them alter your results?
+  e. Preprocess the remaining seasons and perform the analysis you did above. Could you visualize the results in a neat bar plot comparing the 5 most-used words in the different seasons? (We will learn more on this next week!)
+
+2. Use `spacyr` to investigate which countries were mentioned the most in the SOTU addresses over time in the 20th century. Do you find patterns? (step-by-step: take the SOTUs; filter them (1900--2000); spacyr::spacy_extract_entity(), filter geographical units, normalize them -- str_replace_all + pattern; plot them in ggplot2 with date on x-axis, count on y-axis, colored by country)
+
+<details>
+  <summary>Solution. Click to expand!</summary>
+
+```{r eval=FALSE}
+#1
+season_1_tokens <- friends %>% 
+  filter(season == 1) %>% 
+  unnest_tokens(token, text)
+
+#a
+season_1_tokens %>% 
+  count(token) %>% 
+  slice_max(n, n = 20)
+
+#b
+season_1_tokens %>% 
+  count(speaker) %>% 
+  arrange(-n)
+
+#c
+season_1_tokens %>% 
+  filter(!token %in% stopwords_vec) %>% 
+  count(token) %>% 
+  slice_max(n, n = 20)
+
+#d
+stopwords_friends_specific <- c("oh", "just", "know", "like", "yeah", "uh", "well", "okay", "hey", "right", "gonna", "ok")
+season_1_tokens %>% 
+  filter(!token %in% stopwords_vec) %>% 
+  filter(!token %in% stopwords_friends_specific) %>% 
+  count(token) %>% 
+  slice_max(n, n = 20)
+
+#e
+friends %>% 
+  unnest_tokens(token, text) %>% 
+  count(token, season) %>% 
+  filter(!token %in% stopwords_vec) %>% 
+  filter(!token %in% stopwords_friends_specific) %>% 
+  group_by(season) %>% 
+  slice_max(n, n = 5) %>% 
+  ungroup() %>% 
+  mutate(token = reorder_within(token, n, season)) %>% 
+  ggplot() +
+  geom_col(aes(x = n, y = token)) +
+  facet_wrap(vars(season), scales = "free") + 
+  scale_y_reordered()
+
+# 2
+spacy_initialize("en_core_web_sm")
+
+sotu_entities <- sotu_meta %>% 
+  bind_cols(sotu_text) %>% 
+  rename(text = `...6`) %>% 
+  distinct(text, .keep_all = TRUE) %>% 
+  filter(between(year, 1900, 2000)) %>% 
+  group_by(president, year) %>% 
+  summarize(text = str_c(text, collapse = " ")) %>% 
+  ungroup() %>% 
+  mutate(doc_id = str_replace(president, " ", "_") %>% 
+           str_c(., year, sep = "_")) %>% 
+  select(doc_id, text) %>% 
+  spacyr::spacy_extract_entity()
+
+replacement_pattern <- c(
+  "^America$" = "United States",
+  "^States$" = "United States",
+  "Washington" = "United States",
+  "U.S." = "United States",
+  "Viet-Nam" = "Vietnam",
+  "AMERICA" = "United States",
+  "^Britain$" = "Great Britain",
+  "^BRITAIN$" = "Great Britain",
+  "Alaska" = "US State/City",
+  "District of Columbia" = "US State/City",
+  "Hawaii" = "US State/City",
+  "California" = "US State/City",
+  "New York" = "US State/City",
+  "Mississippi" = "US State/City",
+  "Texas" = "US State/City",
+  "Chicago" = "US State/City",
+  "United States of America" = "United States",
+  "Berlin" = "Germany"
+)
+
+countries <- sotu_entities %>% 
+  filter(ent_type == "GPE") %>% 
+  mutate(country = str_remove_all(text, "The |the |a ") %>% 
+           str_replace_all(replacement_pattern),
+         year = str_extract(doc_id, "[0-9]{4}$") %>% 
+           as.numeric()) %>% 
+  filter(country != "United States",
+         country != "US State/City") %>% 
+  add_count(country) %>% 
+  filter(n >= 50) %>% 
+  count(country, year)
+
+ggplot(countries) +
+  geom_point(aes(year, n, color = country)) +
+  scale_x_continuous(breaks = c(1900, 1920, 1940, 1960, 1980, 2000))
+
+spacy_finalize()
+
+```
+
+</details>

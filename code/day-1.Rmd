@@ -1,0 +1,57 @@
+---
+title: "Day 1 -- setting up R for the coming days"
+author: "Felix Lennert"
+date: "2022-06-20"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Intro
+
+Dear student,
+the next chunk serves the purpose of preparing your machine for the days to come. In particular, it will install all the necessary packages.
+
+```{r}
+if (!"tidyverse" %in% installed.packages()[, 1]) install.packages("tidyverse")
+
+packages <- c(
+  "broom",
+  "forcats",
+  "hcandersenr",
+  "irlba",
+  "janitor",
+  "LDAvis",
+  "lubridate", 
+  "naivebayes",
+  "polite",
+  "ranger",
+  "rtweet",
+  "rvest",
+  "sotu",
+  "spacyr",
+  "stm", 
+  "stmBrowser",
+  "stmCorrViz",
+  "textdata",
+  "textrecipes",
+  "tidymodels",
+  "tidytext", 
+  "tidyverse", 
+  "topicmodels", 
+  "tsne",
+  "tune",
+  "wordcloud",
+  "workflows", 
+  "yardstick"
+  
+  )
+
+purrr::walk(packages, ~{
+  if (!.x %in% installed.packages()[, 1]) install.packages(.x)
+})
+```
+
+While we would strongly advise you to integrate RStudio projects into your workflow, it is not required for SICSS-Paris. We will work with RMarkdown (RMD) documents which facilitate working with file paths significantly insofar as they automatically assume the folder they are stored in as current working directory. Hence, make sure that the data we provide, usually csv-files, are stored in the same folder as the RMD file with the respective script. 
