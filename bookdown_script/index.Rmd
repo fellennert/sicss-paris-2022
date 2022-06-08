@@ -17,7 +17,7 @@ link-citations: yes
 always_allow_html: true
 ---
 
-# Introduction {#day1}
+# Day 0: Introduction {#day1}
 
 Dear student, 
 

@@ -1,4 +1,4 @@
-# Day 1: Scraping the web -- in an automated fashion {#day2}
+# Day 1: Scraping the web -- in an automated fashion {#day1}
 
 Notes: 
 * examples need to be adapted
@@ -15,3 +15,118 @@ Structure:
 
 ![](https://raw.githubusercontent.com/yusuzech/r-web-scraping-cheat-sheet/master/resources/functions_and_classes.png)
 
+## Application Programming Interfaces (APIs)
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+vembedr::embed_youtube("aSJ9u5gtUD4")
+```
+
+While web scraping (or *screen scraping*, as you extraxt ths stuff that appears on your screen) is certainly fun, it should be seen as a last resort. More and more web platforms provide so-called Application Programming Interfaces (APIs). 
+
+>"An application programming interface (API) is a connection between computers or between computer programs." ([Wikipedia](https://en.wikipedia.org/wiki/API))
+
+There are a bunch of different sorts of APIs, but the most common one is the REST API. REST stands for "Representational State Transfer" and describes a set of rules the API designers are supposed to obey when developing their particular interface. You can make different requests, such as *GET* content, *POST* a file to a server -- `PUT` is similar, or request to `DELETE` a file. We will ony focus on the `GET` part. 
+
+APIs basically offer you a structured way to communicate with the platform via your machine. In our use case, this means that you can get the data you want in a usually well-structured format and without all the "dirt" that you need to scrape off tediously (enough web scraping metaphors for today). With APIs you can generally quite clearly define what you want and how you want it. In R, we achieve this by using the `httr` [@wickham2020d] package. Moreover, using APIs does not bear the risk of acquiring information you are not supposed to access and you also do not need to worry about the server not being able to handle the load of your requests (usually, there are rate limits in place to address this particular issue). However, it's not all fun and games with APIs: they might give you their data in a special format, both XML and JSON are common. The former is the one `rvest` uses as well, the latter can be tamed using `jsonlite` [@ooms2020] which is to be introduced as well. Moreover, you usually have to ask the platform for permission and perhaps pay to get it. Once you have received the keys you need, you can tell R to fill them automatically, similar to how your browser knows your Amazon password etc.; `usethis` [@wickham2021] can help you with such tasks. An overview of current existing APIs can be found on [The Programmable Web](https://www.programmableweb.com/apis/directory)
+
+The best thing that can happen with APIs: some of them are so popular that people have already written specific R packages for working with them -- an overview can be found on the [ROpenSci web site](https://ropensci.org/packages/data-access/). One example for this is Twitter and the `rtweet` package [@kearney2019] which will be introduced in the end. Less work for us, great.
+
+### Obtaining their data
+
+API requests are performed using URLs. Those start with the basic address of the API (e.g., https://api.nytimes.com), followed by the endpoint that you want to use (e.g., /lists). They also contain so-called headers which are provided as key-value pairs. Those headers can contain for instance authentification tokens or different search parameters. A request to the New York Times API to obtain articles for January 2019 would then look like this: https://api.nytimes.com/svc/archive/v1/2019/1.json?api-key=yourkey.
+
+At most APIs, you will have to register first. As we will play with the New York Times API, do this [here](https://developer.nytimes.com/get-started).
+
+#### Making queries
+
+A basic query is performed using the `GET()` function. However, first you need to define the call you want to make. The different keys and values they can take can be found in the API documentation. Of course, there is also a neater way to deal with the key problem. I will show it later.
+
+```{r eval=FALSE}
+library(httr)
+key <- "qekEhoGTXqjsZnXpqHns0Vfa2U6T7ABf"
+nyt_headlines <- modify_url(
+  url = "https://api.nytimes.com/",
+  path = "svc/news/v3/content/nyt/business.json",
+  query = list(`api-key` = key))
+
+response <- GET(nyt_headlines)
+```
+
+When it comes to the NYT news API, there is the problem that the type of section is specified not in the query but in the endpoint path itself. Hence, if we were to scrape the different sections, we would have to change the path itself, e.g., through `str_c()`. 
+
+The `Status:` code you want to see here is `200` which stands for success. If you want to put it inside a function, you might want to break the function once you get a non-successful query. `http_error()` or `http_status()` are your friends here. 
+
+```{r eval=FALSE}
+response %>% http_error()
+response %>% http_status()
+```
+
+`content()` will give you the content of the request.
+
+```{r eval=FALSE}
+response %>% content()
+```
+
+What you see is also the content of the call -- which is what we want. It is in a format which we cannot work with right away, though, it is in JSON. 
+
+#### JSON
+
+The following unordered list is stolen from this [blog entry](https://www.earthdatascience.org/courses/earth-analytics/get-data-using-apis/intro-to-JSON/):
+
+* The data are in name/value pairs
+* Data objects are separated by commas
+* Curly braces {} hold objects
+* Square brackets [] hold arrays
+* Each data element is enclosed with quotes "" if it is a character, or without quotes if it is a numeric value
+
+```{r eval=FALSE}
+writeLines(rawToChar(response$content))
+```
+
+`jsonlite` helps us to bring this output into a data frame. 
+
+```{r eval=FALSE}
+library(jsonlite)
+response %>% 
+  content(as = "text") %>%
+  fromJSON()
+```
+
+#### Dealing with authentification
+
+Well, as we saw before, I basically put my official NYT API code publicly visible in this script. This is bad practice and should be avoided, especially if you work in a joint project (where everybody uses their own code) or if you put your scripts to public places (such as GitHub). The `usethis` package can help you here.
+
+```{r eval=FALSE}
+#usethis::edit_r_environ()
+Sys.getenv("nyt_api_key")
+```
+
+Hence, if we now search for articles -- find the proper parameters [here](https://developer.nytimes.com/docs/articlesearch-product/1/routes/articlesearch.json/get), we provide the key by using the `Sys.getenv` function.
+
+```{r eval=FALSE}
+modify_url(
+  url = "http://api.nytimes.com/svc/search/v2/articlesearch.json",
+  query = list(q = "Trump",
+               pub = "20161101",
+               end_date = "20161110",
+               `api-key` = Sys.getenv("nyt_api_key"))
+) %>% 
+  GET()
+```
+
+### `rtweet`
+
+Twitter is quite popular among social scientists. The main reason for this is arguably its data accessibility. For R users, the package you want to use is `rtweet` by Michael Kearney (find an overview of the different packages and their capabilities [here](https://www.rdocumentation.org/packages/rtweet/versions/0.7.0)). There is a great and quite complete [presentation demonstrating its capabilities](https://mkearney.github.io/nicar_tworkshop/#1). This presentation is a bit outdated. The main difference to the package these days is that you will not need to register an app upfront anymore. All you need is a Twitter account. When you make your first request, a browser window will open where you log on to Twitter, authorize the app, and then you can just go for it. There are certain rate limits, too, which you will need to be aware of when you try to acquire data. Rate limits and the parameters you need to specify can be found in the extensive documentation.
+
+In the following, I will just link to the respective vignettes. Please, feel free to play around with the functions yourself. As a starting point, I provide you the list of all German politicians and some tasks in exercise 3. A first introductioh gives [this vignette](https://cran.r-project.org/web/packages/rtweet/vignettes/intro.html).
+
+```{r eval=FALSE}
+library(rtweet)
+lists_members(
+  list_id = "1050737868606455810"
+)
+```
+
+## Further links
+
+* [APIs for social scientists:
+A collaborative review](https://bookdown.org/paul/apis_for_social_scientists/)

@@ -1,0 +1,506 @@
+# Day 2: Scraping the web -- in an automated fashion {#day2}
+
+In \@ref(day1) you were shown how to make calls to web pages and get responses. Moreover, you were introduced to making calls to APIs which (usually) give you content in a nice and structured manner. In this chapter, the guiding topic will be how you can extract content from web pages which give you unstructured content in a structured way. The (in our opinion) easiest way to achieve that is by harnessing the way the web is written. 
+
+## HTML 101
+
+Web content is usually written in HTML (**H**yper **T**ext **M**arkup **L**anguage). An HTML document is comprised of elements that are letting its content appear in a certain way.
+
+![The tree-like structure of an HTML document](https://www.w3schools.com/js/pic_htmltree.gif)
+
+The way these elements look is defined by so-called tags.
+
+![](https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web/HTML_basics/grumpy-cat-small.png)
+
+The opening tag is the name of the element (`p` in this case) in angle brackets, the closing tag is the same with a forward slash before the name. `p` stands for a paragraph element and would basically look like this (since RMarkdown can handle HTML tags, the second line will showcase how it would appear on a web page:
+
+`<p> My cat is very grumpy. <p/>`
+
+<p> My cat is very grumpy. <p/>
+
+The `<p>` tag makes sure that the text is standing by itself and that a line-break is included thereafter:
+
+`<p>My cat is very grumpy</p>. And so is my dog.` would look like this:
+
+<p>My cat is very grumpy</p>. And so is my dog.
+
+There do exist many types of tags indicating different kinds of elements (about 100). Every page must be in an `<html>` element with two children `<head>` and `<body>`. The former contains the page title and some meta data, the latter the contents you are actually seeing in your browser. So-called **block tags**, e.g., `<h1>` (heading 1), `<p>` (paragraph), or `<ol>` (ordered list), structure the page. **Inline tags** (`<b>` -- bold, `<a>` -- link) format text inside block tags.
+
+You can nest elements, e.g., if you want to make certain things bold, you can wrap text in `<b>`:
+
+<p>My cat is <b> very </b> grumpy</p>
+
+Then, the `<b>` element is considered the *child* of the `<p>` element. 
+
+Elements can also bear attributes:
+
+![](https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web/HTML_basics/grumpy-cat-attribute-small.png)
+
+Those attributes will not appear in the actual content. Moreover, they are super-handy for us as scrapers. Here, `class` is the attribute name and `"editor-note"` the value. Another important attribute is `id`. Combined with CSS, they control the appearance of the element on the actual page. A `class` can be used by multiple HTML elements whereas an `id` is unique. 
+
+### Selecting relevant content
+
+To scrape the web, the first step is to simply read in the web page. `rvest` then stores it in the XML format -- just another format to store information. For this, we use `rvest`'s `read_html()` function. Here, for instance, I download the Wikipedia page of U.S. American senators.
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(rvest)
+page <- read_html("https://en.wikipedia.org/wiki/List_of_current_United_States_senators")
+```
+
+To demonstrate the usage of CSS selectors, I create my own, basic web page using the `rvest` function `minimal_html()`:
+
+```{r message=FALSE, warning=FALSE}
+library(rvest)
+basic_html <- minimal_html('
+  <html>
+  <head>
+    <title>Page title</title>
+  </head>
+  <body>
+    <h1 id="first">A heading</h1>
+    <p class="paragraph">Some text &amp; <b>some bold text.</b></p>
+    <a> Some more <i> italicized text which is not in a paragraph. </i> </a>
+    <a class="paragraph">even more text &amp; <i>some italicized text.</i></p>
+    <a id="link" href="www.nyt.com"> The New York Times </a>
+  </body>
+')
+
+basic_html
+```
+
+CSS is the abbreviation for cascading style sheets and used to define the visual styling of HTML documents. CSS selectors are used to map elements in the HTML code to the relevant styles in the CSS. Hence, they define patterns that allow us to easily select certain elements on the page. CSS selectors can be used in conjunction with the `rvest` function `html_elements()` which takes as arguments the read-in page and a CSS selector. Alternatively you can also provide an XPath which is usually a bit more complicated and will not be covered in this tutorial.
+
+* `p` selects all `<p>` elements.
+
+```{r}
+basic_html %>% html_elements(css = "p")
+```
+
+* `.title` selects all elements that are of `class` "title"
+
+```{r}
+basic_html %>% html_elements(css = ".title")
+```
+
+There are no elements of `class` "title". But some of `class` "paragraph".
+
+```{r}
+basic_html %>% html_elements(css = ".paragraph")
+```
+
+* `p.paragraph` analogously takes every `<p>` element which is of `class` "paragraph". 
+
+```{r}
+basic_html %>% html_elements(css = "a.paragraph")
+```
+
+* `#link` scrapes elements that are of `id` "link"
+
+```{r}
+basic_html %>% html_elements(css = "#link")
+```
+
+You can also connect children with their parents by using the ` ` combinator. For instance, to extract the italicized text from "a.paragraph," I can do "a.paragraph i". 
+
+```{r}
+basic_html %>% html_elements(css = "a.paragraph i")
+```
+
+You can also look at the children by using `html_children()`:
+
+```{r}
+basic_html %>% html_elements(css = "a.paragraph") %>% html_children()
+```
+
+Unfortunately, web pages in the wild are usually not as easily readable as the small example one I came up with. Hence, I would recommend you to use the [SelectorGadget](javascript:(function()%7Bvar%20s=document.createElement('div');s.innerHTML='Loading...';s.style.color='black';s.style.padding='20px';s.style.position='fixed';s.style.zIndex='9999';s.style.fontSize='3.0em';s.style.border='2px%20solid%20black';s.style.right='40px';s.style.top='40px';s.setAttribute('class','selector_gadget_loading');s.style.background='white';document.body.appendChild(s);s=document.createElement('script');s.setAttribute('type','text/javascript');s.setAttribute('src','https://dv0akt2986vzh.cloudfront.net/unstable/lib/selectorgadget.js');document.body.appendChild(s);%7D)();) -- just drag it into your bookmarks list.
+
+### Scraping HTML pages with `rvest`
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+vembedr::embed_youtube("Nwx2DaEqy_c")
+```
+
+So far, I have shown you how HTML is written and how to select elements. However, what we want to achieve is extracting the data in a proper format and storing it in some sort of tibble. Therefore, we need functions that allow us to actually grab the data.
+
+The following overview taken from the [web scraping cheatsheet](https://github.com/yusuzech/r-web-scraping-cheat-sheet) shows you the basic "flow" of scraping web pages plus the corresponding functions. In this tutorial, I will limit myself to `rvest` functions. This will enable you to scrape many web pages but not all of them. Some require more advanced packages such as `RSelenium` or `httr`. 
+
+![](https://raw.githubusercontent.com/yusuzech/r-web-scraping-cheat-sheet/master/resources/functions_and_classes.png)
+
+In the first part, I will introduce you to scraping singular pages and extracting their contents. `rvest` also allows for proper sessions where you navigate on the web pages and fill out forms. This is to be introduced in the second part. 
+
+#### `html_text()` and `html_text2()`
+
+Extracting text from an HTML is easy. You use `html_text()` or `html_text2()`. The former is faster but will give you not so nice results. The latter will give you the text like it would be returned in a web browser. 
+
+The following example is taken from [the documentation](https://rvest.tidyverse.org/reference/html_text.html)
+
+```{r}
+# To understand the difference between html_text() and html_text2()
+# take the following html:
+
+html <- minimal_html(
+  "<p>This is a paragraph.
+    This another sentence.<br>This should start on a new line"
+)
+```
+
+```{r}
+# html_text() returns the raw underlying text, which includes white space
+# that would be ignored by a browser, and ignores the <br>
+html %>% html_element("p") %>% html_text() %>% writeLines()
+```
+
+```{r}
+# html_text2() simulates what a browser would display. Non-significant
+# white space is collapsed, and <br> is turned into a line break
+html %>% html_element("p") %>% html_text2() %>% writeLines()
+```
+
+A "real example" would then look like this:
+
+```{r}
+us_senators <- read_html("https://en.wikipedia.org/wiki/List_of_current_United_States_senators")
+text <- us_senators %>%
+  html_element(css = "p:nth-child(6)") %>% 
+  html_text2()
+```
+
+#### Extracting attributes 
+
+You can also extract attributes such as links using `html_attrs()`. An example would be to extract the headlines and their corresponding links from r-bloggers.com.
+
+```{r}
+rbloggers <- read_html("https://www.r-bloggers.com")
+```
+
+A quick check with the SelectorGadget told me that the element I am looking for is of class ".loop-title" and the child of it is "a", standing for normal text. With `html_attrs()` I can extract the attributes. This gives me a list of named vectors containing the name of the attribute and the value:
+
+```{r}
+r_blogger_postings <- rbloggers %>% html_elements(css = ".loop-title a")
+
+r_blogger_postings %>% html_attrs() 
+```
+
+Links are stored as attribute "href" -- hyperlink reference. `html_attr()` allows me to extract the attribute's value. Hence, building a tibble with the article's title and its corresponding hyperlink is straight-forward now:
+
+```{r}
+tibble(
+  title = r_blogger_postings %>% html_text2(),
+  link = r_blogger_postings %>% html_attr(name = "href")
+) %>% 
+  glimpse()
+```
+
+Another approach for this would be using the `polite` package and its function `html_attrs_dfr()` which binds together all the different attributes column-wise the different elements row-wise.
+
+```{r}
+library(polite)
+
+rbloggers %>% 
+  html_elements(css = ".loop-title a") %>% 
+  html_attrs_dfr() %>% 
+  select(title = 3, 
+         link = 1) %>% 
+  glimpse()
+```
+
+#### Extracting tables
+
+The general output format we strive for is a tibble. Oftentimes, data is already stored online in a table format, basically ready for us to analyze them. In the next example, I want to get a table from the Wikipedia page that contains the senators of different States in the United States I have used before. For this first, basic example, I do not use selectors for extracting the right table. You can use `rvest::html_table()`. It will give you a list containing all tables on this particular page. We can inspect it using `str()` which returns an overview of the list and the tibbles it contains.
+
+```{r}
+tables <- us_senators %>% 
+  html_table()
+
+# str(tables)
+```
+
+Here, the table I want is the sixth one. We can grab it by either using double square brackets -- `[[6]]` -- or `purrr`'s `pluck(6)`.
+
+```{r}
+senators <- tables %>% 
+  pluck(6)
+
+glimpse(senators)
+
+## alternative approach using css
+senators <- us_senators %>% 
+  html_elements("#senators") %>% 
+  html_table() %>% 
+  pluck(1)
+```
+
+You can see that the tibble contains "dirty" names and that the party column appears twice -- which will make it impossible to work with the tibble later on. Hence, I use `clean_names()` from the `janitor` package to fix that. Also, in the variable that matters most to me, `party_2`, there are some footnotes which will appear as, for instance, "[a]". Hence, I remove them using a regex and the `stringr` function `str_remove()`.
+
+```{r message=FALSE, warning=FALSE}
+library(janitor)
+senators_clean_names <- senators %>% 
+  clean_names() %>% 
+  select(-party) %>% 
+  mutate(party = party_2 %>% 
+           str_remove("\\[.\\]") %>% 
+           as_factor()) 
+```
+
+Now, we have the table in a nice tibble and can go on with whatever we want to do with it (e.g., exercise 2).
+
+### Automating scraping
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+vembedr::embed_youtube("2QFphrsYCFM")
+```
+
+Well, grabbing singular points of data from web sites is nice. However, if you want to do things such as collecting large amounts of data or multiple pages, you will not be able to do this without some automation.
+
+The example page we scrape today is <https://wg-gesucht.de>. Looking at its [robots.txt](https://wg-gesucht.de/robots.txt) tells us that we are allowed to scrape most of its pages. Unfortunately, we cannot fill out the form on the first page, as it is written using javascript -- which goes beyond `rvest`'s capabilities. However, we can still fill this out by hand and, thereafter, start scraping the search results for the last month. Overall, the process will look as follows:
+
+1) Determine search parameters manually, copy URL of results list
+2) read in results list
+3) get links and names of all listed apartments
+4) go to next page of results
+
+--> repeat 2--4 until satisfied (here: listings are ordered chronologically, stop when they were posted earlier than one month ago)
+Read page containing the different apartments
+
+5) optional: scrape listings (take-home exercise)
+
+It is probably easiest to perform those things in a `while` loop, hence here a quick revision:
+
+For the loop to run efficiently, space for every object should be pre-allocated (i.e., you create a list beforehand, its length can be determined by an educated guess). Hence, our `while` loop in pseudo-code will look like this:
+
+```{r eval=FALSE}
+output_list <- vector(mode = "list", length = 10000L)
+
+while (date > today-30days) {
+  read in wg-gesucht results list
+  get links and store them in list
+  get names and store them in list
+  get date and store them in list
+  go to next page
+}
+```
+
+For moving to the next page, there are basically three approaches: the most basic one is pre-determining how the pages are numbered in the URL (e.g., webpage.com/page_1, webpage.com/page_2, webpage.com/page_3, etc.). Fancier is finding the next link on the web page through `html_elements()`. The fanciest -- and compatible with most web pages, however, is scraping the web page using an `html_session()`. Then you can make R hit the next page using `session_follow_link()`. I will show you how you can scrape all "1-Zimmer-Wohnungen-in-Leipzig" using the aforementioned approaches. 
+
+#### Looping over URLs
+
+First, we need to determine how the URLs for page 1 and 2 differ. Usually, we find a number in the URL that just changes that we can then manipulate to navigate trough the pages. I just went to the web page and copied the URL for the first page and for the second one. 
+
+```{r}
+url_1 <- "https://www.wg-gesucht.de/1-zimmer-wohnungen-in-Leipzig.77.1.1.0.html?category=1&city_id=77&rent_type=0&img=1&rent_types%5B0%5D=0"
+url_2 <- "https://www.wg-gesucht.de/1-zimmer-wohnungen-in-Leipzig.77.1.1.1.html?category=1&city_id=77&rent_type=0&img=1&rent_types%5B0%5D=0"
+```
+
+Well, that's a mess. Let's find the difference in an R way (code stolen and adapted from [StackOverflow](https://stackoverflow.com/questions/48651858/detecting-the-differences-between-two-string-vectors)).
+
+```{r}
+initial_dist <- adist(url_1, url_2, counts = TRUE) %>% 
+  attr("trafos") %>% 
+  diag() %>% 
+  str_locate_all("[^M]")
+
+  
+str_sub(url_1, start = initial_dist[[1]][1]-5, end = initial_dist[[1]][1]+5)
+str_sub(url_2, start = initial_dist[[1]][1]-5, end = initial_dist[[1]][1]+5)
+```
+
+Now we can build our list of links to loop over:
+
+```{r}
+links <- str_c(
+  "https://www.wg-gesucht.de/1-zimmer-wohnungen-in-Leipzig.77.1.1.", 
+  0:5, 
+  ".html?category=1&city_id=77&rent_type=0&img=1&rent_types%5B0%5D=0"
+  )
+```
+
+Looping over the pages and extracting the relevant content is then straight-forward. This method also bears the advantage that we know how long the maximum length of the output list upfront:
+
+```{r eval=FALSE}
+library(lubridate)
+
+fix_date <- function(date_vec){
+  proper_dates <- str_extract(date_vec, "[0-9]{2}.[0-1][0-9].[2][0][0-3][0-9]") %>% 
+    parse_date(format = "%d.%m.%Y") %>% 
+    .[!is.na(.)]
+  today <- date_vec[str_detect(date_vec, "Minuten|Stunde")] %>% 
+    str_replace(".+", today() %>% as.character()) %>% 
+    ymd()
+  days_ago <- date_vec[str_detect(date_vec, "Tag")] %>% 
+    str_replace(., 
+                ".+", 
+                (today()-(days(str_extract(., "[1-4](?= Tag)") %>% 
+                                 as.numeric()))) %>% 
+                as.character()) %>% 
+    ymd()
+  c(today, days_ago, proper_dates)
+}
+
+output_list <- vector(mode = "list", length = length(links))
+
+i <- 0
+date <- today()
+end_date <- today() - months(1)
+
+while (date >= end_date) {
+  i <- i + 1
+  page <- read_html(links[[i]])
+
+  output_list[[i]] <- page %>% 
+    html_elements(".truncate_title a") %>% 
+    html_attrs_dfr() %>% 
+    filter(class == "detailansicht") %>% 
+    select(link = href, title = .text) %>% 
+    mutate(title = title %>% str_squish(),
+           link = url_absolute(link, base = "https://www.wg-gesucht.de/"))
+
+  output_list[[i]]$date <- page %>% 
+    html_elements("span:nth-child(2)") %>% 
+    html_text2() %>% 
+    .[str_detect(., "^Online")] %>% 
+    fix_date()
+  
+  date <- output_list[[i]]$date %>% tail(1)
+  
+  Sys.sleep(2)
+}
+
+output_list %>% bind_rows()
+```
+
+Extracting the link on the fly is basically the same thing, but at the end you need to replace the link argument by the one you extracted:
+
+```{r eval=FALSE}
+output_list <- vector(mode = "list", length = length(links))
+
+i <- 0
+date <- today()
+end_date <- today() - months(1)
+
+link <- links[[1]]
+
+while (date >= end_date) {
+  i <- i + 1
+  page <- read_html(links[[i]])
+
+  output_list[[i]] <- page %>% 
+    html_elements(".truncate_title a") %>% 
+    html_attrs_dfr() %>% 
+    filter(class == "detailansicht") %>% 
+    select(link = href, title = .text) %>% 
+    mutate(title = title %>% str_squish())
+
+  output_list[[i]]$date <- page %>% 
+    html_elements("span:nth-child(2)") %>% 
+    html_text2() %>% 
+    .[str_detect(., "^Online")] %>% 
+    fix_date()
+  
+  date <- output_list[[i]]$date %>% tail(1)
+  
+  link <- page %>% 
+    html_elements("#main_column li:nth-child(15) a") %>% 
+    html_attr("href") %>% 
+    url_absolute(base = "https://www.wg-gesucht.de/")
+}
+
+output_list %>% bind_rows()
+```
+
+However, the slickest way to do this is by using a session. In a session, R behaves like a normal browser, stores cookies, allows you to navigate to pages, by going `session_forward()` or `session_back()`, `session_follow_link()`s on the page itself or `session_jump_to()` a different URL, or submit `form()`s with `session_submit()`.
+
+First, you start the session by simply calling `session()`.
+```{r eval=FALSE}
+wg_session <- session("https://www.wg-gesucht.de/1-zimmer-wohnungen-in-Leipzig.77.1.1.0.html") 
+```
+
+When you want to save a page from the session, do so using `read_html()`. 
+
+```{r eval=FALSE}
+page <- read_html(wg_session)
+```
+
+If you want to follow a link, hit `follow_link()`
+
+```{r eval=FALSE}
+library(magrittr)
+wg_session %<>% session_follow_link(css = "#main_column li:nth-child(15) a")
+```
+
+Wanna go back -- `session_back()`; thereafter you can go `session_forward()`, too.
+
+```{r eval=FALSE}
+wg_session %<>% 
+  session_back()
+```
+
+You can look at what your scraper has done with `session_history()`.
+
+```{r eval=FALSE}
+wg_session %>% session_history()
+```
+
+Feel free to create a `while` loop with a session as an exercise (Exercise #3).
+
+### Forms
+
+Sometimes we also want to provide certain input, e.g., to provide login credentials or to scrape a web site in a more systematic manner. Those information are usually provided using so-called [forms](https://www.w3schools.com/html/html_forms.asp). A `<form>` element can contain different other elements such as text fields or check boxes. Basically, we use `html_form()` to extract the form, `html_form_set()` to define what we want to submit and `html_form_submit()` to finally submit it. [For a basic example, I search for something on Google.](https://rvest.tidyverse.org/reference/html_form.html)
+
+```{r eval=FALSE}
+google <- read_html("http://www.google.com")
+search <- html_form(google)[[1]]
+
+search_something <- search %>% html_form_set(q = "something")
+
+vals <- list(q = "web scraping", hl = "en")
+
+search <- search %>% html_form_set(!!!vals)
+
+resp <- html_form_submit(search)
+```
+
+### Scraping hacks
+
+Some web pages are a bit fancier than the ones we have looked at so far (i.e., they use JavaScript). `rvest` works nicely for static web pages, but for more advanced ones you need different tools such as [`RSelenium`](https://docs.ropensci.org/RSelenium/). This, however, goes beyond the scope of this tutorial.
+
+Some web pages might block you right away as they know that you are no "real" human being based on the user agent:
+
+```{r eval=FALSE}
+library(rvest)
+my_session <- session("https://scrapethissite.com/")
+
+my_session$response$request$options$useragent
+```
+
+Not very human. We can set it to a common one using the `httr` package (which actually powers `rvest`).
+
+```{r eval=FALSE}
+user_a <- httr::user_agent("Mozilla/5.0 (Macintosh; Intel Mac OS X 12_0_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36")
+session_with_ua <- html_session("https://scrapethissite.com/", user_a)
+session_with_ua$response$request$options$useragent
+```
+
+A web page may sometimes gives you time outs (i.e., it doesn't respond within a given time). This can break your loop. Wrapping your code in `safely()` or `insistently()` from the `purrr` package might help. The former moves on and notes down what has gone wrong, the latter keeps sending requests until it has been successful. They both work easiest if you put your scraping code in functions and wrap those with either [`insistently()`](https://purrr.tidyverse.org/reference/insistently.html) or [`safely()`](https://purrr.tidyverse.org/reference/safely.html).
+
+Sometimes a web page keeps blocking you. Consider using a proxy server. 
+
+```{r eval=FALSE}
+my_proxy <- httr::use_proxy(url = "http://example.com",
+                            user_name = "myusername",
+                            password = "mypassword",
+                            auth = "one of basic, digest, digest_ie, gssnegotiate, ntlm, any")
+
+my_session <- html_session("https://scrapethissite.com/", my_proxy)
+```
+
+Find more useful information  -- including the stuff I just described -- and links on [this GitHub page](https://github.com/yusuzech/r-web-scraping-cheat-sheet/blob/master/README.md).
+ 
+ ## Conclusion
+ 
+ To sum it up: when you have a good research idea that relies on Digital Trace Data that you need to collect, ask yourself the following questions:
+ 
+1. Is there an R package for it?
+2. If 1. == FALSE: Is there an API where I can get the data (if yes, use it)
+3. If 1. == FALSE & 2. == FALSE: Is screen scraping an option?
+
