@@ -1,4 +1,4 @@
-# Day 1: Scraping the web -- in an automated fashion {#day1}
+# Day 2: Scraping the web -- in an automated fashion {#day2}
 
 Notes: 
 * examples need to be adapted
@@ -14,7 +14,193 @@ Structure:
 
 
 ![](https://raw.githubusercontent.com/yusuzech/r-web-scraping-cheat-sheet/master/resources/functions_and_classes.png)
+### Forms
 
+Sometimes we also want to provide certain input, e.g., to provide login credentials or to scrape a web site in a more systematic manner. Those information are usually provided using so-called [forms](https://www.w3schools.com/html/html_forms.asp). A `<form>` element can contain different other elements such as text fields or check boxes. Basically, we use `html_form()` to extract the form, `html_form_set()` to define what we want to submit and `html_form_submit()` to finally submit it. [For a basic example, I search for something on Google.](https://rvest.tidyverse.org/reference/html_form.html)
+
+```{r eval=FALSE}
+google <- read_html("http://www.google.com")
+search <- html_form(google)[[1]]
+
+search_something <- search %>% html_form_set(q = "something")
+
+vals <- list(q = "web scraping", hl = "en")
+
+search <- search %>% html_form_set(!!!vals)
+
+resp <- html_form_submit(search)
+```
+
+
+### Automating scraping
+
+Well, grabbing singular points of data from web sites is nice. However, if you want to do things such as collecting large amounts of data or multiple pages, you will not be able to do this without some automation.
+
+An example here would again be the R-bloggers page. It provides you plenty of R-related content. If you were now eager to scrape all the articles, you would first need to acquire all the different links leading to the blog postings. Hence, you would need to navigate through the site's pages first to acquire the links.
+
+In general, there are two ways to go about this. The first is to manually create a list of urls the scraper will visit and take the content you need, therefore not needing to identify where it needs to go next. The other one would be automatically acquiring it's next destination from the page (i.e., identifying the "go on" button). Both strategies can also be nicely combined with some sort of `session()`.
+
+#### Looping over pages
+
+For the first approach, we need to check the URLs first. How do they change as we navigate through the pages?
+
+
+```{r}
+url_1 <- "https://www.r-bloggers.com/page/2/"
+url_2 <- "https://www.r-bloggers.com/page/3/"
+
+initial_dist <- adist(url_1, url_2, counts = TRUE) %>% 
+  attr("trafos") %>% 
+  diag() %>% 
+  str_locate_all("[^M]")
+
+  
+str_sub(url_1, start = initial_dist[[1]][1]-5, end = initial_dist[[1]][1]+5) # makes sense for longer urls
+str_sub(url_2, start = initial_dist[[1]][1]-5, end = initial_dist[[1]][1]+5)
+```
+
+Obviously, there is some sort of underlying pattern and we can harness that. `url_1` refers to the second page, `url_2` to the third. Hence, if we just combine the basic url and, say, the numbers from 1 to 100, we could then visit all the pages (exercise 3a) and extract the content we want.
+
+```{r}
+urls <- str_c("https://www.r-bloggers.com/page/", 1:10, "/")
+urls
+```
+
+It is probably easiest to perform those things in a `while` loop, hence here a quick revision:
+
+For the loop to run efficiently, space for every object should be pre-allocated (i.e., you create a list beforehand, its length can be determined by an educated guess). Hence, our `while` loop in pseudo-code will look like this:
+
+```{r eval=FALSE}
+output_list <- vector(mode = "list", length = 100L)
+i <- 0
+while (session$response$status_code == 200) {
+  i <- i + 1
+  read in r-bloggers results list
+  get all stuff and store it in output_list[[i]]
+  go to next page
+}
+```
+
+#### Letting the scraper navigate on its own
+
+Extracting the link on the fly is basically the same thing, but at the end you need to replace the link argument by the one you extracted. You will learn more on the extraction of content from unstructured web pages in 
+
+```{r eval=FALSE}
+output_list <- vector(mode = "list", length = length(links))
+
+i <- 0
+date <- today()
+end_date <- today() - months(1)
+
+link <- links[[1]]
+
+while (date >= end_date) {
+  i <- i + 1
+  page <- read_html(links[[i]])
+
+  output_list[[i]] <- page %>% 
+    html_elements(".truncate_title a") %>% 
+    html_attrs_dfr() %>% 
+    filter(class == "detailansicht") %>% 
+    select(link = href, title = .text) %>% 
+    mutate(title = title %>% str_squish())
+
+  output_list[[i]]$date <- page %>% 
+    html_elements("span:nth-child(2)") %>% 
+    html_text2() %>% 
+    .[str_detect(., "^Online")] %>% 
+    fix_date()
+  
+  date <- output_list[[i]]$date %>% tail(1)
+  
+  link <- page %>% 
+    html_elements("#main_column li:nth-child(15) a") %>% 
+    html_attr("href") %>% 
+    url_absolute(base = "https://www.wg-gesucht.de/")
+}
+
+output_list %>% bind_rows()
+```
+
+However, the slickest way to do this is by using a `session()`. In a session, R behaves like a normal browser, stores cookies, allows you to navigate to pages, by going `session_forward()` or `session_back()`, `session_follow_link()`s on the page itself or `session_jump_to()` a different URL, or submit `form()`s with `session_submit()`.
+
+First, you start the session by simply calling `session()`.
+```{r eval=FALSE}
+wg_session <- session("https://www.wg-gesucht.de/1-zimmer-wohnungen-in-Leipzig.77.1.1.0.html") 
+```
+
+You can check the response using `session$response$status_code` -- 200 is good.
+
+```{r}
+session$response$status_code
+```
+
+When you want to save a page from the session, do so using `read_html()`. 
+
+```{r eval=FALSE}
+page <- read_html(session)
+```
+
+If you want to follow a link, hit `follow_link()`
+
+```{r eval=FALSE}
+library(magrittr)
+wg_session %<>% session_follow_link(css = "#main_column li:nth-child(15) a")
+```
+
+Wanna go back -- `session_back()`; thereafter you can go `session_forward()`, too.
+
+```{r eval=FALSE}
+wg_session %<>% 
+  session_back()
+```
+
+You can look at what your scraper has done with `session_history()`.
+
+```{r eval=FALSE}
+wg_session %>% session_history()
+```
+
+Feel free to create a `while` loop with a session as an exercise (Exercise #3).
+
+
+
+### Scraping hacks
+
+Some web pages are a bit fancier than the ones we have looked at so far (i.e., they use JavaScript). `rvest` works nicely for static web pages, but for more advanced ones you need different tools such as [`RSelenium`](https://docs.ropensci.org/RSelenium/). This, however, goes beyond the scope of this tutorial.
+
+Some web pages might block you right away as they know that you are no "real" human being based on the user agent:
+
+```{r eval=FALSE}
+library(rvest)
+my_session <- session("https://scrapethissite.com/")
+
+my_session$response$request$options$useragent
+```
+
+Not very human. We can set it to a common one using the `httr` package (which actually powers `rvest`).
+
+```{r eval=FALSE}
+user_a <- httr::user_agent("Mozilla/5.0 (Macintosh; Intel Mac OS X 12_0_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36")
+session_with_ua <- html_session("https://scrapethissite.com/", user_a)
+session_with_ua$response$request$options$useragent
+```
+
+A web page may sometimes gives you time outs (i.e., it doesn't respond within a given time). This can break your loop. Wrapping your code in `safely()` or `insistently()` from the `purrr` package might help. The former moves on and notes down what has gone wrong, the latter keeps sending requests until it has been successful. They both work easiest if you put your scraping code in functions and wrap those with either [`insistently()`](https://purrr.tidyverse.org/reference/insistently.html) or [`safely()`](https://purrr.tidyverse.org/reference/safely.html).
+
+Sometimes a web page keeps blocking you. Consider using a proxy server. 
+
+```{r eval=FALSE}
+my_proxy <- httr::use_proxy(url = "http://example.com",
+                            user_name = "myusername",
+                            password = "mypassword",
+                            auth = "one of basic, digest, digest_ie, gssnegotiate, ntlm, any")
+
+my_session <- session("https://scrapethissite.com/", my_proxy)
+```
+
+Find more useful information  -- including the stuff I just described -- and links on [this GitHub page](https://github.com/yusuzech/r-web-scraping-cheat-sheet/blob/master/README.md).
+ 
 ## Application Programming Interfaces (APIs)
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 vembedr::embed_youtube("aSJ9u5gtUD4")
