@@ -268,8 +268,8 @@ In the following, I will just link to the respective vignettes. Please, feel fre
 
 ```{r eval=FALSE}
 library(rtweet)
-lists_members(
-  list_id = "1050737868606455810"
+uk_mps <- lists_members(
+  list_id = "217199644"
 )
 ```
 
@@ -300,4 +300,12 @@ base_session <- session("https://www.scrapethissite.com/pages/advanced/?gotcha=l
 ```
 
 
-3. 
+3. Scrape 10 profile timelines from the following list. Check the documentation for instructions.
+
+```{r}
+library(rtweet)
+uk_mps <- lists_members(
+  list_id = "217199644"
+) 
+```
+
