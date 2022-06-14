@@ -150,10 +150,6 @@ google_session %>%
 
 Some web pages are a bit fancier than the ones we have looked at so far (i.e., they use JavaScript). `rvest` works nicely for static web pages, but for more advanced ones you need different tools such as [`RSelenium`](https://docs.ropensci.org/RSelenium/). This, however, goes beyond the scope of this tutorial.
 
-Some web pages might block you right away as they know that you are no "real" human being based on the user agent:
-
-
-
 A web page may sometimes gives you time outs (i.e., it doesn't respond within a given time). This can break your loop. Wrapping your code in `safely()` or `insistently()` from the `purrr` package might help. The former moves on and notes down what has gone wrong, the latter keeps sending requests until it has been successful. They both work easiest if you put your scraping code in functions and wrap those with either [`insistently()`](https://purrr.tidyverse.org/reference/insistently.html) or [`safely()`](https://purrr.tidyverse.org/reference/safely.html).
 
 Sometimes a web page keeps blocking you. Consider using a proxy server. 
@@ -170,11 +166,8 @@ my_session <- session("https://scrapethissite.com/", my_proxy)
 Find more useful information  -- including the stuff I just described -- and links on [this GitHub page](https://github.com/yusuzech/r-web-scraping-cheat-sheet/blob/master/README.md).
  
 ## Application Programming Interfaces (APIs)
-```{r echo=FALSE, message=FALSE, warning=FALSE}
-vembedr::embed_youtube("aSJ9u5gtUD4")
-```
 
-While web scraping (or *screen scraping*, as you extraxt ths stuff that appears on your screen) is certainly fun, it should be seen as a last resort. More and more web platforms provide so-called Application Programming Interfaces (APIs). 
+While web scraping (or *screen scraping*, as you extract the stuff that appears on your screen) is certainly fun, it should be seen as a last resort. More and more web platforms provide so-called Application Programming Interfaces (APIs). 
 
 >"An application programming interface (API) is a connection between computers or between computer programs." ([Wikipedia](https://en.wikipedia.org/wiki/API))
 
@@ -271,7 +264,7 @@ modify_url(
 
 Twitter is quite popular among social scientists. The main reason for this is arguably its data accessibility. For R users, the package you want to use is `rtweet` by Michael Kearney (find an overview of the different packages and their capabilities [here](https://www.rdocumentation.org/packages/rtweet/versions/0.7.0)). There is a great and quite complete [presentation demonstrating its capabilities](https://mkearney.github.io/nicar_tworkshop/#1). This presentation is a bit outdated. The main difference to the package these days is that you will not need to register an app upfront anymore. All you need is a Twitter account. When you make your first request, a browser window will open where you log on to Twitter, authorize the app, and then you can just go for it. There are certain rate limits, too, which you will need to be aware of when you try to acquire data. Rate limits and the parameters you need to specify can be found in the extensive documentation.
 
-In the following, I will just link to the respective vignettes. Please, feel free to play around with the functions yourself. As a starting point, I provide you the list of all German politicians and some tasks in exercise 3. A first introductioh gives [this vignette](https://cran.r-project.org/web/packages/rtweet/vignettes/intro.html).
+In the following, I will just link to the respective vignettes. Please, feel free to play around with the functions yourself. As a starting point, I provide you the list of all German politicians and some tasks in exercise 3. A first introduction gives [this vignette](https://cran.r-project.org/web/packages/rtweet/vignettes/intro.html).
 
 ```{r eval=FALSE}
 library(rtweet)
