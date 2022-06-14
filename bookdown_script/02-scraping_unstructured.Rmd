@@ -38,20 +38,16 @@ Elements can also bear attributes:
 
 Those attributes will not appear in the actual content. Moreover, they are super-handy for us as scrapers. Here, `class` is the attribute name and `"editor-note"` the value. Another important attribute is `id`. Combined with CSS, they control the appearance of the element on the actual page. A `class` can be used by multiple HTML elements whereas an `id` is unique. 
 
-### Selecting relevant content
+## Extracting content in `rvest`
 
 To scrape the web, the first step is to simply read in the web page. `rvest` then stores it in the XML format -- just another format to store information. For this, we use `rvest`'s `read_html()` function. Here, for instance, I download the Wikipedia page of U.S. American senators.
-
-```{r message=FALSE, warning=FALSE}
-library(tidyverse)
-library(rvest)
-page <- read_html("https://en.wikipedia.org/wiki/List_of_current_United_States_senators")
-```
 
 To demonstrate the usage of CSS selectors, I create my own, basic web page using the `rvest` function `minimal_html()`:
 
 ```{r message=FALSE, warning=FALSE}
 library(rvest)
+library(tidyverse)
+
 basic_html <- minimal_html('
   <html>
   <head>
@@ -122,7 +118,7 @@ It's usage could hardly be simpler:
 3. Click on the green things that you don't want -- they will turn red; click on what's not green yet but what you want -- it will turn green.
 4. copy the CSS selector the gadget provides you with and paste it in the `html_elements()` function. 
 
-### Scraping HTML pages with `rvest`
+## Scraping HTML pages with `rvest`
 
 So far, I have shown you how HTML is written and how to select elements. However, what we want to achieve is extracting the data the elements contain in a proper format and storing it in some sort of tibble. Therefore, we need functions that allow us to actually grab the data.
 
@@ -132,7 +128,7 @@ The following overview taken from the [web scraping cheatsheet](https://github.c
 
 In the first part, I will introduce you to scraping singular pages and extracting their contents. `rvest` also allows for proper sessions where you navigate on the web pages and fill out forms. This is to be introduced in the second part. 
 
-#### `html_text()` and `html_text2()`
+### `html_text()` and `html_text2()`
 
 Extracting text from an HTML is easy. You use `html_text()` or `html_text2()`. The former is faster but will give you not so nice results. The latter will give you the text like it would be returned in a web browser. 
 
@@ -169,7 +165,37 @@ text <- us_senators %>%
   html_text2()
 ```
 
-#### Extracting attributes 
+### Extracting tables
+
+The general output format we strive for is a tibble. Oftentimes, data is already stored online in a table format, basically ready for us to analyze them. In the next example, I want to get a table from the Wikipedia page that contains the senators of different States in the United States I have used before. For this first, basic example, I do not use selectors for extracting the right table. You can use `rvest::html_table()`. It will give you a list containing all tables on this particular page. We can inspect it using `str()` which returns an overview of the list and the tibbles it contains.
+
+```{r}
+tables <- us_senators %>% 
+  html_table()
+
+# str(tables)
+```
+
+Here, the table I want is the sixth one. We can grab it by either using double square brackets -- `[[6]]` -- or `purrr`'s `pluck(6)`.
+
+```{r}
+library(janitor)
+senators <- tables %>% 
+  pluck(6)
+
+glimpse(senators)
+
+## alternative approach using css
+senators <- us_senators %>% 
+  html_elements("#senators") %>% 
+  html_table() %>% 
+  pluck(1) %>% 
+  clean_names()
+```
+
+You can see that the tibble contains "dirty" names and that the party column appears twice -- which will make it impossible to work with the tibble later on. Hence, I use `clean_names()` from the `janitor` package to fix that. 
+
+### Extracting attributes 
 
 You can also extract attributes such as links using `html_attrs()`. An example would be to extract the headlines and their corresponding links from r-bloggers.com.
 
@@ -208,37 +234,69 @@ rbloggers %>%
   glimpse()
 ```
 
-#### Extracting tables
+## Automating scraping
 
-The general output format we strive for is a tibble. Oftentimes, data is already stored online in a table format, basically ready for us to analyze them. In the next example, I want to get a table from the Wikipedia page that contains the senators of different States in the United States I have used before. For this first, basic example, I do not use selectors for extracting the right table. You can use `rvest::html_table()`. It will give you a list containing all tables on this particular page. We can inspect it using `str()` which returns an overview of the list and the tibbles it contains.
+Well, grabbing singular points of data from web sites is nice. However, if you want to do things such as collecting large amounts of data or multiple pages, you will not be able to do this without some automation.
+
+An example here would again be the R-bloggers page. It provides you plenty of R-related content. If you were now eager to scrape all the articles, you would first need to acquire all the different links leading to the blog postings. Hence, you would need to navigate through the site's pages first to acquire the links.
+
+In general, there are two ways to go about this. The first is to manually create a list of urls the scraper will visit and take the content you need, therefore not needing to identify where it needs to go next. The other one would be automatically acquiring it's next destination from the page (i.e., identifying the "go on" button). Both strategies can also be nicely combined with some sort of `session()`. 
+
+### Looping over pages
+
+For the first approach, we need to check the URLs first. How do they change as we navigate through the pages?
+
 
 ```{r}
-tables <- us_senators %>% 
-  html_table()
+url_1 <- "https://www.r-bloggers.com/page/2/"
+url_2 <- "https://www.r-bloggers.com/page/3/"
 
-# str(tables)
+initial_dist <- adist(url_1, url_2, counts = TRUE) %>% 
+  attr("trafos") %>% 
+  diag() %>% 
+  str_locate_all("[^M]")
+
+  
+str_sub(url_1, start = initial_dist[[1]][1]-5, end = initial_dist[[1]][1]+5) # makes sense for longer urls
+str_sub(url_2, start = initial_dist[[1]][1]-5, end = initial_dist[[1]][1]+5)
 ```
 
-Here, the table I want is the sixth one. We can grab it by either using double square brackets -- `[[6]]` -- or `purrr`'s `pluck(6)`.
+Obviously, there is some sort of underlying pattern and we can harness that. `url_1` refers to the second page, `url_2` to the third. Hence, if we just combine the basic url and, say, the numbers from 1 to 10, we could then visit all the pages (exercise 3a) and extract the content we want.
 
 ```{r}
-library(janitor)
-senators <- tables %>% 
-  pluck(6)
-
-glimpse(senators)
-
-## alternative approach using css
-senators <- us_senators %>% 
-  html_elements("#senators") %>% 
-  html_table() %>% 
-  pluck(1) %>% 
-  clean_names()
+urls <- str_c("https://www.r-bloggers.com/page/", 1:10, "/")
+urls
 ```
 
-You can see that the tibble contains "dirty" names and that the party column appears twice -- which will make it impossible to work with the tibble later on. Hence, I use `clean_names()` from the `janitor` package to fix that. 
+You can run this in a for-loop, here's a quick revision. For the loop to run efficiently, space for every object should be pre-allocated (i.e., you create a list beforehand, its length can be determined by an educated guess). 
 
- ## Conclusion
+```{r eval=FALSE}
+result_list <- vector(mode = "list", length = length(urls))
+starting_link <- 
+for (i in seq_along(urls)){
+  read in urls[[i]]
+  store page in result_list
+}
+```
+
+### Letting the scraper navigate on its own
+
+Extracting the link on the fly is basically the same thing, but at the end you need to replace the link argument by the one you extracted. You will do this in exercise 3. It is probably easiest to perform those things in a `while` loop, hence here a quick revision:
+
+Hence, our `while` loop in pseudo-code will look like this:
+
+```{r eval=FALSE}
+output_list <- vector(mode = "list", length = 10L)
+i <- 0
+while (session$response$status_code == 200 && i <= 10) {
+  i <- i + 1
+  read in r-bloggers results list
+  get all stuff and store it in output_list[[i]]
+  go to next page
+}
+```
+
+## Conclusion
  
  To sum it up: when you have a good research idea that relies on Digital Trace Data that you need to collect, ask yourself the following questions:
  
@@ -345,8 +403,8 @@ tibble(
 </details>
 
 3. Scrape the 10 first pages of [R-bloggers](https://www.r-bloggers.com) in an automated fashion. Make sure to take breaks between requests by including `Sys.sleep(2)`.
-  a. Do so using the list we created above.
-  b. Do so by getting the link from the next page and a loop.
+  a. Do so using the url vector we created above.
+  b. Do so by getting the link for the next page and a loop.
   c. Do so by using `html_session()` in a loop.
 
 <details>
