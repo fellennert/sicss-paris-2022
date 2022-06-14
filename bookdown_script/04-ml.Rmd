@@ -344,11 +344,20 @@ What becomes evident is that the actual topic modeling does not happen within `t
 In order to search for the topics which are prevalent in the singular addresses, we need to transform the tidy tibble into a document-term matrix. This can be achieved with `cast_dtm()`.
 
 ```{r}
-sotu_dtm <- sotu_20cent_clean %>% 
-  filter(str_length(word) > 1) %>% 
-  count(year, word) %>% 
-  filter(between(year, 1950, 2000)) %>% 
-  cast_dtm(document = year, term = word, value = n)
+sotu_clean <- sotu_raw %>% 
+  filter(between(year, 1900, 2000)) %>% 
+  unnest_tokens(output = token, input = text) %>% 
+  anti_join(get_stopwords(), by = c("token" = "word")) %>% 
+  filter(!str_detect(token, "[:digit:]")) %>% 
+  mutate(token = wordStem(token, language = "en"))
+
+sotu_dtm <- sotu_clean %>% 
+  filter(str_length(token) > 1) %>% 
+  count(year, token) %>% 
+  #filter(between(year, 1900, 2000)) %>% 
+  group_by(token) %>% 
+  filter(n() < 90) %>% 
+  cast_dtm(document = year, term = token, value = n)
 ```
 
 A DTM contains of Documents (rows) and Terms (columns) and specifies how often a term appears in a document.
@@ -525,7 +534,7 @@ json_lda <- prep_lda_output(sotu_dtm, sotu_lda_k23)
 
 ```{r eval=FALSE}
 serVis(json_lda, out.dir = 'vis', open.browser = TRUE)
-servr::daemon_stop()
+servr::daemon_stop(2)
 ```
 
 ### Structural Topic Models
