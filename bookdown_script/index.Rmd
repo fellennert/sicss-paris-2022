@@ -97,7 +97,7 @@ Also, if you want to play with the `rtweet` package, you need a Twitter account.
 
 ### Docker for `RSelenium` 
 
-When you work with `RSelenium`, what basically happens is that you simulate a browser which you then control through R. For multiple reasons, the preferred procedure is to run the headless browser in a docker conainer, a virtual machine inside your laptop. Hence, if you are planning on using `RSelenium`, you should install docker first and follow this tutorial to set it up properly. (Please note that if you're on a non-Intel Mac, like one of the authors of this script, you are screwed and Docker's browser module will not work. We have not found a functioning workaround yet. So no scraping with Selenium for you.)
+When you work with `RSelenium`, what basically happens is that you simulate a browser which you then control through R. For multiple reasons, the preferred procedure is to run the headless browser in a Docker container, a virtual machine inside your laptop. Hence, if you are planning on using `RSelenium`, you should install Docker first and follow [this tutorial](https://callumgwtaylor.github.io/post/using-rselenium-and-docker-to-webscrape-in-r-using-the-who-snake-database/) to set it up properly. (Please note that if you're on a non-Intel Mac, like one of the authors of this script, you are screwed and Docker's browser module will not work. We have not found a functioning workaround yet. So no scraping with Selenium for you.)
 
 ## Further links
 
