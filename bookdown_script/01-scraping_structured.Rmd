@@ -270,6 +270,9 @@ A collaborative review](https://bookdown.org/paul/apis_for_social_scientists/)
 
 1. Start a session with the tidyverse Wikipedia page. Adapt your user agent to some sort of different value. Proceed to Hadley Wickham's page. Go back. Go forth. Check the `session_history()` to see if it has worked.
 
+<details>
+  <summary>Solution. Click to expand!</summary>
+  
 ```{r eval=FALSE}
 tidyverse_wiki <- "https://en.wikipedia.org/wiki/Tidyverse"
 hadley_wiki <- "https://en.wikipedia.org/wiki/Hadley_Wickham"
@@ -286,6 +289,8 @@ wiki_session %<>% session_jump_to(hadley_wiki) %>%
 wiki_session %>% session_history()
 ```
 
+</details>
+
 2. Start a session on "https://www.scrapethissite.com/pages/advanced/?gotcha=login", fill out, and submit the form. Any value for login and password will do. (Disclaimer: you have to add the URL as an "action" attribute after creating the form, see [this tutorial](https://github.com/tidyverse/rvest/issues/319). -- `login_form$action <- url`)
 
 ```{r eval=FALSE}
@@ -299,6 +304,9 @@ login_form$action <- url # add url as action attribute
 base_session <- session("https://www.scrapethissite.com/pages/advanced/?gotcha=login") %>% 
   session_submit(login_form) 
 ```
+
+<details>
+  <summary>Solution. Click to expand!</summary>
 
 ```{r eval=FALSE}
 url <- "https://www.scrapethissite.com/pages/advanced/?gotcha=login"
@@ -317,9 +325,13 @@ base_session <- session("https://www.scrapethissite.com/pages/advanced/?gotcha=l
   session_submit(login_form) 
 ```
 
+</details>
 
 3. Scrape 10 profile timelines from the following list. Check the [documentation](https://cran.r-project.org/web/packages/rtweet/vignettes/intro.html) for instructions.
 
+<details>
+  <summary>Solution. Click to expand!</summary>
+  
 ```{r eval=FALSE}
 library(rtweet)
 uk_mps <- lists_members(
@@ -344,3 +356,4 @@ for (i in seq_along(sample_uk_mps)){
 }
 ```
 
+</details>

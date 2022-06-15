@@ -1,4 +1,4 @@
-# Day 3: Scraping the web -- in an automated fashion {#day3}
+# Day 3: Scraping the web -- extracting data {#day3}
 
 In Chapter \@ref(day2) you were shown how to make calls to web pages and get responses. Moreover, you were introduced to making calls to APIs which (usually) give you content in a nice and structured manner. In this chapter, the guiding topic will be how you can extract content from web pages which give you unstructured content in a structured way. The (in our opinion) easiest way to achieve that is by harnessing the way the web is written. 
 
@@ -300,10 +300,13 @@ while (session$response$status_code == 200 && i <= 10) {
  
  To sum it up: when you have a good research idea that relies on Digital Trace Data that you need to collect, ask yourself the following questions:
  
-1. Is there an R package for it?
-2. If 1. == FALSE: Is there an API where I can get the data (if yes, use it)
-3. If 1. == FALSE & 2. == FALSE: Is screen scraping an option?
+1. Is there an R package for the web service?
+2. If 1. == FALSE: Is there an API where I can get the data (if TRUE, use it)
+3. If 1. == FALSE & 2. == FALSE: Is screen scraping an option and any structure in the data that you can harness?
 
+## Further links
+
+[to be added]
 
 ## Exercises
 
