@@ -76,6 +76,7 @@ packages <- c(
   "topicmodels", 
   "tsne",
   "tune",
+  "word2vec",
   "wordcloud",
   "workflows", 
   "yardstick"
@@ -98,6 +99,78 @@ Also, if you want to play with the `rtweet` package, you need a Twitter account.
 ### Docker for `RSelenium` 
 
 When you work with `RSelenium`, what basically happens is that you simulate a browser which you then control through R. For multiple reasons, the preferred procedure is to run the headless browser in a Docker container, a virtual machine inside your laptop. Hence, if you are planning on using `RSelenium`, you should install Docker first and follow [this tutorial](https://callumgwtaylor.github.io/post/using-rselenium-and-docker-to-webscrape-in-r-using-the-who-snake-database/) to set it up properly. (Please note that if you're on a non-Intel Mac, like one of the authors of this script, you are screwed and Docker's browser module will not work. We have not found a functioning workaround yet. So no scraping with Selenium for you.)
+
+### Some useful functions
+
+We assume your familiarity with R. However, we are fully aware that coding styles (or "dialects") differ. Therefore, just a quick demonstration of some of the building blocks of the tidyverse.
+
+We use the "old" pipe -- `%>%`. The pipe takes its argument on the left and forwards it to the next function, including it there as the first argument unless a `.` placeholder is provided somewhere. `%<>%` takes the argument on the left and changes it at the same time.
+
+```{r}
+library(magrittr)
+mean(c(2, 3)) == c(2, 3) %>% mean()
+
+mtcars %>% lm(mpg ~ cyl, data = .)
+# … is the same as…
+lm(mpg ~ cyl, data = mtcars)
+
+cars <- mtcars
+cars %<>% .[[1]] %>% mean()
+cars <- cars %>% .[[1]] %>% mean()
+```
+
+The important terms in the `dplyr` package are `mutate()`, `select()`, `filter()`, `summarize()` (used with `group_by()`), and `arrange()`. `pull()` can be used to extract a vector. 
+```{r}
+library(tidyverse)
+
+mtcars %>%
+  rownames_to_column("model") %>% # add rownames as a column
+  select(model, mpg, cyl, hp) %>% # select 4 columns
+  arrange(cyl) %>% # arrange them according to number of cylinders
+  filter(cyl %in% c(4, 6)) %>% # only retain values where condition is TRUE
+  mutate(model = str_to_lower(model)) %>% # change modelnames to lowercase
+  group_by(cyl) %>% # change scope, effectively split up tibbles according to group_variable
+  summarize(mean_mpg = mean(mpg)) %>% # drop all other columns, collapse rows
+  pull(cyl) # pull vector
+```
+
+We also will work with lists. Lesser known functions here are the `map()` family, which applies functions over lists, and `pluck()` which extracts elements from the list. 
+
+```{r}
+raw_list <- list(1:4, 4:6, 10:42)
+str(raw_list)
+
+map(raw_list, mean)
+map(raw_list, ~{mean(.x)})
+map_dbl(raw_list, mean)
+
+raw_list %>% pluck(1)
+```
+
+This can also be achieved using a loop. Here, you use an index to loop over objects and do something to their elements.
+
+```{r}
+for (i in seq_along(raw_list)){
+  raw_list[[i]] <- mean(raw_list[[i]])
+}
+```
+
+Another part of R is functions. They require arguments. Then they do something to these arguments. In the end, they return the last call (if it's not stored in an object). Otherwise, an object can be returned using `return()` -- usually unnecessary though.
+
+```{r}
+a_plus_b <- function(a, b){
+  a + b
+}
+
+a_plus_b(1, 2)
+
+a_plus_b <- function(a, b){
+ c <- a + b
+ return(c)
+}
+
+a_plus_b(1, 2)
+```
 
 ## Further links
 
