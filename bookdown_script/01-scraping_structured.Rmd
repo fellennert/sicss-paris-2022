@@ -1,22 +1,10 @@
 # Day 2: Scraping the web {#day2}
 
-Notes: 
-* examples need to be adapted
-* RSelenium?
-* How to teach this without Regexes?
-
-Structure:
-
-* make calls to web pages 
-* sessions, forms -- cookies etc.
-* apis
-* in the end: Etienne comes in, showing them RSelenium
-
-Today's session will be dedicated to getting data from the web. This process is also called scraping, since we basically scrape data off from the surface and remodel it for our own inferences. The following picture shows you the [web scraping cheat sheet](https://github.com/yusuzech/r-web-scraping-cheat-sheet/) that outlines the process of scraping the web. On the left side, you can see the first step in scraping the web which is requesting the information from the server. This is basically what is going under the hood when you make requests using a browser. The response is the website, usually stored in an XML document, which is then the starting point for your subsequent queries and data extraction. 
+Today's session will be dedicated to getting data from the web. This process is also called scraping since we scrape data off from the surface and remodel it for our inferences. The following picture shows you the [web scraping cheat sheet](https://github.com/yusuzech/r-web-scraping-cheat-sheet/) that outlines the process of scraping the web. On the left side, you can see the first step in scraping the web which is requesting the information from the server. This is basically what is going under the hood when you make requests using a browser. The response is the website, usually stored in an XML document, which is then the starting point for your subsequent queries and data extraction. 
 
 ![Web scraping cheat sheet](https://raw.githubusercontent.com/yusuzech/r-web-scraping-cheat-sheet/master/resources/functions_and_classes.png)
 
-In today's session, you will learn different techniques to get your hands on data. In particular, this will encompass making simple URL requests with `read_html()`, using `session()`s to navigate around on a web page, submitting `html_form()`s to fill in forms on a web page, making structured requests to APIs, and, finally, there will be a quick demo of `RSelenium` which is required for scraping web pages that rely heavily on Javascript, making them virtually inaccessible through basic `rvest`. 
+In today's session, you will learn different techniques to get your hands on data. In particular, this will encompass making simple URL requests with `read_html()`, using `session()`s to navigate around on a web page, submitting `html_form()`s to fill in forms on a web page, and making structured requests to APIs.
 
 ## Making requests
 
@@ -44,11 +32,11 @@ my_session <- session("https://scrapethissite.com/")
 my_session$response$request$options$useragent
 ```
 
-Not very human. We can set it to a common one using the `httr` package (which actually powers `rvest`).
+Not very human. We can set it to a common one using the `httr` package (which powers `rvest`).
 
 ```{r eval=FALSE}
 user_a <- httr::user_agent("Mozilla/5.0 (Macintosh; Intel Mac OS X 12_0_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36")
-session_with_ua <- html_session("https://scrapethissite.com/", user_a)
+session_with_ua <- session("https://scrapethissite.com/", user_a)
 session_with_ua$response$request$options$useragent
 ```
 
@@ -64,7 +52,7 @@ When you want to save a page from the session, do so using `read_html()`.
 page <- read_html(session_with_ua)
 ```
 
-If you want to open a new url, hit `session_jump_to()`.
+If you want to open a new URL, hit `session_jump_to()`.
 
 ```{r eval=FALSE}
 library(magrittr)
@@ -103,7 +91,7 @@ session_with_ua %>% session_history()
 
 ### Forms
 
-Sometimes we also want to provide certain input, e.g., to provide login credentials or to scrape a web site in a more systematic manner. Those information are usually provided using so-called [forms](https://www.w3schools.com/html/html_forms.asp). A `<form>` element can contain different other elements such as text fields or check boxes. Basically, we use `html_form()` to extract the form, `html_form_set()` to define what we want to submit and `html_form_submit()` to finally submit it. [For a basic example, I search for something on Google.](https://rvest.tidyverse.org/reference/html_form.html)
+Sometimes we also want to provide certain input, e.g., to provide login credentials or to scrape a website more systematically. That information is usually provided using so-called [forms](https://www.w3schools.com/html/html_forms.asp). A `<form>` element can contain different other elements such as text fields or checkboxes. Basically, we use `html_form()` to extract the form, `html_form_set()` to define what we want to submit, and `html_form_submit()` to finally submit it. [For a basic example, I search for something on Google.](https://rvest.tidyverse.org/reference/html_form.html)
 
 ```{r eval=FALSE}
 google <- read_html("http://www.google.com")
@@ -112,7 +100,7 @@ search <- html_form(google)[[1]]
 search %>% str()
 
 search_something <- search %>% html_form_set(q = "something")
-resp <- html_form_submit(search_something)
+resp <- html_form_submit(search_something, submit = "btnG")
 read_html(resp)
 
 vals <- list(q = "web scraping", hl = "en")
@@ -144,13 +132,11 @@ google_session %>%
   read_html()
 ```
 
-
-
 ### Scraping hacks
 
 Some web pages are a bit fancier than the ones we have looked at so far (i.e., they use JavaScript). `rvest` works nicely for static web pages, but for more advanced ones you need different tools such as [`RSelenium`](https://docs.ropensci.org/RSelenium/). This, however, goes beyond the scope of this tutorial.
 
-A web page may sometimes gives you time outs (i.e., it doesn't respond within a given time). This can break your loop. Wrapping your code in `safely()` or `insistently()` from the `purrr` package might help. The former moves on and notes down what has gone wrong, the latter keeps sending requests until it has been successful. They both work easiest if you put your scraping code in functions and wrap those with either [`insistently()`](https://purrr.tidyverse.org/reference/insistently.html) or [`safely()`](https://purrr.tidyverse.org/reference/safely.html).
+A web page may sometimes give you time-outs (i.e., it doesn't respond within a given time). This can break your loop. Wrapping your code in `safely()` or `insistently()` from the `purrr` package might help. The former moves on and notes down what has gone wrong, the latter keeps sending requests until it has been successful. They both work easiest if you put your scraping code in functions and wrap those with either [`insistently()`](https://purrr.tidyverse.org/reference/insistently.html) or [`safely()`](https://purrr.tidyverse.org/reference/safely.html).
 
 Sometimes a web page keeps blocking you. Consider using a proxy server. 
 
@@ -171,11 +157,11 @@ While web scraping (or *screen scraping*, as you extract the stuff that appears 
 
 >"An application programming interface (API) is a connection between computers or between computer programs." ([Wikipedia](https://en.wikipedia.org/wiki/API))
 
-There are a bunch of different sorts of APIs, but the most common one is the REST API. REST stands for "Representational State Transfer" and describes a set of rules the API designers are supposed to obey when developing their particular interface. You can make different requests, such as *GET* content, *POST* a file to a server -- `PUT` is similar, or request to `DELETE` a file. We will ony focus on the `GET` part. 
+There are a bunch of different sorts of APIs, but the most common one is the REST API. REST stands for "Representational State Transfer" and describes a set of rules the API designers are supposed to obey when developing their particular interface. You can make different requests, such as *GET* content, *POST* a file to a server -- `PUT` is similar, or request to `DELETE` a file. We will only focus on the `GET` part. 
 
-APIs basically offer you a structured way to communicate with the platform via your machine. In our use case, this means that you can get the data you want in a usually well-structured format and without all the "dirt" that you need to scrape off tediously (enough web scraping metaphors for today). With APIs you can generally quite clearly define what you want and how you want it. In R, we achieve this by using the `httr` [@wickham2020d] package. Moreover, using APIs does not bear the risk of acquiring information you are not supposed to access and you also do not need to worry about the server not being able to handle the load of your requests (usually, there are rate limits in place to address this particular issue). However, it's not all fun and games with APIs: they might give you their data in a special format, both XML and JSON are common. The former is the one `rvest` uses as well, the latter can be tamed using `jsonlite` [@ooms2020] which is to be introduced as well. Moreover, you usually have to ask the platform for permission and perhaps pay to get it. Once you have received the keys you need, you can tell R to fill them automatically, similar to how your browser knows your Amazon password etc.; `usethis` [@wickham2021] can help you with such tasks. An overview of current existing APIs can be found on [The Programmable Web](https://www.programmableweb.com/apis/directory)
+APIs offer you a structured way to communicate with the platform via your machine. In our use case, this means that you can get the data you want in a usually well-structured format and without all the "dirt" that you need to scrape off tediously (enough web scraping metaphors for today). With APIs, you can generally quite clearly define what you want and how you want it. In R, we achieve this by using the `httr` [@wickham2020d] package. Moreover, using APIs does not bear the risk of acquiring the information you are not supposed to access and you also do not need to worry about the server not being able to handle the load of your requests (usually, there are rate limits in place to address this particular issue). However, it's not all fun and games with APIs: they might give you their data in a special format, both XML and JSON are common. The former is the one `rvest` uses as well, the latter can be tamed using `jsonlite` [@ooms2020] which is to be introduced as well. Moreover, you usually have to ask the platform for permission and perhaps pay to get it. Once you have received the keys you need, you can tell R to fill them automatically, similar to how your browser knows your Amazon password, etc.; `usethis` [@wickham2021] can help you with such tasks. An overview of current existing APIs can be found on [The Programmable Web](https://www.programmableweb.com/apis/directory)
 
-The best thing that can happen with APIs: some of them are so popular that people have already written specific R packages for working with them -- an overview can be found on the [ROpenSci web site](https://ropensci.org/packages/data-access/). One example for this is Twitter and the `rtweet` package [@kearney2019] which will be introduced in the end. Less work for us, great.
+The best thing that can happen with APIs: some of them are so popular that people have already written specific R packages for working with them -- an overview can be found on the [ROpenSci website](https://ropensci.org/packages/data-access/). One example of this is Twitter and the `rtweet` package [@kearney2019] which will be introduced in the end. Less work for us, great.
 
 ### Obtaining their data
 
@@ -185,7 +171,7 @@ At most APIs, you will have to register first. As we will play with the New York
 
 #### Making queries
 
-A basic query is performed using the `GET()` function. However, first you need to define the call you want to make. The different keys and values they can take can be found in the API documentation. Of course, there is also a neater way to deal with the key problem. I will show it later.
+A basic query is performed using the `GET()` function. However, first, you need to define the call you want to make. The different keys and values they can take can be found in the API documentation. Of course, there is also a neater way to deal with the key problem. I will show it later.
 
 ```{r eval=FALSE}
 library(httr)
@@ -210,17 +196,17 @@ response %>% http_status()
 `content()` will give you the content of the request.
 
 ```{r eval=FALSE}
-response %>% content()
+response %>% content() %>% glimpse()
 ```
 
-What you see is also the content of the call -- which is what we want. It is in a format which we cannot work with right away, though, it is in JSON. 
+What you see is also the content of the call -- which is what we want. It is in a format that we cannot work with right away, though, it is in JSON. 
 
 #### JSON
 
 The following unordered list is stolen from this [blog entry](https://www.earthdatascience.org/courses/earth-analytics/get-data-using-apis/intro-to-JSON/):
 
 * The data are in name/value pairs
-* Data objects are separated by commas
+* Commas separate data objects
 * Curly braces {} hold objects
 * Square brackets [] hold arrays
 * Each data element is enclosed with quotes "" if it is a character, or without quotes if it is a numeric value
@@ -240,14 +226,14 @@ response %>%
 
 #### Dealing with authentification
 
-Well, as we saw before, I basically put my official NYT API code publicly visible in this script. This is bad practice and should be avoided, especially if you work in a joint project (where everybody uses their own code) or if you put your scripts to public places (such as GitHub). The `usethis` package can help you here.
+Well, as we saw before, I put my official NYT API key publicly visible in this script. This is bad practice and should be avoided, especially if you work on a joint project (where everybody uses their code) or if you put your scripts in public places (such as GitHub). The `usethis` package can help you here.
 
 ```{r eval=FALSE}
-#usethis::edit_r_environ()
-Sys.getenv("nyt_api_key")
+#usethis::edit_r_environ() # save key there
+Sys.getenv("nyt_key")
 ```
 
-Hence, if we now search for articles -- find the proper parameters [here](https://developer.nytimes.com/docs/articlesearch-product/1/routes/articlesearch.json/get), we provide the key by using the `Sys.getenv` function.
+Hence, if we now search for articles -- find the proper parameters [here](https://developer.nytimes.com/docs/articlesearch-product/1/routes/articlesearch.json/get), we provide the key by using the `Sys.getenv` function. So, if somebody wants to work with your code and their own key, all they need to make sure is that they have the API key stored in the environment with the same name.
 
 ```{r eval=FALSE}
 modify_url(
@@ -255,7 +241,7 @@ modify_url(
   query = list(q = "Trump",
                pub = "20161101",
                end_date = "20161110",
-               `api-key` = Sys.getenv("nyt_api_key"))
+               `api-key` = Sys.getenv("nyt_key"))
 ) %>% 
   GET()
 ```
@@ -264,7 +250,7 @@ modify_url(
 
 Twitter is quite popular among social scientists. The main reason for this is arguably its data accessibility. For R users, the package you want to use is `rtweet` by Michael Kearney (find an overview of the different packages and their capabilities [here](https://www.rdocumentation.org/packages/rtweet/versions/0.7.0)). There is a great and quite complete [presentation demonstrating its capabilities](https://mkearney.github.io/nicar_tworkshop/#1). This presentation is a bit outdated. The main difference to the package these days is that you will not need to register an app upfront anymore. All you need is a Twitter account. When you make your first request, a browser window will open where you log on to Twitter, authorize the app, and then you can just go for it. There are certain rate limits, too, which you will need to be aware of when you try to acquire data. Rate limits and the parameters you need to specify can be found in the extensive documentation.
 
-In the following, I will just link to the respective vignettes. Please, feel free to play around with the functions yourself. As a starting point, I provide you the list of all German politicians and some tasks in exercise 3. A first introduction gives [this vignette](https://cran.r-project.org/web/packages/rtweet/vignettes/intro.html).
+In the following, I will just link to the respective vignettes. Please, feel free to play around with the functions yourself. As a starting point, I provide you with the list of all British MPs and some tasks in exercise 3. A first introduction gives [this vignette](https://cran.r-project.org/web/packages/rtweet/vignettes/intro.html).
 
 ```{r eval=FALSE}
 library(rtweet)
@@ -278,34 +264,83 @@ uk_mps <- lists_members(
 * [APIs for social scientists:
 A collaborative review](https://bookdown.org/paul/apis_for_social_scientists/)
 
+[more to be added]
+
 ## Exercises
 
 1. Start a session with the tidyverse Wikipedia page. Adapt your user agent to some sort of different value. Proceed to Hadley Wickham's page. Go back. Go forth. Check the `session_history()` to see if it has worked.
 
-2. Start a session on "https://www.scrapethissite.com/pages/advanced/?gotcha=login", fill out, and submit the form. Any value for login and password will do. (Disclaimer: you have to add the url as an "action" attribute after creating the form, see [this tutorial](https://github.com/tidyverse/rvest/issues/319).)
+```{r eval=FALSE}
+tidyverse_wiki <- "https://en.wikipedia.org/wiki/Tidyverse"
+hadley_wiki <- "https://en.wikipedia.org/wiki/Hadley_Wickham"
+user_agent <- httr::user_agent("Hi, I'm Felix and I try to steal your data.")
+```
 
 ```{r}
+wiki_session <- session(tidyverse_wiki, user_agent)
+
+wiki_session %<>% session_jump_to(hadley_wiki) %>% 
+  session_back() %>% 
+  session_forward()
+
+wiki_session %>% session_history()
+```
+
+2. Start a session on "https://www.scrapethissite.com/pages/advanced/?gotcha=login", fill out, and submit the form. Any value for login and password will do. (Disclaimer: you have to add the URL as an "action" attribute after creating the form, see [this tutorial](https://github.com/tidyverse/rvest/issues/319). -- `login_form$action <- url`)
+
+```{r eval=FALSE}
 url <- "https://www.scrapethissite.com/pages/advanced/?gotcha=login"
+
+#extract and set login form here
+
+login_form$action <- url # add url as action attribute
+
+# submit form
+base_session <- session("https://www.scrapethissite.com/pages/advanced/?gotcha=login") %>% 
+  session_submit(login_form) 
+```
+
+```{r eval=FALSE}
+url <- "https://www.scrapethissite.com/pages/advanced/?gotcha=login"
+
+#extract and set login form here
 login_form <- read_html(url) %>% 
   html_form() %>% 
   pluck(1) %>% 
   html_form_set(user = "123",
                 pass = "456")
 
-login_form$action <- url
+login_form$action <- url # add url as action attribute
 
-
+# submit form
 base_session <- session("https://www.scrapethissite.com/pages/advanced/?gotcha=login") %>% 
   session_submit(login_form) 
 ```
 
 
-3. Scrape 10 profile timelines from the following list. Check the documentation for instructions.
+3. Scrape 10 profile timelines from the following list. Check the [documentation](https://cran.r-project.org/web/packages/rtweet/vignettes/intro.html) for instructions.
 
-```{r}
+```{r eval=FALSE}
 library(rtweet)
 uk_mps <- lists_members(
   list_id = "217199644"
 ) 
+
+# get 10 profiles
+sample_uk_mps <- uk_mps %>% 
+  slice_sample(n = 10) %>% 
+  pull(screen_name)
+
+# get timelines
+## using purrr::map
+timelines <- sample_uk_mps %>% 
+  map(get_timeline)
+
+## using for-loop
+timelines <- vector(mode = "list", length = length(sample_uk_mps))
+
+for (i in seq_along(sample_uk_mps)){
+  timelines[[i]] <- get_timeline(user = sample_uk_mps[[i]])
+}
 ```
 
