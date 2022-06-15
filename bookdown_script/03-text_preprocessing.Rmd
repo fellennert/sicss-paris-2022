@@ -1014,7 +1014,7 @@ for_test == c(1.3, 2.01, 3.1)
 
 ### Preprocessing
 
-1. Download the Twitter timeline data. Preprocess the Tweets. 
+1. Download the Twitter timeline data (`timelines <- read_csv("https://www.dropbox.com/s/pat7muh816yhxlj/sample.csv?dl=1")`. Preprocess the Tweets. 
   a. Unnest the tokens.
   b. Remove stop words. 
   c. Perform stemming. 
@@ -1056,6 +1056,8 @@ timelines <- read_csv("https://www.dropbox.com/s/n60co1u4ml40kvv/timelines.csv?d
   select(name, text, screen_name, party, created_at) %>% 
   mutate(date = as.Date(created_at)) %>% 
   slice_sample(n = 10000)
+
+timeline_sample <- write_csv(timelines, "sample.csv")
 ```
 
 3. Count the terms per party. 
@@ -1098,6 +1100,21 @@ timelines_spacy %>%
     facet_wrap(vars(party), scales = "free") 
 ```
   d. Again, is there stuff to be removed? Do so using a Regex.
+  
+```{r}
+timelines_spacy %>% 
+  filter(pos %in% c("PROPN", "NOUN"),
+         !str_detect(token, "^@|[^a-z]|^amp$")) %>% 
+  left_join(timelines_meta %>% mutate(doc_id = as.character(doc_id)), by = "doc_id") %>% 
+  count(token, party) %>%
+  group_by(party) %>% 
+  slice_max(n, n = 10, with_ties = FALSE) %>% 
+  ggplot()  +
+    geom_col(aes(x = n, y = reorder_within(token, n, party))) +
+    scale_y_reordered() +
+    labs(y = "token") +
+    facet_wrap(vars(party), scales = "free") 
+```
 
 4. Do the same thing as in 3. but use TF-IDF instead of raw counts. How does this alter your results?
 
@@ -1133,3 +1150,5 @@ timelines_spacy %>%
     labs(y = "token") +
     facet_wrap(vars(party), scales = "free") 
 ```
+
+5. What else could you have done in terms of preprocessing (think of the special characters and syntax Twitter uses here)?
