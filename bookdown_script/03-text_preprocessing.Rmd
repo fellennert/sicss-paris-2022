@@ -1018,7 +1018,11 @@ for_test == c(1.3, 2.01, 3.1)
   a. Unnest the tokens.
   b. Remove stop words. 
   c. Perform stemming. 
-  
+
+
+<details>
+  <summary>Solution. Click to expand!</summary>
+
 ```{r}
 library(tidytext)
 library(stopwords)
@@ -1029,9 +1033,14 @@ preprocessed <- timelines %>%
   anti_join(get_stopwords()) %>% 
   mutate(stemmed = wordStem(word))
 ```
-  
+
+</details>
 
 2. Perform the same steps, but using `spacyr`. What works better, lemmatization or stemming?
+
+
+<details>
+  <summary>Solution. Click to expand!</summary>
 
 ```{r}
 library(spacyr)
@@ -1048,20 +1057,13 @@ timelines_spacy <- timelines %>%
   anti_join(get_stopwords(), by = c("token" = "word"))
 ```
 
-  
-```{r}
-timelines <- read_csv("https://www.dropbox.com/s/n60co1u4ml40kvv/timelines.csv?dl=1") %>% 
-  left_join(mp_meta %>% mutate(screen_name = str_remove(handle, "^@"))) %>% 
-  drop_na(party) %>% 
-  select(name, text, screen_name, party, created_at) %>% 
-  mutate(date = as.Date(created_at)) %>% 
-  slice_sample(n = 10000)
-
-timeline_sample <- write_csv(timelines, "sample.csv")
-```
+</details>
 
 3. Count the terms per party. 
   a. Do you see party-specific differences with regard to their ten most common terms (hint: `slice_max(tf_idf, n = 10, with_ties = FALSE)`)? Use the following code to plot them.
+
+<details>
+  <summary>Solution. Click to expand!</summary>
 
 ```{r}
 df <- preprocessed %>% 
@@ -1078,14 +1080,27 @@ df %>%
     facet_wrap(vars(party), scales = "free") 
 ```
 
+</details>
+
+
   b. Is there more words you should add to your stopwords list?
+
+
+<details>
+  <summary>Solution. Click to expand!</summary>
 
 ```{r}
 c("t.co", "https", "amp", "can", "just", "now", "like", "get", "ar", "see") 
 ```
 
+</details>
+
+
   c. Do the same thing but using the spacy output and filtering only NOUNs and PROPNouns. 
   
+<details>
+  <summary>Solution. Click to expand!</summary>
+
 ```{r}
 timelines_spacy %>% 
   filter(pos %in% c("PROPN", "NOUN")) %>% 
@@ -1099,8 +1114,15 @@ timelines_spacy %>%
     labs(y = "token") +
     facet_wrap(vars(party), scales = "free") 
 ```
+
+</details>
+
   d. Again, is there stuff to be removed? Do so using a Regex.
   
+  
+<details>
+  <summary>Solution. Click to expand!</summary>
+
 ```{r}
 timelines_spacy %>% 
   filter(pos %in% c("PROPN", "NOUN"),
@@ -1116,7 +1138,13 @@ timelines_spacy %>%
     facet_wrap(vars(party), scales = "free") 
 ```
 
+</details>
+
+
 4. Do the same thing as in 3. but use TF-IDF instead of raw counts. How does this alter your results?
+
+<details>
+  <summary>Solution. Click to expand!</summary>
 
 ```{r}
 
@@ -1151,4 +1179,16 @@ timelines_spacy %>%
     facet_wrap(vars(party), scales = "free") 
 ```
 
+</details>
+
 5. What else could you have done in terms of preprocessing (think of the special characters and syntax Twitter uses here)?
+
+
+<details>
+  <summary>Solution. Click to expand!</summary>
+  
+* Remove @…
+* Extract hashtags
+
+</details>
+
