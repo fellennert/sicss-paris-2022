@@ -129,10 +129,6 @@ str_squish(unnecessary_whitespaces)
 
 ## Regular expressions
 
-```{r echo=FALSE}
-vembedr::embed_youtube("EAxIcgbGWaw")
-```
-
 Up to now, you have been introduced to the more basic functions of the `stringr` package. Those are useful, for sure, yet limited. However, to make use of the full potential of `stringr`, you will first have to acquaint yourself with regular expressions (also often abbreviated as "regex" with plural "regexes"). 
 
 Those regular expressions are patterns that can be used to describe certain strings. Exemplary use cases of regexes are the identification of phone numbers, email addresses, or whether a password you choose on a web page consists of enough characters, an uppercase character, and at least one special character. Hence, if you want to replace certain words with another one, you can write the proper regex and it will identify the strings you want to replace, and the `stringr` functions (i.e., `str_replace()`) will take care of the rest.
@@ -362,7 +358,7 @@ str_detect(shortened_sentences, "The\\b")
 This also works very well in a `dplyr::filter()` call. Finding all action movies in the IMDB data set can be solved like this:
 
 ```{r}
-imdb_raw <- read_csv("data/imdb2006-2016.csv")
+imdb_raw <- read_csv("https://www.dropbox.com/s/81o3zzdkw737vt0/imdb2006-2016.csv?dl=1")
 imdb_raw %>% 
   filter(str_detect(Genre, "Action"))
 ```
@@ -447,13 +443,13 @@ str_split_fixed(manufacturer_model, "(?<=\\w)\\b", n = 2) %>%
   mutate(model = str_squish(model))
 ```
 
-
+## Featurization of text
 
 After having learned about the basics of string manipulation, we are now turning to how you can turn your collection of documents, your corpus, into a representation that lends itself nicely to quantitative analyses of text. There are a couple of packages around which you can use for text mining, such as `quanteda` [@benoit2018], `tm` [@feinerer2008], and `tidytext` [@silge2016], the latter being probably the most recent addition to them. A larger overview of relevant packages can be found on this [CRAN Task View](https://cran.r-project.org/web/views/NaturalLanguageProcessing.html).
 
 As you could probably tell from its name, `tidytext` obeys the tidy data principles. "Every observation is a row" translates here to "every token has its own row" -- "token" not necessarily relating to a singular term, but also to so-called n-grams. In the following, we will demonstrate what text mining using tidy principles can look like in R. For this, we will first cover the preprocessing of text using tidy data principles. Thereafter, we will delve into more advanced preprocessing such as the lemmatization of words and part-of-speech (POS) tagging using `spaCy` [@benoit2020]. Finally, different R packages are using different representations of text data. Depending on the task at hand, you will therefore have to be able to transform the data into the proper format. This will be covered in the final part.
 
-## Pre-processing with `tidytext`
+### Pre-processing with `tidytext`
 
 The `sotu` package contains all of the so-called "State of the Union" addresses -- the president gives them to the congress annually -- since 1790.
 
@@ -474,7 +470,7 @@ Now that the data are read in, we need to put them into the proper format and cl
 sotu_raw %>% slice(1) %>% pull(text) %>% str_sub(1, 500)
 ```
 
-### `unnest_tokens()`
+#### `unnest_tokens()`
 
 we will focus on the 20th-century SOTUs. Here, the `dplyr::between()` function comes in handy.
 
@@ -526,7 +522,7 @@ glimpse(sotu_20cent_tokenized)
 
 The new tibble consists of `r sotu_20cent_tokenized %>% nrow()` rows. Please note that usually, you have to put some sort of id column into your original tibble before tokenizing it, e.g., by giving each case -- representing a document, or chapter, or whatever -- a separate id (e.g., using `tibble::rowid_to_column()`). This does not apply here, because my original tibble came with a bunch of metadata (president, year, party) which serve as sufficient identifiers.
 
-### Removal of unnecessary content
+#### Removal of unnecessary content
 
 The next step is to remove stop words -- they are not necessary for the analyses we want to perform. The `stopwords` package has a nice list for English.
 
@@ -553,7 +549,7 @@ sotu_20cent_tokenized_nostopwords_nonumbers <- sotu_20cent_tokenized_nostopwords
 
 The corpus now contains `r sotu_20cent_tokenized_nostopwords_nonumbers %>% distinct(token) %>% nrow()` different tokens, the so-called "vocabulary." `r (sotu_20cent_tokenized %>% distinct(token) %>% nrow()) - (sotu_20cent_tokenized_nostopwords_nonumbers %>% distinct(token) %>% nrow())` tokens were removed from the vocuabulary. This translates to a signifiant reduction in corpus size though, the new tibble only consists of `r sotu_20cent_tokenized_nostopwords_nonumbers %>% nrow()` rows, basically a 50 percent reduction. 
 
-### Stemming
+#### Stemming
 
 To decrease the complexity of the vocabulary even further, we can reduce the tokens to their stem using the `SnowballC` package and its function `wordStem()`:
 
@@ -565,17 +561,17 @@ sotu_20cent_tokenized_nostopwords_nonumbers_stemmed <- sotu_20cent_tokenized_nos
 #SnowballC::getStemLanguages() # if you want to know the abbreviations for other languages as well
 ```
 
-Maybe we should also remove insignificant words, i.e., ones that appear less than 0.5 percent of the time. 
+Maybe we should also remove insignificant words, i.e., ones that appear less than 0.1 percent of the time. 
 
 ```{r}
 sotu_20cent_tokenized_nostopwords_nonumbers_stemmed %>% 
   group_by(token) %>% 
-  filter(n() > nrow(.)/200)
+  filter(n() > nrow(.)/1000)
 ```
 
 These steps have brought down the vocabulary from `r sotu_20cent_tokenized_nostopwords_nonumbers %>% distinct(token) %>% nrow()` to `r sotu_20cent_tokenized_nostopwords_nonumbers_stemmed %>% distinct(token) %>% nrow()`.
 
-### In a nutshell
+#### In a nutshell
 
 Well, all those things could also be summarized in one nice cleaning pipeline:
 
@@ -587,7 +583,7 @@ sotu_20cent_clean <- sotu_raw %>%
   filter(!str_detect(token, "[:digit:]")) %>% 
   mutate(token = wordStem(token, language = "en")) %>% 
   group_by(token) %>% 
-  filter(n() > nrow(.)/200)
+  filter(n() > nrow(.)/1000)
 ```
 
 Now we have created a nice tibble containing the SOTU addresses of the 20th century in a tidy format. This is a great point of departure for subsequent analyses.
@@ -709,6 +705,154 @@ spacy_extract_nounphrases(sotu_speeches_tif %>% slice(1:3))
 
 The `spacyr` package of course has some more functions such as dependency parsing. However, they will not be touched upon in the rest of the course and we will therefore leave them out for now. 
 
+## First analyses
+
+A common task in the quantitative analysis of text is to determine how documents differ from each other concerning word usage. This is usually achieved by identifying words that are particular for one document but not for another. These words are referred to by @monroe2008 as *fighting words* or, by @grimmer2022, *discriminating words*. To use the techniques that will be presented today, an already existing organization of the documents is assumed.
+
+In the following, I will present multiple methods according to which you can identify words that are related to different groups and can be used to distinguish them. I will present the methods and their implementation in R ordered from rather simple to more complicated. The order is inspired by @monroe2008. The methods have in common that, at their heart, they determine how often a word appears in a group of documents. Thereafter, the "importance" of a word in distinguishing the groups is determined through several weighting procedures.
+
+### Counting words per document
+
+The most simple approach to determine which words are more correlated to a certain group of documents is by merely counting them and determining their proportion in the document groups. For illustratory purposes, I use fairytales from H.C. Andersen which are contained in the `hcandersenr` package.
+
+```{r}
+library(tidyverse)
+library(lubridate)
+library(tidytext)
+fairytales <- hcandersenr::hcandersen_en %>% 
+  filter(book %in% c("The princess and the pea",
+                     "The little mermaid",
+                     "The emperor's new suit"))
+
+fairytales_tidy <- fairytales %>% 
+  unnest_tokens(output = token, input = text)
+```
+
+#### Naive approach: raw counts
+
+For a first, naive analysis, I can merely count the times the terms appear in the texts. Since the text is in `tidytext` format, I can do so using means from traditional `tidyverse` packages. I will then visualize the results with a bar plot. 
+
+```{r}
+fairytales_top10 <- fairytales_tidy %>% 
+  group_by(book) %>% 
+  count(token) %>% 
+  slice_max(n, n = 10)
+```
+
+```{r}
+fairytales_top10 %>% 
+  ggplot()  +
+  geom_col(aes(x = n, y = reorder_within(token, n, book))) +
+  scale_y_reordered() +
+  labs(y = "token") +
+  facet_wrap(vars(book), scales = "free") +
+  theme(strip.text.x = element_blank())
+```
+
+It is quite hard to draw inferences on which plot belongs to which book since the plots are crowded with stopwords. However, there are pre-made stopword lists I can harness to remove the noise and perhaps catch a bit more signal for determining the books.
+
+```{r}
+library(stopwords)
+fairytales_top10_nostop <- fairytales_tidy %>% 
+  anti_join(get_stopwords(), by = c("token" = "word")) %>% 
+  group_by(book) %>% 
+  count(token) %>% 
+  slice_max(n, n = 10, with_ties = FALSE)
+```
+
+```{r}
+fairytales_top10_nostop %>% 
+  ggplot()  +
+  geom_col(aes(x = n, y = reorder_within(token, n, book))) +
+  scale_y_reordered() +
+  labs(y = "token") +
+  facet_wrap(vars(book), scales = "free") +
+  scale_x_continuous(breaks = scales::pretty_breaks()) +
+  theme(strip.text.x = element_blank())
+```
+
+This already looks quite nice, it is quite easy to see which plot belongs to the respective book. 
+
+#### TF-IDF
+
+A better explanation for words that are particular to a group of documents is the ones that appear often in one group but rarely in the other one(s). So far, the measure of term frequency only accounts for how often terms are used in the respective document. I can take into account how often it appears in other documents by including the inverse document frequency. The resulting measure is called tf-idf and describes "the frequency of a term adjusted for how rarely it is used." [@silge2016: 31] If a term is rarely used overall but appears comparably often in a singular document, it might be safe to assume that it plays a bigger role in that document.
+
+The tf-idf of a word in a document is commonly^[Note that multiple implementations exist, for an overview see, ofr instance, @manning2008] calculated as follows:
+
+$$w_{i,j}=tf_{i,j}\times ln(\frac{N}{df_{i}})$$
+
+--\> $tf_{i,j}$: number of occurrences of term $i$ in document $j$
+
+--\> $df_{i}$: number of documents containing $i$
+
+--\> $N$: total number of documents
+
+Note that the $ln$ is included so that words that appear in all documents -- and do therefore not have discriminatory power -- will automatically get a value of 0. This is because $ln(1) = 0$. On the other hand, if a term appears in, say, 4 out of 20 documents, its idf is $ln(20/4) = ln(5) = 1.6$.
+
+The `tidytext` package provides a neat implementation for calculating the tf-idf called `bind_tfidf()`. It takes as input the columns containing the `term`, the `document`, and the document-term counts `n`.
+
+```{r}
+fairytales_top10_tfidf <- fairytales_tidy %>% 
+  group_by(book) %>% 
+  count(token) %>% 
+  bind_tf_idf(token, book, n) %>% 
+  slice_max(tf_idf, n = 10)
+```
+
+```{r}
+fairytales_top10_tfidf %>% 
+  ggplot()  +
+  geom_col(aes(x = tf_idf, y = reorder_within(token, tf_idf, book))) +
+  scale_y_reordered() +
+  labs(y = "token") +
+  facet_wrap(vars(book), scales = "free") +
+  theme(strip.text.x = element_blank(),
+        axis.title.x = element_blank(),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank())
+```
+
+Pretty good already! All the fairytales can be clearly identified. A problem with this representation is that I cannot straightforwardly interpret the x-axis values (they can be removed by uncommenting the last three lines). A way to mitigate this is using odds.
+
+Another shortcoming becomes visible when I take the terms with the highest TF-IDF as compared to all other fairytales.
+
+```{r}
+tfidf_vs_full <- hcandersenr::hcandersen_en %>% 
+  unnest_tokens(output = token, input = text) %>% 
+  count(token, book) %>% 
+  bind_tf_idf(book, token, n) %>% 
+  filter(book %in% c("The princess and the pea",
+                     "The little mermaid",
+                     "The emperor's new suit")) 
+
+plot_tf_idf <- function(df, group_var){
+  df %>% 
+    group_by({{ group_var }}) %>% 
+    slice_max(tf_idf, n = 10, with_ties = FALSE) %>% 
+    ggplot()  +
+    geom_col(aes(x = tf_idf, y = reorder_within(token, tf_idf, {{ group_var }}))) +
+    scale_y_reordered() +
+    labs(y = "token") +
+    facet_wrap(vars({{ group_var }}), scales = "free") +
+    #theme(strip.text.x = element_blank()) +
+    theme(axis.title.x=element_blank(),
+          axis.text.x=element_blank(),
+          axis.ticks.x=element_blank())
+} 
+  
+plot_tf_idf(tfidf_vs_full, book)
+```
+
+The tokens are far too specific to make any sense. Introducing a lower threshold (i.e., limiting the analysis to terms that appear at least x times in the document) might mitigate that. Yet, this threshold is of course arbitrary.
+
+```{r}
+tfidf_vs_full %>% 
+  group_by(token) %>% 
+  filter(n > 3) %>% 
+  ungroup() %>% 
+  plot_tf_idf(book)
+```
+
 ## Converting between formats
 
 While the `tidytext` format lends itself nicely to "basic" operations and visualizations, you will have to use different representations of text data for other applications such as topic models or word embeddings. On the other hand, you might want to harness, for instance, the `ggplot2` package for visualization. In this case, you will need to project the data into a tidy format. The former operations are performed using multiple `cast_.*()` functions, the latter using the `tidy()` function from the `broom` package whose purpose is to bring data from foreign structures to tidy representations.
@@ -821,3 +965,171 @@ This results in a tibble that contains the relevant metadata and a `text` column
 * [A guide to Using spacyr](https://spacy.io/api/token#attributes).
 
 ## Exercises
+
+### Regexes
+
+1.Write a regex for Swedish mobile number. Test it with `str_detect("+46 71-738 25 33", "[insert your regex here]")`. 
+2. Find all Mercedes in the `mtcars` data set.
+3. Take the IMDb file (`imdb <- read_csv("https://www.dropbox.com/s/81o3zzdkw737vt0/imdb2006-2016.csv?dl=1")`) and split the `Genre` column into different columns (hint: look at the `tidyr::separate()` function). How would you do it if `Genre` were a vector using `str_split_fixed()`?
+4. Take this vector of heights: `heights <- c("1m30cm", "2m01cm", "3m10cm")`
+    a. How can you extract the meters using the negative look behind?
+    b. Bring it into numeric format (i.e., your_solution == c(1.3, 2.01, 3.1)) using regexes and `stringr` commands.
+
+<details>
+  <summary>Solution. Click to expand!</summary>
+
+```{r eval=FALSE}
+#1
+str_detect("+46 71-738 25 33", "\\+46 [0-9]{2}\\-[0-9]{3} [0-9]{2} [0-9]{2}")
+
+#2
+mtcars %>% 
+  rownames_to_column("model") %>% 
+  filter(str_detect(model, "Merc"))
+
+#3
+imdb <- read_csv("https://www.dropbox.com/s/81o3zzdkw737vt0/imdb2006-2016.csv?dl=1")
+
+imdb %>% 
+  separate(Genre, sep = ",", into = c("genre_1", "genre_2", "genre_3"))
+
+imdb$Genre %>% 
+  str_split_fixed(pattern = ",", 3)
+
+#4
+heights <- c("1m30cm", "2m01cm", "3m10cm")
+
+#a
+meters <- str_extract(heights, "(?<!m)[0-9]")
+
+#b
+for_test <- str_replace(heights, "(?<=[0-9])m", "\\.") %>% 
+  str_replace("cm", "") %>% 
+  as.numeric() 
+
+for_test == c(1.3, 2.01, 3.1)
+```
+
+</details>
+
+### Preprocessing
+
+1. Download the Twitter timeline data. Preprocess the Tweets. 
+  a. Unnest the tokens.
+  b. Remove stop words. 
+  c. Perform stemming. 
+  
+```{r}
+library(tidytext)
+library(stopwords)
+library(SnowballC)
+
+preprocessed <- timelines %>% 
+  unnest_tokens(word, text) %>% 
+  anti_join(get_stopwords()) %>% 
+  mutate(stemmed = wordStem(word))
+```
+  
+
+2. Perform the same steps, but using `spacyr`. What works better, lemmatization or stemming?
+
+```{r}
+library(spacyr)
+spacy_initialize()
+
+timelines_meta <- timelines %>% 
+  rowid_to_column("doc_id") %>% 
+  select(-text)
+
+timelines_spacy <- timelines %>% 
+  select(text) %>% 
+  rowid_to_column("doc_id") %>% 
+  spacy_parse(entity = FALSE) %>% 
+  anti_join(get_stopwords(), by = c("token" = "word"))
+```
+
+  
+```{r}
+timelines <- read_csv("https://www.dropbox.com/s/n60co1u4ml40kvv/timelines.csv?dl=1") %>% 
+  left_join(mp_meta %>% mutate(screen_name = str_remove(handle, "^@"))) %>% 
+  drop_na(party) %>% 
+  select(name, text, screen_name, party, created_at) %>% 
+  mutate(date = as.Date(created_at)) %>% 
+  slice_sample(n = 10000)
+```
+
+3. Count the terms per party. 
+  a. Do you see party-specific differences with regard to their ten most common terms (hint: `slice_max(tf_idf, n = 10, with_ties = FALSE)`)? Use the following code to plot them.
+
+```{r}
+df <- preprocessed %>% 
+  count(word, party) %>% 
+  group_by(party) %>% 
+  slice_max(n, n = 10, with_ties = FALSE)
+  
+df %>% 
+  group_by(party) %>% 
+  ggplot()  +
+    geom_col(aes(x = n, y = reorder_within(word, n, party))) +
+    scale_y_reordered() +
+    labs(y = "token") +
+    facet_wrap(vars(party), scales = "free") 
+```
+
+  b. Is there more words you should add to your stopwords list?
+
+```{r}
+c("t.co", "https", "amp", "can", "just", "now", "like", "get", "ar", "see") 
+```
+
+  c. Do the same thing but using the spacy output and filtering only NOUNs and PROPNouns. 
+  
+```{r}
+timelines_spacy %>% 
+  filter(pos %in% c("PROPN", "NOUN")) %>% 
+  left_join(timelines_meta %>% mutate(doc_id = as.character(doc_id)), by = "doc_id") %>% 
+  count(token, party) %>%
+  group_by(party) %>% 
+  slice_max(n, n = 10, with_ties = FALSE) %>% 
+  ggplot()  +
+    geom_col(aes(x = n, y = reorder_within(token, n, party))) +
+    scale_y_reordered() +
+    labs(y = "token") +
+    facet_wrap(vars(party), scales = "free") 
+```
+  d. Again, is there stuff to be removed? Do so using a Regex.
+
+4. Do the same thing as in 3. but use TF-IDF instead of raw counts. How does this alter your results?
+
+```{r}
+
+df_tf_idf <- preprocessed %>% 
+  count(word, party) %>% 
+  bind_tf_idf(word, party, n) %>% 
+  group_by(party) %>% 
+  slice_max(tf_idf, n = 10, with_ties = FALSE)
+  
+df_tf_idf %>% 
+  group_by(party) %>% 
+  ggplot()  +
+    geom_col(aes(x = tf_idf, y = reorder_within(word, tf_idf, party))) +
+    scale_y_reordered() +
+    labs(y = "token") +
+    facet_wrap(vars(party), scales = "free") 
+
+
+timelines_spacy %>% 
+  filter(pos %in% c("PROPN", "NOUN")) %>% 
+  left_join(timelines_meta %>% mutate(doc_id = as.character(doc_id)), by = "doc_id") %>% 
+  count(token, party) %>%
+  filter(str_detect(token, "[a-z]")) %>% 
+  filter(!str_detect(token, "^@")) %>% 
+  bind_tf_idf(token, party, n) %>% 
+  group_by(party) %>% 
+  slice_max(n, n = 10, with_ties = FALSE) %>% 
+  ggplot()  +
+    geom_col(aes(x = tf_idf, y = reorder_within(token, tf_idf, party))) +
+    scale_y_reordered() +
+    labs(y = "token") +
+    facet_wrap(vars(party), scales = "free") 
+```
