@@ -12,6 +12,7 @@ The most basic form of making a request is by using `read_html()` from the `xml2
 
 ```{r}
 library(rvest) # this also loads the xml2 package
+library(tidyverse)
 
 page <- read_html("https://en.wikipedia.org/wiki/Tidyverse")
 
@@ -34,7 +35,7 @@ my_session$response$request$options$useragent
 
 Not very human. We can set it to a common one using the `httr` package (which powers `rvest`).
 
-```{r eval=FALSE}
+```{r}
 user_a <- httr::user_agent("Mozilla/5.0 (Macintosh; Intel Mac OS X 12_0_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36")
 session_with_ua <- session("https://scrapethissite.com/", user_a)
 session_with_ua$response$request$options$useragent
@@ -48,13 +49,13 @@ my_session$response$status_code
 
 When you want to save a page from the session, do so using `read_html()`. 
 
-```{r eval=FALSE}
+```{r}
 page <- read_html(session_with_ua)
 ```
 
 If you want to open a new URL, hit `session_jump_to()`.
 
-```{r eval=FALSE}
+```{r}
 library(magrittr)
 session_with_ua %<>% session_jump_to("https://www.scrapethissite.com/pages/")
 session_with_ua
@@ -71,7 +72,7 @@ session_with_ua
 
 Wanna go back -- `session_back()`; thereafter you can go `session_forward()`, too.
 
-```{r eval=FALSE}
+```{r}
 session_with_ua %<>% 
   session_back()
 
@@ -85,7 +86,7 @@ session_with_ua
 
 You can look at what your scraper has done with `session_history()`.
 
-```{r eval=FALSE}
+```{r}
 session_with_ua %>% session_history()
 ```
 
@@ -93,7 +94,7 @@ session_with_ua %>% session_history()
 
 Sometimes we also want to provide certain input, e.g., to provide login credentials or to scrape a website more systematically. That information is usually provided using so-called [forms](https://www.w3schools.com/html/html_forms.asp). A `<form>` element can contain different other elements such as text fields or checkboxes. Basically, we use `html_form()` to extract the form, `html_form_set()` to define what we want to submit, and `html_form_submit()` to finally submit it. [For a basic example, I search for something on Google.](https://rvest.tidyverse.org/reference/html_form.html)
 
-```{r eval=FALSE}
+```{r}
 google <- read_html("http://www.google.com")
 search <- html_form(google)[[1]]
 
@@ -173,7 +174,7 @@ At most APIs, you will have to register first. As we will play with the New York
 
 A basic query is performed using the `GET()` function. However, first, you need to define the call you want to make. The different keys and values they can take can be found in the API documentation. Of course, there is also a neater way to deal with the key problem. I will show it later.
 
-```{r eval=FALSE}
+```{r}
 library(httr)
 key <- "qekEhoGTXqjsZnXpqHns0Vfa2U6T7ABf"
 nyt_headlines <- modify_url(
@@ -188,7 +189,7 @@ When it comes to the NYT news API, there is the problem that the type of section
 
 The `Status:` code you want to see here is `200` which stands for success. If you want to put it inside a function, you might want to break the function once you get a non-successful query. `http_error()` or `http_status()` are your friends here. 
 
-```{r eval=FALSE}
+```{r}
 response %>% http_error()
 response %>% http_status()
 ```
@@ -217,7 +218,7 @@ writeLines(rawToChar(response$content))
 
 `jsonlite` helps us to bring this output into a data frame. 
 
-```{r eval=FALSE}
+```{r}
 library(jsonlite)
 response %>% 
   content(as = "text") %>%
@@ -235,7 +236,7 @@ Sys.getenv("nyt_key")
 
 Hence, if we now search for articles -- find the proper parameters [here](https://developer.nytimes.com/docs/articlesearch-product/1/routes/articlesearch.json/get), we provide the key by using the `Sys.getenv` function. So, if somebody wants to work with your code and their own key, all they need to make sure is that they have the API key stored in the environment with the same name.
 
-```{r eval=FALSE}
+```{r}
 modify_url(
   url = "http://api.nytimes.com/svc/search/v2/articlesearch.json",
   query = list(q = "Trump",
@@ -279,7 +280,7 @@ hadley_wiki <- "https://en.wikipedia.org/wiki/Hadley_Wickham"
 user_agent <- httr::user_agent("Hi, I'm Felix and I try to steal your data.")
 ```
 
-```{r}
+```{r eval=FALSE}
 wiki_session <- session(tidyverse_wiki, user_agent)
 
 wiki_session %<>% session_jump_to(hadley_wiki) %>% 

@@ -31,7 +31,7 @@ library(glmnet)
 library(tidytext)
 library(tidyverse)
 
-imdb_data <- read_csv("data/imdb_reviews.csv")
+imdb_data <- read_csv("https://www.dropbox.com/s/0cfr4rkthtfryyp/imdb_reviews.csv?dl=1")
 ```
 
 The first step is to divide the data into training and test sets using `initial_split()`. You need to make sure that the test and training set are fairly balanced which is achieved by using `strata =`. `prop =` refers to the proportion of rows that make it into the training set.
@@ -185,13 +185,17 @@ imdb_folds <- vfold_cv(imdb_train)
 
 `fit_resamples()` trains models on the respective samples. (Note that for this to work, no model must have been fit to this workflow before. Hence, you either need to define a new workflow first or restart the session and skip the fit-line from before.)
 
-```{r}
+```{r eval=FALSE}
 imdb_nb_resampled <- fit_resamples(
   imdb_nb_wf,
   imdb_folds,
   control = control_resamples(save_pred = TRUE),
   metrics = metric_set(accuracy, recall, precision)
 )
+```
+
+```{r eval=TRUE, include=FALSE}
+imdb_nb_resampled <- read_rds("https://www.dropbox.com/s/hulz4m6g3xrkemv/imdb_nb_resampled.rds?dl=1")
 ```
 
 `collect_metrics()` can be used to evaluate the results. 
@@ -275,12 +279,10 @@ tune_lasso_rs <- tune_grid(
   grid = lambda_grid,
   metrics = metric_set(accuracy, sensitivity, specificity)
 )
-
-tune_lasso_rs %>% write_rds("data/tuned_lasso.rds")
 ```
 
 ```{r include=FALSE}
-tune_lasso_rs <- read_rds("data/tuned_lasso.rds")
+tune_lasso_rs <- read_rds("https://www.dropbox.com/s/pbkeugsbzw7pgh2/tuned_lasso.rds?dl=1")
 ```
 
 
@@ -337,14 +339,20 @@ The following graphic depicts a flowchart of text analysis with the `tidytext` p
 
 ![Text analysis flowchart](https://www.tidytextmining.com/images/tmwr_0601.png)
 
-What becomes evident is that the actual topic modeling does not happen within `tidytext`. For this, the text needs to be transformed into a document-term-matrix and then passed on to the `topicmodels` package [@grun2020], which will take care of the modeling process. Thereafter, the results are turned back into tidy format, so that they can be visualized using `ggplot2`.
+What becomes evident is that the actual topic modeling does not happen within `tidytext`. For this, the text needs to be transformed into a document-term-matrix and then passed on to the `topicmodels` package [@grun2020], which will take care of the modeling process. Thereafter, the results are turned back into tidy format, using `broom` so that they can be visualized using `ggplot2`.
 
 ### Document-term matrix
 
-In order to search for the topics which are prevalent in the singular addresses, we need to transform the tidy tibble into a document-term matrix. This can be achieved with `cast_dtm()`.
+In order to search for the topics which are prevalent in the singular addresses through LDA, we need to transform the tidy tibble into a document-term matrix first. This can be achieved with `cast_dtm()`.
 
 ```{r}
-sotu_clean <- sotu_raw %>% 
+library(sotu)
+library(tidytext)
+library(SnowballC)
+
+sotu_clean <- sotu_meta %>% 
+  mutate(text = sotu_text %>% 
+           str_replace_all("[,.]", " ")) %>% 
   filter(between(year, 1900, 2000)) %>% 
   unnest_tokens(output = token, input = text) %>% 
   anti_join(get_stopwords(), by = c("token" = "word")) %>% 
@@ -356,28 +364,26 @@ sotu_dtm <- sotu_clean %>%
   count(year, token) %>% 
   #filter(between(year, 1900, 2000)) %>% 
   group_by(token) %>% 
-  filter(n() < 90) %>% 
+  filter(n() < 95) %>% 
   cast_dtm(document = year, term = token, value = n)
 ```
 
-A DTM contains of Documents (rows) and Terms (columns) and specifies how often a term appears in a document.
+A DTM contains  Documents (rows) and Terms (columns) and specifies how often a term appears in a document.
 
 ```{r}
 sotu_dtm %>% as.matrix() %>% .[1:5, 1:5]
 ```
 
-This DTM can now be used to create an LDA model.
-
 ### Inferring the number of topics
 
-The thing with LDA models is that we need to tell the model in advance how many topics we assume to be present within the document. Since we have neither read the SOTU addresses nor any secondary literature about them, we cannot make a guess on how many topics are in there. Furthermore, you want to use LDA to uncover the topics within the corpus in general. This is totally doable with LDA, but you will need to go some extra-miles to assess the number of topics and then evaluate your choice.
+We need to tell the model in advance how many topics we assume to be present within the document. Since we have neither read all the SOTU addresses (if so, we would hardly need to use the topic model), we cannot make an educated guess on how many topics are in there.
 
 #### Making guesses
 
-One approach might be to just providing it with wild guesses on how many topics might be in there and then trying to make sense of it afterwards.
+One approach might be to just providing it with wild guesses on how many topics might be in there and then trying to make sense of them afterwards.
 
 ```{r include=FALSE}
-sotu_lda_k10_tidied <- read_rds("data/sotu_lda_k10.rds")
+sotu_lda_k10_tidied <- read_rds("https://www.dropbox.com/s/lxrcy44aqz16sgb/sotu_lda_k10.rds?dl=1")
 ```
 
 ```{r eval=FALSE}
@@ -399,7 +405,7 @@ Now, we can wrangle it a bit, and then visualize it with `ggplot2`.
 ```{r}
 top_terms_k10 <- sotu_lda_k10_tidied %>%
   group_by(topic) %>%
-  slice_max(beta, n = 5) %>%
+  slice_max(beta, n = 5, with_ties = FALSE) %>%
   ungroup() %>%
   arrange(topic, -beta)
 
@@ -413,7 +419,7 @@ top_terms_k10 %>%
   coord_flip()
 ```
 
-Now the hard part begins: making sense of it in an inductive manner. But, of course, there is a large probability that we just chose the wrong number of topics. Therefore, before scratching our head trying to come to meaningful conclusions, we should first assess what the optimal number of models is.
+Now the hard part begins: making sense of it in an inductive manner. But, of course, there is a large probability that we just chose the wrong number of topics. Therefore, before scratching our head trying to come to meaningful conclusions, we should first assess what the optimal number of topics is.
 
 #### More elaborate methods
 
@@ -430,55 +436,49 @@ determine_k <- FindTopicsNumber(
   metrics = c("Griffiths2004", "CaoJuan2009", "Arun2010", "Deveaud2014"),
   method = "Gibbs",
   control = list(seed = 77),
-  mc.cores = 4L,
+  mc.cores = 16L,
   verbose = TRUE
 )
+
+determine_k %>% write_rds("lda_tuning.rds")
 ```
 
 ```{r include=FALSE}
-determine_k <- read_rds("data/lda_tuning.rds")
+determine_k <- read_rds("https://www.dropbox.com/s/1jtehujx1b6f0rp/lda_tuning.rds?dl=1")
 ```
 
 ```{r}
 FindTopicsNumber_plot(determine_k)
 ```
 
-We would actually go with the 23 topics here, as they seem to maximize at least one of the metrics that shall be maximized and minimizes the other ones quite well. 
+We would actually go with the 16 topics here, as they seem to maximizes the metrics that shall be maximized and minimizes the other ones quite well. 
+
+```{r eval=FALSE}
+sotu_lda_k16 <- LDA(sotu_dtm, k = 16, control = list(seed = 77))
+
+sotu_lda_k16_tidied <- tidy(sotu_lda_k16)
+
+write_rds(sotu_lda_k16, "lda_16.rds")
+```
+
+```{r include=FALSE}
+sotu_lda_k16 <- read_rds("https://www.dropbox.com/s/ffq762eq7ytzyb8/lda_16.rds?dl=1")
+sotu_lda_k16_tidied <- tidy(sotu_lda_k16)
+```
 
 ### Sense-making
 
 Now, the harder part begins: making sense of the different topics. In LDA, words can exist across topics, making them not perfectly distinguishable. Also, as the number of topics becomes greater, plotting them doesn't make too much sense anymore. 
 
-```{r eval=FALSE}
-sotu_lda_k23 <- LDA(sotu_dtm, k = 23, control = list(seed = 77))
-
-sotu_lda_k23_tidied <- tidy(sotu_lda_k23)
-```
-
-```{r include=FALSE}
-sotu_lda_k23 <- read_rds("data/lda_k23.rds")
-sotu_lda_k23_tidied <- tidy(sotu_lda_k23)
-```
-
 ```{r}
-topic_list <- sotu_lda_k23_tidied %>% 
+topic_list <- sotu_lda_k16_tidied %>% 
   group_by(topic) %>% 
   group_split() %>% 
-  map_dfc(~.x %>% slice_max(beta, n = 20) %>% arrange(-beta) %>% slice(1:20)  %>% select(term))
-names(topic_list) <- str_c("topic", 1:23, sep = " ")
-```
-
-
-```{r}
-weighted_topics <- sotu_lda_k23_tidied %>% 
-  filter(beta > 0.001) %>%
-  bind_tf_idf(term, topic, beta) %>% 
-  group_by(topic) %>% 
-  group_split() %>% 
-  map_dfc(~.x %>% slice_max(tf_idf, n = 20, with_ties = FALSE) %>% arrange(-beta) %>% select(term))
-colnames(weighted_topics) <- str_c("topic", 1:23,  sep = " ")
-
-kableExtra::kable(weighted_topics)
+  map_dfc(~.x %>% 
+            slice_max(beta, n = 20, with_ties = FALSE) %>%
+            arrange(-beta) %>% 
+            select(term)) %>% 
+  set_names(str_c("topic", 1:16, sep = "_"))
 ```
 
 ### Document-topic probabilities
@@ -486,23 +486,25 @@ kableExtra::kable(weighted_topics)
 Another thing to assess is document-topic probabilities `gamma`: which document belongs to which topic. By doing so, you can choose the documents that have the highest probability of belonging to a topic and then read these specifically. This might give you some better understanding of what the different topics might imply. 
 
 ```{r}
-sotu_lda_k23_document <- tidy(sotu_lda_k23, matrix = "gamma")
+sotu_lda_k16_document <- tidy(sotu_lda_k16, matrix = "gamma")
 ```
 
 This shows you the proportion of words of the document which were drawn from the specific topics. In 1990, for instance, many words were drawn from the first topic.
 
 ```{r}
-sotu_lda_k23_document %>% 
+sotu_lda_k16_document %>% 
   group_by(document) %>% 
-  slice_max(gamma, n = 1)
+  slice_max(gamma, n = 1) %>% 
+  mutate(gamma = round(gamma, 3))
 ```
 
 An interesting pattern is that the topics show some time-dependency. This intuitively makes sense, as they might represent some sort of deeper underlying issue.
 
+#### `LDAvis`
+
 `LDAvis` is a handy tool we can use to inspect our model visually. Preprocessing the data is a bit tricky though, therefore we define a quick function first.
 
 ```{r}
-library(topicmodels)
 library(LDAvis)
 prep_lda_output <- function(dtm, lda_output){
   doc_length <- dtm %>% 
@@ -511,8 +513,8 @@ prep_lda_output <- function(dtm, lda_output){
     rowwise() %>% 
     summarize(doc_sum = c_across() %>% sum()) %>% 
     pull(doc_sum)
-  phi <- posterior(sotu_lda_k23)$terms %>% as.matrix()
-  theta <- posterior(sotu_lda_k23)$topics %>% as.matrix()
+  phi <- posterior(lda_output)$terms %>% as.matrix()
+  theta <- posterior(lda_output)$topics %>% as.matrix()
   vocab <- colnames(dtm)
   term_sums <- dtm %>% 
     as.matrix() %>% 
@@ -529,7 +531,7 @@ prep_lda_output <- function(dtm, lda_output){
   )
 }
 
-json_lda <- prep_lda_output(sotu_dtm, sotu_lda_k23)
+json_lda <- prep_lda_output(sotu_dtm, sotu_lda_k16)
 ```
 
 ```{r eval=FALSE}
@@ -621,7 +623,7 @@ mod.out.corr <- topicCorr(sotu_content_fit)
 plot(mod.out.corr)
 ```
 
-```{r}
+```{r eval=FALSE}
 sotu_content_fit %>% toLDAvis(docs = docs)
 servr::daemon_stop(2) 
 ```

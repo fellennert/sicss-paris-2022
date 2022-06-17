@@ -1023,7 +1023,7 @@ for_test == c(1.3, 2.01, 3.1)
 <details>
   <summary>Solution. Click to expand!</summary>
 
-```{r}
+```{r eval=FALSE}
 library(tidytext)
 library(stopwords)
 library(SnowballC)
@@ -1042,7 +1042,7 @@ preprocessed <- timelines %>%
 <details>
   <summary>Solution. Click to expand!</summary>
 
-```{r}
+```{r eval=FALSE}
 library(spacyr)
 spacy_initialize()
 
@@ -1065,7 +1065,7 @@ timelines_spacy <- timelines %>%
 <details>
   <summary>Solution. Click to expand!</summary>
 
-```{r}
+```{r eval=FALSE}
 df <- preprocessed %>% 
   count(word, party) %>% 
   group_by(party) %>% 
@@ -1089,7 +1089,7 @@ df %>%
 <details>
   <summary>Solution. Click to expand!</summary>
 
-```{r}
+```{r eval=FALSE}
 c("t.co", "https", "amp", "can", "just", "now", "like", "get", "ar", "see") 
 ```
 
@@ -1101,7 +1101,7 @@ c("t.co", "https", "amp", "can", "just", "now", "like", "get", "ar", "see")
 <details>
   <summary>Solution. Click to expand!</summary>
 
-```{r}
+```{r eval=FALSE}
 timelines_spacy %>% 
   filter(pos %in% c("PROPN", "NOUN")) %>% 
   left_join(timelines_meta %>% mutate(doc_id = as.character(doc_id)), by = "doc_id") %>% 
@@ -1123,7 +1123,7 @@ timelines_spacy %>%
 <details>
   <summary>Solution. Click to expand!</summary>
 
-```{r}
+```{r eval=FALSE}
 timelines_spacy %>% 
   filter(pos %in% c("PROPN", "NOUN"),
          !str_detect(token, "^@|[^a-z]|^amp$")) %>% 
@@ -1146,8 +1146,7 @@ timelines_spacy %>%
 <details>
   <summary>Solution. Click to expand!</summary>
 
-```{r}
-
+```{r eval=FALSE}
 df_tf_idf <- preprocessed %>% 
   count(word, party) %>% 
   bind_tf_idf(word, party, n) %>% 

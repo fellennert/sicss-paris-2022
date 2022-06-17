@@ -56,12 +56,13 @@ packages <- c(
   "irlba",
   "janitor",
   "jsonlite",
+  "ldatuning",
   "LDAvis",
   "lubridate", 
   "naivebayes",
   "polite",
   "ranger",
-  "rselenium",
+  "RSelenium",
   "rtweet",
   "rvest",
   "sotu",
@@ -104,7 +105,7 @@ When you work with `RSelenium`, what basically happens is that you simulate a br
 
 We assume your familiarity with R. However, we are fully aware that coding styles (or "dialects") differ. Therefore, just a quick demonstration of some of the building blocks of the tidyverse.
 
-We use the "old" pipe -- `%>%`. The pipe takes its argument on the left and forwards it to the next function, including it there as the first argument unless a `.` placeholder is provided somewhere. `%<>%` takes the argument on the left and changes it at the same time.
+We use the "old" pipe -- `%>%`. The pipe takes its argument on the left and forwards it to the next function, including it there as the first argument unless a `.` placeholder is provided somewhere. `%<>%` takes the argument on the left and modifies it at the same time.
 
 ```{r}
 library(magrittr)
@@ -134,7 +135,7 @@ mtcars %>%
   pull(cyl) # pull vector
 ```
 
-We also will work with lists. Lesser known functions here are the `map()` family, which applies functions over lists, and `pluck()` which extracts elements from the list. 
+We also will work with lists. Lesser known functions here come from the `purrr` package. On one hand, we have the `map()` family, which applies functions over lists, and `pluck()` which extracts elements from the list. 
 
 ```{r}
 raw_list <- list(1:4, 4:6, 10:42)
@@ -142,7 +143,7 @@ str(raw_list)
 
 map(raw_list, mean)
 map(raw_list, ~{mean(.x)})
-map_dbl(raw_list, mean)
+map_dbl(raw_list, mean) # by specifying the type of output, you can reduce the list
 
 raw_list %>% pluck(1)
 ```
@@ -155,7 +156,7 @@ for (i in seq_along(raw_list)){
 }
 ```
 
-Another part of R is functions. They require arguments. Then they do something to these arguments. In the end, they return the last call (if it's not stored in an object). Otherwise, an object can be returned using `return()` -- usually unnecessary though.
+Another part of R is functions. They require arguments. Then they do something to these arguments. In the end, they return the last call (if it's not stored in an object). Otherwise, an object can be returned using `return()` -- this is usually unnecessary though.
 
 ```{r}
 a_plus_b <- function(a, b){
@@ -189,4 +190,4 @@ Learning R -- and programming in general -- is tough. More often than not, thing
 vembedr::embed_youtube("HluANRwPyNo")
 ```
 
-If questions arise that a google search cannot answer, we are always only one [email](mailto: felix.lennert@ensae.fr) away -- and will probably just hit Google right away, too, to figure something out for you.
+If questions arise that a Google search cannot answer, we are always only one [email](mailto: felix.lennert@ensae.fr) away -- and will probably just hit Google right away, too, to figure something out for you.
