@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Day 2 Scraping the web | Course script for SICSS Paris</title>
+  <meta name="description" content="This book serves as accompanying script for the R sessions of the 2022 Summer Institute for Computational Social Science (SICSS), taking place at the Institut Polytechnique de Paris." />
+  <meta name="generator" content="bookdown 0.26 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Day 2 Scraping the web | Course script for SICSS Paris" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="This book serves as accompanying script for the R sessions of the 2022 Summer Institute for Computational Social Science (SICSS), taking place at the Institut Polytechnique de Paris." />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Day 2 Scraping the web | Course script for SICSS Paris" />
+  
+  <meta name="twitter:description" content="This book serves as accompanying script for the R sessions of the 2022 Summer Institute for Computational Social Science (SICSS), taking place at the Institut Polytechnique de Paris." />
+  
+
+<meta name="author" content="Germain Gauthier" />
+<meta name="author" content="Felix Lennert" />
+<meta name="author" content="Étienne Ollion" />
+
+
+<meta name="date" content="2022-06-19" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="index.html"/>
+<link rel="next" href="day3.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+<link href="libs/vembedr-0.1.5/css/vembedr.css" rel="stylesheet" />
+<script src="libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
+<link href="libs/str_view-0.1.0/str_view.css" rel="stylesheet" />
+<script src="libs/str_view-binding-1.4.0/str_view.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Script for SICSS-Paris 2022</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#outline"><i class="fa fa-check"></i><b>1.1</b> Outline</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#setup-procedure"><i class="fa fa-check"></i><b>1.2</b> Setup procedure</a>
+<ul>
+<li class="chapter" data-level="1.2.1" data-path="index.html"><a href="index.html#registration-for-api-usage"><i class="fa fa-check"></i><b>1.2.1</b> Registration for API usage</a></li>
+<li class="chapter" data-level="1.2.2" data-path="index.html"><a href="index.html#docker-for-rselenium"><i class="fa fa-check"></i><b>1.2.2</b> Docker for <code>RSelenium</code></a></li>
+<li class="chapter" data-level="1.2.3" data-path="index.html"><a href="index.html#some-useful-functions"><i class="fa fa-check"></i><b>1.2.3</b> Some useful functions</a></li>
+</ul></li>
+<li class="chapter" data-level="1.3" data-path="index.html"><a href="index.html#further-links"><i class="fa fa-check"></i><b>1.3</b> Further links</a></li>
+<li class="chapter" data-level="1.4" data-path="index.html"><a href="index.html#last-but-not-least"><i class="fa fa-check"></i><b>1.4</b> Last but not least</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="day2.html"><a href="day2.html"><i class="fa fa-check"></i><b>2</b> Scraping the web</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="day2.html"><a href="day2.html#making-requests"><i class="fa fa-check"></i><b>2.1</b> Making requests</a>
+<ul>
+<li class="chapter" data-level="2.1.1" data-path="day2.html"><a href="day2.html#session"><i class="fa fa-check"></i><b>2.1.1</b> <code>session()</code></a></li>
+<li class="chapter" data-level="2.1.2" data-path="day2.html"><a href="day2.html#forms"><i class="fa fa-check"></i><b>2.1.2</b> Forms</a></li>
+<li class="chapter" data-level="2.1.3" data-path="day2.html"><a href="day2.html#scraping-hacks"><i class="fa fa-check"></i><b>2.1.3</b> Scraping hacks</a></li>
+</ul></li>
+<li class="chapter" data-level="2.2" data-path="day2.html"><a href="day2.html#application-programming-interfaces-apis"><i class="fa fa-check"></i><b>2.2</b> Application Programming Interfaces (APIs)</a>
+<ul>
+<li class="chapter" data-level="2.2.1" data-path="day2.html"><a href="day2.html#obtaining-their-data"><i class="fa fa-check"></i><b>2.2.1</b> Obtaining their data</a></li>
+<li class="chapter" data-level="2.2.2" data-path="day2.html"><a href="day2.html#rtweet"><i class="fa fa-check"></i><b>2.2.2</b> <code>rtweet</code></a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="day2.html"><a href="day2.html#further-links-1"><i class="fa fa-check"></i><b>2.3</b> Further links</a></li>
+<li class="chapter" data-level="2.4" data-path="day2.html"><a href="day2.html#exercises"><i class="fa fa-check"></i><b>2.4</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="day3.html"><a href="day3.html"><i class="fa fa-check"></i><b>3</b> Scraping the web – extracting data</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="day3.html"><a href="day3.html#html-101"><i class="fa fa-check"></i><b>3.1</b> HTML 101</a></li>
+<li class="chapter" data-level="3.2" data-path="day3.html"><a href="day3.html#extracting-content-in-rvest"><i class="fa fa-check"></i><b>3.2</b> Extracting content in <code>rvest</code></a></li>
+<li class="chapter" data-level="3.3" data-path="day3.html"><a href="day3.html#scraping-html-pages-with-rvest"><i class="fa fa-check"></i><b>3.3</b> Scraping HTML pages with <code>rvest</code></a>
+<ul>
+<li class="chapter" data-level="3.3.1" data-path="day3.html"><a href="day3.html#html_text-and-html_text2"><i class="fa fa-check"></i><b>3.3.1</b> <code>html_text()</code> and <code>html_text2()</code></a></li>
+<li class="chapter" data-level="3.3.2" data-path="day3.html"><a href="day3.html#extracting-tables"><i class="fa fa-check"></i><b>3.3.2</b> Extracting tables</a></li>
+<li class="chapter" data-level="3.3.3" data-path="day3.html"><a href="day3.html#extracting-attributes"><i class="fa fa-check"></i><b>3.3.3</b> Extracting attributes</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="day3.html"><a href="day3.html#automating-scraping"><i class="fa fa-check"></i><b>3.4</b> Automating scraping</a>
+<ul>
+<li class="chapter" data-level="3.4.1" data-path="day3.html"><a href="day3.html#looping-over-pages"><i class="fa fa-check"></i><b>3.4.1</b> Looping over pages</a></li>
+<li class="chapter" data-level="3.4.2" data-path="day3.html"><a href="day3.html#letting-the-scraper-navigate-on-its-own"><i class="fa fa-check"></i><b>3.4.2</b> Letting the scraper navigate on its own</a></li>
+</ul></li>
+<li class="chapter" data-level="3.5" data-path="day3.html"><a href="day3.html#conclusion"><i class="fa fa-check"></i><b>3.5</b> Conclusion</a></li>
+<li class="chapter" data-level="3.6" data-path="day3.html"><a href="day3.html#further-links-2"><i class="fa fa-check"></i><b>3.6</b> Further links</a></li>
+<li class="chapter" data-level="3.7" data-path="day3.html"><a href="day3.html#exercises-1"><i class="fa fa-check"></i><b>3.7</b> Exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="day4.html"><a href="day4.html"><i class="fa fa-check"></i><b>4</b> Text preprocessing</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="day4.html"><a href="day4.html#basic-manipulations"><i class="fa fa-check"></i><b>4.1</b> Basic manipulations</a>
+<ul>
+<li class="chapter" data-level="4.1.1" data-path="day4.html"><a href="day4.html#changing-the-case-of-the-words"><i class="fa fa-check"></i><b>4.1.1</b> Changing the case of the words</a></li>
+<li class="chapter" data-level="4.1.2" data-path="day4.html"><a href="day4.html#determining-a-strings-length"><i class="fa fa-check"></i><b>4.1.2</b> Determining a string’s length</a></li>
+<li class="chapter" data-level="4.1.3" data-path="day4.html"><a href="day4.html#extracting-particular-characters"><i class="fa fa-check"></i><b>4.1.3</b> Extracting particular characters</a></li>
+<li class="chapter" data-level="4.1.4" data-path="day4.html"><a href="day4.html#concatenating-strings"><i class="fa fa-check"></i><b>4.1.4</b> Concatenating strings</a></li>
+<li class="chapter" data-level="4.1.5" data-path="day4.html"><a href="day4.html#repetition"><i class="fa fa-check"></i><b>4.1.5</b> Repetition</a></li>
+<li class="chapter" data-level="4.1.6" data-path="day4.html"><a href="day4.html#removing-unnecessary-whitespaces"><i class="fa fa-check"></i><b>4.1.6</b> Removing unnecessary whitespaces</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="day4.html"><a href="day4.html#regular-expressions"><i class="fa fa-check"></i><b>4.2</b> Regular expressions</a>
+<ul>
+<li class="chapter" data-level="4.2.1" data-path="day4.html"><a href="day4.html#literal-characters"><i class="fa fa-check"></i><b>4.2.1</b> Literal characters</a></li>
+<li class="chapter" data-level="4.2.2" data-path="day4.html"><a href="day4.html#metacharacters"><i class="fa fa-check"></i><b>4.2.2</b> Metacharacters</a></li>
+<li class="chapter" data-level="4.2.3" data-path="day4.html"><a href="day4.html#sets-of-characters"><i class="fa fa-check"></i><b>4.2.3</b> Sets of characters</a></li>
+<li class="chapter" data-level="4.2.4" data-path="day4.html"><a href="day4.html#anchors"><i class="fa fa-check"></i><b>4.2.4</b> Anchors</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="day4.html"><a href="day4.html#more-advanced-string-manipulation"><i class="fa fa-check"></i><b>4.3</b> More advanced string manipulation</a>
+<ul>
+<li class="chapter" data-level="4.3.1" data-path="day4.html"><a href="day4.html#detect-matches"><i class="fa fa-check"></i><b>4.3.1</b> Detect matches</a></li>
+<li class="chapter" data-level="4.3.2" data-path="day4.html"><a href="day4.html#mutating-strings"><i class="fa fa-check"></i><b>4.3.2</b> Mutating strings</a></li>
+<li class="chapter" data-level="4.3.3" data-path="day4.html"><a href="day4.html#extracting-text"><i class="fa fa-check"></i><b>4.3.3</b> Extracting text</a></li>
+<li class="chapter" data-level="4.3.4" data-path="day4.html"><a href="day4.html#split-vectors"><i class="fa fa-check"></i><b>4.3.4</b> Split vectors</a></li>
+</ul></li>
+<li class="chapter" data-level="4.4" data-path="day4.html"><a href="day4.html#featurization-of-text"><i class="fa fa-check"></i><b>4.4</b> Featurization of text</a>
+<ul>
+<li class="chapter" data-level="4.4.1" data-path="day4.html"><a href="day4.html#pre-processing-with-tidytext"><i class="fa fa-check"></i><b>4.4.1</b> Pre-processing with <code>tidytext</code></a></li>
+</ul></li>
+<li class="chapter" data-level="4.5" data-path="day4.html"><a href="day4.html#preprocessing-with-spacy"><i class="fa fa-check"></i><b>4.5</b> Preprocessing with <code>spaCy</code></a>
+<ul>
+<li class="chapter" data-level="4.5.1" data-path="day4.html"><a href="day4.html#initializing-spacy"><i class="fa fa-check"></i><b>4.5.1</b> Initializing spacy</a></li>
+</ul></li>
+<li class="chapter" data-level="4.6" data-path="day4.html"><a href="day4.html#spacy_parse"><i class="fa fa-check"></i><b>4.6</b> <code>spacy_parse()</code></a>
+<ul>
+<li class="chapter" data-level="4.6.1" data-path="day4.html"><a href="day4.html#pos-tags-ner-and-nounphrases"><i class="fa fa-check"></i><b>4.6.1</b> POS tags, NER, and nounphrases</a></li>
+</ul></li>
+<li class="chapter" data-level="4.7" data-path="day4.html"><a href="day4.html#first-analyses"><i class="fa fa-check"></i><b>4.7</b> First analyses</a>
+<ul>
+<li class="chapter" data-level="4.7.1" data-path="day4.html"><a href="day4.html#counting-words-per-document"><i class="fa fa-check"></i><b>4.7.1</b> Counting words per document</a></li>
+</ul></li>
+<li class="chapter" data-level="4.8" data-path="day4.html"><a href="day4.html#converting-between-formats"><i class="fa fa-check"></i><b>4.8</b> Converting between formats</a>
+<ul>
+<li class="chapter" data-level="4.8.1" data-path="day4.html"><a href="day4.html#document-term-matrix"><i class="fa fa-check"></i><b>4.8.1</b> Document-term matrix</a></li>
+<li class="chapter" data-level="4.8.2" data-path="day4.html"><a href="day4.html#document-feature-matrix"><i class="fa fa-check"></i><b>4.8.2</b> Document-feature matrix</a></li>
+<li class="chapter" data-level="4.8.3" data-path="day4.html"><a href="day4.html#corpus-objects"><i class="fa fa-check"></i><b>4.8.3</b> Corpus objects</a></li>
+</ul></li>
+<li class="chapter" data-level="4.9" data-path="day4.html"><a href="day4.html#further-links-3"><i class="fa fa-check"></i><b>4.9</b> Further links</a></li>
+<li class="chapter" data-level="4.10" data-path="day4.html"><a href="day4.html#exercises-2"><i class="fa fa-check"></i><b>4.10</b> Exercises</a>
+<ul>
+<li class="chapter" data-level="4.10.1" data-path="day4.html"><a href="day4.html#regexes"><i class="fa fa-check"></i><b>4.10.1</b> Regexes</a></li>
+<li class="chapter" data-level="4.10.2" data-path="day4.html"><a href="day4.html#preprocessing"><i class="fa fa-check"></i><b>4.10.2</b> Preprocessing</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="day5.html"><a href="day5.html"><i class="fa fa-check"></i><b>5</b> Machine Learning</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="day5.html"><a href="day5.html#split-data"><i class="fa fa-check"></i><b>5.1</b> Split data</a></li>
+<li class="chapter" data-level="5.2" data-path="day5.html"><a href="day5.html#pre-processing-and-featurization"><i class="fa fa-check"></i><b>5.2</b> Pre-processing and featurization</a>
+<ul>
+<li class="chapter" data-level="5.2.1" data-path="day5.html"><a href="day5.html#textrecipes-basic-example"><i class="fa fa-check"></i><b>5.2.1</b> <code>textrecipes</code> – basic example</a></li>
+<li class="chapter" data-level="5.2.2" data-path="day5.html"><a href="day5.html#textrecipes-further-preprocessing-steps"><i class="fa fa-check"></i><b>5.2.2</b> <code>textrecipes</code> – further preprocessing steps</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="day5.html"><a href="day5.html#model-specification"><i class="fa fa-check"></i><b>5.3</b> Model specification</a></li>
+<li class="chapter" data-level="5.4" data-path="day5.html"><a href="day5.html#model-training-workflows"><i class="fa fa-check"></i><b>5.4</b> Model training – <code>workflows</code></a></li>
+<li class="chapter" data-level="5.5" data-path="day5.html"><a href="day5.html#model-evaluation"><i class="fa fa-check"></i><b>5.5</b> Model evaluation</a>
+<ul>
+<li class="chapter" data-level="5.5.1" data-path="day5.html"><a href="day5.html#hyperparameter-tuning"><i class="fa fa-check"></i><b>5.5.1</b> Hyperparameter tuning</a></li>
+</ul></li>
+<li class="chapter" data-level="5.6" data-path="day5.html"><a href="day5.html#final-fit"><i class="fa fa-check"></i><b>5.6</b> Final fit</a></li>
+<li class="chapter" data-level="5.7" data-path="day5.html"><a href="day5.html#latent-dirichlet-allocation-lda"><i class="fa fa-check"></i><b>5.7</b> Latent Dirichlet Allocation (LDA)</a>
+<ul>
+<li class="chapter" data-level="5.7.1" data-path="day5.html"><a href="day5.html#document-term-matrix-1"><i class="fa fa-check"></i><b>5.7.1</b> Document-term matrix</a></li>
+<li class="chapter" data-level="5.7.2" data-path="day5.html"><a href="day5.html#inferring-the-number-of-topics"><i class="fa fa-check"></i><b>5.7.2</b> Inferring the number of topics</a></li>
+<li class="chapter" data-level="5.7.3" data-path="day5.html"><a href="day5.html#sense-making"><i class="fa fa-check"></i><b>5.7.3</b> Sense-making</a></li>
+<li class="chapter" data-level="5.7.4" data-path="day5.html"><a href="day5.html#document-topic-probabilities"><i class="fa fa-check"></i><b>5.7.4</b> Document-topic probabilities</a></li>
+<li class="chapter" data-level="5.7.5" data-path="day5.html"><a href="day5.html#structural-topic-models"><i class="fa fa-check"></i><b>5.7.5</b> Structural Topic Models</a></li>
+</ul></li>
+<li class="chapter" data-level="5.8" data-path="day5.html"><a href="day5.html#further-readings"><i class="fa fa-check"></i><b>5.8</b> Further readings</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="day6.html"><a href="day6.html"><i class="fa fa-check"></i><b>6</b> Word Embeddings</a></li>
+<li class="chapter" data-level="7" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i><b>7</b> References</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Course script for SICSS Paris</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="day2" class="section level1 hasAnchor" number="2">
+<h1><span class="header-section-number">Day 2</span> Scraping the web<a href="day2.html#day2" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>Today’s session will be dedicated to getting data from the web. This process is also called scraping since we scrape data off from the surface and remodel it for our inferences. The following picture shows you the <a href="https://github.com/yusuzech/r-web-scraping-cheat-sheet/">web scraping cheat sheet</a> that outlines the process of scraping the web. On the left side, you can see the first step in scraping the web which is requesting the information from the server. This is basically what is going under the hood when you make requests using a browser. The response is the website, usually stored in an XML document, which is then the starting point for your subsequent queries and data extraction.</p>
+<div class="figure">
+<img src="https://raw.githubusercontent.com/yusuzech/r-web-scraping-cheat-sheet/master/resources/functions_and_classes.png" alt="" />
+<p class="caption">Web scraping cheat sheet</p>
+</div>
+<p>In today’s session, you will learn different techniques to get your hands on data. In particular, this will encompass making simple URL requests with <code>read_html()</code>, using <code>session()</code>s to navigate around on a web page, submitting <code>html_form()</code>s to fill in forms on a web page, and making structured requests to APIs.</p>
+<div id="making-requests" class="section level2 hasAnchor" number="2.1">
+<h2><span class="header-section-number">2.1</span> Making requests<a href="day2.html#making-requests" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The most basic form of making a request is by using <code>read_html()</code> from the <code>xml2</code> package.</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="day2.html#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rvest) <span class="co"># this also loads the xml2 package</span></span></code></pre></div>
+<pre><code>## 
+## Attaching package: &#39;rvest&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:readr&#39;:
+## 
+##     guess_encoding</code></pre>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="day2.html#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb33-2"><a href="day2.html#cb33-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-3"><a href="day2.html#cb33-3" aria-hidden="true" tabindex="-1"></a>page <span class="ot">&lt;-</span> <span class="fu">read_html</span>(<span class="st">&quot;https://en.wikipedia.org/wiki/Tidyverse&quot;</span>)</span>
+<span id="cb33-4"><a href="day2.html#cb33-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-5"><a href="day2.html#cb33-5" aria-hidden="true" tabindex="-1"></a>page <span class="sc">%&gt;%</span> <span class="fu">str</span>()</span></code></pre></div>
+<pre><code>## List of 2
+##  $ node:&lt;externalptr&gt; 
+##  $ doc :&lt;externalptr&gt; 
+##  - attr(*, &quot;class&quot;)= chr [1:2] &quot;xml_document&quot; &quot;xml_node&quot;</code></pre>
+<p>This is perfectly fine for making requests to static pages where you do not need to take any further action. Sometimes, however, this is not enough, and you want to accept cookies or move on the page.</p>
+<div id="session" class="section level3 hasAnchor" number="2.1.1">
+<h3><span class="header-section-number">2.1.1</span> <code>session()</code><a href="day2.html#session" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>However, the slickest way to do this is by using a <code>session()</code>. In a session, R behaves like a normal browser, stores cookies, allows you to navigate between pages, by going <code>session_forward()</code> or <code>session_back()</code>, <code>session_follow_link()</code>s on the page itself or <code>session_jump_to()</code> a different URL, or submit <code>form()</code>s with <code>session_submit()</code>. Moreover, we can set a “useragent” in a session. This is how we can trick the server into thinking that we are humans instead of robots.</p>
+<p>First, you start the session by simply calling <code>session()</code>.</p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="day2.html#cb35-1" aria-hidden="true" tabindex="-1"></a>my_session <span class="ot">&lt;-</span> <span class="fu">session</span>(<span class="st">&quot;https://scrapethissite.com/&quot;</span>)</span>
+<span id="cb35-2"><a href="day2.html#cb35-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-3"><a href="day2.html#cb35-3" aria-hidden="true" tabindex="-1"></a>my_session<span class="sc">$</span>response<span class="sc">$</span>request<span class="sc">$</span>options<span class="sc">$</span>useragent</span></code></pre></div>
+<pre><code>## [1] &quot;libcurl/7.79.1 r-curl/4.3.2 httr/1.4.3&quot;</code></pre>
+<p>Not very human. We can set it to a common one using the <code>httr</code> package (which powers <code>rvest</code>).</p>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="day2.html#cb37-1" aria-hidden="true" tabindex="-1"></a>user_a <span class="ot">&lt;-</span> httr<span class="sc">::</span><span class="fu">user_agent</span>(<span class="st">&quot;Mozilla/5.0 (Macintosh; Intel Mac OS X 12_0_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36&quot;</span>)</span>
+<span id="cb37-2"><a href="day2.html#cb37-2" aria-hidden="true" tabindex="-1"></a>session_with_ua <span class="ot">&lt;-</span> <span class="fu">session</span>(<span class="st">&quot;https://scrapethissite.com/&quot;</span>, user_a)</span>
+<span id="cb37-3"><a href="day2.html#cb37-3" aria-hidden="true" tabindex="-1"></a>session_with_ua<span class="sc">$</span>response<span class="sc">$</span>request<span class="sc">$</span>options<span class="sc">$</span>useragent</span></code></pre></div>
+<pre><code>## [1] &quot;Mozilla/5.0 (Macintosh; Intel Mac OS X 12_0_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36&quot;</code></pre>
+<p>You can check the response using <code>session$response$status_code</code> – 200 is good.</p>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="day2.html#cb39-1" aria-hidden="true" tabindex="-1"></a>my_session<span class="sc">$</span>response<span class="sc">$</span>status_code</span></code></pre></div>
+<pre><code>## [1] 200</code></pre>
+<p>When you want to save a page from the session, do so using <code>read_html()</code>.</p>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="day2.html#cb41-1" aria-hidden="true" tabindex="-1"></a>page <span class="ot">&lt;-</span> <span class="fu">read_html</span>(session_with_ua)</span></code></pre></div>
+<p>If you want to open a new URL, hit <code>session_jump_to()</code>.</p>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="day2.html#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(magrittr)</span>
+<span id="cb42-2"><a href="day2.html#cb42-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-3"><a href="day2.html#cb42-3" aria-hidden="true" tabindex="-1"></a>session_with_ua <span class="sc">%&lt;&gt;%</span> <span class="fu">session_jump_to</span>(<span class="st">&quot;https://www.scrapethissite.com/pages/&quot;</span>)</span>
+<span id="cb42-4"><a href="day2.html#cb42-4" aria-hidden="true" tabindex="-1"></a>session_with_ua</span></code></pre></div>
+<pre><code>## &lt;session&gt; https://www.scrapethissite.com/pages/
+##   Status: 200
+##   Type:   text/html; charset=utf-8
+##   Size:   10603</code></pre>
+<p>Once you are familiar with CSS selectors – which will be introduced tomorrow – you can also click buttons on the page:</p>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="day2.html#cb44-1" aria-hidden="true" tabindex="-1"></a>session_with_ua <span class="sc">%&lt;&gt;%</span> <span class="fu">session_jump_to</span>(<span class="st">&quot;https://www.scrapethissite.com/&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb44-2"><a href="day2.html#cb44-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">session_follow_link</span>(<span class="at">css =</span> <span class="st">&quot;.btn-default&quot;</span>)</span></code></pre></div>
+<pre><code>## Navigating to /pages/</code></pre>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="day2.html#cb46-1" aria-hidden="true" tabindex="-1"></a>session_with_ua</span></code></pre></div>
+<pre><code>## &lt;session&gt; https://www.scrapethissite.com/pages/
+##   Status: 200
+##   Type:   text/html; charset=utf-8
+##   Size:   10603</code></pre>
+<p>Wanna go back – <code>session_back()</code>; thereafter you can go <code>session_forward()</code>, too.</p>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="day2.html#cb48-1" aria-hidden="true" tabindex="-1"></a>session_with_ua <span class="sc">%&lt;&gt;%</span> </span>
+<span id="cb48-2"><a href="day2.html#cb48-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">session_back</span>()</span>
+<span id="cb48-3"><a href="day2.html#cb48-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-4"><a href="day2.html#cb48-4" aria-hidden="true" tabindex="-1"></a>session_with_ua</span></code></pre></div>
+<pre><code>## &lt;session&gt; https://www.scrapethissite.com/
+##   Status: 200
+##   Type:   text/html; charset=utf-8
+##   Size:   8117</code></pre>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="day2.html#cb50-1" aria-hidden="true" tabindex="-1"></a>session_with_ua <span class="sc">%&lt;&gt;%</span> </span>
+<span id="cb50-2"><a href="day2.html#cb50-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">session_forward</span>()</span>
+<span id="cb50-3"><a href="day2.html#cb50-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-4"><a href="day2.html#cb50-4" aria-hidden="true" tabindex="-1"></a>session_with_ua</span></code></pre></div>
+<pre><code>## &lt;session&gt; https://www.scrapethissite.com/pages/
+##   Status: 200
+##   Type:   text/html; charset=utf-8
+##   Size:   10603</code></pre>
+<p>You can look at what your scraper has done with <code>session_history()</code>.</p>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="day2.html#cb52-1" aria-hidden="true" tabindex="-1"></a>session_with_ua <span class="sc">%&gt;%</span> <span class="fu">session_history</span>()</span></code></pre></div>
+<pre><code>##   https://www.scrapethissite.com/
+##   https://www.scrapethissite.com/pages/
+##   https://www.scrapethissite.com/
+## - https://www.scrapethissite.com/pages/</code></pre>
+</div>
+<div id="forms" class="section level3 hasAnchor" number="2.1.2">
+<h3><span class="header-section-number">2.1.2</span> Forms<a href="day2.html#forms" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Sometimes we also want to provide certain input, e.g., to provide login credentials or to scrape a website more systematically. That information is usually provided using so-called <a href="https://www.w3schools.com/html/html_forms.asp">forms</a>. A <code>&lt;form&gt;</code> element can contain different other elements such as text fields or checkboxes. Basically, we use <code>html_form()</code> to extract the form, <code>html_form_set()</code> to define what we want to submit, and <code>html_form_submit()</code> to finally submit it. <a href="https://rvest.tidyverse.org/reference/html_form.html">For a basic example, I search for something on Google.</a></p>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="day2.html#cb54-1" aria-hidden="true" tabindex="-1"></a>google <span class="ot">&lt;-</span> <span class="fu">read_html</span>(<span class="st">&quot;http://www.google.com&quot;</span>)</span>
+<span id="cb54-2"><a href="day2.html#cb54-2" aria-hidden="true" tabindex="-1"></a>search <span class="ot">&lt;-</span> <span class="fu">html_form</span>(google)[[<span class="dv">1</span>]]</span>
+<span id="cb54-3"><a href="day2.html#cb54-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-4"><a href="day2.html#cb54-4" aria-hidden="true" tabindex="-1"></a>search <span class="sc">%&gt;%</span> <span class="fu">str</span>()</span></code></pre></div>
+<pre><code>## List of 5
+##  $ name   : chr &quot;f&quot;
+##  $ method : chr &quot;GET&quot;
+##  $ action : chr &quot;http://www.google.com/search&quot;
+##  $ enctype: chr &quot;form&quot;
+##  $ fields :List of 10
+##   ..$ ie    :List of 4
+##   .. ..$ type : chr &quot;hidden&quot;
+##   .. ..$ name : chr &quot;ie&quot;
+##   .. ..$ value: chr &quot;ISO-8859-1&quot;
+##   .. ..$ attr :List of 3
+##   .. .. ..$ name : chr &quot;ie&quot;
+##   .. .. ..$ value: chr &quot;ISO-8859-1&quot;
+##   .. .. ..$ type : chr &quot;hidden&quot;
+##   .. ..- attr(*, &quot;class&quot;)= chr &quot;rvest_field&quot;
+##   ..$ hl    :List of 4
+##   .. ..$ type : chr &quot;hidden&quot;
+##   .. ..$ name : chr &quot;hl&quot;
+##   .. ..$ value: chr &quot;fr&quot;
+##   .. ..$ attr :List of 3
+##   .. .. ..$ value: chr &quot;fr&quot;
+##   .. .. ..$ name : chr &quot;hl&quot;
+##   .. .. ..$ type : chr &quot;hidden&quot;
+##   .. ..- attr(*, &quot;class&quot;)= chr &quot;rvest_field&quot;
+##   ..$ source:List of 4
+##   .. ..$ type : chr &quot;hidden&quot;
+##   .. ..$ name : chr &quot;source&quot;
+##   .. ..$ value: chr &quot;hp&quot;
+##   .. ..$ attr :List of 3
+##   .. .. ..$ name : chr &quot;source&quot;
+##   .. .. ..$ type : chr &quot;hidden&quot;
+##   .. .. ..$ value: chr &quot;hp&quot;
+##   .. ..- attr(*, &quot;class&quot;)= chr &quot;rvest_field&quot;
+##   ..$ biw   :List of 4
+##   .. ..$ type : chr &quot;hidden&quot;
+##   .. ..$ name : chr &quot;biw&quot;
+##   .. ..$ value: NULL
+##   .. ..$ attr :List of 2
+##   .. .. ..$ name: chr &quot;biw&quot;
+##   .. .. ..$ type: chr &quot;hidden&quot;
+##   .. ..- attr(*, &quot;class&quot;)= chr &quot;rvest_field&quot;
+##   ..$ bih   :List of 4
+##   .. ..$ type : chr &quot;hidden&quot;
+##   .. ..$ name : chr &quot;bih&quot;
+##   .. ..$ value: NULL
+##   .. ..$ attr :List of 2
+##   .. .. ..$ name: chr &quot;bih&quot;
+##   .. .. ..$ type: chr &quot;hidden&quot;
+##   .. ..- attr(*, &quot;class&quot;)= chr &quot;rvest_field&quot;
+##   ..$ q     :List of 4
+##   .. ..$ type : chr &quot;text&quot;
+##   .. ..$ name : chr &quot;q&quot;
+##   .. ..$ value: chr &quot;&quot;
+##   .. ..$ attr :List of 8
+##   .. .. ..$ class       : chr &quot;lst&quot;
+##   .. .. ..$ style       : chr &quot;margin:0;padding:5px 8px 0 6px;vertical-align:top;color:#000&quot;
+##   .. .. ..$ autocomplete: chr &quot;off&quot;
+##   .. .. ..$ value       : chr &quot;&quot;
+##   .. .. ..$ title       : chr &quot;Recherche Google&quot;
+##   .. .. ..$ maxlength   : chr &quot;2048&quot;
+##   .. .. ..$ name        : chr &quot;q&quot;
+##   .. .. ..$ size        : chr &quot;57&quot;
+##   .. ..- attr(*, &quot;class&quot;)= chr &quot;rvest_field&quot;
+##   ..$ btnG  :List of 4
+##   .. ..$ type : chr &quot;submit&quot;
+##   .. ..$ name : chr &quot;btnG&quot;
+##   .. ..$ value: chr &quot;Recherche Google&quot;
+##   .. ..$ attr :List of 4
+##   .. .. ..$ class: chr &quot;lsb&quot;
+##   .. .. ..$ value: chr &quot;Recherche Google&quot;
+##   .. .. ..$ name : chr &quot;btnG&quot;
+##   .. .. ..$ type : chr &quot;submit&quot;
+##   .. ..- attr(*, &quot;class&quot;)= chr &quot;rvest_field&quot;
+##   ..$ btnI  :List of 4
+##   .. ..$ type : chr &quot;submit&quot;
+##   .. ..$ name : chr &quot;btnI&quot;
+##   .. ..$ value: chr &quot;J&#39;ai de la chance&quot;
+##   .. ..$ attr :List of 5
+##   .. .. ..$ class: chr &quot;lsb&quot;
+##   .. .. ..$ id   : chr &quot;tsuid1&quot;
+##   .. .. ..$ value: chr &quot;J&#39;ai de la chance&quot;
+##   .. .. ..$ name : chr &quot;btnI&quot;
+##   .. .. ..$ type : chr &quot;submit&quot;
+##   .. ..- attr(*, &quot;class&quot;)= chr &quot;rvest_field&quot;
+##   ..$ iflsig:List of 4
+##   .. ..$ type : chr &quot;hidden&quot;
+##   .. ..$ name : chr &quot;iflsig&quot;
+##   .. ..$ value: chr &quot;AJiK0e8AAAAAYq8udJhZqy2HI1cugo0gWUvagKE0ccdf&quot;
+##   .. ..$ attr :List of 3
+##   .. .. ..$ value: chr &quot;AJiK0e8AAAAAYq8udJhZqy2HI1cugo0gWUvagKE0ccdf&quot;
+##   .. .. ..$ name : chr &quot;iflsig&quot;
+##   .. .. ..$ type : chr &quot;hidden&quot;
+##   .. ..- attr(*, &quot;class&quot;)= chr &quot;rvest_field&quot;
+##   ..$ gbv   :List of 4
+##   .. ..$ type : chr &quot;hidden&quot;
+##   .. ..$ name : chr &quot;gbv&quot;
+##   .. ..$ value: chr &quot;1&quot;
+##   .. ..$ attr :List of 4
+##   .. .. ..$ id   : chr &quot;gbv&quot;
+##   .. .. ..$ name : chr &quot;gbv&quot;
+##   .. .. ..$ type : chr &quot;hidden&quot;
+##   .. .. ..$ value: chr &quot;1&quot;
+##   .. ..- attr(*, &quot;class&quot;)= chr &quot;rvest_field&quot;
+##  - attr(*, &quot;class&quot;)= chr &quot;rvest_form&quot;</code></pre>
+<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="day2.html#cb56-1" aria-hidden="true" tabindex="-1"></a>search_something <span class="ot">&lt;-</span> search <span class="sc">%&gt;%</span> <span class="fu">html_form_set</span>(<span class="at">q =</span> <span class="st">&quot;something&quot;</span>)</span>
+<span id="cb56-2"><a href="day2.html#cb56-2" aria-hidden="true" tabindex="-1"></a>resp <span class="ot">&lt;-</span> <span class="fu">html_form_submit</span>(search_something, <span class="at">submit =</span> <span class="st">&quot;btnG&quot;</span>)</span>
+<span id="cb56-3"><a href="day2.html#cb56-3" aria-hidden="true" tabindex="-1"></a><span class="fu">read_html</span>(resp)</span></code></pre></div>
+<pre><code>## {html_document}
+## &lt;html lang=&quot;fr&quot;&gt;
+## [1] &lt;head&gt;\n&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=UTF-8 ...
+## [2] &lt;body jsmodel=&quot;hspDDf&quot;&gt;\n&lt;header id=&quot;hdr&quot;&gt;&lt;script nonce=&quot;HK21zNN0OSCq8Ff_ ...</code></pre>
+<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="day2.html#cb58-1" aria-hidden="true" tabindex="-1"></a>vals <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">q =</span> <span class="st">&quot;web scraping&quot;</span>, <span class="at">hl =</span> <span class="st">&quot;en&quot;</span>)</span>
+<span id="cb58-2"><a href="day2.html#cb58-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-3"><a href="day2.html#cb58-3" aria-hidden="true" tabindex="-1"></a>search <span class="ot">&lt;-</span> search <span class="sc">%&gt;%</span> <span class="fu">html_form_set</span>(<span class="sc">!!!</span>vals)</span></code></pre></div>
+<pre><code>## Warning: Setting value of hidden field &#39;hl&#39;.</code></pre>
+<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb60-1"><a href="day2.html#cb60-1" aria-hidden="true" tabindex="-1"></a>resp <span class="ot">&lt;-</span> <span class="fu">html_form_submit</span>(search)</span></code></pre></div>
+<pre><code>## Submitting with &#39;btnG&#39;</code></pre>
+<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="day2.html#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="fu">read_html</span>(resp)</span></code></pre></div>
+<pre><code>## {html_document}
+## &lt;html lang=&quot;en-FR&quot;&gt;
+## [1] &lt;head&gt;\n&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=UTF-8 ...
+## [2] &lt;body jsmodel=&quot;hspDDf&quot;&gt;\n&lt;header id=&quot;hdr&quot;&gt;&lt;script nonce=&quot;apv1LM15Ks0e8OvB ...</code></pre>
+<p>If you are working with a session, the workflow is as follows:</p>
+<ol style="list-style-type: decimal">
+<li>Extract the form.</li>
+<li>Set it.</li>
+<li>Start your session on the page with the form.</li>
+<li>Submit the form using <code>session_submit()</code>.</li>
+</ol>
+<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="day2.html#cb64-1" aria-hidden="true" tabindex="-1"></a>google_form <span class="ot">&lt;-</span> <span class="fu">read_html</span>(<span class="st">&quot;http://www.google.com&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb64-2"><a href="day2.html#cb64-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_form</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb64-3"><a href="day2.html#cb64-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pluck</span>(<span class="dv">1</span>) <span class="co">#another way to do [[1]]</span></span>
+<span id="cb64-4"><a href="day2.html#cb64-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-5"><a href="day2.html#cb64-5" aria-hidden="true" tabindex="-1"></a>search_something <span class="ot">&lt;-</span> google_form <span class="sc">%&gt;%</span> <span class="fu">html_form_set</span>(<span class="at">q =</span> <span class="st">&quot;something&quot;</span>)</span>
+<span id="cb64-6"><a href="day2.html#cb64-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-7"><a href="day2.html#cb64-7" aria-hidden="true" tabindex="-1"></a>google_session <span class="ot">&lt;-</span> <span class="fu">session</span>(<span class="st">&quot;http://www.google.com&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb64-8"><a href="day2.html#cb64-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">session_submit</span>(search_something)</span></code></pre></div>
+<pre><code>## Submitting with &#39;btnG&#39;</code></pre>
+<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="day2.html#cb66-1" aria-hidden="true" tabindex="-1"></a>google_session <span class="sc">%&gt;%</span> </span>
+<span id="cb66-2"><a href="day2.html#cb66-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">read_html</span>()</span></code></pre></div>
+<pre><code>## {html_document}
+## &lt;html lang=&quot;fr&quot;&gt;
+## [1] &lt;head&gt;\n&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=UTF-8 ...
+## [2] &lt;body jsmodel=&quot;hspDDf&quot;&gt;\n&lt;header id=&quot;hdr&quot;&gt;&lt;script nonce=&quot;PyHwDZBWqYSh0T9S ...</code></pre>
+</div>
+<div id="scraping-hacks" class="section level3 hasAnchor" number="2.1.3">
+<h3><span class="header-section-number">2.1.3</span> Scraping hacks<a href="day2.html#scraping-hacks" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Some web pages are a bit fancier than the ones we have looked at so far (i.e., they use JavaScript). <code>rvest</code> works nicely for static web pages, but for more advanced ones you need different tools such as <a href="https://docs.ropensci.org/RSelenium/"><code>RSelenium</code></a>. This, however, goes beyond the scope of this tutorial.</p>
+<p>A web page may sometimes give you time-outs (i.e., it doesn’t respond within a given time). This can break your loop. Wrapping your code in <code>safely()</code> or <code>insistently()</code> from the <code>purrr</code> package might help. The former moves on and notes down what has gone wrong, the latter keeps sending requests until it has been successful. They both work easiest if you put your scraping code in functions and wrap those with either <a href="https://purrr.tidyverse.org/reference/insistently.html"><code>insistently()</code></a> or <a href="https://purrr.tidyverse.org/reference/safely.html"><code>safely()</code></a>.</p>
+<p>Sometimes a web page keeps blocking you. Consider using a proxy server.</p>
+<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb68-1"><a href="day2.html#cb68-1" aria-hidden="true" tabindex="-1"></a>my_proxy <span class="ot">&lt;-</span> httr<span class="sc">::</span><span class="fu">use_proxy</span>(<span class="at">url =</span> <span class="st">&quot;http://example.com&quot;</span>,</span>
+<span id="cb68-2"><a href="day2.html#cb68-2" aria-hidden="true" tabindex="-1"></a>                            <span class="at">user_name =</span> <span class="st">&quot;myusername&quot;</span>,</span>
+<span id="cb68-3"><a href="day2.html#cb68-3" aria-hidden="true" tabindex="-1"></a>                            <span class="at">password =</span> <span class="st">&quot;mypassword&quot;</span>,</span>
+<span id="cb68-4"><a href="day2.html#cb68-4" aria-hidden="true" tabindex="-1"></a>                            <span class="at">auth =</span> <span class="st">&quot;one of basic, digest, digest_ie, gssnegotiate, ntlm, any&quot;</span>)</span>
+<span id="cb68-5"><a href="day2.html#cb68-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb68-6"><a href="day2.html#cb68-6" aria-hidden="true" tabindex="-1"></a>my_session <span class="ot">&lt;-</span> <span class="fu">session</span>(<span class="st">&quot;https://scrapethissite.com/&quot;</span>, my_proxy)</span></code></pre></div>
+<p>Find more useful information – including the stuff I just described – and links on <a href="https://github.com/yusuzech/r-web-scraping-cheat-sheet/blob/master/README.md">this GitHub page</a>.</p>
+</div>
+</div>
+<div id="application-programming-interfaces-apis" class="section level2 hasAnchor" number="2.2">
+<h2><span class="header-section-number">2.2</span> Application Programming Interfaces (APIs)<a href="day2.html#application-programming-interfaces-apis" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>While web scraping (or <em>screen scraping</em>, as you extract the stuff that appears on your screen) is certainly fun, it should be seen as a last resort. More and more web platforms provide so-called Application Programming Interfaces (APIs).</p>
+<blockquote>
+<p>“An application programming interface (API) is a connection between computers or between computer programs.” (<a href="https://en.wikipedia.org/wiki/API">Wikipedia</a>)</p>
+</blockquote>
+<p>There are a bunch of different sorts of APIs, but the most common one is the REST API. REST stands for “Representational State Transfer” and describes a set of rules the API designers are supposed to obey when developing their particular interface. You can make different requests, such as <em>GET</em> content, <em>POST</em> a file to a server – <code>PUT</code> is similar, or request to <code>DELETE</code> a file. We will only focus on the <code>GET</code> part.</p>
+<p>APIs offer you a structured way to communicate with the platform via your machine. In our use case, this means that you can get the data you want in a usually well-structured format and without all the “dirt” that you need to scrape off tediously (enough web scraping metaphors for today). With APIs, you can generally quite clearly define what you want and how you want it. In R, we achieve this by using the <code>httr</code> <span class="citation">(<a href="#ref-wickham2020d" role="doc-biblioref"><strong>wickham2020d?</strong></a>)</span> package. Moreover, using APIs does not bear the risk of acquiring the information you are not supposed to access and you also do not need to worry about the server not being able to handle the load of your requests (usually, there are rate limits in place to address this particular issue). However, it’s not all fun and games with APIs: they might give you their data in a special format, both XML and JSON are common. The former is the one <code>rvest</code> uses as well, the latter can be tamed using <code>jsonlite</code> <span class="citation">(<a href="#ref-ooms2020" role="doc-biblioref"><strong>ooms2020?</strong></a>)</span> which is to be introduced as well. Moreover, you usually have to ask the platform for permission and perhaps pay to get it. Once you have received the keys you need, you can tell R to fill them automatically, similar to how your browser knows your Amazon password, etc.; <code>usethis</code> <span class="citation">(<a href="#ref-wickham2021" role="doc-biblioref"><strong>wickham2021?</strong></a>)</span> can help you with such tasks. An overview of current existing APIs can be found on <a href="https://www.programmableweb.com/apis/directory">The Programmable Web</a></p>
+<p>The best thing that can happen with APIs: some of them are so popular that people have already written specific R packages for working with them – an overview can be found on the <a href="https://ropensci.org/packages/data-access/">ROpenSci website</a>. One example of this is Twitter and the <code>rtweet</code> package <span class="citation">(<a href="#ref-kearney2019" role="doc-biblioref"><strong>kearney2019?</strong></a>)</span> which will be introduced in the end. Less work for us, great.</p>
+<div id="obtaining-their-data" class="section level3 hasAnchor" number="2.2.1">
+<h3><span class="header-section-number">2.2.1</span> Obtaining their data<a href="day2.html#obtaining-their-data" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>API requests are performed using URLs. Those start with the basic address of the API (e.g., <a href="https://api.nytimes.com" class="uri">https://api.nytimes.com</a>), followed by the endpoint that you want to use (e.g., /lists). They also contain so-called headers which are provided as key-value pairs. Those headers can contain for instance authentification tokens or different search parameters. A request to the New York Times API to obtain articles for January 2019 would then look like this: <a href="https://api.nytimes.com/svc/archive/v1/2019/1.json?api-key=yourkey" class="uri">https://api.nytimes.com/svc/archive/v1/2019/1.json?api-key=yourkey</a>.</p>
+<p>At most APIs, you will have to register first. As we will play with the New York Times API, do this <a href="https://developer.nytimes.com/get-started">here</a>.</p>
+<div id="making-queries" class="section level4 hasAnchor" number="2.2.1.1">
+<h4><span class="header-section-number">2.2.1.1</span> Making queries<a href="day2.html#making-queries" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>A basic query is performed using the <code>GET()</code> function. However, first, you need to define the call you want to make. The different keys and values they can take can be found in the API documentation. Of course, there is also a neater way to deal with the key problem. I will show it later.</p>
+<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb69-1"><a href="day2.html#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(httr)</span>
+<span id="cb69-2"><a href="day2.html#cb69-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb69-3"><a href="day2.html#cb69-3" aria-hidden="true" tabindex="-1"></a>key <span class="ot">&lt;-</span> <span class="st">&quot;xxx&quot;</span></span>
+<span id="cb69-4"><a href="day2.html#cb69-4" aria-hidden="true" tabindex="-1"></a>nyt_headlines <span class="ot">&lt;-</span> <span class="fu">modify_url</span>(</span>
+<span id="cb69-5"><a href="day2.html#cb69-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">url =</span> <span class="st">&quot;https://api.nytimes.com/&quot;</span>,</span>
+<span id="cb69-6"><a href="day2.html#cb69-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">path =</span> <span class="st">&quot;svc/news/v3/content/nyt/business.json&quot;</span>,</span>
+<span id="cb69-7"><a href="day2.html#cb69-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">query =</span> <span class="fu">list</span>(<span class="st">`</span><span class="at">api-key</span><span class="st">`</span> <span class="ot">=</span> key))</span>
+<span id="cb69-8"><a href="day2.html#cb69-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb69-9"><a href="day2.html#cb69-9" aria-hidden="true" tabindex="-1"></a>response <span class="ot">&lt;-</span> <span class="fu">GET</span>(nyt_headlines)</span></code></pre></div>
+<p>When it comes to the NYT news API, there is the problem that the type of section is specified not in the query but in the endpoint path itself. Hence, if we were to scrape the different sections, we would have to change the path itself, e.g., through <code>str_c()</code>.</p>
+<p>The <code>Status:</code> code you want to see here is <code>200</code> which stands for success. If you want to put it inside a function, you might want to break the function once you get a non-successful query. <code>http_error()</code> or <code>http_status()</code> are your friends here.</p>
+<div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb70-1"><a href="day2.html#cb70-1" aria-hidden="true" tabindex="-1"></a>response <span class="sc">%&gt;%</span> <span class="fu">http_error</span>()</span></code></pre></div>
+<pre><code>## [1] TRUE</code></pre>
+<div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb72-1"><a href="day2.html#cb72-1" aria-hidden="true" tabindex="-1"></a>response <span class="sc">%&gt;%</span> <span class="fu">http_status</span>()</span></code></pre></div>
+<pre><code>## $category
+## [1] &quot;Client error&quot;
+## 
+## $reason
+## [1] &quot;Unauthorized&quot;
+## 
+## $message
+## [1] &quot;Client error: (401) Unauthorized&quot;</code></pre>
+<p><code>content()</code> will give you the content of the request.</p>
+<div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb74-1"><a href="day2.html#cb74-1" aria-hidden="true" tabindex="-1"></a>response <span class="sc">%&gt;%</span> <span class="fu">content</span>() <span class="sc">%&gt;%</span> <span class="fu">glimpse</span>()</span></code></pre></div>
+<p>What you see is also the content of the call – which is what we want. It is in a format that we cannot work with right away, though, it is in JSON.</p>
+</div>
+<div id="json" class="section level4 hasAnchor" number="2.2.1.2">
+<h4><span class="header-section-number">2.2.1.2</span> JSON<a href="day2.html#json" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>The following unordered list is stolen from this <a href="https://www.earthdatascience.org/courses/earth-analytics/get-data-using-apis/intro-to-JSON/">blog entry</a>:</p>
+<ul>
+<li>The data are in name/value pairs</li>
+<li>Commas separate data objects</li>
+<li>Curly braces {} hold objects</li>
+<li>Square brackets [] hold arrays</li>
+<li>Each data element is enclosed with quotes “” if it is a character, or without quotes if it is a numeric value</li>
+</ul>
+<div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb75-1"><a href="day2.html#cb75-1" aria-hidden="true" tabindex="-1"></a><span class="fu">writeLines</span>(<span class="fu">rawToChar</span>(response<span class="sc">$</span>content))</span></code></pre></div>
+<p><code>jsonlite</code> helps us to bring this output into a data frame.</p>
+<div class="sourceCode" id="cb76"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb76-1"><a href="day2.html#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(jsonlite)</span></code></pre></div>
+<pre><code>## 
+## Attaching package: &#39;jsonlite&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:purrr&#39;:
+## 
+##     flatten</code></pre>
+<div class="sourceCode" id="cb79"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb79-1"><a href="day2.html#cb79-1" aria-hidden="true" tabindex="-1"></a>response <span class="sc">%&gt;%</span> </span>
+<span id="cb79-2"><a href="day2.html#cb79-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">content</span>(<span class="at">as =</span> <span class="st">&quot;text&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb79-3"><a href="day2.html#cb79-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fromJSON</span>()</span></code></pre></div>
+<pre><code>## No encoding supplied: defaulting to UTF-8.</code></pre>
+<pre><code>## $fault
+## $fault$faultstring
+## [1] &quot;Invalid ApiKey&quot;
+## 
+## $fault$detail
+## $fault$detail$errorcode
+## [1] &quot;oauth.v2.InvalidApiKey&quot;</code></pre>
+</div>
+<div id="dealing-with-authentification" class="section level4 hasAnchor" number="2.2.1.3">
+<h4><span class="header-section-number">2.2.1.3</span> Dealing with authentification<a href="day2.html#dealing-with-authentification" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Well, as we saw before, I put my official NYT API key publicly visible in this script. This is bad practice and should be avoided, especially if you work on a joint project (where everybody uses their code) or if you put your scripts in public places (such as GitHub). The <code>usethis</code> package can help you here.</p>
+<div class="sourceCode" id="cb82"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb82-1"><a href="day2.html#cb82-1" aria-hidden="true" tabindex="-1"></a><span class="co">#usethis::edit_r_environ() # save key there</span></span>
+<span id="cb82-2"><a href="day2.html#cb82-2" aria-hidden="true" tabindex="-1"></a><span class="fu">Sys.getenv</span>(<span class="st">&quot;nyt_key&quot;</span>)</span></code></pre></div>
+<p>Hence, if we now search for articles – find the proper parameters <a href="https://developer.nytimes.com/docs/articlesearch-product/1/routes/articlesearch.json/get">here</a>, we provide the key by using the <code>Sys.getenv</code> function. So, if somebody wants to work with your code and their own key, all they need to make sure is that they have the API key stored in the environment with the same name.</p>
+<div class="sourceCode" id="cb83"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb83-1"><a href="day2.html#cb83-1" aria-hidden="true" tabindex="-1"></a><span class="fu">modify_url</span>(</span>
+<span id="cb83-2"><a href="day2.html#cb83-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">url =</span> <span class="st">&quot;http://api.nytimes.com/svc/search/v2/articlesearch.json&quot;</span>,</span>
+<span id="cb83-3"><a href="day2.html#cb83-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">query =</span> <span class="fu">list</span>(<span class="at">q =</span> <span class="st">&quot;Trump&quot;</span>,</span>
+<span id="cb83-4"><a href="day2.html#cb83-4" aria-hidden="true" tabindex="-1"></a>               <span class="at">pub =</span> <span class="st">&quot;20161101&quot;</span>,</span>
+<span id="cb83-5"><a href="day2.html#cb83-5" aria-hidden="true" tabindex="-1"></a>               <span class="at">end_date =</span> <span class="st">&quot;20161110&quot;</span>,</span>
+<span id="cb83-6"><a href="day2.html#cb83-6" aria-hidden="true" tabindex="-1"></a>               <span class="st">`</span><span class="at">api-key</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">Sys.getenv</span>(<span class="st">&quot;nyt_key&quot;</span>))</span>
+<span id="cb83-7"><a href="day2.html#cb83-7" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span> </span>
+<span id="cb83-8"><a href="day2.html#cb83-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">GET</span>()</span></code></pre></div>
+<pre><code>## Response [http://api.nytimes.com/svc/search/v2/articlesearch.json?q=Trump&amp;pub=20161101&amp;end_date=20161110&amp;api-key=qekEhoGTXqjsZnXpqHns0Vfa2U6T7ABf]
+##   Date: 2022-06-19 13:11
+##   Status: 200
+##   Content-Type: application/json
+##   Size: 190 kB</code></pre>
+</div>
+</div>
+<div id="rtweet" class="section level3 hasAnchor" number="2.2.2">
+<h3><span class="header-section-number">2.2.2</span> <code>rtweet</code><a href="day2.html#rtweet" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Twitter is quite popular among social scientists. The main reason for this is arguably its data accessibility. For R users, the package you want to use is <code>rtweet</code> by Michael Kearney (find an overview of the different packages and their capabilities <a href="https://www.rdocumentation.org/packages/rtweet/versions/0.7.0">here</a>). There is a great and quite complete <a href="https://mkearney.github.io/nicar_tworkshop/#1">presentation demonstrating its capabilities</a>. This presentation is a bit outdated. The main difference to the package these days is that you will not need to register an app upfront anymore. All you need is a Twitter account. When you make your first request, a browser window will open where you log on to Twitter, authorize the app, and then you can just go for it. There are certain rate limits, too, which you will need to be aware of when you try to acquire data. Rate limits and the parameters you need to specify can be found in the extensive documentation.</p>
+<p>In the following, I will just link to the respective vignettes. Please, feel free to play around with the functions yourself. As a starting point, I provide you with the list of all British MPs and some tasks in exercise 3. A first introduction gives <a href="https://cran.r-project.org/web/packages/rtweet/vignettes/intro.html">this vignette</a>.</p>
+<div class="sourceCode" id="cb85"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb85-1"><a href="day2.html#cb85-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rtweet)</span>
+<span id="cb85-2"><a href="day2.html#cb85-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb85-3"><a href="day2.html#cb85-3" aria-hidden="true" tabindex="-1"></a>uk_mps <span class="ot">&lt;-</span> <span class="fu">lists_members</span>(</span>
+<span id="cb85-4"><a href="day2.html#cb85-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">list_id =</span> <span class="st">&quot;217199644&quot;</span></span>
+<span id="cb85-5"><a href="day2.html#cb85-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+</div>
+</div>
+<div id="further-links-1" class="section level2 hasAnchor" number="2.3">
+<h2><span class="header-section-number">2.3</span> Further links<a href="day2.html#further-links-1" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<ul>
+<li><a href="https://bookdown.org/paul/apis_for_social_scientists/">APIs for social scientists:
+A collaborative review</a></li>
+</ul>
+<p>[more to be added]</p>
+</div>
+<div id="exercises" class="section level2 hasAnchor" number="2.4">
+<h2><span class="header-section-number">2.4</span> Exercises<a href="day2.html#exercises" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<ol style="list-style-type: decimal">
+<li>Start a session with the tidyverse Wikipedia page. Adapt your user agent to some sort of different value. Proceed to Hadley Wickham’s page. Go back. Go forth. Check the <code>session_history()</code> to see if it has worked.</li>
+</ol>
+<details>
+<summary>
+Solution. Click to expand!
+</summary>
+<div class="sourceCode" id="cb86"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb86-1"><a href="day2.html#cb86-1" aria-hidden="true" tabindex="-1"></a>tidyverse_wiki <span class="ot">&lt;-</span> <span class="st">&quot;https://en.wikipedia.org/wiki/Tidyverse&quot;</span></span>
+<span id="cb86-2"><a href="day2.html#cb86-2" aria-hidden="true" tabindex="-1"></a>hadley_wiki <span class="ot">&lt;-</span> <span class="st">&quot;https://en.wikipedia.org/wiki/Hadley_Wickham&quot;</span></span>
+<span id="cb86-3"><a href="day2.html#cb86-3" aria-hidden="true" tabindex="-1"></a>user_agent <span class="ot">&lt;-</span> httr<span class="sc">::</span><span class="fu">user_agent</span>(<span class="st">&quot;Hi, I&#39;m Felix and I try to steal your data.&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb87"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb87-1"><a href="day2.html#cb87-1" aria-hidden="true" tabindex="-1"></a>wiki_session <span class="ot">&lt;-</span> <span class="fu">session</span>(tidyverse_wiki, user_agent)</span>
+<span id="cb87-2"><a href="day2.html#cb87-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb87-3"><a href="day2.html#cb87-3" aria-hidden="true" tabindex="-1"></a>wiki_session <span class="sc">%&lt;&gt;%</span> <span class="fu">session_jump_to</span>(hadley_wiki) <span class="sc">%&gt;%</span> </span>
+<span id="cb87-4"><a href="day2.html#cb87-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">session_back</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb87-5"><a href="day2.html#cb87-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">session_forward</span>()</span>
+<span id="cb87-6"><a href="day2.html#cb87-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb87-7"><a href="day2.html#cb87-7" aria-hidden="true" tabindex="-1"></a>wiki_session <span class="sc">%&gt;%</span> <span class="fu">session_history</span>()</span></code></pre></div>
+</details>
+<ol start="2" style="list-style-type: decimal">
+<li>Start a session on “<a href="https://www.scrapethissite.com/pages/advanced/?gotcha=login" class="uri">https://www.scrapethissite.com/pages/advanced/?gotcha=login</a>”, fill out, and submit the form. Any value for login and password will do. (Disclaimer: you have to add the URL as an “action” attribute after creating the form, see <a href="https://github.com/tidyverse/rvest/issues/319">this tutorial</a>. – <code>login_form$action &lt;- url</code>)</li>
+</ol>
+<div class="sourceCode" id="cb88"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb88-1"><a href="day2.html#cb88-1" aria-hidden="true" tabindex="-1"></a>url <span class="ot">&lt;-</span> <span class="st">&quot;https://www.scrapethissite.com/pages/advanced/?gotcha=login&quot;</span></span>
+<span id="cb88-2"><a href="day2.html#cb88-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb88-3"><a href="day2.html#cb88-3" aria-hidden="true" tabindex="-1"></a><span class="co">#extract and set login form here</span></span>
+<span id="cb88-4"><a href="day2.html#cb88-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb88-5"><a href="day2.html#cb88-5" aria-hidden="true" tabindex="-1"></a>login_form<span class="sc">$</span>action <span class="ot">&lt;-</span> url <span class="co"># add url as action attribute</span></span>
+<span id="cb88-6"><a href="day2.html#cb88-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb88-7"><a href="day2.html#cb88-7" aria-hidden="true" tabindex="-1"></a><span class="co"># submit form</span></span>
+<span id="cb88-8"><a href="day2.html#cb88-8" aria-hidden="true" tabindex="-1"></a>base_session <span class="ot">&lt;-</span> <span class="fu">session</span>(<span class="st">&quot;https://www.scrapethissite.com/pages/advanced/?gotcha=login&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb88-9"><a href="day2.html#cb88-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">session_submit</span>(login_form) </span></code></pre></div>
+<details>
+<summary>
+Solution. Click to expand!
+</summary>
+<div class="sourceCode" id="cb89"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb89-1"><a href="day2.html#cb89-1" aria-hidden="true" tabindex="-1"></a>url <span class="ot">&lt;-</span> <span class="st">&quot;https://www.scrapethissite.com/pages/advanced/?gotcha=login&quot;</span></span>
+<span id="cb89-2"><a href="day2.html#cb89-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-3"><a href="day2.html#cb89-3" aria-hidden="true" tabindex="-1"></a><span class="co">#extract and set login form here</span></span>
+<span id="cb89-4"><a href="day2.html#cb89-4" aria-hidden="true" tabindex="-1"></a>login_form <span class="ot">&lt;-</span> <span class="fu">read_html</span>(url) <span class="sc">%&gt;%</span> </span>
+<span id="cb89-5"><a href="day2.html#cb89-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_form</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb89-6"><a href="day2.html#cb89-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pluck</span>(<span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb89-7"><a href="day2.html#cb89-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_form_set</span>(<span class="at">user =</span> <span class="st">&quot;123&quot;</span>,</span>
+<span id="cb89-8"><a href="day2.html#cb89-8" aria-hidden="true" tabindex="-1"></a>                <span class="at">pass =</span> <span class="st">&quot;456&quot;</span>)</span>
+<span id="cb89-9"><a href="day2.html#cb89-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-10"><a href="day2.html#cb89-10" aria-hidden="true" tabindex="-1"></a>login_form<span class="sc">$</span>action <span class="ot">&lt;-</span> url <span class="co"># add url as action attribute</span></span>
+<span id="cb89-11"><a href="day2.html#cb89-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-12"><a href="day2.html#cb89-12" aria-hidden="true" tabindex="-1"></a><span class="co"># submit form</span></span>
+<span id="cb89-13"><a href="day2.html#cb89-13" aria-hidden="true" tabindex="-1"></a>base_session <span class="ot">&lt;-</span> <span class="fu">session</span>(<span class="st">&quot;https://www.scrapethissite.com/pages/advanced/?gotcha=login&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb89-14"><a href="day2.html#cb89-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">session_submit</span>(login_form) </span></code></pre></div>
+</details>
+<ol start="3" style="list-style-type: decimal">
+<li>Scrape 10 profile timelines from the following list. Check the <a href="https://cran.r-project.org/web/packages/rtweet/vignettes/intro.html">documentation</a> for instructions.</li>
+</ol>
+<details>
+<summary>
+Solution. Click to expand!
+</summary>
+<div class="sourceCode" id="cb90"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb90-1"><a href="day2.html#cb90-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rtweet)</span>
+<span id="cb90-2"><a href="day2.html#cb90-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-3"><a href="day2.html#cb90-3" aria-hidden="true" tabindex="-1"></a>uk_mps <span class="ot">&lt;-</span> <span class="fu">lists_members</span>(</span>
+<span id="cb90-4"><a href="day2.html#cb90-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">list_id =</span> <span class="st">&quot;217199644&quot;</span></span>
+<span id="cb90-5"><a href="day2.html#cb90-5" aria-hidden="true" tabindex="-1"></a>) </span>
+<span id="cb90-6"><a href="day2.html#cb90-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-7"><a href="day2.html#cb90-7" aria-hidden="true" tabindex="-1"></a><span class="co"># get 10 profiles</span></span>
+<span id="cb90-8"><a href="day2.html#cb90-8" aria-hidden="true" tabindex="-1"></a>sample_uk_mps <span class="ot">&lt;-</span> uk_mps <span class="sc">%&gt;%</span> </span>
+<span id="cb90-9"><a href="day2.html#cb90-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_sample</span>(<span class="at">n =</span> <span class="dv">10</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb90-10"><a href="day2.html#cb90-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(screen_name)</span>
+<span id="cb90-11"><a href="day2.html#cb90-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-12"><a href="day2.html#cb90-12" aria-hidden="true" tabindex="-1"></a><span class="co"># get timelines</span></span>
+<span id="cb90-13"><a href="day2.html#cb90-13" aria-hidden="true" tabindex="-1"></a><span class="do">## using purrr::map</span></span>
+<span id="cb90-14"><a href="day2.html#cb90-14" aria-hidden="true" tabindex="-1"></a>timelines <span class="ot">&lt;-</span> sample_uk_mps <span class="sc">%&gt;%</span> </span>
+<span id="cb90-15"><a href="day2.html#cb90-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(get_timeline)</span>
+<span id="cb90-16"><a href="day2.html#cb90-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-17"><a href="day2.html#cb90-17" aria-hidden="true" tabindex="-1"></a><span class="do">## using for-loop</span></span>
+<span id="cb90-18"><a href="day2.html#cb90-18" aria-hidden="true" tabindex="-1"></a>timelines <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="at">mode =</span> <span class="st">&quot;list&quot;</span>, <span class="at">length =</span> <span class="fu">length</span>(sample_uk_mps))</span>
+<span id="cb90-19"><a href="day2.html#cb90-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-20"><a href="day2.html#cb90-20" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(sample_uk_mps)){</span>
+<span id="cb90-21"><a href="day2.html#cb90-21" aria-hidden="true" tabindex="-1"></a>  timelines[[i]] <span class="ot">&lt;-</span> <span class="fu">get_timeline</span>(<span class="at">user =</span> sample_uk_mps[[i]])</span>
+<span id="cb90-22"><a href="day2.html#cb90-22" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+</details>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="index.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="day3.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/USERNAME/REPO/edit/BRANCH/01-scraping_structured.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["_main.pdf", "_main.epub"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

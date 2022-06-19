@@ -17,7 +17,7 @@ link-citations: yes
 always_allow_html: true
 ---
 
-# Day 1: Introduction {#day1}
+# Introduction {#day1}
 
 Dear student, 
 
@@ -29,17 +29,19 @@ This script will introduce you to the automated acquisition and subsequent quant
 
 This script will be split into 5 chapters. Each chapter can be seen as representing a day of the summer school. Each chapter contains a "further links" section and exercises. Data are provided through dropbox links that are directly executable from the script. The raw RMD files are stored in a [dedicated GitHub repository](https://github.com/fellennert/sicss-paris-2022)^[Hence, you can also file a pull request if you have found a flaw.].
 
-This introductory chapter is intended to help you set up your RStudio by installing all the required packages. Some of them (`spacyr`!) rely on a working Python interpreter and are therefore a bit more finicky to set up. We will provide links to step-by-step guides to help you with the process. The script will heavily rely on packages from the `tidyverse` with which we assume familiarity, in particular with the `dplyr` and `purrr` package. At the end of chapter 1, we include links to introductions we deem useful.
+This introductory chapter is intended to help you set up your RStudio by installing all the required packages. Some of them (`spacyr`!) rely on a working Python interpreter and are therefore a bit more finicky to set up. We will provide links to step-by-step guides to help you with the process but not cover it in the tutorial. The script will heavily rely on packages from the `tidyverse` with which we assume familiarity, in particular with the `dplyr` and `purrr` packages. At the end of chapter 1, we include links to introductions we deem useful.
 
-Chapter \@ref(day2) introduces web scraping. You will become familiar with making calls to different structured web pages through `rvest` and `rselenium`). APIs and how you can tap them will be introduced, too.
+Day \@ref(day2) introduces web scraping. You will become familiar with making calls to different structured web pages through `rvest` and `rselenium`). APIs and how you can tap them will be introduced, too.
 
-Chapter \@ref(day3) gives you insight to techniques for scraping unstructured web pages. This is usually achieved using CSS selectors.
+Day \@ref(day3) gives you insight to techniques for scraping unstructured web pages. This is usually achieved using CSS selectors.
 
-Chapter \@ref(day4) is dedicated to the featurization and descriptive analysis of text.
+Day \@ref(day4) is dedicated to the featurization and descriptive analysis of text.
 
-Chapter \@ref(day5) introduces both unsupervised and supervised machine learning approaches for the classification and analysis of text. Moreover, a glimpse on how word embedding techniques can be used as preprocessing technique is provided.
+Day \@ref(day5) introduces both unsupervised and supervised machine learning approaches for the classification and analysis of text. 
 
-The following chapters draw heavily on packages from the `tidyverse` [@wickham2019c], `tidytext` [@silge2016], and `tidymodels` [@kuhn2020], as well as the two excellent books "Text Mining with R: A Tidy Approach" [@silge2017] and "Supervised Machine Learning for Text Analysis in R" [@hvitfeldt2022]. Examples and inspiration are often drawn from blog posts and/or other tutorials, and we will give credit wherever credit is due. Moreover, you will find further readings at the end of each section as well as exercises at the end of the respective chapter.
+Day \@ref(day6) provides a glimpse on how word embedding techniques can be used. It will showcase how `word2vec` can be used to learn embeddings from text from scratch, as well as some arithmetic calculations using these embeddings.
+
+The following chapters draw heavily on packages from the `tidyverse` [@wickham_welcome_2019], `tidytext` [@silge_tidytext_2016], and `tidymodels` [@kuhn_tidymodels_2020], as well as the two excellent books "Text Mining with R: A Tidy Approach" [@silge_teyt_2017] and "Supervised Machine Learning for Text Analysis in R" [@hvitfeldt_supervised_2022]. Examples and inspiration are often drawn from blog posts and/or other tutorials, and we will give credit wherever credit is due. Moreover, you will find further readings at the end of each section as well as exercises at the end of the respective chapter.
 
 ## Setup procedure
 
@@ -50,7 +52,10 @@ if (!"tidyverse" %in% installed.packages()[, 1]) install.packages("tidyverse")
 
 packages <- c(
   "broom",
+  "devtools",
+  "discrim",
   "forcats",
+  "glmnet",
   "hcandersenr",
   "httr",
   "irlba",
@@ -59,16 +64,19 @@ packages <- c(
   "ldatuning",
   "LDAvis",
   "lubridate", 
+  "magrittr",
   "naivebayes",
   "polite",
   "ranger",
   "RSelenium",
   "rtweet",
   "rvest",
+  "SnowballC",
   "sotu",
   "spacyr",
   "stm", 
-  "stmCorrViz",
+  "stopwords",
+  "stminsights",
   "textdata",
   "textrecipes",
   "tidymodels",
@@ -81,12 +89,13 @@ packages <- c(
   "wordcloud",
   "workflows", 
   "yardstick"
-  
   )
 
 purrr::walk(packages, ~{
   if (!.x %in% installed.packages()[, 1]) install.packages(.x)
 })
+
+if (!"tif" %in% installed.packages()[, 1]) devtools::install_github("ropensci/tif")
 ```
 
 While we would strongly advise you to integrate RStudio projects into your workflow, it is not required for SICSS-Paris. We will work with RMarkdown (RMD) documents which facilitate working with file paths significantly insofar as they automatically assume the folder they are stored in as current working directory. In our case, this is not necessary though, since everything can be directly downloaded from Dropbox.

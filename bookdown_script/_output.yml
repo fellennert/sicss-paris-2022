@@ -3,7 +3,7 @@ bookdown::gitbook:
   config:
     toc:
       before: |
-        <li><a href="./">Text Mining for Social Scientists</a></li>
+        <li><a href="./">Script for SICSS-Paris 2022</a></li>
       after: |
         <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
     edit: https://github.com/USERNAME/REPO/edit/BRANCH/%s

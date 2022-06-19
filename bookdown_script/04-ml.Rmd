@@ -1,4 +1,4 @@
-# Day 5: Text preprocessing {#day5}
+# Machine Learning {#day5}
 
 In the following script, we will introduce you to the supervised and unsupervised classification of text. Supervised means that we will need to "show" the machine a data set that already contains the value or label we want to predict (the "dependent variable") as well as all the variables that are used to predict the class/value (the independent variables or, in ML lingo, *features*). In the examples we will showcase, the features are the tokens that are contained in a document. Dependent variables are in our example sentiment.
 
@@ -12,11 +12,11 @@ Overall, the process of supervised classification using text in R encompasses th
 5. Applying the model to the held-out test set
 6. Final evaluation
 
-This is mirrored in the `workflow()` function from the `workflow` [@vaughan2022] package. There, you define the pre-processing procedure (`add_recipe()` -- created through the `recipe()` function from the `recipes` [@kuhn2022] and/or `textrecipes` [@hvitfeldt2022a] package(s)), the model specification with `add_spec()` -- taking a model specification as created by the `parsnip` [@kuhn2022a] package.
+This is mirrored in the `workflow()` function from the `workflow` [@vaughan_workflow_2022] package. There, you define the pre-processing procedure (`add_recipe()` -- created through the `recipe()` function from the `recipes` [@kuhn_recipes_2022] and/or `textrecipes` [@hvitfeldt_textrecipes_2022] package(s)), the model specification with `add_spec()` -- taking a model specification as created by the `parsnip` [@kuhn_parsnip_2022] package.
 
 ![Workflow overview](figures/workflow.png)
 
-In the next part, other approaches such as Support Vector Machines (SVM), penalized logistic regression models (penalized here means, loosely speaking, that insignificant predictors which contribute little will be shrunk and ignored -- as the text contains many tokens that might not contribute much, those models lend themselves nicely to such tasks), random forest models, or XGBoost will be introduced. Those approaches are not to be explained in-depth, third-party articles will be linked though, but their intuition and the particularities of their implementation will be described. Since we use the `tidymodels` [@kuhn2020] framework for implementation, trying out different approaches is straightforward. Also, the pre-processing differs, `recipes` and `textrecipes` facilitate this task decisively. Third, the evaluation of different classifiers will be described. Finally, the entire workflow will be demonstrated using the abortion Tweet data set.
+In the next part, other approaches such as Support Vector Machines (SVM), penalized logistic regression models (penalized here means, loosely speaking, that insignificant predictors which contribute little will be shrunk and ignored -- as the text contains many tokens that might not contribute much, those models lend themselves nicely to such tasks), random forest models, or XGBoost will be introduced. Those approaches are not to be explained in-depth, third-party articles will be linked though, but their intuition and the particularities of their implementation will be described. Since we use the `tidymodels` [@kuhn_tidymodels_2020] framework for implementation, trying out different approaches is straightforward. Also, the pre-processing differs, `recipes` and `textrecipes` facilitate this task decisively. Third, the evaluation of different classifiers will be described. Finally, the entire workflow will be demonstrated using the abortion Tweet data set.
 
 ## Split data 
 
@@ -179,6 +179,7 @@ Now that a first model has been trained, its performance can be evaluated. In th
 First, the folds need to be determined. we set a seed in the beginning to ensure reproducibility.
 ```{r}
 library(tune)
+
 set.seed(123)
 imdb_folds <- vfold_cv(imdb_train)
 ```
@@ -250,7 +251,7 @@ imdb_tune_basic_recipe <- recipe(sentiment ~ text, data = imdb_train) %>%
   step_tf(text)
 ```
 
-The `dials` [@kuhn2022b] package provides the handy `grid_regular()` function which chooses suitable values for certain parameters. 
+The `dials` [@kuhn_dials_2022] package provides the handy `grid_regular()` function which chooses suitable values for certain parameters. 
 
 ```{r}
 lambda_grid <- grid_regular(
@@ -339,7 +340,7 @@ The following graphic depicts a flowchart of text analysis with the `tidytext` p
 
 ![Text analysis flowchart](https://www.tidytextmining.com/images/tmwr_0601.png)
 
-What becomes evident is that the actual topic modeling does not happen within `tidytext`. For this, the text needs to be transformed into a document-term-matrix and then passed on to the `topicmodels` package [@grun2020], which will take care of the modeling process. Thereafter, the results are turned back into tidy format, using `broom` so that they can be visualized using `ggplot2`.
+What becomes evident is that the actual topic modeling does not happen within `tidytext`. For this, the text needs to be transformed into a document-term-matrix and then passed on to the `topicmodels` package [@grun_topicmodels_2020], which will take care of the modeling process. Thereafter, the results are turned back into tidy format, using `broom` so that they can be visualized using `ggplot2`.
 
 ### Document-term matrix
 
@@ -389,12 +390,13 @@ sotu_lda_k10_tidied <- read_rds("https://www.dropbox.com/s/lxrcy44aqz16sgb/sotu_
 ```{r eval=FALSE}
 library(topicmodels)
 library(broom)
+
 sotu_lda_k10 <- LDA(sotu_dtm, k = 10, control = list(seed = 123))
 
 sotu_lda_k10_tidied <- tidy(sotu_lda_k10)
 ```
 
-The `tidy()` function from the `broom` package [@robinson2020] brings the LDA output back into a tidy format. It consists of three columns: the topic, the term, and `beta`, which is the probability that the term stems from this topic. 
+The `tidy()` function from the `broom` package [@robinson_broom_2020] brings the LDA output back into a tidy format. It consists of three columns: the topic, the term, and `beta`, which is the probability that the term stems from this topic. 
 
 ```{r}
 sotu_lda_k10_tidied %>% glimpse()
@@ -462,6 +464,7 @@ write_rds(sotu_lda_k16, "lda_16.rds")
 ```
 
 ```{r include=FALSE}
+library(topicmodels)
 sotu_lda_k16 <- read_rds("https://www.dropbox.com/s/ffq762eq7ytzyb8/lda_16.rds?dl=1")
 sotu_lda_k16_tidied <- tidy(sotu_lda_k16)
 ```
@@ -506,6 +509,7 @@ An interesting pattern is that the topics show some time-dependency. This intuit
 
 ```{r}
 library(LDAvis)
+
 prep_lda_output <- function(dtm, lda_output){
   doc_length <- dtm %>% 
     as.matrix() %>% 
@@ -536,113 +540,77 @@ json_lda <- prep_lda_output(sotu_dtm, sotu_lda_k16)
 
 ```{r eval=FALSE}
 serVis(json_lda, out.dir = 'vis', open.browser = TRUE)
-servr::daemon_stop(2)
+
+servr::daemon_stop(1)
 ```
 
 ### Structural Topic Models
 
-```{r}
-library(stm)
-```
+Structural Topic Models offer a framework for incorporating meta data into topic models. In particular, you can have these metadata affect the *topical prevalence*, i.e., the frequency a certain *topic* is discussed can vary depending on some observed non-textual property of the document. On the other hand, the topical content, i.e., the terms that constitute topics, may vary depending on certain covariates.
+
+Structural Topic Models are implemented in R via a a dedicated package. The following overview provides information on the workflow and the functions that facilitate it. 
+
+![@roberts_stm_2019](https://warin.ca/shiny/stm/images/fig02.png)
+In the following example, I will use the State of the Union addresses to run you through the process of training and evaluating an STM. 
 
 ```{r}
-sotu_stm <- sotu_raw <- sotu_meta %>% 
-  bind_cols(sotu_text) %>% 
-  rename(text = `...6`) %>% 
+library(stm)
+
+sotu_stm <- sotu_meta %>% 
+  mutate(text = sotu_text) %>% 
   distinct(text, .keep_all = TRUE) %>% 
   filter(between(year, 1900, 2000))
 ```
 
+The package requires a particular data structure and has included a number of functions that help you preprocess your data. `textProcessor()` takes care of preprocessing the data. It takes as first argument the text as a character vector as well as the tibble containing the meta data. Its output is a list containing a document list containing word indices and counts, a vocabulary vector containing words associated with these word indices, and a data.frame containing associated meta data. `prepDocuments()` finally brings the resulting list into a shape that is appropriate for training an STM. It has certain threshold parameters which are geared towards further reducing the vocabulary. `lower.thresh = n` removes words that are not present in at least n documents, `upper.thresh = m` removes words that are present in more than m documents. The ramifications of these parameter settings can be explored graphically using the `plotRemoved()` function.
+
 ```{r}
-processed <- textProcessor(sotu_stm$text, metadata = sotu_stm)
-out <- prepDocuments(processed$documents, processed$vocab, processed$meta)
+processed <- textProcessor(sotu_stm$text, metadata = sotu_stm %>% select(-text))
+#, custompunctuation = "-")
+#?textProcessor() # check out the different arguments 
 
-docs <- out$documents
-vocab <- out$vocab
-meta <- out$meta
+#?prepDocuments()
 
-plotRemoved(processed$documents, lower.thresh = seq(1, 200, by = 100))
+plotRemoved(processed$documents, lower.thresh = seq(1, 50, by = 2))
 
-out <- prepDocuments(processed$documents, processed$vocab, processed$meta, lower.thresh = 5)
+prepped_docs <- prepDocuments(processed$documents, processed$vocab, processed$meta, lower.thresh = 3, upper.thresh = 80)
 ```
 
-```{r}
-sotu_content_fit <- stm(documents = out$documents, 
-                      vocab = out$vocab, 
-                      K = 20, 
-                      prevalence = ~party + s(year), 
-                      content = ~party,
-                      max.em.its = 75, 
-                      data = out$meta, 
-                      init.type = "Spectral")
+Now that the data is properly preprocessed and prepared, we can estimate the actual model. As mentioned before, covariates can influence topical prevalence as well as their content. I assume topical prevalence to be influenced by the party of the speaker as well as the year the SOTU was held. The latter is assumed to influence the topical prevalence in a non-linear way (SOTU addresses usually deal with acute topics which do not gradually build over time) and is therefore estimated with a spline through the `s()` function that comes from the `stm` package. It defaults to a spline with 10 degrees of freedom. Moreover, I assume the content of topics to be influenced by party affiliation. Both `prevalence =` and `content =` take their arguments in formula notation.
+
+As determined before, I assume the presence of `K = 16` topics (`stm` also offers the `searchK()` function to tune this hyperparameter)
+
+```{r eval=FALSE}
+sotu_content_fit <- stm(documents = prepped_docs$documents, 
+                        vocab = prepped_docs$vocab, 
+                        K = 16, 
+                        prevalence = ~party + s(year),
+                        content = ~party,
+                        max.em.its = 75, 
+                        data = prepped_docs$meta, 
+                        init.type = "Spectral",
+                        verbose = FALSE)
 ```
 
-```{r}
-plot(sotu_content_fit, type = "summary", xlim = c(0, 0.3))
-```
+Let's look at a summary of the topics and their prevalence. For this, we can use a [shiny app developed by Carsten Schwemmer](https://github.com/cschwem2er/stminsights)
 
-```{r}
-out$meta$party <- as.factor(out$meta$party)
-prep <- estimateEffect(1:20 ~ party + s(year), sotu_content_fit, meta = out$meta, uncertainty = "Global")
-summary(prep, topics = 1)
-```
-
-```{r}
-plot(prep, 
-     covariate = "party", 
-     topics = 1:10, 
-     model = sotu_content_fit, 
-     method = "difference", 
-     cov.value1 = "Republican", 
-     cov.value2 = "Democratic", 
-     xlab = "Republican vs. Democratic", 
-     main = "…", 
-     xlim = c(-0.2, 0.2),
-     labeltype = "custom", 
-     custom.labels = str_c("topic", 1:10))
-```
-
-```{r}
-plot(prep, "year", method = "continuous", topics = 1:10, model = z, printlegend = FALSE, xaxt = "n", xlab = "Years")
-years <- 1900:2000
-axis(1, at = years, labels = years)
-```
-
-```{r}
-plot(sotu_content_fit, type = "perspectives", topics = 7)
-
-```
-
-```{r}
-cloud(sotu_content_fit, topic = 13, scale = c(2, 0.25))
-
-```
-
-```{r}
-mod.out.corr <- topicCorr(sotu_content_fit)
-plot(mod.out.corr)
+```{r eval=FALSE, include=FALSE}
+sotu_stm <- read_rds("https://www.dropbox.com/s/65bukmm42byq0dy/sotu_stm_k16.rds?dl=1")
 ```
 
 ```{r eval=FALSE}
-sotu_content_fit %>% toLDAvis(docs = docs)
-servr::daemon_stop(2) 
+library(stminsights)
+
+prepped_docs$meta$party <- as.factor(prepped_docs$meta$party)
+prep <- estimateEffect(1:16 ~ party + s(year), sotu_content_fit, meta = prepped_docs$meta, uncertainty = "Global")
+map(1:16, ~summary(prep, topics = .x))
+
+save(prepped_docs, sotu_stm, prep, file = "stm_insights.RData")
+
+run_stminsights()
 ```
 
-
 ## Further readings
-
-
-
-
-
-
-
-
-
-
-
-
-## Further links
 
 * Check out the [SMLTAR book](https://smltar.com)
 * More on [tidymodels](https://www.tidymodels.org)

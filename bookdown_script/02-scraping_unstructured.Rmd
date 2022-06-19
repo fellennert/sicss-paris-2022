@@ -1,4 +1,4 @@
-# Day 3: Scraping the web -- extracting data {#day3}
+# Scraping the web -- extracting data {#day3}
 
 In Chapter \@ref(day2) you were shown how to make calls to web pages and get responses. Moreover, you were introduced to making calls to APIs which (usually) give you content in a nice and structured manner. In this chapter, the guiding topic will be how you can extract content from web pages which give you unstructured content in a structured way. The (in our opinion) easiest way to achieve that is by harnessing the way the web is written. 
 
@@ -313,7 +313,7 @@ while (session$response$status_code == 200 && i <= 10) {
 1. Scrape the (British MPs Wikipedia page)[https://en.wikipedia.org/wiki/List_of_MPs_elected_in_the_2019_United_Kingdom_general_election].
   a. Scrape the table containing data on all individual MPs. (Hint: you can select and remove single lines using `slice()`, e.g., `tbl %>% slice(1)` retains only the first line, `tbl %>% slice(-1)` removes only the first line.)
   b. Extract the links linking to individual pages. Make them readable using `url_absolute()` – `url_absolute("/kdfnndfkok", base = "https://wikipedia.com")` --> `"https://wikipedia.com/kdfnndfkok"`. Add the links to the table from 1a.
-  c. Scrape the textual content of the first MP’s Wikipedia page.
+  c. Scrape the textual content of the **first** MP’s Wikipedia page.
   d. (ADVANCED – feel free to move on to task 2.) Wrap 1c. in a function called `scrape_mp_wiki()`.
 
 <details>
@@ -367,7 +367,7 @@ scrape_page <- function(link){
     mutate(link = link)
 }
 
-mp_wiki_entries <- table_w_link$link %>% 
+mp_wiki_entries <- table_w_link$link[[1]] %>% 
   map(~{scrape_page(.x)})
 
 mp_wiki_entries_tbl <- table_w_link %>% 

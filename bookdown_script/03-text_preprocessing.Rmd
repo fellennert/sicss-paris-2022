@@ -1,4 +1,4 @@
-# Day 4: Text preprocessing {#day4}
+# Text preprocessing {#day4}
 
 When working with data, a significant number of variables will be in some sort of text format. When you want to manipulate these variables, an easy approach would be exporting the data to MS Excel and then just performing those manipulations by hand. This is very time-consuming, though, and, hence, we rather recommend the R way which scales well and works fast for data sets of varying sizes.
 
@@ -16,7 +16,7 @@ single_ones <- "what's up"
 double_ones <- 'he said: "I am fine"'
 ```
 
-The `stringr` package [@wickham2019b] contains a multitude of commands (49 in total) that can be used to achieve a couple of things, mainly manipulating character vectors, and finding and matching patterns. Basically, these goals can also be achieved with base R functions, but `stringr`'s advantage is its consistency. The makers of `stringr` describe it as
+The `stringr` package [@wickham_stringr_2019] contains a multitude of commands (49 in total) that can be used to achieve a couple of things, mainly manipulating character vectors, and finding and matching patterns. Basically, these goals can also be achieved with base R functions, but `stringr`'s advantage is its consistency. The makers of `stringr` describe it as
 
 > A consistent, simple and easy to use set of wrappers around the fantastic `stringi` package. All function and argument names (and positions) are consistent, all functions deal with `NA`'s and zero-length vectors in the same way, and the output from one function is easy to feed into the input of another.
 
@@ -34,7 +34,7 @@ A basic operation is changing words' cases.
 
 ```{r}
 library(tidyverse) #stringr is part of the core tidyverse
-library(stringr)
+
 str_to_lower(vector_of_strings)
 str_to_upper(vector_of_strings)
 str_to_title(vector_of_strings)
@@ -445,17 +445,17 @@ str_split_fixed(manufacturer_model, "(?<=\\w)\\b", n = 2) %>%
 
 ## Featurization of text
 
-After having learned about the basics of string manipulation, we are now turning to how you can turn your collection of documents, your corpus, into a representation that lends itself nicely to quantitative analyses of text. There are a couple of packages around which you can use for text mining, such as `quanteda` [@benoit2018], `tm` [@feinerer2008], and `tidytext` [@silge2016], the latter being probably the most recent addition to them. A larger overview of relevant packages can be found on this [CRAN Task View](https://cran.r-project.org/web/views/NaturalLanguageProcessing.html).
+After having learned about the basics of string manipulation, we are now turning to how you can turn your collection of documents, your corpus, into a representation that lends itself nicely to quantitative analyses of text. There are a couple of packages around which you can use for text mining, such as `quanteda` [@benoit_quanteda_2018], `tm` [@feinerer_tm_2008], and `tidytext` [@silge_tidytext_2016], the latter being probably the most recent addition to them. A larger overview of relevant packages can be found on this [CRAN Task View](https://cran.r-project.org/web/views/NaturalLanguageProcessing.html).
 
-As you could probably tell from its name, `tidytext` obeys the tidy data principles. "Every observation is a row" translates here to "every token has its own row" -- "token" not necessarily relating to a singular term, but also to so-called n-grams. In the following, we will demonstrate what text mining using tidy principles can look like in R. For this, we will first cover the preprocessing of text using tidy data principles. Thereafter, we will delve into more advanced preprocessing such as the lemmatization of words and part-of-speech (POS) tagging using `spaCy` [@benoit2020]. Finally, different R packages are using different representations of text data. Depending on the task at hand, you will therefore have to be able to transform the data into the proper format. This will be covered in the final part.
+As you could probably tell from its name, `tidytext` obeys the tidy data principles. "Every observation is a row" translates here to "every token has its own row" -- "token" not necessarily relating to a singular term, but also to so-called n-grams. In the following, we will demonstrate what text mining using tidy principles can look like in R. For this, we will first cover the preprocessing of text using tidy data principles. Thereafter, we will delve into more advanced preprocessing such as the lemmatization of words and part-of-speech (POS) tagging using `spaCy` [@benoit_spacy_2020]. Finally, different R packages are using different representations of text data. Depending on the task at hand, you will therefore have to be able to transform the data into the proper format. This will be covered in the final part.
 
 ### Pre-processing with `tidytext`
 
 The `sotu` package contains all of the so-called "State of the Union" addresses -- the president gives them to the congress annually -- since 1790.
 
 ```{r message=FALSE, warning=FALSE}
-library(tidyverse)
 library(sotu)
+
 sotu_raw <- sotu_meta %>% 
   bind_cols(sotu_text) %>% 
   rename(text = `...6`) %>% 
@@ -483,6 +483,7 @@ In a first step, we bring the data into a form that facilitates manipulation: a 
 `
 ```{r}
 library(tidytext)
+
 toy_example <- tibble(
   text = "Look, this is a brief example for how tokenization works."
 )
@@ -524,10 +525,11 @@ The new tibble consists of `r sotu_20cent_tokenized %>% nrow()` rows. Please not
 
 #### Removal of unnecessary content
 
-The next step is to remove stop words -- they are not necessary for the analyses we want to perform. The `stopwords` package has a nice list for English.
+The next step is to remove stop words -- they are not necessary for the analyses we want to perform. The `stopwords` [@benoit_stopwords_2020] package has a nice list for English.
 
 ```{r}
 library(stopwords)
+
 stopwords_vec <- stopwords(language = "en")
 #stopwords(language = "de") # the german equivalent
 #stopwords_getlanguages() # find the languages that are available
@@ -555,6 +557,7 @@ To decrease the complexity of the vocabulary even further, we can reduce the tok
 
 ```{r}
 library(SnowballC)
+
 sotu_20cent_tokenized_nostopwords_nonumbers_stemmed <- sotu_20cent_tokenized_nostopwords_nonumbers %>% 
   mutate(token = wordStem(token, language = "en"))
 
@@ -590,7 +593,7 @@ Now we have created a nice tibble containing the SOTU addresses of the 20th cent
 
 ## Preprocessing with `spaCy`
 
-Similar things (and more!) can also be achieved with `spaCy` [@benoit2020]. `spacyr` is an R wrapper around the `spaCy` Python package and, therefore, a bit tricky to install at first, you can find instructions [here](https://spacyr.quanteda.io/articles/using_spacyr.html). 
+Similar things (and more!) can also be achieved with `spaCy` [@benoit_spacy_2020]. `spacyr` is an R wrapper around the `spaCy` Python package and, therefore, a bit tricky to install at first, you can find instructions [here](https://spacyr.quanteda.io/articles/using_spacyr.html). 
 
 The functionalities `spacyr` offers you are the following^[overview copied from their webpage]: 
 
@@ -607,8 +610,10 @@ Before using `spacyr`, it needs to be initialized. What happens during this proc
 
 ```{r}
 library(spacyr)
+
 spacy_initialize(model = "en_core_web_sm")
-# to download new model -- here: French
+
+# to download a new model -- here: French
 #spacy_finalize()
 #spacy_download_langmodel(model = "fr_core_news_sm")
 #spacy_initialize(model = "fr_core_news_sm") #check that it has worked
@@ -622,7 +627,6 @@ spacy_initialize(model = "en_core_web_sm")
 `spacyr`'s main function is `spacy_parse()`. It takes a character vector or [TIF-compliant data frame](https://github.com/ropensci/tif). The latter is basically a tibble containing at least two columns, one named `doc_id` with unique document ids and one named `text`, containing the respective documents.
 
 ```{r}
-#devtools::install_github("ropensci/tif")
 library(tif)
 
 tif_toy_example <- tibble(
@@ -716,9 +720,8 @@ In the following, I will present multiple methods according to which you can ide
 The most simple approach to determine which words are more correlated to a certain group of documents is by merely counting them and determining their proportion in the document groups. For illustratory purposes, I use fairytales from H.C. Andersen which are contained in the `hcandersenr` package.
 
 ```{r}
-library(tidyverse)
 library(lubridate)
-library(tidytext)
+
 fairytales <- hcandersenr::hcandersen_en %>% 
   filter(book %in% c("The princess and the pea",
                      "The little mermaid",
@@ -753,6 +756,7 @@ It is quite hard to draw inferences on which plot belongs to which book since th
 
 ```{r}
 library(stopwords)
+
 fairytales_top10_nostop <- fairytales_tidy %>% 
   anti_join(get_stopwords(), by = c("token" = "word")) %>% 
   group_by(book) %>% 
@@ -775,7 +779,7 @@ This already looks quite nice, it is quite easy to see which plot belongs to the
 
 #### TF-IDF
 
-A better explanation for words that are particular to a group of documents is the ones that appear often in one group but rarely in the other one(s). So far, the measure of term frequency only accounts for how often terms are used in the respective document. I can take into account how often it appears in other documents by including the inverse document frequency. The resulting measure is called tf-idf and describes "the frequency of a term adjusted for how rarely it is used." [@silge2016: 31] If a term is rarely used overall but appears comparably often in a singular document, it might be safe to assume that it plays a bigger role in that document.
+A better explanation for words that are particular to a group of documents is the ones that appear often in one group but rarely in the other one(s). So far, the measure of term frequency only accounts for how often terms are used in the respective document. I can take into account how often it appears in other documents by including the inverse document frequency. The resulting measure is called tf-idf and describes "the frequency of a term adjusted for how rarely it is used." [@silge_tidytext_2016: 31] If a term is rarely used overall but appears comparably often in a singular document, it might be safe to assume that it plays a bigger role in that document.
 
 The tf-idf of a word in a document is commonly^[Note that multiple implementations exist, for an overview see, ofr instance, @manning2008] calculated as follows:
 
@@ -867,6 +871,7 @@ In R, a common implementation of DTMs is the `DocumentTermMatrix` class in the `
 
 ```{r}
 library(topicmodels)
+
 data("AssociatedPress")
 
 class(AssociatedPress)
@@ -1096,7 +1101,7 @@ c("t.co", "https", "amp", "can", "just", "now", "like", "get", "ar", "see")
 </details>
 
 
-  c. Do the same thing but using the spacy output and filtering only NOUNs and PROPNouns. 
+  c. Do the same thing but using the spacy output and filtering only `NOUN`s and `PROPN`ouns. 
   
 <details>
   <summary>Solution. Click to expand!</summary>
