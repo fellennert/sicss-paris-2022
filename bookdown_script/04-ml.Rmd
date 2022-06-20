@@ -12,7 +12,7 @@ Overall, the process of supervised classification using text in R encompasses th
 5. Applying the model to the held-out test set
 6. Final evaluation
 
-This is mirrored in the `workflow()` function from the `workflow` [@vaughan_workflow_2022] package. There, you define the pre-processing procedure (`add_recipe()` -- created through the `recipe()` function from the `recipes` [@kuhn_recipes_2022] and/or `textrecipes` [@hvitfeldt_textrecipes_2022] package(s)), the model specification with `add_spec()` -- taking a model specification as created by the `parsnip` [@kuhn_parsnip_2022] package.
+This is mirrored in the `workflow()` function from the `workflows` [@vaughan_workflows_2022] package. There, you define the pre-processing procedure (`add_recipe()` -- created through the `recipe()` function from the `recipes` [@kuhn_recipes_2022] and/or `textrecipes` [@hvitfeldt_textrecipes_2022] package(s)), the model specification with `add_spec()` -- taking a model specification as created by the `parsnip` [@kuhn_parsnip_2022] package.
 
 ![Workflow overview](figures/workflow.png)
 
@@ -72,7 +72,7 @@ imdb_basic_recipe %>%
 
 ### `textrecipes` -- further preprocessing steps
 
-More steps exist. These always follow the same structure: their first two arguments are the recipe (which in practice does not matter, because they are generally used in a "pipeline") and the variable that is affected (in our example "text" because it is the one to be modified). The rest of the arguments depends on the function. In the following, we will briefly list them and their most important arguments. [add link to vignette]
+More steps exist. These always follow the same structure: their first two arguments are the recipe (which in practice does not matter, because they are generally used in a "pipeline") and the variable that is affected (in our example "text" because it is the one to be modified). The rest of the arguments depends on the function. In the following, we will briefly list them and their most important arguments. Find the exhaustive list [here](https://cran.r-project.org/web/packages/textrecipes/textrecipes.pdf),
 
 * `step_tokenfilter()`: filters tokens
   + `max_times =` upper threshold for how often a term can appear (removes common words)
@@ -82,7 +82,7 @@ More steps exist. These always follow the same structure: their first two argume
 * `step_lemma()`: allows you to extract the lemma
   + in case you want to use it, make sure you tokenize via `spacyr` (by using `step_tokenize(text, engine = "spacyr"))`
 * `step_pos_filter()`: adds the Part-of-speech tags
-  + `keep_tags =` character vector that specifies the types of tags to retain (default is "NOUN", for more details see [here](https://github.com/explosion/spaCy/blob/master/spacy/glossary.py) or consult chapter \@ref(texttodata))
+  + `keep_tags =` character vector that specifies the types of tags to retain (default is "NOUN", for more details see [here](https://github.com/explosion/spaCy/blob/master/spacy/glossary.py) or consult chapter \@ref(day4))
   + in case you want to use it, make sure you tokenize via `spacyr` (by using `step_tokenize(text, engine = "spacyr"))`
 * `step_stem()`: stems tokens 
   + `custom_stem =` specifies the stemming function. Defaults to `SnowballC`. Custom functions can be provided.
@@ -327,24 +327,24 @@ collect_predictions(final_fitted) %>%
 
 ## Latent Dirichlet Allocation (LDA)
 
-In the former section, I, first, explored how the sentiment in the SOTU addresses has evolved over the 20th century. Then, we looked at the decade-specific vocabulary. This, paired with previous knowledge of what happened throughout the 20th century, sufficed to gain some sort of insights. However, another approach to infer meaning from text is to search it for topics. This is also possible with the SOTU corpus which we have at hand.
+In the former section, I, first, explored how the sentiment in the SOTU addresses has evolved over the 20th century. Then, we looked at the decade-specific vocabulary. This, paired with previous knowledge of what happened throughout the 20th century, sufficed to gain some sort of insight. However, another approach to infer meaning from text is to search it for topics. This is also possible with the SOTU corpus which we have at hand.
 
 The two main assumptions of LDA are as follows:
 
 -   Every document is a mixture of topics.
 -   Every topic is a mixture of words.
 
-Hence, singular documents do not necessarily be distinct in terms of their content. They can be related -- if they contain the same topics. This is definitely more in line with natural language's use.
+Hence, singular documents do not necessarily be distinct in terms of their content. They can be related -- if they contain the same topics. This is more in line with natural language use.
 
 The following graphic depicts a flowchart of text analysis with the `tidytext` package.
 
 ![Text analysis flowchart](https://www.tidytextmining.com/images/tmwr_0601.png)
 
-What becomes evident is that the actual topic modeling does not happen within `tidytext`. For this, the text needs to be transformed into a document-term-matrix and then passed on to the `topicmodels` package [@grun_topicmodels_2020], which will take care of the modeling process. Thereafter, the results are turned back into tidy format, using `broom` so that they can be visualized using `ggplot2`.
+What becomes evident is that the actual topic modeling does not happen within `tidytext`. For this, the text needs to be transformed into a document-term-matrix and then passed on to the `topicmodels` package [@grun_topicmodels_2020], which will take care of the modeling process. Thereafter, the results are turned back into a tidy format, using `broom` so that they can be visualized using `ggplot2`.
 
 ### Document-term matrix
 
-In order to search for the topics which are prevalent in the singular addresses through LDA, we need to transform the tidy tibble into a document-term matrix first. This can be achieved with `cast_dtm()`.
+To search for the topics which are prevalent in the singular addresses through LDA, we need to transform the tidy tibble into a document-term matrix first. This can be achieved with `cast_dtm()`.
 
 ```{r}
 library(sotu)
@@ -381,7 +381,7 @@ We need to tell the model in advance how many topics we assume to be present wit
 
 #### Making guesses
 
-One approach might be to just providing it with wild guesses on how many topics might be in there and then trying to make sense of them afterwards.
+One approach might be to just provide it with wild guesses on how many topics might be in there and then try to make sense of them afterward.
 
 ```{r include=FALSE}
 sotu_lda_k10_tidied <- read_rds("https://www.dropbox.com/s/lxrcy44aqz16sgb/sotu_lda_k10.rds?dl=1")
@@ -421,7 +421,7 @@ top_terms_k10 %>%
   coord_flip()
 ```
 
-Now the hard part begins: making sense of it in an inductive manner. But, of course, there is a large probability that we just chose the wrong number of topics. Therefore, before scratching our head trying to come to meaningful conclusions, we should first assess what the optimal number of topics is.
+Now the hard part begins: inductively making sense of it. But, of course, there is a large probability that we just chose the wrong number of topics. Therefore, before scratching our heads trying to come to meaningful conclusions, we should first assess what the optimal number of topics is.
 
 #### More elaborate methods
 
@@ -453,7 +453,7 @@ determine_k <- read_rds("https://www.dropbox.com/s/1jtehujx1b6f0rp/lda_tuning.rd
 FindTopicsNumber_plot(determine_k)
 ```
 
-We would actually go with the 16 topics here, as they seem to maximizes the metrics that shall be maximized and minimizes the other ones quite well. 
+We would go with the 16 topics here, as they seem to maximize the metrics that shall be maximized and minimizes the other ones quite well. 
 
 ```{r eval=FALSE}
 sotu_lda_k16 <- LDA(sotu_dtm, k = 16, control = list(seed = 77))
@@ -486,13 +486,13 @@ topic_list <- sotu_lda_k16_tidied %>%
 
 ### Document-topic probabilities
 
-Another thing to assess is document-topic probabilities `gamma`: which document belongs to which topic. By doing so, you can choose the documents that have the highest probability of belonging to a topic and then read these specifically. This might give you some better understanding of what the different topics might imply. 
+Another thing to assess is document-topic probabilities `gamma`: which document belongs to which topic. By doing so, you can choose the documents that have the highest probability of belonging to a topic and then read these specifically. This might give you a better understanding of what the different topics might imply. 
 
 ```{r}
 sotu_lda_k16_document <- tidy(sotu_lda_k16, matrix = "gamma")
 ```
 
-This shows you the proportion of words of the document which were drawn from the specific topics. In 1990, for instance, many words were drawn from the first topic.
+This shows you the proportion of words in the document which were drawn from the specific topics. In 1990, for instance, many words were drawn from the first topic.
 
 ```{r}
 sotu_lda_k16_document %>% 
@@ -546,9 +546,9 @@ servr::daemon_stop(1)
 
 ### Structural Topic Models
 
-Structural Topic Models offer a framework for incorporating meta data into topic models. In particular, you can have these metadata affect the *topical prevalence*, i.e., the frequency a certain *topic* is discussed can vary depending on some observed non-textual property of the document. On the other hand, the topical content, i.e., the terms that constitute topics, may vary depending on certain covariates.
+Structural Topic Models offer a framework for incorporating metadata into topic models. In particular, you can have these metadata affect the *topical prevalence*, i.e., the frequency a certain *topic* is discussed can vary depending on some observed non-textual property of the document. On the other hand, the topical content, i.e., the terms that constitute topics, may vary depending on certain covariates.
 
-Structural Topic Models are implemented in R via a a dedicated package. The following overview provides information on the workflow and the functions that facilitate it. 
+Structural Topic Models are implemented in R via a dedicated package. The following overview provides information on the workflow and the functions that facilitate it. 
 
 ![@roberts_stm_2019](https://warin.ca/shiny/stm/images/fig02.png)
 In the following example, I will use the State of the Union addresses to run you through the process of training and evaluating an STM. 
@@ -562,7 +562,7 @@ sotu_stm <- sotu_meta %>%
   filter(between(year, 1900, 2000))
 ```
 
-The package requires a particular data structure and has included a number of functions that help you preprocess your data. `textProcessor()` takes care of preprocessing the data. It takes as first argument the text as a character vector as well as the tibble containing the meta data. Its output is a list containing a document list containing word indices and counts, a vocabulary vector containing words associated with these word indices, and a data.frame containing associated meta data. `prepDocuments()` finally brings the resulting list into a shape that is appropriate for training an STM. It has certain threshold parameters which are geared towards further reducing the vocabulary. `lower.thresh = n` removes words that are not present in at least n documents, `upper.thresh = m` removes words that are present in more than m documents. The ramifications of these parameter settings can be explored graphically using the `plotRemoved()` function.
+The package requires a particular data structure and has included several functions that help you preprocess your data. `textProcessor()` takes care of preprocessing the data. It takes as a first argument the text as a character vector as well as the tibble containing the metadata. Its output is a list containing a document list containing word indices and counts, a vocabulary vector containing words associated with these word indices, and a data.frame containing associated metadata. `prepDocuments()` finally brings the resulting list into a shape that is appropriate for training an STM. It has certain threshold parameters which are geared towards further reducing the vocabulary. `lower.thresh = n` removes words that are not present in at least n documents, `upper.thresh = m` removes words that are present in more than m documents. The ramifications of these parameter settings can be explored graphically using the `plotRemoved()` function.
 
 ```{r}
 processed <- textProcessor(sotu_stm$text, metadata = sotu_stm %>% select(-text))

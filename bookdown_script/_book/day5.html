@@ -5,19 +5,19 @@
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Day 5 Machine Learning | Course script for SICSS Paris</title>
-  <meta name="description" content="This book serves as accompanying script for the R sessions of the 2022 Summer Institute for Computational Social Science (SICSS), taking place at the Institut Polytechnique de Paris." />
+  <meta name="description" content="This book serves as an accompanying script for the R sessions of the 2022 Summer Institute for Computational Social Science (SICSS), taking place at the Institut Polytechnique de Paris." />
   <meta name="generator" content="bookdown 0.26 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Day 5 Machine Learning | Course script for SICSS Paris" />
   <meta property="og:type" content="book" />
   
-  <meta property="og:description" content="This book serves as accompanying script for the R sessions of the 2022 Summer Institute for Computational Social Science (SICSS), taking place at the Institut Polytechnique de Paris." />
+  <meta property="og:description" content="This book serves as an accompanying script for the R sessions of the 2022 Summer Institute for Computational Social Science (SICSS), taking place at the Institut Polytechnique de Paris." />
   
 
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="Day 5 Machine Learning | Course script for SICSS Paris" />
   
-  <meta name="twitter:description" content="This book serves as accompanying script for the R sessions of the 2022 Summer Institute for Computational Social Science (SICSS), taking place at the Institut Polytechnique de Paris." />
+  <meta name="twitter:description" content="This book serves as an accompanying script for the R sessions of the 2022 Summer Institute for Computational Social Science (SICSS), taking place at the Institut Polytechnique de Paris." />
   
 
 <meta name="author" content="Germain Gauthier" />
@@ -25,7 +25,7 @@
 <meta name="author" content="Étienne Ollion" />
 
 
-<meta name="date" content="2022-06-19" />
+<meta name="date" content="2022-06-20" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -243,26 +243,24 @@ div.csl-indent {
 <li class="chapter" data-level="4.5" data-path="day4.html"><a href="day4.html#preprocessing-with-spacy"><i class="fa fa-check"></i><b>4.5</b> Preprocessing with <code>spaCy</code></a>
 <ul>
 <li class="chapter" data-level="4.5.1" data-path="day4.html"><a href="day4.html#initializing-spacy"><i class="fa fa-check"></i><b>4.5.1</b> Initializing spacy</a></li>
+<li class="chapter" data-level="4.5.2" data-path="day4.html"><a href="day4.html#spacy_parse"><i class="fa fa-check"></i><b>4.5.2</b> <code>spacy_parse()</code></a></li>
+<li class="chapter" data-level="4.5.3" data-path="day4.html"><a href="day4.html#pos-tags-ner-and-noun-phrases"><i class="fa fa-check"></i><b>4.5.3</b> POS tags, NER, and noun phrases</a></li>
 </ul></li>
-<li class="chapter" data-level="4.6" data-path="day4.html"><a href="day4.html#spacy_parse"><i class="fa fa-check"></i><b>4.6</b> <code>spacy_parse()</code></a>
+<li class="chapter" data-level="4.6" data-path="day4.html"><a href="day4.html#first-analyses"><i class="fa fa-check"></i><b>4.6</b> First analyses</a>
 <ul>
-<li class="chapter" data-level="4.6.1" data-path="day4.html"><a href="day4.html#pos-tags-ner-and-nounphrases"><i class="fa fa-check"></i><b>4.6.1</b> POS tags, NER, and nounphrases</a></li>
+<li class="chapter" data-level="4.6.1" data-path="day4.html"><a href="day4.html#counting-words-per-document"><i class="fa fa-check"></i><b>4.6.1</b> Counting words per document</a></li>
 </ul></li>
-<li class="chapter" data-level="4.7" data-path="day4.html"><a href="day4.html#first-analyses"><i class="fa fa-check"></i><b>4.7</b> First analyses</a>
+<li class="chapter" data-level="4.7" data-path="day4.html"><a href="day4.html#converting-between-formats"><i class="fa fa-check"></i><b>4.7</b> Converting between formats</a>
 <ul>
-<li class="chapter" data-level="4.7.1" data-path="day4.html"><a href="day4.html#counting-words-per-document"><i class="fa fa-check"></i><b>4.7.1</b> Counting words per document</a></li>
+<li class="chapter" data-level="4.7.1" data-path="day4.html"><a href="day4.html#document-term-matrix"><i class="fa fa-check"></i><b>4.7.1</b> Document-term matrix</a></li>
+<li class="chapter" data-level="4.7.2" data-path="day4.html"><a href="day4.html#document-feature-matrix"><i class="fa fa-check"></i><b>4.7.2</b> Document-feature matrix</a></li>
+<li class="chapter" data-level="4.7.3" data-path="day4.html"><a href="day4.html#corpus-objects"><i class="fa fa-check"></i><b>4.7.3</b> Corpus objects</a></li>
 </ul></li>
-<li class="chapter" data-level="4.8" data-path="day4.html"><a href="day4.html#converting-between-formats"><i class="fa fa-check"></i><b>4.8</b> Converting between formats</a>
+<li class="chapter" data-level="4.8" data-path="day4.html"><a href="day4.html#further-links-3"><i class="fa fa-check"></i><b>4.8</b> Further links</a></li>
+<li class="chapter" data-level="4.9" data-path="day4.html"><a href="day4.html#exercises-2"><i class="fa fa-check"></i><b>4.9</b> Exercises</a>
 <ul>
-<li class="chapter" data-level="4.8.1" data-path="day4.html"><a href="day4.html#document-term-matrix"><i class="fa fa-check"></i><b>4.8.1</b> Document-term matrix</a></li>
-<li class="chapter" data-level="4.8.2" data-path="day4.html"><a href="day4.html#document-feature-matrix"><i class="fa fa-check"></i><b>4.8.2</b> Document-feature matrix</a></li>
-<li class="chapter" data-level="4.8.3" data-path="day4.html"><a href="day4.html#corpus-objects"><i class="fa fa-check"></i><b>4.8.3</b> Corpus objects</a></li>
-</ul></li>
-<li class="chapter" data-level="4.9" data-path="day4.html"><a href="day4.html#further-links-3"><i class="fa fa-check"></i><b>4.9</b> Further links</a></li>
-<li class="chapter" data-level="4.10" data-path="day4.html"><a href="day4.html#exercises-2"><i class="fa fa-check"></i><b>4.10</b> Exercises</a>
-<ul>
-<li class="chapter" data-level="4.10.1" data-path="day4.html"><a href="day4.html#regexes"><i class="fa fa-check"></i><b>4.10.1</b> Regexes</a></li>
-<li class="chapter" data-level="4.10.2" data-path="day4.html"><a href="day4.html#preprocessing"><i class="fa fa-check"></i><b>4.10.2</b> Preprocessing</a></li>
+<li class="chapter" data-level="4.9.1" data-path="day4.html"><a href="day4.html#regexes"><i class="fa fa-check"></i><b>4.9.1</b> Regexes</a></li>
+<li class="chapter" data-level="4.9.2" data-path="day4.html"><a href="day4.html#preprocessing"><i class="fa fa-check"></i><b>4.9.2</b> Preprocessing</a></li>
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="5" data-path="day5.html"><a href="day5.html"><i class="fa fa-check"></i><b>5</b> Machine Learning</a>
@@ -325,36 +323,36 @@ div.csl-indent {
 <li>Applying the model to the held-out test set</li>
 <li>Final evaluation</li>
 </ol>
-<p>This is mirrored in the <code>workflow()</code> function from the <code>workflow</code> <span class="citation">(<a href="#ref-vaughan2022" role="doc-biblioref"><strong>vaughan2022?</strong></a>)</span> package. There, you define the pre-processing procedure (<code>add_recipe()</code> – created through the <code>recipe()</code> function from the <code>recipes</code> <span class="citation">(<a href="#ref-kuhn2022" role="doc-biblioref"><strong>kuhn2022?</strong></a>)</span> and/or <code>textrecipes</code> <span class="citation">(<a href="#ref-hvitfeldt2022a" role="doc-biblioref"><strong>hvitfeldt2022a?</strong></a>)</span> package(s)), the model specification with <code>add_spec()</code> – taking a model specification as created by the <code>parsnip</code> <span class="citation">(<a href="#ref-kuhn2022a" role="doc-biblioref"><strong>kuhn2022a?</strong></a>)</span> package.</p>
+<p>This is mirrored in the <code>workflow()</code> function from the <code>workflows</code> <span class="citation">(<a href="#ref-vaughan_workflows_2022" role="doc-biblioref">Vaughan 2022</a>)</span> package. There, you define the pre-processing procedure (<code>add_recipe()</code> – created through the <code>recipe()</code> function from the <code>recipes</code> <span class="citation">(<a href="#ref-kuhn_recipes_2022" role="doc-biblioref">Kuhn and Wickham 2022</a>)</span> and/or <code>textrecipes</code> <span class="citation">(<a href="#ref-hvitfeldt_textrecipes_2022" role="doc-biblioref">Hvitfeldt 2022</a>)</span> package(s)), the model specification with <code>add_spec()</code> – taking a model specification as created by the <code>parsnip</code> <span class="citation">(<a href="#ref-kuhn_parsnip_2022" role="doc-biblioref">Kuhn, Vaughan, and Hvitfeldt 2022</a>)</span> package.</p>
 <div class="figure">
 <img src="figures/workflow.png" alt="" />
 <p class="caption">Workflow overview</p>
 </div>
-<p>In the next part, other approaches such as Support Vector Machines (SVM), penalized logistic regression models (penalized here means, loosely speaking, that insignificant predictors which contribute little will be shrunk and ignored – as the text contains many tokens that might not contribute much, those models lend themselves nicely to such tasks), random forest models, or XGBoost will be introduced. Those approaches are not to be explained in-depth, third-party articles will be linked though, but their intuition and the particularities of their implementation will be described. Since we use the <code>tidymodels</code> <span class="citation">(<a href="#ref-kuhn2020" role="doc-biblioref"><strong>kuhn2020?</strong></a>)</span> framework for implementation, trying out different approaches is straightforward. Also, the pre-processing differs, <code>recipes</code> and <code>textrecipes</code> facilitate this task decisively. Third, the evaluation of different classifiers will be described. Finally, the entire workflow will be demonstrated using the abortion Tweet data set.</p>
+<p>In the next part, other approaches such as Support Vector Machines (SVM), penalized logistic regression models (penalized here means, loosely speaking, that insignificant predictors which contribute little will be shrunk and ignored – as the text contains many tokens that might not contribute much, those models lend themselves nicely to such tasks), random forest models, or XGBoost will be introduced. Those approaches are not to be explained in-depth, third-party articles will be linked though, but their intuition and the particularities of their implementation will be described. Since we use the <code>tidymodels</code> <span class="citation">(<a href="#ref-kuhn_tidymodels_2020" role="doc-biblioref">Kuhn and Wickham 2020</a>)</span> framework for implementation, trying out different approaches is straightforward. Also, the pre-processing differs, <code>recipes</code> and <code>textrecipes</code> facilitate this task decisively. Third, the evaluation of different classifiers will be described. Finally, the entire workflow will be demonstrated using the abortion Tweet data set.</p>
 <div id="split-data" class="section level2 hasAnchor" number="5.1">
 <h2><span class="header-section-number">5.1</span> Split data<a href="day5.html#split-data" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>The example for today’s session is the IMDb data set. First, we load a whole bunch of packages and the data set.</p>
-<div class="sourceCode" id="cb315"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb315-1"><a href="day5.html#cb315-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidymodels)</span>
-<span id="cb315-2"><a href="day5.html#cb315-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(textrecipes)</span>
-<span id="cb315-3"><a href="day5.html#cb315-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(workflows)</span>
-<span id="cb315-4"><a href="day5.html#cb315-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(discrim)</span>
-<span id="cb315-5"><a href="day5.html#cb315-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(glmnet)</span>
-<span id="cb315-6"><a href="day5.html#cb315-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidytext)</span>
-<span id="cb315-7"><a href="day5.html#cb315-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb315-8"><a href="day5.html#cb315-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb315-9"><a href="day5.html#cb315-9" aria-hidden="true" tabindex="-1"></a>imdb_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;https://www.dropbox.com/s/0cfr4rkthtfryyp/imdb_reviews.csv?dl=1&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb296"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb296-1"><a href="day5.html#cb296-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidymodels)</span>
+<span id="cb296-2"><a href="day5.html#cb296-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(textrecipes)</span>
+<span id="cb296-3"><a href="day5.html#cb296-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(workflows)</span>
+<span id="cb296-4"><a href="day5.html#cb296-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(discrim)</span>
+<span id="cb296-5"><a href="day5.html#cb296-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(glmnet)</span>
+<span id="cb296-6"><a href="day5.html#cb296-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidytext)</span>
+<span id="cb296-7"><a href="day5.html#cb296-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb296-8"><a href="day5.html#cb296-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb296-9"><a href="day5.html#cb296-9" aria-hidden="true" tabindex="-1"></a>imdb_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;https://www.dropbox.com/s/0cfr4rkthtfryyp/imdb_reviews.csv?dl=1&quot;</span>)</span></code></pre></div>
 <p>The first step is to divide the data into training and test sets using <code>initial_split()</code>. You need to make sure that the test and training set are fairly balanced which is achieved by using <code>strata =</code>. <code>prop =</code> refers to the proportion of rows that make it into the training set.</p>
-<div class="sourceCode" id="cb316"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb316-1"><a href="day5.html#cb316-1" aria-hidden="true" tabindex="-1"></a>split <span class="ot">&lt;-</span> <span class="fu">initial_split</span>(imdb_data, <span class="at">prop =</span> <span class="fl">0.8</span>, <span class="at">strata =</span> sentiment)</span>
-<span id="cb316-2"><a href="day5.html#cb316-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb316-3"><a href="day5.html#cb316-3" aria-hidden="true" tabindex="-1"></a>imdb_train <span class="ot">&lt;-</span> <span class="fu">training</span>(split)</span>
-<span id="cb316-4"><a href="day5.html#cb316-4" aria-hidden="true" tabindex="-1"></a>imdb_test <span class="ot">&lt;-</span> <span class="fu">testing</span>(split)</span>
-<span id="cb316-5"><a href="day5.html#cb316-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb316-6"><a href="day5.html#cb316-6" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(imdb_train)</span></code></pre></div>
+<div class="sourceCode" id="cb297"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb297-1"><a href="day5.html#cb297-1" aria-hidden="true" tabindex="-1"></a>split <span class="ot">&lt;-</span> <span class="fu">initial_split</span>(imdb_data, <span class="at">prop =</span> <span class="fl">0.8</span>, <span class="at">strata =</span> sentiment)</span>
+<span id="cb297-2"><a href="day5.html#cb297-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb297-3"><a href="day5.html#cb297-3" aria-hidden="true" tabindex="-1"></a>imdb_train <span class="ot">&lt;-</span> <span class="fu">training</span>(split)</span>
+<span id="cb297-4"><a href="day5.html#cb297-4" aria-hidden="true" tabindex="-1"></a>imdb_test <span class="ot">&lt;-</span> <span class="fu">testing</span>(split)</span>
+<span id="cb297-5"><a href="day5.html#cb297-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb297-6"><a href="day5.html#cb297-6" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(imdb_train)</span></code></pre></div>
 <pre><code>## Rows: 20,000
 ## Columns: 2
 ## $ text      &lt;chr&gt; &quot;Once again Mr. Costner has dragged out a movie for far long…
 ## $ sentiment &lt;chr&gt; &quot;negative&quot;, &quot;negative&quot;, &quot;negative&quot;, &quot;negative&quot;, &quot;negative&quot;, …</code></pre>
-<div class="sourceCode" id="cb318"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb318-1"><a href="day5.html#cb318-1" aria-hidden="true" tabindex="-1"></a>imdb_train <span class="sc">%&gt;%</span> <span class="fu">count</span>(sentiment)</span></code></pre></div>
+<div class="sourceCode" id="cb299"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb299-1"><a href="day5.html#cb299-1" aria-hidden="true" tabindex="-1"></a>imdb_train <span class="sc">%&gt;%</span> <span class="fu">count</span>(sentiment)</span></code></pre></div>
 <pre><code>## # A tibble: 2 × 2
 ##   sentiment     n
 ##   &lt;chr&gt;     &lt;int&gt;
@@ -367,15 +365,15 @@ div.csl-indent {
 <div id="textrecipes-basic-example" class="section level3 hasAnchor" number="5.2.1">
 <h3><span class="header-section-number">5.2.1</span> <code>textrecipes</code> – basic example<a href="day5.html#textrecipes-basic-example" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>In the initial call, the formula needs to be provided. In our example, we want to predict the sentiment (“positive” or “negative”) using the text in the review. Then, different steps for pre-processing are added. Similar to what you have learned in the prior chapters containing measures based on the bag of words assumption, the first step is usually tokenization, achieved through <code>step_tokenize()</code>. In the end, the features need to be quantified, either through <code>step_tf()</code>, for raw term frequencies, or <code>step_tfidf()</code>, for TF-IDF. In between, various pre-processing steps such as word normalization (i.e., stemming or lemmatization), and removal of rare or common words Hence, a recipe for a very basic model just using raw frequencies and the 1,000 most common words would look as follows:</p>
-<div class="sourceCode" id="cb320"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb320-1"><a href="day5.html#cb320-1" aria-hidden="true" tabindex="-1"></a>imdb_basic_recipe <span class="ot">&lt;-</span> <span class="fu">recipe</span>(sentiment <span class="sc">~</span> text, <span class="at">data =</span> imdb_train) <span class="sc">%&gt;%</span> </span>
-<span id="cb320-2"><a href="day5.html#cb320-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_tokenize</span>(text) <span class="sc">%&gt;%</span> <span class="co"># tokenize text</span></span>
-<span id="cb320-3"><a href="day5.html#cb320-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_tokenfilter</span>(text, <span class="at">max_tokens =</span> <span class="dv">1000</span>) <span class="sc">%&gt;%</span> <span class="co"># only retain 1000 most common words</span></span>
-<span id="cb320-4"><a href="day5.html#cb320-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># additional pre-processing steps can be added, see next chapter</span></span>
-<span id="cb320-5"><a href="day5.html#cb320-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_tf</span>(text) <span class="co"># final step: add term frequencies</span></span></code></pre></div>
+<div class="sourceCode" id="cb301"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb301-1"><a href="day5.html#cb301-1" aria-hidden="true" tabindex="-1"></a>imdb_basic_recipe <span class="ot">&lt;-</span> <span class="fu">recipe</span>(sentiment <span class="sc">~</span> text, <span class="at">data =</span> imdb_train) <span class="sc">%&gt;%</span> </span>
+<span id="cb301-2"><a href="day5.html#cb301-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_tokenize</span>(text) <span class="sc">%&gt;%</span> <span class="co"># tokenize text</span></span>
+<span id="cb301-3"><a href="day5.html#cb301-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_tokenfilter</span>(text, <span class="at">max_tokens =</span> <span class="dv">1000</span>) <span class="sc">%&gt;%</span> <span class="co"># only retain 1000 most common words</span></span>
+<span id="cb301-4"><a href="day5.html#cb301-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># additional pre-processing steps can be added, see next chapter</span></span>
+<span id="cb301-5"><a href="day5.html#cb301-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_tf</span>(text) <span class="co"># final step: add term frequencies</span></span></code></pre></div>
 <p>In case you want to know what the data set for the classification task looks like, you can <code>prep()</code> and finally <code>bake()</code> the recipe. Note that we need to specify the data set we want to pre-process in the recipe’s manner. In our case, we want to perform the operations on the data specified in the <code>basic_recipe</code> and, hence, need to specify <code>new_data = NULL</code>.</p>
-<div class="sourceCode" id="cb321"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb321-1"><a href="day5.html#cb321-1" aria-hidden="true" tabindex="-1"></a>imdb_basic_recipe <span class="sc">%&gt;%</span> </span>
-<span id="cb321-2"><a href="day5.html#cb321-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">prep</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb321-3"><a href="day5.html#cb321-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bake</span>(<span class="at">new_data =</span> <span class="cn">NULL</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb302"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb302-1"><a href="day5.html#cb302-1" aria-hidden="true" tabindex="-1"></a>imdb_basic_recipe <span class="sc">%&gt;%</span> </span>
+<span id="cb302-2"><a href="day5.html#cb302-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">prep</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb302-3"><a href="day5.html#cb302-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bake</span>(<span class="at">new_data =</span> <span class="cn">NULL</span>)</span></code></pre></div>
 <pre><code>## # A tibble: 20,000 × 1,001
 ##    sentiment tf_text_1 tf_text_10 tf_text_2 tf_text_20 tf_text_3 tf_text_4
 ##    &lt;fct&gt;         &lt;dbl&gt;      &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
@@ -384,10 +382,10 @@ div.csl-indent {
 ##  3 negative          1          0         1          0         0         0
 ##  4 negative          0          0         0          0         1         0
 ##  5 negative          0          0         0          0         0         0
-##  6 negative          0          1         1          0         0         0
+##  6 negative          0          0         0          0         0         0
 ##  7 negative          0          0         0          0         0         0
-##  8 negative          1          0         1          0         0         0
-##  9 negative          0          0         0          0         0         0
+##  8 negative          0          1         1          0         0         0
+##  9 negative          1          0         1          0         0         0
 ## 10 negative          0          0         0          0         0         0
 ## # … with 19,990 more rows, and 994 more variables: tf_text_5 &lt;dbl&gt;,
 ## #   tf_text_7 &lt;dbl&gt;, tf_text_8 &lt;dbl&gt;, tf_text_80 &lt;dbl&gt;, tf_text_9 &lt;dbl&gt;,
@@ -399,7 +397,7 @@ div.csl-indent {
 </div>
 <div id="textrecipes-further-preprocessing-steps" class="section level3 hasAnchor" number="5.2.2">
 <h3><span class="header-section-number">5.2.2</span> <code>textrecipes</code> – further preprocessing steps<a href="day5.html#textrecipes-further-preprocessing-steps" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>More steps exist. These always follow the same structure: their first two arguments are the recipe (which in practice does not matter, because they are generally used in a “pipeline”) and the variable that is affected (in our example “text” because it is the one to be modified). The rest of the arguments depends on the function. In the following, we will briefly list them and their most important arguments. [add link to vignette]</p>
+<p>More steps exist. These always follow the same structure: their first two arguments are the recipe (which in practice does not matter, because they are generally used in a “pipeline”) and the variable that is affected (in our example “text” because it is the one to be modified). The rest of the arguments depends on the function. In the following, we will briefly list them and their most important arguments. Find the exhaustive list <a href="https://cran.r-project.org/web/packages/textrecipes/textrecipes.pdf">here</a>,</p>
 <ul>
 <li><code>step_tokenfilter()</code>: filters tokens
 <ul>
@@ -414,7 +412,7 @@ div.csl-indent {
 </ul></li>
 <li><code>step_pos_filter()</code>: adds the Part-of-speech tags
 <ul>
-<li><code>keep_tags =</code> character vector that specifies the types of tags to retain (default is “NOUN”, for more details see <a href="https://github.com/explosion/spaCy/blob/master/spacy/glossary.py">here</a> or consult chapter <a href="#texttodata"><strong>??</strong></a>)</li>
+<li><code>keep_tags =</code> character vector that specifies the types of tags to retain (default is “NOUN”, for more details see <a href="https://github.com/explosion/spaCy/blob/master/spacy/glossary.py">here</a> or consult chapter <a href="day4.html#day4">4</a>)</li>
 <li>in case you want to use it, make sure you tokenize via <code>spacyr</code> (by using <code>step_tokenize(text, engine = "spacyr"))</code></li>
 </ul></li>
 <li><code>step_stem()</code>: stems tokens
@@ -451,49 +449,49 @@ div.csl-indent {
 <div id="model-specification" class="section level2 hasAnchor" number="5.3">
 <h2><span class="header-section-number">5.3</span> Model specification<a href="day5.html#model-specification" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Now that the data is ready, the model can be specified. The <code>parsnip</code> package is used for this. It contains a model specification, the type, and the engine. For Naïve Bayes, this would look like the following (note that you will need to install the relevant packages – here: <code>discrim</code> – before using them):</p>
-<div class="sourceCode" id="cb323"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb323-1"><a href="day5.html#cb323-1" aria-hidden="true" tabindex="-1"></a>nb_spec <span class="ot">&lt;-</span> <span class="fu">naive_Bayes</span>() <span class="sc">%&gt;%</span> <span class="co"># the initial function, coming from the parsnip package</span></span>
-<span id="cb323-2"><a href="day5.html#cb323-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">&quot;classification&quot;</span>) <span class="sc">%&gt;%</span> <span class="co"># classification for discrete values, regression for continuous ones</span></span>
-<span id="cb323-3"><a href="day5.html#cb323-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">&quot;naivebayes&quot;</span>) <span class="co"># needs to be installed</span></span></code></pre></div>
+<div class="sourceCode" id="cb304"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb304-1"><a href="day5.html#cb304-1" aria-hidden="true" tabindex="-1"></a>nb_spec <span class="ot">&lt;-</span> <span class="fu">naive_Bayes</span>() <span class="sc">%&gt;%</span> <span class="co"># the initial function, coming from the parsnip package</span></span>
+<span id="cb304-2"><a href="day5.html#cb304-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">&quot;classification&quot;</span>) <span class="sc">%&gt;%</span> <span class="co"># classification for discrete values, regression for continuous ones</span></span>
+<span id="cb304-3"><a href="day5.html#cb304-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">&quot;naivebayes&quot;</span>) <span class="co"># needs to be installed</span></span></code></pre></div>
 <p>Other model specifications you might deem relevant:</p>
 <ul>
 <li>Logistic regression</li>
 </ul>
-<div class="sourceCode" id="cb324"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb324-1"><a href="day5.html#cb324-1" aria-hidden="true" tabindex="-1"></a>lr_spec <span class="ot">&lt;-</span> <span class="fu">logistic_reg</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb324-2"><a href="day5.html#cb324-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">&quot;glm&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb324-3"><a href="day5.html#cb324-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">&quot;classification&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb305"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb305-1"><a href="day5.html#cb305-1" aria-hidden="true" tabindex="-1"></a>lr_spec <span class="ot">&lt;-</span> <span class="fu">logistic_reg</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb305-2"><a href="day5.html#cb305-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">&quot;glm&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb305-3"><a href="day5.html#cb305-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">&quot;classification&quot;</span>)</span></code></pre></div>
 <ul>
 <li>Logistic regression (penalized with Lasso):</li>
 </ul>
-<div class="sourceCode" id="cb325"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb325-1"><a href="day5.html#cb325-1" aria-hidden="true" tabindex="-1"></a>lasso_spec <span class="ot">&lt;-</span> <span class="fu">logistic_reg</span>(<span class="at">mixture =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb325-2"><a href="day5.html#cb325-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">&quot;glm&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb325-3"><a href="day5.html#cb325-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">&quot;classification&quot;</span>) </span></code></pre></div>
+<div class="sourceCode" id="cb306"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb306-1"><a href="day5.html#cb306-1" aria-hidden="true" tabindex="-1"></a>lasso_spec <span class="ot">&lt;-</span> <span class="fu">logistic_reg</span>(<span class="at">mixture =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb306-2"><a href="day5.html#cb306-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">&quot;glm&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb306-3"><a href="day5.html#cb306-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">&quot;classification&quot;</span>) </span></code></pre></div>
 <ul>
 <li>SVM (here, <code>step_normalize(all_predictors())</code> needs to be the last step in the recipe)</li>
 </ul>
-<div class="sourceCode" id="cb326"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb326-1"><a href="day5.html#cb326-1" aria-hidden="true" tabindex="-1"></a>svm_spec <span class="ot">&lt;-</span> <span class="fu">svm_linear</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb326-2"><a href="day5.html#cb326-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">&quot;regression&quot;</span>) <span class="sc">%&gt;%</span> <span class="co"># can also be &quot;classification&quot;</span></span>
-<span id="cb326-3"><a href="day5.html#cb326-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">&quot;LiblineaR&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb307"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb307-1"><a href="day5.html#cb307-1" aria-hidden="true" tabindex="-1"></a>svm_spec <span class="ot">&lt;-</span> <span class="fu">svm_linear</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb307-2"><a href="day5.html#cb307-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">&quot;regression&quot;</span>) <span class="sc">%&gt;%</span> <span class="co"># can also be &quot;classification&quot;</span></span>
+<span id="cb307-3"><a href="day5.html#cb307-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">&quot;LiblineaR&quot;</span>)</span></code></pre></div>
 <ul>
 <li>Random Forest (with 1000 decision trees):</li>
 </ul>
-<div class="sourceCode" id="cb327"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb327-1"><a href="day5.html#cb327-1" aria-hidden="true" tabindex="-1"></a>rf_spec <span class="ot">&lt;-</span> <span class="fu">rand_forest</span>(<span class="at">trees =</span> <span class="dv">1000</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb327-2"><a href="day5.html#cb327-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">&quot;ranger&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb327-3"><a href="day5.html#cb327-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">&quot;regression&quot;</span>) <span class="co"># can also be &quot;classification&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb308"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb308-1"><a href="day5.html#cb308-1" aria-hidden="true" tabindex="-1"></a>rf_spec <span class="ot">&lt;-</span> <span class="fu">rand_forest</span>(<span class="at">trees =</span> <span class="dv">1000</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb308-2"><a href="day5.html#cb308-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">&quot;ranger&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb308-3"><a href="day5.html#cb308-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">&quot;regression&quot;</span>) <span class="co"># can also be &quot;classification&quot;</span></span></code></pre></div>
 <ul>
 <li>xgBoost (with 20 decision trees):</li>
 </ul>
-<div class="sourceCode" id="cb328"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb328-1"><a href="day5.html#cb328-1" aria-hidden="true" tabindex="-1"></a>xg_spec <span class="ot">&lt;-</span> <span class="fu">boost_tree</span>(<span class="at">trees =</span> <span class="dv">20</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb328-2"><a href="day5.html#cb328-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">&quot;xgboost&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb328-3"><a href="day5.html#cb328-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">&quot;regression&quot;</span>) <span class="co"># can also be classification</span></span></code></pre></div>
+<div class="sourceCode" id="cb309"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb309-1"><a href="day5.html#cb309-1" aria-hidden="true" tabindex="-1"></a>xg_spec <span class="ot">&lt;-</span> <span class="fu">boost_tree</span>(<span class="at">trees =</span> <span class="dv">20</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb309-2"><a href="day5.html#cb309-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">&quot;xgboost&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb309-3"><a href="day5.html#cb309-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">&quot;regression&quot;</span>) <span class="co"># can also be classification</span></span></code></pre></div>
 </div>
 <div id="model-training-workflows" class="section level2 hasAnchor" number="5.4">
 <h2><span class="header-section-number">5.4</span> Model training – <code>workflows</code><a href="day5.html#model-training-workflows" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>A workflow can be defined to train the model. It will contain the recipe, hence taking care of the pre-processing, and the model specification. In the end, it can be used to fit the model.</p>
-<div class="sourceCode" id="cb329"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb329-1"><a href="day5.html#cb329-1" aria-hidden="true" tabindex="-1"></a>imdb_nb_wf <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb329-2"><a href="day5.html#cb329-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(imdb_basic_recipe) <span class="sc">%&gt;%</span> </span>
-<span id="cb329-3"><a href="day5.html#cb329-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(nb_spec)</span></code></pre></div>
+<div class="sourceCode" id="cb310"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb310-1"><a href="day5.html#cb310-1" aria-hidden="true" tabindex="-1"></a>imdb_nb_wf <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb310-2"><a href="day5.html#cb310-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(imdb_basic_recipe) <span class="sc">%&gt;%</span> </span>
+<span id="cb310-3"><a href="day5.html#cb310-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(nb_spec)</span></code></pre></div>
 <p>It can then be fit using <code>fit()</code>.</p>
-<div class="sourceCode" id="cb330"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb330-1"><a href="day5.html#cb330-1" aria-hidden="true" tabindex="-1"></a>imdb_nb_basic <span class="ot">&lt;-</span> imdb_nb_wf <span class="sc">%&gt;%</span> <span class="fu">fit</span>(<span class="at">data =</span> imdb_train)</span></code></pre></div>
+<div class="sourceCode" id="cb311"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb311-1"><a href="day5.html#cb311-1" aria-hidden="true" tabindex="-1"></a>imdb_nb_basic <span class="ot">&lt;-</span> imdb_nb_wf <span class="sc">%&gt;%</span> <span class="fu">fit</span>(<span class="at">data =</span> imdb_train)</span></code></pre></div>
 </div>
 <div id="model-evaluation" class="section level2 hasAnchor" number="5.5">
 <h2><span class="header-section-number">5.5</span> Model evaluation<a href="day5.html#model-evaluation" class="anchor-section" aria-label="Anchor link to header"></a></h2>
@@ -503,17 +501,17 @@ div.csl-indent {
 <p class="caption">Graph taken from <a href="https://scikit-learn.org/stable/modules/cross_validation.html/" class="uri">https://scikit-learn.org/stable/modules/cross_validation.html/</a></p>
 </div>
 <p>First, the folds need to be determined. we set a seed in the beginning to ensure reproducibility.</p>
-<div class="sourceCode" id="cb331"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb331-1"><a href="day5.html#cb331-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tune)</span>
-<span id="cb331-2"><a href="day5.html#cb331-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb331-3"><a href="day5.html#cb331-3" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
-<span id="cb331-4"><a href="day5.html#cb331-4" aria-hidden="true" tabindex="-1"></a>imdb_folds <span class="ot">&lt;-</span> <span class="fu">vfold_cv</span>(imdb_train)</span></code></pre></div>
+<div class="sourceCode" id="cb312"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb312-1"><a href="day5.html#cb312-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tune)</span>
+<span id="cb312-2"><a href="day5.html#cb312-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb312-3"><a href="day5.html#cb312-3" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb312-4"><a href="day5.html#cb312-4" aria-hidden="true" tabindex="-1"></a>imdb_folds <span class="ot">&lt;-</span> <span class="fu">vfold_cv</span>(imdb_train)</span></code></pre></div>
 <p><code>fit_resamples()</code> trains models on the respective samples. (Note that for this to work, no model must have been fit to this workflow before. Hence, you either need to define a new workflow first or restart the session and skip the fit-line from before.)</p>
-<div class="sourceCode" id="cb332"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb332-1"><a href="day5.html#cb332-1" aria-hidden="true" tabindex="-1"></a>imdb_nb_resampled <span class="ot">&lt;-</span> <span class="fu">fit_resamples</span>(</span>
-<span id="cb332-2"><a href="day5.html#cb332-2" aria-hidden="true" tabindex="-1"></a>  imdb_nb_wf,</span>
-<span id="cb332-3"><a href="day5.html#cb332-3" aria-hidden="true" tabindex="-1"></a>  imdb_folds,</span>
-<span id="cb332-4"><a href="day5.html#cb332-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">control =</span> <span class="fu">control_resamples</span>(<span class="at">save_pred =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb332-5"><a href="day5.html#cb332-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">metrics =</span> <span class="fu">metric_set</span>(accuracy, recall, precision)</span>
-<span id="cb332-6"><a href="day5.html#cb332-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb313"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb313-1"><a href="day5.html#cb313-1" aria-hidden="true" tabindex="-1"></a>imdb_nb_resampled <span class="ot">&lt;-</span> <span class="fu">fit_resamples</span>(</span>
+<span id="cb313-2"><a href="day5.html#cb313-2" aria-hidden="true" tabindex="-1"></a>  imdb_nb_wf,</span>
+<span id="cb313-3"><a href="day5.html#cb313-3" aria-hidden="true" tabindex="-1"></a>  imdb_folds,</span>
+<span id="cb313-4"><a href="day5.html#cb313-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">control =</span> <span class="fu">control_resamples</span>(<span class="at">save_pred =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb313-5"><a href="day5.html#cb313-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">metrics =</span> <span class="fu">metric_set</span>(accuracy, recall, precision)</span>
+<span id="cb313-6"><a href="day5.html#cb313-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 <p><code>collect_metrics()</code> can be used to evaluate the results.</p>
 <ul>
 <li>Accuracy tells me the share of correct predictions overall</li>
@@ -522,52 +520,52 @@ div.csl-indent {
 </ul>
 <p>In all cases, values close to 1 are better.</p>
 <p><code>collect_predictions()</code> will give you the predicted values.</p>
-<div class="sourceCode" id="cb333"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb333-1"><a href="day5.html#cb333-1" aria-hidden="true" tabindex="-1"></a>nb_rs_metrics <span class="ot">&lt;-</span> <span class="fu">collect_metrics</span>(imdb_nb_resampled)</span>
-<span id="cb333-2"><a href="day5.html#cb333-2" aria-hidden="true" tabindex="-1"></a>nb_rs_predictions <span class="ot">&lt;-</span> <span class="fu">collect_predictions</span>(imdb_nb_resampled)</span></code></pre></div>
+<div class="sourceCode" id="cb314"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb314-1"><a href="day5.html#cb314-1" aria-hidden="true" tabindex="-1"></a>nb_rs_metrics <span class="ot">&lt;-</span> <span class="fu">collect_metrics</span>(imdb_nb_resampled)</span>
+<span id="cb314-2"><a href="day5.html#cb314-2" aria-hidden="true" tabindex="-1"></a>nb_rs_predictions <span class="ot">&lt;-</span> <span class="fu">collect_predictions</span>(imdb_nb_resampled)</span></code></pre></div>
 <p>This can also be used to create the confusion matrix by hand.</p>
-<div class="sourceCode" id="cb334"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb334-1"><a href="day5.html#cb334-1" aria-hidden="true" tabindex="-1"></a>confusion_mat <span class="ot">&lt;-</span> nb_rs_predictions <span class="sc">%&gt;%</span> </span>
-<span id="cb334-2"><a href="day5.html#cb334-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(id) <span class="sc">%&gt;%</span> </span>
-<span id="cb334-3"><a href="day5.html#cb334-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">confusion_class =</span> <span class="fu">case_when</span>(.pred_class <span class="sc">==</span> <span class="st">&quot;positive&quot;</span> <span class="sc">&amp;</span> sentiment <span class="sc">==</span> <span class="st">&quot;positive&quot;</span> <span class="sc">~</span> <span class="st">&quot;TP&quot;</span>,</span>
-<span id="cb334-4"><a href="day5.html#cb334-4" aria-hidden="true" tabindex="-1"></a>                                     .pred_class <span class="sc">==</span> <span class="st">&quot;positive&quot;</span> <span class="sc">&amp;</span> sentiment <span class="sc">==</span> <span class="st">&quot;negative&quot;</span> <span class="sc">~</span> <span class="st">&quot;FP&quot;</span>,</span>
-<span id="cb334-5"><a href="day5.html#cb334-5" aria-hidden="true" tabindex="-1"></a>                                     .pred_class <span class="sc">==</span> <span class="st">&quot;negative&quot;</span> <span class="sc">&amp;</span> sentiment <span class="sc">==</span> <span class="st">&quot;negative&quot;</span> <span class="sc">~</span> <span class="st">&quot;TN&quot;</span>,</span>
-<span id="cb334-6"><a href="day5.html#cb334-6" aria-hidden="true" tabindex="-1"></a>                                     .pred_class <span class="sc">==</span> <span class="st">&quot;negative&quot;</span> <span class="sc">&amp;</span> sentiment <span class="sc">==</span> <span class="st">&quot;positive&quot;</span> <span class="sc">~</span> <span class="st">&quot;FN&quot;</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb334-7"><a href="day5.html#cb334-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(confusion_class) <span class="sc">%&gt;%</span> </span>
-<span id="cb334-8"><a href="day5.html#cb334-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb334-9"><a href="day5.html#cb334-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> confusion_class, <span class="at">values_from =</span> n)</span></code></pre></div>
+<div class="sourceCode" id="cb315"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb315-1"><a href="day5.html#cb315-1" aria-hidden="true" tabindex="-1"></a>confusion_mat <span class="ot">&lt;-</span> nb_rs_predictions <span class="sc">%&gt;%</span> </span>
+<span id="cb315-2"><a href="day5.html#cb315-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(id) <span class="sc">%&gt;%</span> </span>
+<span id="cb315-3"><a href="day5.html#cb315-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">confusion_class =</span> <span class="fu">case_when</span>(.pred_class <span class="sc">==</span> <span class="st">&quot;positive&quot;</span> <span class="sc">&amp;</span> sentiment <span class="sc">==</span> <span class="st">&quot;positive&quot;</span> <span class="sc">~</span> <span class="st">&quot;TP&quot;</span>,</span>
+<span id="cb315-4"><a href="day5.html#cb315-4" aria-hidden="true" tabindex="-1"></a>                                     .pred_class <span class="sc">==</span> <span class="st">&quot;positive&quot;</span> <span class="sc">&amp;</span> sentiment <span class="sc">==</span> <span class="st">&quot;negative&quot;</span> <span class="sc">~</span> <span class="st">&quot;FP&quot;</span>,</span>
+<span id="cb315-5"><a href="day5.html#cb315-5" aria-hidden="true" tabindex="-1"></a>                                     .pred_class <span class="sc">==</span> <span class="st">&quot;negative&quot;</span> <span class="sc">&amp;</span> sentiment <span class="sc">==</span> <span class="st">&quot;negative&quot;</span> <span class="sc">~</span> <span class="st">&quot;TN&quot;</span>,</span>
+<span id="cb315-6"><a href="day5.html#cb315-6" aria-hidden="true" tabindex="-1"></a>                                     .pred_class <span class="sc">==</span> <span class="st">&quot;negative&quot;</span> <span class="sc">&amp;</span> sentiment <span class="sc">==</span> <span class="st">&quot;positive&quot;</span> <span class="sc">~</span> <span class="st">&quot;FN&quot;</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb315-7"><a href="day5.html#cb315-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(confusion_class) <span class="sc">%&gt;%</span> </span>
+<span id="cb315-8"><a href="day5.html#cb315-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb315-9"><a href="day5.html#cb315-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> confusion_class, <span class="at">values_from =</span> n)</span></code></pre></div>
 <p>Now you can go back and adapt the pre-processing recipe, fit a new model, or try a different classifier, and evaluate it against the same set of folds. Once you are satisfied, you can proceed to check the workflow on the held-out test data.</p>
 <div id="hyperparameter-tuning" class="section level3 hasAnchor" number="5.5.1">
 <h3><span class="header-section-number">5.5.1</span> Hyperparameter tuning<a href="day5.html#hyperparameter-tuning" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Some models also require the tuning of hyperparameters (for instance, lasso regression). If we wanted to tune these values, we could do so using the <code>tune</code> package. There, the parameter that needs to be tuned gets a placeholder in the model specification. Through variation of the placeholder, the optimal solution can be empirically determined.</p>
 <p>So, in the first example, we will try to determine a good penalty value for LASSO regression.</p>
-<div class="sourceCode" id="cb335"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb335-1"><a href="day5.html#cb335-1" aria-hidden="true" tabindex="-1"></a>lasso_tune_spec <span class="ot">&lt;-</span> <span class="fu">logistic_reg</span>(<span class="at">penalty =</span> <span class="fu">tune</span>(), <span class="at">mixture =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb335-2"><a href="day5.html#cb335-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">&quot;classification&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb335-3"><a href="day5.html#cb335-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">&quot;glmnet&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb316"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb316-1"><a href="day5.html#cb316-1" aria-hidden="true" tabindex="-1"></a>lasso_tune_spec <span class="ot">&lt;-</span> <span class="fu">logistic_reg</span>(<span class="at">penalty =</span> <span class="fu">tune</span>(), <span class="at">mixture =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb316-2"><a href="day5.html#cb316-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">&quot;classification&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb316-3"><a href="day5.html#cb316-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">&quot;glmnet&quot;</span>)</span></code></pre></div>
 <p>we will also play with the numbers of tokens to be included:</p>
-<div class="sourceCode" id="cb336"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb336-1"><a href="day5.html#cb336-1" aria-hidden="true" tabindex="-1"></a>imdb_tune_basic_recipe <span class="ot">&lt;-</span> <span class="fu">recipe</span>(sentiment <span class="sc">~</span> text, <span class="at">data =</span> imdb_train) <span class="sc">%&gt;%</span> </span>
-<span id="cb336-2"><a href="day5.html#cb336-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_tokenize</span>(text) <span class="sc">%&gt;%</span></span>
-<span id="cb336-3"><a href="day5.html#cb336-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_tokenfilter</span>(text, <span class="at">max_tokens =</span> <span class="fu">tune</span>()) <span class="sc">%&gt;%</span> </span>
-<span id="cb336-4"><a href="day5.html#cb336-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_tf</span>(text)</span></code></pre></div>
-<p>The <code>dials</code> <span class="citation">(<a href="#ref-kuhn2022b" role="doc-biblioref"><strong>kuhn2022b?</strong></a>)</span> package provides the handy <code>grid_regular()</code> function which chooses suitable values for certain parameters.</p>
-<div class="sourceCode" id="cb337"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb337-1"><a href="day5.html#cb337-1" aria-hidden="true" tabindex="-1"></a>lambda_grid <span class="ot">&lt;-</span> <span class="fu">grid_regular</span>(</span>
-<span id="cb337-2"><a href="day5.html#cb337-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">penalty</span>(<span class="at">range =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">4</span>, <span class="dv">0</span>)), </span>
-<span id="cb337-3"><a href="day5.html#cb337-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">max_tokens</span>(<span class="at">range =</span> <span class="fu">c</span>(<span class="fl">1e3</span>, <span class="fl">2e3</span>)),</span>
-<span id="cb337-4"><a href="day5.html#cb337-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="at">penalty =</span> <span class="dv">3</span>, <span class="at">max_tokens =</span> <span class="dv">2</span>)</span>
-<span id="cb337-5"><a href="day5.html#cb337-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb317"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb317-1"><a href="day5.html#cb317-1" aria-hidden="true" tabindex="-1"></a>imdb_tune_basic_recipe <span class="ot">&lt;-</span> <span class="fu">recipe</span>(sentiment <span class="sc">~</span> text, <span class="at">data =</span> imdb_train) <span class="sc">%&gt;%</span> </span>
+<span id="cb317-2"><a href="day5.html#cb317-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_tokenize</span>(text) <span class="sc">%&gt;%</span></span>
+<span id="cb317-3"><a href="day5.html#cb317-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_tokenfilter</span>(text, <span class="at">max_tokens =</span> <span class="fu">tune</span>()) <span class="sc">%&gt;%</span> </span>
+<span id="cb317-4"><a href="day5.html#cb317-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_tf</span>(text)</span></code></pre></div>
+<p>The <code>dials</code> <span class="citation">(<a href="#ref-kuhn_dials_2022" role="doc-biblioref">Kuhn and Frick 2022</a>)</span> package provides the handy <code>grid_regular()</code> function which chooses suitable values for certain parameters.</p>
+<div class="sourceCode" id="cb318"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb318-1"><a href="day5.html#cb318-1" aria-hidden="true" tabindex="-1"></a>lambda_grid <span class="ot">&lt;-</span> <span class="fu">grid_regular</span>(</span>
+<span id="cb318-2"><a href="day5.html#cb318-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">penalty</span>(<span class="at">range =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">4</span>, <span class="dv">0</span>)), </span>
+<span id="cb318-3"><a href="day5.html#cb318-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">max_tokens</span>(<span class="at">range =</span> <span class="fu">c</span>(<span class="fl">1e3</span>, <span class="fl">2e3</span>)),</span>
+<span id="cb318-4"><a href="day5.html#cb318-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="at">penalty =</span> <span class="dv">3</span>, <span class="at">max_tokens =</span> <span class="dv">2</span>)</span>
+<span id="cb318-5"><a href="day5.html#cb318-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 <p>Then, we need to define a new workflow, too.</p>
-<div class="sourceCode" id="cb338"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb338-1"><a href="day5.html#cb338-1" aria-hidden="true" tabindex="-1"></a>lasso_tune_wf <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb338-2"><a href="day5.html#cb338-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(imdb_tune_basic_recipe) <span class="sc">%&gt;%</span></span>
-<span id="cb338-3"><a href="day5.html#cb338-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(lasso_tune_spec)</span></code></pre></div>
+<div class="sourceCode" id="cb319"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb319-1"><a href="day5.html#cb319-1" aria-hidden="true" tabindex="-1"></a>lasso_tune_wf <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb319-2"><a href="day5.html#cb319-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(imdb_tune_basic_recipe) <span class="sc">%&gt;%</span></span>
+<span id="cb319-3"><a href="day5.html#cb319-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(lasso_tune_spec)</span></code></pre></div>
 <p>For the resampling, we can use tune_grid() which will use the workflow, a set of folds (we use the ones we created earlier), and a grid containing the different parameters.</p>
-<div class="sourceCode" id="cb339"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb339-1"><a href="day5.html#cb339-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
-<span id="cb339-2"><a href="day5.html#cb339-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb339-3"><a href="day5.html#cb339-3" aria-hidden="true" tabindex="-1"></a>tune_lasso_rs <span class="ot">&lt;-</span> <span class="fu">tune_grid</span>(</span>
-<span id="cb339-4"><a href="day5.html#cb339-4" aria-hidden="true" tabindex="-1"></a>  lasso_tune_wf,</span>
-<span id="cb339-5"><a href="day5.html#cb339-5" aria-hidden="true" tabindex="-1"></a>  imdb_folds,</span>
-<span id="cb339-6"><a href="day5.html#cb339-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">grid =</span> lambda_grid,</span>
-<span id="cb339-7"><a href="day5.html#cb339-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">metrics =</span> <span class="fu">metric_set</span>(accuracy, sensitivity, specificity)</span>
-<span id="cb339-8"><a href="day5.html#cb339-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb320"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb320-1"><a href="day5.html#cb320-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb320-2"><a href="day5.html#cb320-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb320-3"><a href="day5.html#cb320-3" aria-hidden="true" tabindex="-1"></a>tune_lasso_rs <span class="ot">&lt;-</span> <span class="fu">tune_grid</span>(</span>
+<span id="cb320-4"><a href="day5.html#cb320-4" aria-hidden="true" tabindex="-1"></a>  lasso_tune_wf,</span>
+<span id="cb320-5"><a href="day5.html#cb320-5" aria-hidden="true" tabindex="-1"></a>  imdb_folds,</span>
+<span id="cb320-6"><a href="day5.html#cb320-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">grid =</span> lambda_grid,</span>
+<span id="cb320-7"><a href="day5.html#cb320-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">metrics =</span> <span class="fu">metric_set</span>(accuracy, sensitivity, specificity)</span>
+<span id="cb320-8"><a href="day5.html#cb320-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 <p>Again, we can access the resulting metrics using <code>collect_metrics()</code>:</p>
-<div class="sourceCode" id="cb340"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb340-1"><a href="day5.html#cb340-1" aria-hidden="true" tabindex="-1"></a><span class="fu">collect_metrics</span>(tune_lasso_rs)</span></code></pre></div>
+<div class="sourceCode" id="cb321"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb321-1"><a href="day5.html#cb321-1" aria-hidden="true" tabindex="-1"></a><span class="fu">collect_metrics</span>(tune_lasso_rs)</span></code></pre></div>
 <pre><code>## # A tibble: 18 × 8
 ##    penalty max_tokens .metric     .estimator  mean     n std_err .config        
 ##      &lt;dbl&gt;      &lt;int&gt; &lt;chr&gt;       &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;          
@@ -590,13 +588,13 @@ div.csl-indent {
 ## 17  1            2000 sensitivity binary     0.6      10 0.163   Preprocessor2_…
 ## 18  1            2000 specificity binary     0.4      10 0.163   Preprocessor2_…</code></pre>
 <p><code>autoplot()</code> can be used to visualize them:</p>
-<div class="sourceCode" id="cb342"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb342-1"><a href="day5.html#cb342-1" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(tune_lasso_rs) <span class="sc">+</span></span>
-<span id="cb342-2"><a href="day5.html#cb342-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb342-3"><a href="day5.html#cb342-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Lasso model performance across 3 regularization penalties&quot;</span></span>
-<span id="cb342-4"><a href="day5.html#cb342-4" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
+<div class="sourceCode" id="cb323"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb323-1"><a href="day5.html#cb323-1" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(tune_lasso_rs) <span class="sc">+</span></span>
+<span id="cb323-2"><a href="day5.html#cb323-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb323-3"><a href="day5.html#cb323-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Lasso model performance across 3 regularization penalties&quot;</span></span>
+<span id="cb323-4"><a href="day5.html#cb323-4" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
 <p><img src="_main_files/figure-html/unnamed-chunk-181-1.png" width="672" /></p>
 <p>Also, we can use <code>show_best()</code> to look at the best result. Subsequently, <code>select_best()</code> allows me to choose it. In real life, we would choose the best trade-off between a model as simple and as good as possible. Using <code>select_by_pct_loss()</code>, we choose the one that performs still more or less on par with the best option (i.e., within 2 percent accuracy) but is considerably simpler. Finally, once we are satisfied with the outcome, we can <code>finalize_workflow()</code> and fit the final model to the test data.</p>
-<div class="sourceCode" id="cb343"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb343-1"><a href="day5.html#cb343-1" aria-hidden="true" tabindex="-1"></a><span class="fu">show_best</span>(tune_lasso_rs, <span class="st">&quot;accuracy&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb324"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb324-1"><a href="day5.html#cb324-1" aria-hidden="true" tabindex="-1"></a><span class="fu">show_best</span>(tune_lasso_rs, <span class="st">&quot;accuracy&quot;</span>)</span></code></pre></div>
 <pre><code>## # A tibble: 5 × 8
 ##   penalty max_tokens .metric  .estimator  mean     n std_err .config            
 ##     &lt;dbl&gt;      &lt;int&gt; &lt;chr&gt;    &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;              
@@ -605,65 +603,65 @@ div.csl-indent {
 ## 3  0.01         2000 accuracy binary     0.858    10 0.00273 Preprocessor2_Mode…
 ## 4  0.01         1000 accuracy binary     0.851    10 0.00329 Preprocessor1_Mode…
 ## 5  1            1000 accuracy binary     0.491    10 0.00240 Preprocessor1_Mode…</code></pre>
-<div class="sourceCode" id="cb345"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb345-1"><a href="day5.html#cb345-1" aria-hidden="true" tabindex="-1"></a>final_lasso_imdb <span class="ot">&lt;-</span> <span class="fu">finalize_workflow</span>(lasso_tune_wf, <span class="fu">select_by_pct_loss</span>(tune_lasso_rs, <span class="at">metric =</span> <span class="st">&quot;accuracy&quot;</span>, <span class="sc">-</span>penalty))</span></code></pre></div>
+<div class="sourceCode" id="cb326"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb326-1"><a href="day5.html#cb326-1" aria-hidden="true" tabindex="-1"></a>final_lasso_imdb <span class="ot">&lt;-</span> <span class="fu">finalize_workflow</span>(lasso_tune_wf, <span class="fu">select_by_pct_loss</span>(tune_lasso_rs, <span class="at">metric =</span> <span class="st">&quot;accuracy&quot;</span>, <span class="sc">-</span>penalty))</span></code></pre></div>
 </div>
 </div>
 <div id="final-fit" class="section level2 hasAnchor" number="5.6">
 <h2><span class="header-section-number">5.6</span> Final fit<a href="day5.html#final-fit" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Now we can finally fit our model to the training data and predict on the test data. <code>last_fit()</code> is the way to go. It takes the workflow and the split (as defined by <code>initial_split()</code>) as parameters.</p>
-<div class="sourceCode" id="cb346"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb346-1"><a href="day5.html#cb346-1" aria-hidden="true" tabindex="-1"></a>final_fitted <span class="ot">&lt;-</span> <span class="fu">last_fit</span>(final_lasso_imdb, split)</span>
-<span id="cb346-2"><a href="day5.html#cb346-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb346-3"><a href="day5.html#cb346-3" aria-hidden="true" tabindex="-1"></a><span class="fu">collect_metrics</span>(final_fitted)</span></code></pre></div>
+<div class="sourceCode" id="cb327"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb327-1"><a href="day5.html#cb327-1" aria-hidden="true" tabindex="-1"></a>final_fitted <span class="ot">&lt;-</span> <span class="fu">last_fit</span>(final_lasso_imdb, split)</span>
+<span id="cb327-2"><a href="day5.html#cb327-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb327-3"><a href="day5.html#cb327-3" aria-hidden="true" tabindex="-1"></a><span class="fu">collect_metrics</span>(final_fitted)</span></code></pre></div>
 <pre><code>## # A tibble: 2 × 4
 ##   .metric  .estimator .estimate .config             
 ##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
-## 1 accuracy binary         0.854 Preprocessor1_Model1
-## 2 roc_auc  binary         0.926 Preprocessor1_Model1</code></pre>
-<div class="sourceCode" id="cb348"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb348-1"><a href="day5.html#cb348-1" aria-hidden="true" tabindex="-1"></a><span class="fu">collect_predictions</span>(final_fitted) <span class="sc">%&gt;%</span></span>
-<span id="cb348-2"><a href="day5.html#cb348-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">conf_mat</span>(<span class="at">truth =</span> sentiment, <span class="at">estimate =</span> .pred_class) <span class="sc">%&gt;%</span></span>
-<span id="cb348-3"><a href="day5.html#cb348-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autoplot</span>(<span class="at">type =</span> <span class="st">&quot;heatmap&quot;</span>)</span></code></pre></div>
+## 1 accuracy binary         0.847 Preprocessor1_Model1
+## 2 roc_auc  binary         0.919 Preprocessor1_Model1</code></pre>
+<div class="sourceCode" id="cb329"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb329-1"><a href="day5.html#cb329-1" aria-hidden="true" tabindex="-1"></a><span class="fu">collect_predictions</span>(final_fitted) <span class="sc">%&gt;%</span></span>
+<span id="cb329-2"><a href="day5.html#cb329-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">conf_mat</span>(<span class="at">truth =</span> sentiment, <span class="at">estimate =</span> .pred_class) <span class="sc">%&gt;%</span></span>
+<span id="cb329-3"><a href="day5.html#cb329-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autoplot</span>(<span class="at">type =</span> <span class="st">&quot;heatmap&quot;</span>)</span></code></pre></div>
 <p><img src="_main_files/figure-html/unnamed-chunk-183-1.png" width="672" /></p>
 </div>
 <div id="latent-dirichlet-allocation-lda" class="section level2 hasAnchor" number="5.7">
 <h2><span class="header-section-number">5.7</span> Latent Dirichlet Allocation (LDA)<a href="day5.html#latent-dirichlet-allocation-lda" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>In the former section, I, first, explored how the sentiment in the SOTU addresses has evolved over the 20th century. Then, we looked at the decade-specific vocabulary. This, paired with previous knowledge of what happened throughout the 20th century, sufficed to gain some sort of insights. However, another approach to infer meaning from text is to search it for topics. This is also possible with the SOTU corpus which we have at hand.</p>
+<p>In the former section, I, first, explored how the sentiment in the SOTU addresses has evolved over the 20th century. Then, we looked at the decade-specific vocabulary. This, paired with previous knowledge of what happened throughout the 20th century, sufficed to gain some sort of insight. However, another approach to infer meaning from text is to search it for topics. This is also possible with the SOTU corpus which we have at hand.</p>
 <p>The two main assumptions of LDA are as follows:</p>
 <ul>
 <li>Every document is a mixture of topics.</li>
 <li>Every topic is a mixture of words.</li>
 </ul>
-<p>Hence, singular documents do not necessarily be distinct in terms of their content. They can be related – if they contain the same topics. This is definitely more in line with natural language’s use.</p>
+<p>Hence, singular documents do not necessarily be distinct in terms of their content. They can be related – if they contain the same topics. This is more in line with natural language use.</p>
 <p>The following graphic depicts a flowchart of text analysis with the <code>tidytext</code> package.</p>
 <div class="figure">
 <img src="https://www.tidytextmining.com/images/tmwr_0601.png" alt="" />
 <p class="caption">Text analysis flowchart</p>
 </div>
-<p>What becomes evident is that the actual topic modeling does not happen within <code>tidytext</code>. For this, the text needs to be transformed into a document-term-matrix and then passed on to the <code>topicmodels</code> package <span class="citation">(<a href="#ref-grun2020" role="doc-biblioref"><strong>grun2020?</strong></a>)</span>, which will take care of the modeling process. Thereafter, the results are turned back into tidy format, using <code>broom</code> so that they can be visualized using <code>ggplot2</code>.</p>
+<p>What becomes evident is that the actual topic modeling does not happen within <code>tidytext</code>. For this, the text needs to be transformed into a document-term-matrix and then passed on to the <code>topicmodels</code> package <span class="citation">(<a href="#ref-grun_topicmodels_2020" role="doc-biblioref">Grün et al. 2020</a>)</span>, which will take care of the modeling process. Thereafter, the results are turned back into a tidy format, using <code>broom</code> so that they can be visualized using <code>ggplot2</code>.</p>
 <div id="document-term-matrix-1" class="section level3 hasAnchor" number="5.7.1">
 <h3><span class="header-section-number">5.7.1</span> Document-term matrix<a href="day5.html#document-term-matrix-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>In order to search for the topics which are prevalent in the singular addresses through LDA, we need to transform the tidy tibble into a document-term matrix first. This can be achieved with <code>cast_dtm()</code>.</p>
-<div class="sourceCode" id="cb349"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb349-1"><a href="day5.html#cb349-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sotu)</span>
-<span id="cb349-2"><a href="day5.html#cb349-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidytext)</span>
-<span id="cb349-3"><a href="day5.html#cb349-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SnowballC)</span>
-<span id="cb349-4"><a href="day5.html#cb349-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb349-5"><a href="day5.html#cb349-5" aria-hidden="true" tabindex="-1"></a>sotu_clean <span class="ot">&lt;-</span> sotu_meta <span class="sc">%&gt;%</span> </span>
-<span id="cb349-6"><a href="day5.html#cb349-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">text =</span> sotu_text <span class="sc">%&gt;%</span> </span>
-<span id="cb349-7"><a href="day5.html#cb349-7" aria-hidden="true" tabindex="-1"></a>           <span class="fu">str_replace_all</span>(<span class="st">&quot;[,.]&quot;</span>, <span class="st">&quot; &quot;</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb349-8"><a href="day5.html#cb349-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">between</span>(year, <span class="dv">1900</span>, <span class="dv">2000</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb349-9"><a href="day5.html#cb349-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_tokens</span>(<span class="at">output =</span> token, <span class="at">input =</span> text) <span class="sc">%&gt;%</span> </span>
-<span id="cb349-10"><a href="day5.html#cb349-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">anti_join</span>(<span class="fu">get_stopwords</span>(), <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;token&quot;</span> <span class="ot">=</span> <span class="st">&quot;word&quot;</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb349-11"><a href="day5.html#cb349-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">str_detect</span>(token, <span class="st">&quot;[:digit:]&quot;</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb349-12"><a href="day5.html#cb349-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">token =</span> <span class="fu">wordStem</span>(token, <span class="at">language =</span> <span class="st">&quot;en&quot;</span>))</span>
-<span id="cb349-13"><a href="day5.html#cb349-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb349-14"><a href="day5.html#cb349-14" aria-hidden="true" tabindex="-1"></a>sotu_dtm <span class="ot">&lt;-</span> sotu_clean <span class="sc">%&gt;%</span> </span>
-<span id="cb349-15"><a href="day5.html#cb349-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">str_length</span>(token) <span class="sc">&gt;</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb349-16"><a href="day5.html#cb349-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(year, token) <span class="sc">%&gt;%</span> </span>
-<span id="cb349-17"><a href="day5.html#cb349-17" aria-hidden="true" tabindex="-1"></a>  <span class="co">#filter(between(year, 1900, 2000)) %&gt;% </span></span>
-<span id="cb349-18"><a href="day5.html#cb349-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(token) <span class="sc">%&gt;%</span> </span>
-<span id="cb349-19"><a href="day5.html#cb349-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">n</span>() <span class="sc">&lt;</span> <span class="dv">95</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb349-20"><a href="day5.html#cb349-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cast_dtm</span>(<span class="at">document =</span> year, <span class="at">term =</span> token, <span class="at">value =</span> n)</span></code></pre></div>
+<p>To search for the topics which are prevalent in the singular addresses through LDA, we need to transform the tidy tibble into a document-term matrix first. This can be achieved with <code>cast_dtm()</code>.</p>
+<div class="sourceCode" id="cb330"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb330-1"><a href="day5.html#cb330-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sotu)</span>
+<span id="cb330-2"><a href="day5.html#cb330-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidytext)</span>
+<span id="cb330-3"><a href="day5.html#cb330-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(SnowballC)</span>
+<span id="cb330-4"><a href="day5.html#cb330-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb330-5"><a href="day5.html#cb330-5" aria-hidden="true" tabindex="-1"></a>sotu_clean <span class="ot">&lt;-</span> sotu_meta <span class="sc">%&gt;%</span> </span>
+<span id="cb330-6"><a href="day5.html#cb330-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">text =</span> sotu_text <span class="sc">%&gt;%</span> </span>
+<span id="cb330-7"><a href="day5.html#cb330-7" aria-hidden="true" tabindex="-1"></a>           <span class="fu">str_replace_all</span>(<span class="st">&quot;[,.]&quot;</span>, <span class="st">&quot; &quot;</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb330-8"><a href="day5.html#cb330-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">between</span>(year, <span class="dv">1900</span>, <span class="dv">2000</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb330-9"><a href="day5.html#cb330-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_tokens</span>(<span class="at">output =</span> token, <span class="at">input =</span> text) <span class="sc">%&gt;%</span> </span>
+<span id="cb330-10"><a href="day5.html#cb330-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">anti_join</span>(<span class="fu">get_stopwords</span>(), <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;token&quot;</span> <span class="ot">=</span> <span class="st">&quot;word&quot;</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb330-11"><a href="day5.html#cb330-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">str_detect</span>(token, <span class="st">&quot;[:digit:]&quot;</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb330-12"><a href="day5.html#cb330-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">token =</span> <span class="fu">wordStem</span>(token, <span class="at">language =</span> <span class="st">&quot;en&quot;</span>))</span>
+<span id="cb330-13"><a href="day5.html#cb330-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb330-14"><a href="day5.html#cb330-14" aria-hidden="true" tabindex="-1"></a>sotu_dtm <span class="ot">&lt;-</span> sotu_clean <span class="sc">%&gt;%</span> </span>
+<span id="cb330-15"><a href="day5.html#cb330-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">str_length</span>(token) <span class="sc">&gt;</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb330-16"><a href="day5.html#cb330-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(year, token) <span class="sc">%&gt;%</span> </span>
+<span id="cb330-17"><a href="day5.html#cb330-17" aria-hidden="true" tabindex="-1"></a>  <span class="co">#filter(between(year, 1900, 2000)) %&gt;% </span></span>
+<span id="cb330-18"><a href="day5.html#cb330-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(token) <span class="sc">%&gt;%</span> </span>
+<span id="cb330-19"><a href="day5.html#cb330-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">n</span>() <span class="sc">&lt;</span> <span class="dv">95</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb330-20"><a href="day5.html#cb330-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cast_dtm</span>(<span class="at">document =</span> year, <span class="at">term =</span> token, <span class="at">value =</span> n)</span></code></pre></div>
 <p>A DTM contains Documents (rows) and Terms (columns) and specifies how often a term appears in a document.</p>
-<div class="sourceCode" id="cb350"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb350-1"><a href="day5.html#cb350-1" aria-hidden="true" tabindex="-1"></a>sotu_dtm <span class="sc">%&gt;%</span> <span class="fu">as.matrix</span>() <span class="sc">%&gt;%</span> .[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>]</span></code></pre></div>
+<div class="sourceCode" id="cb331"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb331-1"><a href="day5.html#cb331-1" aria-hidden="true" tabindex="-1"></a>sotu_dtm <span class="sc">%&gt;%</span> <span class="fu">as.matrix</span>() <span class="sc">%&gt;%</span> .[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>]</span></code></pre></div>
 <pre><code>##       Terms
 ## Docs   abandon abat abettor abey abid
 ##   1900       1    3       1    2    1
@@ -677,76 +675,76 @@ div.csl-indent {
 <p>We need to tell the model in advance how many topics we assume to be present within the document. Since we have neither read all the SOTU addresses (if so, we would hardly need to use the topic model), we cannot make an educated guess on how many topics are in there.</p>
 <div id="making-guesses" class="section level4 hasAnchor" number="5.7.2.1">
 <h4><span class="header-section-number">5.7.2.1</span> Making guesses<a href="day5.html#making-guesses" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>One approach might be to just providing it with wild guesses on how many topics might be in there and then trying to make sense of them afterwards.</p>
-<div class="sourceCode" id="cb352"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb352-1"><a href="day5.html#cb352-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(topicmodels)</span>
-<span id="cb352-2"><a href="day5.html#cb352-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
-<span id="cb352-3"><a href="day5.html#cb352-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb352-4"><a href="day5.html#cb352-4" aria-hidden="true" tabindex="-1"></a>sotu_lda_k10 <span class="ot">&lt;-</span> <span class="fu">LDA</span>(sotu_dtm, <span class="at">k =</span> <span class="dv">10</span>, <span class="at">control =</span> <span class="fu">list</span>(<span class="at">seed =</span> <span class="dv">123</span>))</span>
-<span id="cb352-5"><a href="day5.html#cb352-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb352-6"><a href="day5.html#cb352-6" aria-hidden="true" tabindex="-1"></a>sotu_lda_k10_tidied <span class="ot">&lt;-</span> <span class="fu">tidy</span>(sotu_lda_k10)</span></code></pre></div>
-<p>The <code>tidy()</code> function from the <code>broom</code> package <span class="citation">(<a href="#ref-robinson2020" role="doc-biblioref"><strong>robinson2020?</strong></a>)</span> brings the LDA output back into a tidy format. It consists of three columns: the topic, the term, and <code>beta</code>, which is the probability that the term stems from this topic.</p>
-<div class="sourceCode" id="cb353"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb353-1"><a href="day5.html#cb353-1" aria-hidden="true" tabindex="-1"></a>sotu_lda_k10_tidied <span class="sc">%&gt;%</span> <span class="fu">glimpse</span>()</span></code></pre></div>
+<p>One approach might be to just provide it with wild guesses on how many topics might be in there and then try to make sense of them afterward.</p>
+<div class="sourceCode" id="cb333"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb333-1"><a href="day5.html#cb333-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(topicmodels)</span>
+<span id="cb333-2"><a href="day5.html#cb333-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
+<span id="cb333-3"><a href="day5.html#cb333-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb333-4"><a href="day5.html#cb333-4" aria-hidden="true" tabindex="-1"></a>sotu_lda_k10 <span class="ot">&lt;-</span> <span class="fu">LDA</span>(sotu_dtm, <span class="at">k =</span> <span class="dv">10</span>, <span class="at">control =</span> <span class="fu">list</span>(<span class="at">seed =</span> <span class="dv">123</span>))</span>
+<span id="cb333-5"><a href="day5.html#cb333-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb333-6"><a href="day5.html#cb333-6" aria-hidden="true" tabindex="-1"></a>sotu_lda_k10_tidied <span class="ot">&lt;-</span> <span class="fu">tidy</span>(sotu_lda_k10)</span></code></pre></div>
+<p>The <code>tidy()</code> function from the <code>broom</code> package <span class="citation">(<a href="#ref-robinson_broom_2020" role="doc-biblioref">Robinson 2020</a>)</span> brings the LDA output back into a tidy format. It consists of three columns: the topic, the term, and <code>beta</code>, which is the probability that the term stems from this topic.</p>
+<div class="sourceCode" id="cb334"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb334-1"><a href="day5.html#cb334-1" aria-hidden="true" tabindex="-1"></a>sotu_lda_k10_tidied <span class="sc">%&gt;%</span> <span class="fu">glimpse</span>()</span></code></pre></div>
 <pre><code>## Rows: 108,880
 ## Columns: 3
 ## $ topic &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1,…
 ## $ term  &lt;chr&gt; &quot;abandon&quot;, &quot;abandon&quot;, &quot;abandon&quot;, &quot;abandon&quot;, &quot;abandon&quot;, &quot;abandon&quot;…
 ## $ beta  &lt;dbl&gt; 1.998668e-04, 2.063569e-04, 5.149531e-04, 3.737819e-04, 3.002458…</code></pre>
 <p>Now, we can wrangle it a bit, and then visualize it with <code>ggplot2</code>.</p>
-<div class="sourceCode" id="cb355"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb355-1"><a href="day5.html#cb355-1" aria-hidden="true" tabindex="-1"></a>top_terms_k10 <span class="ot">&lt;-</span> sotu_lda_k10_tidied <span class="sc">%&gt;%</span></span>
-<span id="cb355-2"><a href="day5.html#cb355-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(topic) <span class="sc">%&gt;%</span></span>
-<span id="cb355-3"><a href="day5.html#cb355-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(beta, <span class="at">n =</span> <span class="dv">5</span>, <span class="at">with_ties =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb355-4"><a href="day5.html#cb355-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb355-5"><a href="day5.html#cb355-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(topic, <span class="sc">-</span>beta)</span>
-<span id="cb355-6"><a href="day5.html#cb355-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb355-7"><a href="day5.html#cb355-7" aria-hidden="true" tabindex="-1"></a>top_terms_k10 <span class="sc">%&gt;%</span></span>
-<span id="cb355-8"><a href="day5.html#cb355-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">topic =</span> <span class="fu">factor</span>(topic),</span>
-<span id="cb355-9"><a href="day5.html#cb355-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">term =</span> <span class="fu">reorder_within</span>(term, beta, topic)) <span class="sc">%&gt;%</span></span>
-<span id="cb355-10"><a href="day5.html#cb355-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(term, beta, <span class="at">fill =</span> topic)) <span class="sc">+</span></span>
-<span id="cb355-11"><a href="day5.html#cb355-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">&quot;identity&quot;</span>, <span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
-<span id="cb355-12"><a href="day5.html#cb355-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_reordered</span>() <span class="sc">+</span></span>
-<span id="cb355-13"><a href="day5.html#cb355-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>topic, <span class="at">scales =</span> <span class="st">&quot;free&quot;</span>, <span class="at">ncol =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb355-14"><a href="day5.html#cb355-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb336"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb336-1"><a href="day5.html#cb336-1" aria-hidden="true" tabindex="-1"></a>top_terms_k10 <span class="ot">&lt;-</span> sotu_lda_k10_tidied <span class="sc">%&gt;%</span></span>
+<span id="cb336-2"><a href="day5.html#cb336-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(topic) <span class="sc">%&gt;%</span></span>
+<span id="cb336-3"><a href="day5.html#cb336-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(beta, <span class="at">n =</span> <span class="dv">5</span>, <span class="at">with_ties =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb336-4"><a href="day5.html#cb336-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb336-5"><a href="day5.html#cb336-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(topic, <span class="sc">-</span>beta)</span>
+<span id="cb336-6"><a href="day5.html#cb336-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb336-7"><a href="day5.html#cb336-7" aria-hidden="true" tabindex="-1"></a>top_terms_k10 <span class="sc">%&gt;%</span></span>
+<span id="cb336-8"><a href="day5.html#cb336-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">topic =</span> <span class="fu">factor</span>(topic),</span>
+<span id="cb336-9"><a href="day5.html#cb336-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">term =</span> <span class="fu">reorder_within</span>(term, beta, topic)) <span class="sc">%&gt;%</span></span>
+<span id="cb336-10"><a href="day5.html#cb336-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(term, beta, <span class="at">fill =</span> topic)) <span class="sc">+</span></span>
+<span id="cb336-11"><a href="day5.html#cb336-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">&quot;identity&quot;</span>, <span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb336-12"><a href="day5.html#cb336-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_reordered</span>() <span class="sc">+</span></span>
+<span id="cb336-13"><a href="day5.html#cb336-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>topic, <span class="at">scales =</span> <span class="st">&quot;free&quot;</span>, <span class="at">ncol =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb336-14"><a href="day5.html#cb336-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>()</span></code></pre></div>
 <p><img src="_main_files/figure-html/unnamed-chunk-189-1.png" width="672" /></p>
-<p>Now the hard part begins: making sense of it in an inductive manner. But, of course, there is a large probability that we just chose the wrong number of topics. Therefore, before scratching our head trying to come to meaningful conclusions, we should first assess what the optimal number of topics is.</p>
+<p>Now the hard part begins: inductively making sense of it. But, of course, there is a large probability that we just chose the wrong number of topics. Therefore, before scratching our heads trying to come to meaningful conclusions, we should first assess what the optimal number of topics is.</p>
 </div>
 <div id="more-elaborate-methods" class="section level4 hasAnchor" number="5.7.2.2">
 <h4><span class="header-section-number">5.7.2.2</span> More elaborate methods<a href="day5.html#more-elaborate-methods" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>LDA offers a couple of parameters to tune, but the most crucial one probably is <code>k</code>, the number of topics.</p>
-<div class="sourceCode" id="cb356"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb356-1"><a href="day5.html#cb356-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ldatuning)</span></code></pre></div>
-<div class="sourceCode" id="cb357"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb357-1"><a href="day5.html#cb357-1" aria-hidden="true" tabindex="-1"></a>determine_k <span class="ot">&lt;-</span> <span class="fu">FindTopicsNumber</span>(</span>
-<span id="cb357-2"><a href="day5.html#cb357-2" aria-hidden="true" tabindex="-1"></a>  sotu_dtm,</span>
-<span id="cb357-3"><a href="day5.html#cb357-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">topics =</span> <span class="fu">seq</span>(<span class="at">from =</span> <span class="dv">2</span>, <span class="at">to =</span> <span class="dv">30</span>, <span class="at">by =</span> <span class="dv">1</span>),</span>
-<span id="cb357-4"><a href="day5.html#cb357-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">metrics =</span> <span class="fu">c</span>(<span class="st">&quot;Griffiths2004&quot;</span>, <span class="st">&quot;CaoJuan2009&quot;</span>, <span class="st">&quot;Arun2010&quot;</span>, <span class="st">&quot;Deveaud2014&quot;</span>),</span>
-<span id="cb357-5"><a href="day5.html#cb357-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">&quot;Gibbs&quot;</span>,</span>
-<span id="cb357-6"><a href="day5.html#cb357-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">control =</span> <span class="fu">list</span>(<span class="at">seed =</span> <span class="dv">77</span>),</span>
-<span id="cb357-7"><a href="day5.html#cb357-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">mc.cores =</span> 16L,</span>
-<span id="cb357-8"><a href="day5.html#cb357-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">verbose =</span> <span class="cn">TRUE</span></span>
-<span id="cb357-9"><a href="day5.html#cb357-9" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb357-10"><a href="day5.html#cb357-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb357-11"><a href="day5.html#cb357-11" aria-hidden="true" tabindex="-1"></a>determine_k <span class="sc">%&gt;%</span> <span class="fu">write_rds</span>(<span class="st">&quot;lda_tuning.rds&quot;</span>)</span></code></pre></div>
-<div class="sourceCode" id="cb358"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb358-1"><a href="day5.html#cb358-1" aria-hidden="true" tabindex="-1"></a><span class="fu">FindTopicsNumber_plot</span>(determine_k)</span></code></pre></div>
+<div class="sourceCode" id="cb337"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb337-1"><a href="day5.html#cb337-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ldatuning)</span></code></pre></div>
+<div class="sourceCode" id="cb338"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb338-1"><a href="day5.html#cb338-1" aria-hidden="true" tabindex="-1"></a>determine_k <span class="ot">&lt;-</span> <span class="fu">FindTopicsNumber</span>(</span>
+<span id="cb338-2"><a href="day5.html#cb338-2" aria-hidden="true" tabindex="-1"></a>  sotu_dtm,</span>
+<span id="cb338-3"><a href="day5.html#cb338-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">topics =</span> <span class="fu">seq</span>(<span class="at">from =</span> <span class="dv">2</span>, <span class="at">to =</span> <span class="dv">30</span>, <span class="at">by =</span> <span class="dv">1</span>),</span>
+<span id="cb338-4"><a href="day5.html#cb338-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">metrics =</span> <span class="fu">c</span>(<span class="st">&quot;Griffiths2004&quot;</span>, <span class="st">&quot;CaoJuan2009&quot;</span>, <span class="st">&quot;Arun2010&quot;</span>, <span class="st">&quot;Deveaud2014&quot;</span>),</span>
+<span id="cb338-5"><a href="day5.html#cb338-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">&quot;Gibbs&quot;</span>,</span>
+<span id="cb338-6"><a href="day5.html#cb338-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">control =</span> <span class="fu">list</span>(<span class="at">seed =</span> <span class="dv">77</span>),</span>
+<span id="cb338-7"><a href="day5.html#cb338-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">mc.cores =</span> 16L,</span>
+<span id="cb338-8"><a href="day5.html#cb338-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">verbose =</span> <span class="cn">TRUE</span></span>
+<span id="cb338-9"><a href="day5.html#cb338-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb338-10"><a href="day5.html#cb338-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb338-11"><a href="day5.html#cb338-11" aria-hidden="true" tabindex="-1"></a>determine_k <span class="sc">%&gt;%</span> <span class="fu">write_rds</span>(<span class="st">&quot;lda_tuning.rds&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb339"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb339-1"><a href="day5.html#cb339-1" aria-hidden="true" tabindex="-1"></a><span class="fu">FindTopicsNumber_plot</span>(determine_k)</span></code></pre></div>
 <pre><code>## Warning: `guides(&lt;scale&gt; = FALSE)` is deprecated. Please use `guides(&lt;scale&gt; =
 ## &quot;none&quot;)` instead.</code></pre>
 <p><img src="_main_files/figure-html/unnamed-chunk-193-1.png" width="672" /></p>
-<p>We would actually go with the 16 topics here, as they seem to maximizes the metrics that shall be maximized and minimizes the other ones quite well.</p>
-<div class="sourceCode" id="cb360"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb360-1"><a href="day5.html#cb360-1" aria-hidden="true" tabindex="-1"></a>sotu_lda_k16 <span class="ot">&lt;-</span> <span class="fu">LDA</span>(sotu_dtm, <span class="at">k =</span> <span class="dv">16</span>, <span class="at">control =</span> <span class="fu">list</span>(<span class="at">seed =</span> <span class="dv">77</span>))</span>
-<span id="cb360-2"><a href="day5.html#cb360-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb360-3"><a href="day5.html#cb360-3" aria-hidden="true" tabindex="-1"></a>sotu_lda_k16_tidied <span class="ot">&lt;-</span> <span class="fu">tidy</span>(sotu_lda_k16)</span>
-<span id="cb360-4"><a href="day5.html#cb360-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb360-5"><a href="day5.html#cb360-5" aria-hidden="true" tabindex="-1"></a><span class="fu">write_rds</span>(sotu_lda_k16, <span class="st">&quot;lda_16.rds&quot;</span>)</span></code></pre></div>
+<p>We would go with the 16 topics here, as they seem to maximize the metrics that shall be maximized and minimizes the other ones quite well.</p>
+<div class="sourceCode" id="cb341"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb341-1"><a href="day5.html#cb341-1" aria-hidden="true" tabindex="-1"></a>sotu_lda_k16 <span class="ot">&lt;-</span> <span class="fu">LDA</span>(sotu_dtm, <span class="at">k =</span> <span class="dv">16</span>, <span class="at">control =</span> <span class="fu">list</span>(<span class="at">seed =</span> <span class="dv">77</span>))</span>
+<span id="cb341-2"><a href="day5.html#cb341-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb341-3"><a href="day5.html#cb341-3" aria-hidden="true" tabindex="-1"></a>sotu_lda_k16_tidied <span class="ot">&lt;-</span> <span class="fu">tidy</span>(sotu_lda_k16)</span>
+<span id="cb341-4"><a href="day5.html#cb341-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb341-5"><a href="day5.html#cb341-5" aria-hidden="true" tabindex="-1"></a><span class="fu">write_rds</span>(sotu_lda_k16, <span class="st">&quot;lda_16.rds&quot;</span>)</span></code></pre></div>
 </div>
 </div>
 <div id="sense-making" class="section level3 hasAnchor" number="5.7.3">
 <h3><span class="header-section-number">5.7.3</span> Sense-making<a href="day5.html#sense-making" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Now, the harder part begins: making sense of the different topics. In LDA, words can exist across topics, making them not perfectly distinguishable. Also, as the number of topics becomes greater, plotting them doesn’t make too much sense anymore.</p>
-<div class="sourceCode" id="cb361"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb361-1"><a href="day5.html#cb361-1" aria-hidden="true" tabindex="-1"></a>topic_list <span class="ot">&lt;-</span> sotu_lda_k16_tidied <span class="sc">%&gt;%</span> </span>
-<span id="cb361-2"><a href="day5.html#cb361-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(topic) <span class="sc">%&gt;%</span> </span>
-<span id="cb361-3"><a href="day5.html#cb361-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_split</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb361-4"><a href="day5.html#cb361-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map_dfc</span>(<span class="sc">~</span>.x <span class="sc">%&gt;%</span> </span>
-<span id="cb361-5"><a href="day5.html#cb361-5" aria-hidden="true" tabindex="-1"></a>            <span class="fu">slice_max</span>(beta, <span class="at">n =</span> <span class="dv">20</span>, <span class="at">with_ties =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb361-6"><a href="day5.html#cb361-6" aria-hidden="true" tabindex="-1"></a>            <span class="fu">arrange</span>(<span class="sc">-</span>beta) <span class="sc">%&gt;%</span> </span>
-<span id="cb361-7"><a href="day5.html#cb361-7" aria-hidden="true" tabindex="-1"></a>            <span class="fu">select</span>(term)) <span class="sc">%&gt;%</span> </span>
-<span id="cb361-8"><a href="day5.html#cb361-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_names</span>(<span class="fu">str_c</span>(<span class="st">&quot;topic&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">16</span>, <span class="at">sep =</span> <span class="st">&quot;_&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb342"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb342-1"><a href="day5.html#cb342-1" aria-hidden="true" tabindex="-1"></a>topic_list <span class="ot">&lt;-</span> sotu_lda_k16_tidied <span class="sc">%&gt;%</span> </span>
+<span id="cb342-2"><a href="day5.html#cb342-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(topic) <span class="sc">%&gt;%</span> </span>
+<span id="cb342-3"><a href="day5.html#cb342-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_split</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb342-4"><a href="day5.html#cb342-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map_dfc</span>(<span class="sc">~</span>.x <span class="sc">%&gt;%</span> </span>
+<span id="cb342-5"><a href="day5.html#cb342-5" aria-hidden="true" tabindex="-1"></a>            <span class="fu">slice_max</span>(beta, <span class="at">n =</span> <span class="dv">20</span>, <span class="at">with_ties =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb342-6"><a href="day5.html#cb342-6" aria-hidden="true" tabindex="-1"></a>            <span class="fu">arrange</span>(<span class="sc">-</span>beta) <span class="sc">%&gt;%</span> </span>
+<span id="cb342-7"><a href="day5.html#cb342-7" aria-hidden="true" tabindex="-1"></a>            <span class="fu">select</span>(term)) <span class="sc">%&gt;%</span> </span>
+<span id="cb342-8"><a href="day5.html#cb342-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_names</span>(<span class="fu">str_c</span>(<span class="st">&quot;topic&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">16</span>, <span class="at">sep =</span> <span class="st">&quot;_&quot;</span>))</span></code></pre></div>
 <pre><code>## New names:
 ## • `term` -&gt; `term...1`
 ## • `term` -&gt; `term...2`
@@ -767,13 +765,13 @@ div.csl-indent {
 </div>
 <div id="document-topic-probabilities" class="section level3 hasAnchor" number="5.7.4">
 <h3><span class="header-section-number">5.7.4</span> Document-topic probabilities<a href="day5.html#document-topic-probabilities" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>Another thing to assess is document-topic probabilities <code>gamma</code>: which document belongs to which topic. By doing so, you can choose the documents that have the highest probability of belonging to a topic and then read these specifically. This might give you some better understanding of what the different topics might imply.</p>
-<div class="sourceCode" id="cb363"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb363-1"><a href="day5.html#cb363-1" aria-hidden="true" tabindex="-1"></a>sotu_lda_k16_document <span class="ot">&lt;-</span> <span class="fu">tidy</span>(sotu_lda_k16, <span class="at">matrix =</span> <span class="st">&quot;gamma&quot;</span>)</span></code></pre></div>
-<p>This shows you the proportion of words of the document which were drawn from the specific topics. In 1990, for instance, many words were drawn from the first topic.</p>
-<div class="sourceCode" id="cb364"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb364-1"><a href="day5.html#cb364-1" aria-hidden="true" tabindex="-1"></a>sotu_lda_k16_document <span class="sc">%&gt;%</span> </span>
-<span id="cb364-2"><a href="day5.html#cb364-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(document) <span class="sc">%&gt;%</span> </span>
-<span id="cb364-3"><a href="day5.html#cb364-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(gamma, <span class="at">n =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb364-4"><a href="day5.html#cb364-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">gamma =</span> <span class="fu">round</span>(gamma, <span class="dv">3</span>))</span></code></pre></div>
+<p>Another thing to assess is document-topic probabilities <code>gamma</code>: which document belongs to which topic. By doing so, you can choose the documents that have the highest probability of belonging to a topic and then read these specifically. This might give you a better understanding of what the different topics might imply.</p>
+<div class="sourceCode" id="cb344"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb344-1"><a href="day5.html#cb344-1" aria-hidden="true" tabindex="-1"></a>sotu_lda_k16_document <span class="ot">&lt;-</span> <span class="fu">tidy</span>(sotu_lda_k16, <span class="at">matrix =</span> <span class="st">&quot;gamma&quot;</span>)</span></code></pre></div>
+<p>This shows you the proportion of words in the document which were drawn from the specific topics. In 1990, for instance, many words were drawn from the first topic.</p>
+<div class="sourceCode" id="cb345"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb345-1"><a href="day5.html#cb345-1" aria-hidden="true" tabindex="-1"></a>sotu_lda_k16_document <span class="sc">%&gt;%</span> </span>
+<span id="cb345-2"><a href="day5.html#cb345-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(document) <span class="sc">%&gt;%</span> </span>
+<span id="cb345-3"><a href="day5.html#cb345-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(gamma, <span class="at">n =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb345-4"><a href="day5.html#cb345-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">gamma =</span> <span class="fu">round</span>(gamma, <span class="dv">3</span>))</span></code></pre></div>
 <pre><code>## # A tibble: 99 × 3
 ## # Groups:   document [99]
 ##    document topic gamma
@@ -793,34 +791,34 @@ div.csl-indent {
 <div id="ldavis" class="section level4 hasAnchor" number="5.7.4.1">
 <h4><span class="header-section-number">5.7.4.1</span> <code>LDAvis</code><a href="day5.html#ldavis" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p><code>LDAvis</code> is a handy tool we can use to inspect our model visually. Preprocessing the data is a bit tricky though, therefore we define a quick function first.</p>
-<div class="sourceCode" id="cb366"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb366-1"><a href="day5.html#cb366-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(LDAvis)</span>
-<span id="cb366-2"><a href="day5.html#cb366-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb366-3"><a href="day5.html#cb366-3" aria-hidden="true" tabindex="-1"></a>prep_lda_output <span class="ot">&lt;-</span> <span class="cf">function</span>(dtm, lda_output){</span>
-<span id="cb366-4"><a href="day5.html#cb366-4" aria-hidden="true" tabindex="-1"></a>  doc_length <span class="ot">&lt;-</span> dtm <span class="sc">%&gt;%</span> </span>
-<span id="cb366-5"><a href="day5.html#cb366-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">as.matrix</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb366-6"><a href="day5.html#cb366-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">as_tibble</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb366-7"><a href="day5.html#cb366-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rowwise</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb366-8"><a href="day5.html#cb366-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="at">doc_sum =</span> <span class="fu">c_across</span>() <span class="sc">%&gt;%</span> <span class="fu">sum</span>()) <span class="sc">%&gt;%</span> </span>
-<span id="cb366-9"><a href="day5.html#cb366-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pull</span>(doc_sum)</span>
-<span id="cb366-10"><a href="day5.html#cb366-10" aria-hidden="true" tabindex="-1"></a>  phi <span class="ot">&lt;-</span> <span class="fu">posterior</span>(lda_output)<span class="sc">$</span>terms <span class="sc">%&gt;%</span> <span class="fu">as.matrix</span>()</span>
-<span id="cb366-11"><a href="day5.html#cb366-11" aria-hidden="true" tabindex="-1"></a>  theta <span class="ot">&lt;-</span> <span class="fu">posterior</span>(lda_output)<span class="sc">$</span>topics <span class="sc">%&gt;%</span> <span class="fu">as.matrix</span>()</span>
-<span id="cb366-12"><a href="day5.html#cb366-12" aria-hidden="true" tabindex="-1"></a>  vocab <span class="ot">&lt;-</span> <span class="fu">colnames</span>(dtm)</span>
-<span id="cb366-13"><a href="day5.html#cb366-13" aria-hidden="true" tabindex="-1"></a>  term_sums <span class="ot">&lt;-</span> dtm <span class="sc">%&gt;%</span> </span>
-<span id="cb366-14"><a href="day5.html#cb366-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">as.matrix</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb366-15"><a href="day5.html#cb366-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">as_tibble</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb366-16"><a href="day5.html#cb366-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="sc">~</span><span class="fu">sum</span>(.x))) <span class="sc">%&gt;%</span> </span>
-<span id="cb366-17"><a href="day5.html#cb366-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">as.matrix</span>()</span>
-<span id="cb366-18"><a href="day5.html#cb366-18" aria-hidden="true" tabindex="-1"></a>  svd_tsne <span class="ot">&lt;-</span> <span class="cf">function</span>(x) tsne<span class="sc">::</span><span class="fu">tsne</span>(<span class="fu">svd</span>(x)<span class="sc">$</span>u)</span>
-<span id="cb366-19"><a href="day5.html#cb366-19" aria-hidden="true" tabindex="-1"></a>  LDAvis<span class="sc">::</span><span class="fu">createJSON</span>(<span class="at">phi =</span> phi, </span>
-<span id="cb366-20"><a href="day5.html#cb366-20" aria-hidden="true" tabindex="-1"></a>                     <span class="at">theta =</span> theta,</span>
-<span id="cb366-21"><a href="day5.html#cb366-21" aria-hidden="true" tabindex="-1"></a>                     <span class="at">vocab =</span> vocab,</span>
-<span id="cb366-22"><a href="day5.html#cb366-22" aria-hidden="true" tabindex="-1"></a>                     <span class="at">doc.length =</span> doc_length,</span>
-<span id="cb366-23"><a href="day5.html#cb366-23" aria-hidden="true" tabindex="-1"></a>                     <span class="at">term.frequency =</span> term_sums[<span class="dv">1</span>,],</span>
-<span id="cb366-24"><a href="day5.html#cb366-24" aria-hidden="true" tabindex="-1"></a>                     <span class="at">mds.method =</span> svd_tsne</span>
-<span id="cb366-25"><a href="day5.html#cb366-25" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb366-26"><a href="day5.html#cb366-26" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb366-27"><a href="day5.html#cb366-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb366-28"><a href="day5.html#cb366-28" aria-hidden="true" tabindex="-1"></a>json_lda <span class="ot">&lt;-</span> <span class="fu">prep_lda_output</span>(sotu_dtm, sotu_lda_k16)</span></code></pre></div>
+<div class="sourceCode" id="cb347"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb347-1"><a href="day5.html#cb347-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(LDAvis)</span>
+<span id="cb347-2"><a href="day5.html#cb347-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb347-3"><a href="day5.html#cb347-3" aria-hidden="true" tabindex="-1"></a>prep_lda_output <span class="ot">&lt;-</span> <span class="cf">function</span>(dtm, lda_output){</span>
+<span id="cb347-4"><a href="day5.html#cb347-4" aria-hidden="true" tabindex="-1"></a>  doc_length <span class="ot">&lt;-</span> dtm <span class="sc">%&gt;%</span> </span>
+<span id="cb347-5"><a href="day5.html#cb347-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">as.matrix</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb347-6"><a href="day5.html#cb347-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">as_tibble</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb347-7"><a href="day5.html#cb347-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rowwise</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb347-8"><a href="day5.html#cb347-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="at">doc_sum =</span> <span class="fu">c_across</span>() <span class="sc">%&gt;%</span> <span class="fu">sum</span>()) <span class="sc">%&gt;%</span> </span>
+<span id="cb347-9"><a href="day5.html#cb347-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pull</span>(doc_sum)</span>
+<span id="cb347-10"><a href="day5.html#cb347-10" aria-hidden="true" tabindex="-1"></a>  phi <span class="ot">&lt;-</span> <span class="fu">posterior</span>(lda_output)<span class="sc">$</span>terms <span class="sc">%&gt;%</span> <span class="fu">as.matrix</span>()</span>
+<span id="cb347-11"><a href="day5.html#cb347-11" aria-hidden="true" tabindex="-1"></a>  theta <span class="ot">&lt;-</span> <span class="fu">posterior</span>(lda_output)<span class="sc">$</span>topics <span class="sc">%&gt;%</span> <span class="fu">as.matrix</span>()</span>
+<span id="cb347-12"><a href="day5.html#cb347-12" aria-hidden="true" tabindex="-1"></a>  vocab <span class="ot">&lt;-</span> <span class="fu">colnames</span>(dtm)</span>
+<span id="cb347-13"><a href="day5.html#cb347-13" aria-hidden="true" tabindex="-1"></a>  term_sums <span class="ot">&lt;-</span> dtm <span class="sc">%&gt;%</span> </span>
+<span id="cb347-14"><a href="day5.html#cb347-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">as.matrix</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb347-15"><a href="day5.html#cb347-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">as_tibble</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb347-16"><a href="day5.html#cb347-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="sc">~</span><span class="fu">sum</span>(.x))) <span class="sc">%&gt;%</span> </span>
+<span id="cb347-17"><a href="day5.html#cb347-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">as.matrix</span>()</span>
+<span id="cb347-18"><a href="day5.html#cb347-18" aria-hidden="true" tabindex="-1"></a>  svd_tsne <span class="ot">&lt;-</span> <span class="cf">function</span>(x) tsne<span class="sc">::</span><span class="fu">tsne</span>(<span class="fu">svd</span>(x)<span class="sc">$</span>u)</span>
+<span id="cb347-19"><a href="day5.html#cb347-19" aria-hidden="true" tabindex="-1"></a>  LDAvis<span class="sc">::</span><span class="fu">createJSON</span>(<span class="at">phi =</span> phi, </span>
+<span id="cb347-20"><a href="day5.html#cb347-20" aria-hidden="true" tabindex="-1"></a>                     <span class="at">theta =</span> theta,</span>
+<span id="cb347-21"><a href="day5.html#cb347-21" aria-hidden="true" tabindex="-1"></a>                     <span class="at">vocab =</span> vocab,</span>
+<span id="cb347-22"><a href="day5.html#cb347-22" aria-hidden="true" tabindex="-1"></a>                     <span class="at">doc.length =</span> doc_length,</span>
+<span id="cb347-23"><a href="day5.html#cb347-23" aria-hidden="true" tabindex="-1"></a>                     <span class="at">term.frequency =</span> term_sums[<span class="dv">1</span>,],</span>
+<span id="cb347-24"><a href="day5.html#cb347-24" aria-hidden="true" tabindex="-1"></a>                     <span class="at">mds.method =</span> svd_tsne</span>
+<span id="cb347-25"><a href="day5.html#cb347-25" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb347-26"><a href="day5.html#cb347-26" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb347-27"><a href="day5.html#cb347-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb347-28"><a href="day5.html#cb347-28" aria-hidden="true" tabindex="-1"></a>json_lda <span class="ot">&lt;-</span> <span class="fu">prep_lda_output</span>(sotu_dtm, sotu_lda_k16)</span></code></pre></div>
 <pre><code>## sigma summary: Min. : 33554432 |1st Qu. : 33554432 |Median : 33554432 |Mean : 33554432 |3rd Qu. : 33554432 |Max. : 33554432 |</code></pre>
 <pre><code>## Epoch: Iteration #100 error is: 12.1436251490033</code></pre>
 <pre><code>## Epoch: Iteration #200 error is: 0.525550510030935</code></pre>
@@ -832,26 +830,26 @@ div.csl-indent {
 <pre><code>## Epoch: Iteration #800 error is: 0.357548799328358</code></pre>
 <pre><code>## Epoch: Iteration #900 error is: 0.357274746683993</code></pre>
 <pre><code>## Epoch: Iteration #1000 error is: 0.357073805574637</code></pre>
-<div class="sourceCode" id="cb378"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb378-1"><a href="day5.html#cb378-1" aria-hidden="true" tabindex="-1"></a><span class="fu">serVis</span>(json_lda, <span class="at">out.dir =</span> <span class="st">&#39;vis&#39;</span>, <span class="at">open.browser =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb378-2"><a href="day5.html#cb378-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb378-3"><a href="day5.html#cb378-3" aria-hidden="true" tabindex="-1"></a>servr<span class="sc">::</span><span class="fu">daemon_stop</span>(<span class="dv">1</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb359"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb359-1"><a href="day5.html#cb359-1" aria-hidden="true" tabindex="-1"></a><span class="fu">serVis</span>(json_lda, <span class="at">out.dir =</span> <span class="st">&#39;vis&#39;</span>, <span class="at">open.browser =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb359-2"><a href="day5.html#cb359-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb359-3"><a href="day5.html#cb359-3" aria-hidden="true" tabindex="-1"></a>servr<span class="sc">::</span><span class="fu">daemon_stop</span>(<span class="dv">1</span>)</span></code></pre></div>
 </div>
 </div>
 <div id="structural-topic-models" class="section level3 hasAnchor" number="5.7.5">
 <h3><span class="header-section-number">5.7.5</span> Structural Topic Models<a href="day5.html#structural-topic-models" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>Structural Topic Models offer a framework for incorporating meta data into topic models. In particular, you can have these metadata affect the <em>topical prevalence</em>, i.e., the frequency a certain <em>topic</em> is discussed can vary depending on some observed non-textual property of the document. On the other hand, the topical content, i.e., the terms that constitute topics, may vary depending on certain covariates.</p>
-<p>Structural Topic Models are implemented in R via a a dedicated package. The following overview provides information on the workflow and the functions that facilitate it.</p>
+<p>Structural Topic Models offer a framework for incorporating metadata into topic models. In particular, you can have these metadata affect the <em>topical prevalence</em>, i.e., the frequency a certain <em>topic</em> is discussed can vary depending on some observed non-textual property of the document. On the other hand, the topical content, i.e., the terms that constitute topics, may vary depending on certain covariates.</p>
+<p>Structural Topic Models are implemented in R via a dedicated package. The following overview provides information on the workflow and the functions that facilitate it.</p>
 <p><img src="https://warin.ca/shiny/stm/images/fig02.png" alt="Roberts, Stewart, and Tingley (2019)" />
 In the following example, I will use the State of the Union addresses to run you through the process of training and evaluating an STM.</p>
-<div class="sourceCode" id="cb379"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb379-1"><a href="day5.html#cb379-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stm)</span></code></pre></div>
+<div class="sourceCode" id="cb360"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb360-1"><a href="day5.html#cb360-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stm)</span></code></pre></div>
 <pre><code>## stm v1.3.6 successfully loaded. See ?stm for help. 
 ##  Papers, resources, and other materials at structuraltopicmodel.com</code></pre>
-<div class="sourceCode" id="cb381"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb381-1"><a href="day5.html#cb381-1" aria-hidden="true" tabindex="-1"></a>sotu_stm <span class="ot">&lt;-</span> sotu_meta <span class="sc">%&gt;%</span> </span>
-<span id="cb381-2"><a href="day5.html#cb381-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">text =</span> sotu_text) <span class="sc">%&gt;%</span> </span>
-<span id="cb381-3"><a href="day5.html#cb381-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(text, <span class="at">.keep_all =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb381-4"><a href="day5.html#cb381-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">between</span>(year, <span class="dv">1900</span>, <span class="dv">2000</span>))</span></code></pre></div>
-<p>The package requires a particular data structure and has included a number of functions that help you preprocess your data. <code>textProcessor()</code> takes care of preprocessing the data. It takes as first argument the text as a character vector as well as the tibble containing the meta data. Its output is a list containing a document list containing word indices and counts, a vocabulary vector containing words associated with these word indices, and a data.frame containing associated meta data. <code>prepDocuments()</code> finally brings the resulting list into a shape that is appropriate for training an STM. It has certain threshold parameters which are geared towards further reducing the vocabulary. <code>lower.thresh = n</code> removes words that are not present in at least n documents, <code>upper.thresh = m</code> removes words that are present in more than m documents. The ramifications of these parameter settings can be explored graphically using the <code>plotRemoved()</code> function.</p>
-<div class="sourceCode" id="cb382"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb382-1"><a href="day5.html#cb382-1" aria-hidden="true" tabindex="-1"></a>processed <span class="ot">&lt;-</span> <span class="fu">textProcessor</span>(sotu_stm<span class="sc">$</span>text, <span class="at">metadata =</span> sotu_stm <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>text))</span></code></pre></div>
+<div class="sourceCode" id="cb362"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb362-1"><a href="day5.html#cb362-1" aria-hidden="true" tabindex="-1"></a>sotu_stm <span class="ot">&lt;-</span> sotu_meta <span class="sc">%&gt;%</span> </span>
+<span id="cb362-2"><a href="day5.html#cb362-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">text =</span> sotu_text) <span class="sc">%&gt;%</span> </span>
+<span id="cb362-3"><a href="day5.html#cb362-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(text, <span class="at">.keep_all =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb362-4"><a href="day5.html#cb362-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">between</span>(year, <span class="dv">1900</span>, <span class="dv">2000</span>))</span></code></pre></div>
+<p>The package requires a particular data structure and has included several functions that help you preprocess your data. <code>textProcessor()</code> takes care of preprocessing the data. It takes as a first argument the text as a character vector as well as the tibble containing the metadata. Its output is a list containing a document list containing word indices and counts, a vocabulary vector containing words associated with these word indices, and a data.frame containing associated metadata. <code>prepDocuments()</code> finally brings the resulting list into a shape that is appropriate for training an STM. It has certain threshold parameters which are geared towards further reducing the vocabulary. <code>lower.thresh = n</code> removes words that are not present in at least n documents, <code>upper.thresh = m</code> removes words that are present in more than m documents. The ramifications of these parameter settings can be explored graphically using the <code>plotRemoved()</code> function.</p>
+<div class="sourceCode" id="cb363"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb363-1"><a href="day5.html#cb363-1" aria-hidden="true" tabindex="-1"></a>processed <span class="ot">&lt;-</span> <span class="fu">textProcessor</span>(sotu_stm<span class="sc">$</span>text, <span class="at">metadata =</span> sotu_stm <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>text))</span></code></pre></div>
 <pre><code>## Building corpus... 
 ## Converting to Lower Case... 
 ## Removing punctuation... 
@@ -859,37 +857,37 @@ In the following example, I will use the State of the Union addresses to run you
 ## Removing numbers... 
 ## Stemming... 
 ## Creating Output...</code></pre>
-<div class="sourceCode" id="cb384"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb384-1"><a href="day5.html#cb384-1" aria-hidden="true" tabindex="-1"></a><span class="co">#, custompunctuation = &quot;-&quot;)</span></span>
-<span id="cb384-2"><a href="day5.html#cb384-2" aria-hidden="true" tabindex="-1"></a><span class="co">#?textProcessor() # check out the different arguments </span></span>
-<span id="cb384-3"><a href="day5.html#cb384-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb384-4"><a href="day5.html#cb384-4" aria-hidden="true" tabindex="-1"></a><span class="co">#?prepDocuments()</span></span>
-<span id="cb384-5"><a href="day5.html#cb384-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb384-6"><a href="day5.html#cb384-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plotRemoved</span>(processed<span class="sc">$</span>documents, <span class="at">lower.thresh =</span> <span class="fu">seq</span>(<span class="dv">1</span>, <span class="dv">50</span>, <span class="at">by =</span> <span class="dv">2</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb365"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb365-1"><a href="day5.html#cb365-1" aria-hidden="true" tabindex="-1"></a><span class="co">#, custompunctuation = &quot;-&quot;)</span></span>
+<span id="cb365-2"><a href="day5.html#cb365-2" aria-hidden="true" tabindex="-1"></a><span class="co">#?textProcessor() # check out the different arguments </span></span>
+<span id="cb365-3"><a href="day5.html#cb365-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb365-4"><a href="day5.html#cb365-4" aria-hidden="true" tabindex="-1"></a><span class="co">#?prepDocuments()</span></span>
+<span id="cb365-5"><a href="day5.html#cb365-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb365-6"><a href="day5.html#cb365-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plotRemoved</span>(processed<span class="sc">$</span>documents, <span class="at">lower.thresh =</span> <span class="fu">seq</span>(<span class="dv">1</span>, <span class="dv">50</span>, <span class="at">by =</span> <span class="dv">2</span>))</span></code></pre></div>
 <p><img src="_main_files/figure-html/unnamed-chunk-202-1.png" width="672" /></p>
-<div class="sourceCode" id="cb385"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb385-1"><a href="day5.html#cb385-1" aria-hidden="true" tabindex="-1"></a>prepped_docs <span class="ot">&lt;-</span> <span class="fu">prepDocuments</span>(processed<span class="sc">$</span>documents, processed<span class="sc">$</span>vocab, processed<span class="sc">$</span>meta, <span class="at">lower.thresh =</span> <span class="dv">3</span>, <span class="at">upper.thresh =</span> <span class="dv">80</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb366"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb366-1"><a href="day5.html#cb366-1" aria-hidden="true" tabindex="-1"></a>prepped_docs <span class="ot">&lt;-</span> <span class="fu">prepDocuments</span>(processed<span class="sc">$</span>documents, processed<span class="sc">$</span>vocab, processed<span class="sc">$</span>meta, <span class="at">lower.thresh =</span> <span class="dv">3</span>, <span class="at">upper.thresh =</span> <span class="dv">80</span>)</span></code></pre></div>
 <pre><code>## Removing 9638 of 14346 terms (43586 of 136130 tokens) due to frequency 
 ## Your corpus now has 109 documents, 4708 terms and 92544 tokens.</code></pre>
 <p>Now that the data is properly preprocessed and prepared, we can estimate the actual model. As mentioned before, covariates can influence topical prevalence as well as their content. I assume topical prevalence to be influenced by the party of the speaker as well as the year the SOTU was held. The latter is assumed to influence the topical prevalence in a non-linear way (SOTU addresses usually deal with acute topics which do not gradually build over time) and is therefore estimated with a spline through the <code>s()</code> function that comes from the <code>stm</code> package. It defaults to a spline with 10 degrees of freedom. Moreover, I assume the content of topics to be influenced by party affiliation. Both <code>prevalence =</code> and <code>content =</code> take their arguments in formula notation.</p>
 <p>As determined before, I assume the presence of <code>K = 16</code> topics (<code>stm</code> also offers the <code>searchK()</code> function to tune this hyperparameter)</p>
-<div class="sourceCode" id="cb387"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb387-1"><a href="day5.html#cb387-1" aria-hidden="true" tabindex="-1"></a>sotu_content_fit <span class="ot">&lt;-</span> <span class="fu">stm</span>(<span class="at">documents =</span> prepped_docs<span class="sc">$</span>documents, </span>
-<span id="cb387-2"><a href="day5.html#cb387-2" aria-hidden="true" tabindex="-1"></a>                        <span class="at">vocab =</span> prepped_docs<span class="sc">$</span>vocab, </span>
-<span id="cb387-3"><a href="day5.html#cb387-3" aria-hidden="true" tabindex="-1"></a>                        <span class="at">K =</span> <span class="dv">16</span>, </span>
-<span id="cb387-4"><a href="day5.html#cb387-4" aria-hidden="true" tabindex="-1"></a>                        <span class="at">prevalence =</span> <span class="sc">~</span>party <span class="sc">+</span> <span class="fu">s</span>(year),</span>
-<span id="cb387-5"><a href="day5.html#cb387-5" aria-hidden="true" tabindex="-1"></a>                        <span class="at">content =</span> <span class="sc">~</span>party,</span>
-<span id="cb387-6"><a href="day5.html#cb387-6" aria-hidden="true" tabindex="-1"></a>                        <span class="at">max.em.its =</span> <span class="dv">75</span>, </span>
-<span id="cb387-7"><a href="day5.html#cb387-7" aria-hidden="true" tabindex="-1"></a>                        <span class="at">data =</span> prepped_docs<span class="sc">$</span>meta, </span>
-<span id="cb387-8"><a href="day5.html#cb387-8" aria-hidden="true" tabindex="-1"></a>                        <span class="at">init.type =</span> <span class="st">&quot;Spectral&quot;</span>,</span>
-<span id="cb387-9"><a href="day5.html#cb387-9" aria-hidden="true" tabindex="-1"></a>                        <span class="at">verbose =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb368"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb368-1"><a href="day5.html#cb368-1" aria-hidden="true" tabindex="-1"></a>sotu_content_fit <span class="ot">&lt;-</span> <span class="fu">stm</span>(<span class="at">documents =</span> prepped_docs<span class="sc">$</span>documents, </span>
+<span id="cb368-2"><a href="day5.html#cb368-2" aria-hidden="true" tabindex="-1"></a>                        <span class="at">vocab =</span> prepped_docs<span class="sc">$</span>vocab, </span>
+<span id="cb368-3"><a href="day5.html#cb368-3" aria-hidden="true" tabindex="-1"></a>                        <span class="at">K =</span> <span class="dv">16</span>, </span>
+<span id="cb368-4"><a href="day5.html#cb368-4" aria-hidden="true" tabindex="-1"></a>                        <span class="at">prevalence =</span> <span class="sc">~</span>party <span class="sc">+</span> <span class="fu">s</span>(year),</span>
+<span id="cb368-5"><a href="day5.html#cb368-5" aria-hidden="true" tabindex="-1"></a>                        <span class="at">content =</span> <span class="sc">~</span>party,</span>
+<span id="cb368-6"><a href="day5.html#cb368-6" aria-hidden="true" tabindex="-1"></a>                        <span class="at">max.em.its =</span> <span class="dv">75</span>, </span>
+<span id="cb368-7"><a href="day5.html#cb368-7" aria-hidden="true" tabindex="-1"></a>                        <span class="at">data =</span> prepped_docs<span class="sc">$</span>meta, </span>
+<span id="cb368-8"><a href="day5.html#cb368-8" aria-hidden="true" tabindex="-1"></a>                        <span class="at">init.type =</span> <span class="st">&quot;Spectral&quot;</span>,</span>
+<span id="cb368-9"><a href="day5.html#cb368-9" aria-hidden="true" tabindex="-1"></a>                        <span class="at">verbose =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <p>Let’s look at a summary of the topics and their prevalence. For this, we can use a <a href="https://github.com/cschwem2er/stminsights">shiny app developed by Carsten Schwemmer</a></p>
-<div class="sourceCode" id="cb388"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb388-1"><a href="day5.html#cb388-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stminsights)</span>
-<span id="cb388-2"><a href="day5.html#cb388-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb388-3"><a href="day5.html#cb388-3" aria-hidden="true" tabindex="-1"></a>prepped_docs<span class="sc">$</span>meta<span class="sc">$</span>party <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(prepped_docs<span class="sc">$</span>meta<span class="sc">$</span>party)</span>
-<span id="cb388-4"><a href="day5.html#cb388-4" aria-hidden="true" tabindex="-1"></a>prep <span class="ot">&lt;-</span> <span class="fu">estimateEffect</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">16</span> <span class="sc">~</span> party <span class="sc">+</span> <span class="fu">s</span>(year), sotu_content_fit, <span class="at">meta =</span> prepped_docs<span class="sc">$</span>meta, <span class="at">uncertainty =</span> <span class="st">&quot;Global&quot;</span>)</span>
-<span id="cb388-5"><a href="day5.html#cb388-5" aria-hidden="true" tabindex="-1"></a><span class="fu">map</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">16</span>, <span class="sc">~</span><span class="fu">summary</span>(prep, <span class="at">topics =</span> .x))</span>
-<span id="cb388-6"><a href="day5.html#cb388-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb388-7"><a href="day5.html#cb388-7" aria-hidden="true" tabindex="-1"></a><span class="fu">save</span>(prepped_docs, sotu_stm, prep, <span class="at">file =</span> <span class="st">&quot;stm_insights.RData&quot;</span>)</span>
-<span id="cb388-8"><a href="day5.html#cb388-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb388-9"><a href="day5.html#cb388-9" aria-hidden="true" tabindex="-1"></a><span class="fu">run_stminsights</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb369"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb369-1"><a href="day5.html#cb369-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stminsights)</span>
+<span id="cb369-2"><a href="day5.html#cb369-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb369-3"><a href="day5.html#cb369-3" aria-hidden="true" tabindex="-1"></a>prepped_docs<span class="sc">$</span>meta<span class="sc">$</span>party <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(prepped_docs<span class="sc">$</span>meta<span class="sc">$</span>party)</span>
+<span id="cb369-4"><a href="day5.html#cb369-4" aria-hidden="true" tabindex="-1"></a>prep <span class="ot">&lt;-</span> <span class="fu">estimateEffect</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">16</span> <span class="sc">~</span> party <span class="sc">+</span> <span class="fu">s</span>(year), sotu_content_fit, <span class="at">meta =</span> prepped_docs<span class="sc">$</span>meta, <span class="at">uncertainty =</span> <span class="st">&quot;Global&quot;</span>)</span>
+<span id="cb369-5"><a href="day5.html#cb369-5" aria-hidden="true" tabindex="-1"></a><span class="fu">map</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">16</span>, <span class="sc">~</span><span class="fu">summary</span>(prep, <span class="at">topics =</span> .x))</span>
+<span id="cb369-6"><a href="day5.html#cb369-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb369-7"><a href="day5.html#cb369-7" aria-hidden="true" tabindex="-1"></a><span class="fu">save</span>(prepped_docs, sotu_stm, prep, <span class="at">file =</span> <span class="st">&quot;stm_insights.RData&quot;</span>)</span>
+<span id="cb369-8"><a href="day5.html#cb369-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb369-9"><a href="day5.html#cb369-9" aria-hidden="true" tabindex="-1"></a><span class="fu">run_stminsights</span>()</span></code></pre></div>
 </div>
 </div>
 <div id="further-readings" class="section level2 hasAnchor" number="5.8">
@@ -902,6 +900,33 @@ In the following example, I will use the State of the Union addresses to run you
 <li>A <code>shiny</code> <a href="https://warin.ca/shiny/stm/#section-the-structural-topic-model">introduction to STM</a> by Thierry Warin</li>
 </ul>
 
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-grun_topicmodels_2020" class="csl-entry">
+Grün, Bettina, Kurt Hornik, David Blei, John Lafferty, Xuan-Hieu Phan, Makoto Matsumoto, Nishimura Takuji, and Shawn Cokus. 2020. <span>“Topicmodels: <span>Topic Models</span>.”</span>
+</div>
+<div id="ref-hvitfeldt_textrecipes_2022" class="csl-entry">
+Hvitfeldt, Emil. 2022. <span>“Textrecipes: <span>Extra</span> ’<span>Recipes</span>’ for <span>Text Processing</span>.”</span>
+</div>
+<div id="ref-kuhn_dials_2022" class="csl-entry">
+Kuhn, Max, and Hannah Frick. 2022. <span>“Dials: <span>Tools</span> for <span>Creating Tuning Parameter Values</span>.”</span>
+</div>
+<div id="ref-kuhn_parsnip_2022" class="csl-entry">
+Kuhn, Max, Davis Vaughan, and Emil Hvitfeldt. 2022. <span>“Parsnip: <span>A Common API</span> to <span>Modeling</span> and <span>Analysis Functions</span>.”</span>
+</div>
+<div id="ref-kuhn_tidymodels_2020" class="csl-entry">
+Kuhn, Max, and Hadley Wickham. 2020. <span>“Tidymodels: A Collection of Packages for Modeling and Machine Learning Using Tidyverse Principles.”</span>
+</div>
+<div id="ref-kuhn_recipes_2022" class="csl-entry">
+———. 2022. <span>“Recipes: <span>Preprocessing</span> and <span>Feature Engineering Steps</span> for <span>Modeling</span>.”</span>
+</div>
+<div id="ref-robinson_broom_2020" class="csl-entry">
+Robinson, David. 2020. <span>“Broom: <span>Convert Statistical Analysis Objects</span> into <span>Tidy Data Frames</span>.”</span>
+</div>
+<div id="ref-vaughan_workflows_2022" class="csl-entry">
+Vaughan, Davis. 2022. <span>“Workflows: <span>Modeling Workflows</span>.”</span>
 </div>
 </div>
             </section>

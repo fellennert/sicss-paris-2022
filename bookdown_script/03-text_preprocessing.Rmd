@@ -16,9 +16,9 @@ single_ones <- "what's up"
 double_ones <- 'he said: "I am fine"'
 ```
 
-The `stringr` package [@wickham_stringr_2019] contains a multitude of commands (49 in total) that can be used to achieve a couple of things, mainly manipulating character vectors, and finding and matching patterns. Basically, these goals can also be achieved with base R functions, but `stringr`'s advantage is its consistency. The makers of `stringr` describe it as
+The `stringr` package [@wickham_stringr_2019] contains a multitude of commands (49 in total) that can be used to achieve a couple of things, mainly manipulating character vectors, and finding and matching patterns. These goals can also be achieved with base R functions, but `stringr`'s advantage is its consistency. The makers of `stringr` describe it as
 
-> A consistent, simple and easy to use set of wrappers around the fantastic `stringi` package. All function and argument names (and positions) are consistent, all functions deal with `NA`'s and zero-length vectors in the same way, and the output from one function is easy to feed into the input of another.
+> A consistent, simple and easy-to-use set of wrappers around the fantastic `stringi` package. All function and argument names (and positions) are consistent, all functions deal with `NA`'s and zero-length vectors in the same way, and the output from one function is easy to feed into the input of another.
 
 Every `stringr` function starts with `str_` -- which facilitates finding the proper command: just type `str_` and RStudio's auto-suggest function should take care of the rest (if it doesn't pop up by itself, you can trigger it by hitting the tab key). Also, they take a vector of strings as their first argument, which facilitates using them in a ` %>% `-pipeline and adding them to a `mutate()`-call. 
 
@@ -26,7 +26,7 @@ One important component of `stringr` functions is regular expressions which will
 
 ## Basic manipulations
 
-In the following, we will introduce you to a number of different operations that can be performed on strings.
+In the following, we will introduce you to several different operations that can be performed on strings.
 
 ### Changing the case of the words
 
@@ -133,7 +133,7 @@ Up to now, you have been introduced to the more basic functions of the `stringr`
 
 Those regular expressions are patterns that can be used to describe certain strings. Exemplary use cases of regexes are the identification of phone numbers, email addresses, or whether a password you choose on a web page consists of enough characters, an uppercase character, and at least one special character. Hence, if you want to replace certain words with another one, you can write the proper regex and it will identify the strings you want to replace, and the `stringr` functions (i.e., `str_replace()`) will take care of the rest.
 
-Before you dive into regexes, beware that they are quite complicated at the beginning^[comment from Felix: "honestly, I was quite overwhelmed when I encountered them first"]. Yet, mastering them is very rewarding and will definitely pay off in the future.
+Before you dive into regexes, beware that they are quite complicated at the beginning^[comment from Felix: "honestly, I was quite overwhelmed when I encountered them first"]. Yet, mastering them is very rewarding and will pay off in the future.
 
 ### Literal characters
 
@@ -199,7 +199,7 @@ str_detect(stringr_functions, "str_._all")
 str_c(stringr_functions, collapse = "\n") %>% cat()
 ```
 
-Well, as you can see, there are none. This is due to the fact that the `.` can only replace one character. We need some sort of multiplier to find them. The ones available are:
+Well, as you can see, there are none. This is because the `.` can only replace one character. We need some sort of multiplier to find them. The ones available are:
 
 * `?` -- zero or one
 * `*` -- zero or more
@@ -270,7 +270,7 @@ str_c(vector_of_strings, collapse = "\n") %>% cat()
 
 #### Negating sets of characters
 
-Sometimes you will also want to exclude certain sets of characters or words. In order to achieve this, you can use the `^` meta character at the beginning of the range or set you are defining. 
+Sometimes you will also want to exclude certain sets of characters or words. To achieve this, you can use the `^` meta character at the beginning of the range or set you are defining. 
 
 ```{r}
 str_view(sp_ce, "sp[^i]ce")
@@ -298,7 +298,7 @@ str_view(shortened_sentences, "^The.+\\.$")
 
 #### Boundaries
 
-Note that right now, the regex also matches the sentence which starts with a "These." In order to address this, we need to tell the machine that it should only accept a "The" if there starts a new word thereafter. In regex syntax, this is done using so-called boundaries. Those are defined as `\b` as a word boundary and `\B` as no word boundary. (Note that you will need an additional escape character as you will have to escape the escape character itself.)
+Note that right now, the regex also matches the sentence which starts with a "These." To address this, we need to tell the machine that it should only accept a "The" if there starts a new word thereafter. In regex syntax, this is done using so-called boundaries. Those are defined as `\b` as a word boundary and `\B` as no word boundary. (Note that you will need an additional escape character as you will have to escape the escape character itself.)
 
 In my example, we would include the former if we were to search for sentences that begin with a single "The" and the latter if we were to search for sentences that begin with a word that starts with a "The" but are not "The" -- such as "These."
 
@@ -319,7 +319,7 @@ heights <- c("1m30cm", "2m01cm", "3m10cm")
 str_c(heights, collapse = "\n") %>% cat()
 ```
 
-Here, in order to identify the height in meters, the first task is to identify all the numbers that are followed by an "m". The regex syntax for this looks like this: `A(?=pattern)` with `A` being the entity that is supposed to be found (hence, in this case, [0-9]+).
+Here, to identify the height in meters, the first task is to identify all the numbers that are followed by an "m". The regex syntax for this looks like this: `A(?=pattern)` with `A` being the entity that is supposed to be found (hence, in this case, [0-9]+).
 
 ```{r}
 str_view(heights, "[0-9]+(?=m)")
@@ -327,7 +327,7 @@ str_view(heights, "[0-9]+(?=m)")
 
 The second step now is to identify the centimeters. This could of course be achieved using the same regex and replacing `m` with `cm`. However, we can also harness a so-called negative look ahead `A(?!pattern)`, a so-called look behind `(?<=pattern)A`. The negative counterpart, the negative look behind `(?<!pattern)A` could be used to extract the meters.
 
-The negative lookahead basically returns everything that is not followed by the defined pattern. The look behind returns everything that is preceded by the pattern, the negative look behind returns everything that is not preceded by the pattern.
+The negative lookahead returns everything that is not followed by the defined pattern. The look behind returns everything that is preceded by the pattern, the negative look behind returns everything that is not preceded by the pattern.
 
 In the following, we demonstrate how you could extract the centimeters using negative look ahead and look behind.
 
@@ -343,9 +343,9 @@ str_view(heights, "(?<=m)[0-9]+") # look behind
 
 Now that you have learned about regexes, you can unleash the full power of `stringr`.
 
-The basic syntax of a `stringr` function looks as follows: `str_.*(string, regex(""))`. Some `stringr` functions also have the suffix `_all` which implies that they perform the operation not only on the first match ("greedy") but on every match.
+The basic syntax of a `stringr` function looks as follows: `str_.*(string, regex(""))`. Some `stringr` functions also have the suffix `_all` which implies that they operate not only on the first match ("greedy") but on every match.
 
-In order to demonstrate the different functions, we will again rely on the subset of example sentences.
+To demonstrate the different functions, we will again rely on the subset of example sentences.
 
 ### Detect matches
 
@@ -369,7 +369,7 @@ If you want to know whether there are multiple matches present in each string, y
 str_count(shortened_sentences, regex("the\\b", ignore_case = TRUE))
 ```
 
-If you want to locate the match in the string, use `str_locate`. This returns a matrix, which is basically a vector of multiple dimensions.
+If you want to locate the match in the string, use `str_locate`. This returns a matrix, which is a vector of multiple dimensions.
 
 ```{r}
 str_locate(shortened_sentences, regex("The\\b", ignore_case = TRUE))
@@ -378,12 +378,12 @@ str_locate(shortened_sentences, regex("The\\b", ignore_case = TRUE))
 Moreover, this is a good example for the greediness of `stringr` functions. Hence, it is advisable to use `str_locate_all` which returns a list with one matrix for each element of the original vector:
 
 ```{r}
-str_locate_all(shortened_sentences, regex("The\\b", ignore_case = TRUE))
+str_locate_all(shortened_sentences, regex("The\\b", ignore_case = TRUE)) %>% .[1:3]
 ```
 
 ### Mutating strings
 
-Mutating strings usually implies the replacement of certain elements (e.g., words) with other elements (or removing them, which is basically a special case of replacing them). In `stringr` this is performed using `str_replace(string, pattern, replacement)` and `str_replace_all(string, pattern, replacement)`. 
+Mutating strings usually implies the replacement of certain elements (e.g., words) with other elements (or removing them, which is a special case of replacing them). In `stringr` this is performed using `str_replace(string, pattern, replacement)` and `str_replace_all(string, pattern, replacement)`. 
 
 If we wanted, for instance, to replace the first occurrence of "m" letters with "meters," we would go about this the following way:
 
@@ -420,7 +420,8 @@ str_replace_all(heights, c("(?<=[2-9]{1})m" = "meters", "(?<=[0-9]{2})m" = "mete
 ```{r}
 mtcars %>% 
   rownames_to_column(var = "car_model") %>% 
-  transmute(manufacturer = str_extract(car_model, "^\\w+\\b"))
+  transmute(manufacturer = str_extract(car_model, "^\\w+\\b")) %>% 
+  head(6)
 ```
 
 ### Split vectors
@@ -445,9 +446,9 @@ str_split_fixed(manufacturer_model, "(?<=\\w)\\b", n = 2) %>%
 
 ## Featurization of text
 
-After having learned about the basics of string manipulation, we are now turning to how you can turn your collection of documents, your corpus, into a representation that lends itself nicely to quantitative analyses of text. There are a couple of packages around which you can use for text mining, such as `quanteda` [@benoit_quanteda_2018], `tm` [@feinerer_tm_2008], and `tidytext` [@silge_tidytext_2016], the latter being probably the most recent addition to them. A larger overview of relevant packages can be found on this [CRAN Task View](https://cran.r-project.org/web/views/NaturalLanguageProcessing.html).
+After having learned about the basics of string manipulation, we are now turning to how you can turn your collection of documents, your corpus, into a representation that lends itself nicely to quantitative analyses of text. There are a couple of packages around which you can use for text mining, such as `quanteda` [@benoit_quanteda_2018], `tm` [@feinerer_text_2008], and `tidytext` [@silge_tidytext_2016], the latter being probably the most recent addition to them. A larger overview of relevant packages can be found on this [CRAN Task View](https://cran.r-project.org/web/views/NaturalLanguageProcessing.html).
 
-As you could probably tell from its name, `tidytext` obeys the tidy data principles. "Every observation is a row" translates here to "every token has its own row" -- "token" not necessarily relating to a singular term, but also to so-called n-grams. In the following, we will demonstrate what text mining using tidy principles can look like in R. For this, we will first cover the preprocessing of text using tidy data principles. Thereafter, we will delve into more advanced preprocessing such as the lemmatization of words and part-of-speech (POS) tagging using `spaCy` [@benoit_spacy_2020]. Finally, different R packages are using different representations of text data. Depending on the task at hand, you will therefore have to be able to transform the data into the proper format. This will be covered in the final part.
+As you could probably tell from its name, `tidytext` obeys the tidy data principles. "Every observation is a row" translates here to "every token has its own row" -- "token" not necessarily relating to a singular term, but also so-called n-grams. In the following, we will demonstrate what text mining using tidy principles can look like in R. For this, we will first cover the preprocessing of text using tidy data principles. Thereafter, we will delve into more advanced preprocessing such as the lemmatization of words and part-of-speech (POS) tagging using `spaCy` [@honnibal_spacy_2017]. Finally, different R packages are using different representations of text data. Depending on the task at hand, you will therefore have to be able to transform the data into the proper format. This will be covered in the final part.
 
 ### Pre-processing with `tidytext`
 
@@ -479,7 +480,7 @@ sotu_20cent_raw <- sotu_raw %>%
   filter(between(year, 1900, 2000))
 ```
 
-In a first step, we bring the data into a form that facilitates manipulation: a tibble. For this, we use `tidytext`'s `unnest_tokens()` function. It basically breaks the corpus up into tokens -- the respective words. In English, words are separated by whitespace. Therefore, tokenization could also be achieved doing `str_split(sep = " ")`.
+In a first step, we bring the data into a form that facilitates manipulation: a tibble. For this, we use `tidytext`'s `unnest_tokens()` function. It breaks the corpus up into tokens -- the respective words. In English, words are separated by whitespace. Therefore, tokenization could also be achieved doing `str_split(sep = " ")`.
 `
 ```{r}
 library(tidytext)
@@ -555,7 +556,7 @@ The corpus now contains `r sotu_20cent_tokenized_nostopwords_nonumbers %>% disti
 
 To decrease the complexity of the vocabulary even further, we can reduce the tokens to their stem using the `SnowballC` package and its function `wordStem()`:
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 library(SnowballC)
 
 sotu_20cent_tokenized_nostopwords_nonumbers_stemmed <- sotu_20cent_tokenized_nostopwords_nonumbers %>% 
@@ -593,7 +594,7 @@ Now we have created a nice tibble containing the SOTU addresses of the 20th cent
 
 ## Preprocessing with `spaCy`
 
-Similar things (and more!) can also be achieved with `spaCy` [@benoit_spacy_2020]. `spacyr` is an R wrapper around the `spaCy` Python package and, therefore, a bit tricky to install at first, you can find instructions [here](https://spacyr.quanteda.io/articles/using_spacyr.html). 
+Similar things (and more!) can also be achieved with `spaCy` [@honnibal_spacy_2017]. `spacyr` [@benoit_spacyr_2020] is an R wrapper around the `spaCy` Python package and, therefore, a bit tricky to install at first, you can find instructions [here](https://spacyr.quanteda.io/articles/using_spacyr.html). 
 
 The functionalities `spacyr` offers you are the following^[overview copied from their webpage]: 
 
@@ -602,11 +603,11 @@ The functionalities `spacyr` offers you are the following^[overview copied from 
 * parsing dependencies (to identify the grammatical structure of the sentence); and
 * identifying, extracting, or consolidating token sequences that form named entities or noun phrases.
 
-In brief, preprocessing with `spacyr` is computationally more expensive than using, for instance, `tidytext`, but will give you more [accurate lemmatization instead of "stupid," rule-based stemming.](https://stackoverflow.com/questions/1787110/what-is-the-difference-between-lemmatization-vs-stemming). Also, it allows you to break up documents into smaller entities, sentences, which might be more suitable, e.g., as input for classifiers (since sentences tend to be about one topic, they allow for more fine-grained analyses). Part-of-speech (POS) tagging basically provides you with the functions of the different terms within the sentence. This might prove useful for tasks such as sentiment analysis. The final task `spacyr` can help you with is Named Entity Recognition (NER) which can be used for tasks such as sampling relevant documents. 
+In brief, preprocessing with `spacyr` is computationally more expensive than using, for instance, `tidytext`, but will give you more [accurate lemmatization instead of "stupid," rule-based stemming.](https://stackoverflow.com/questions/1787110/what-is-the-difference-between-lemmatization-vs-stemming). Also, it allows you to break up documents into smaller entities, sentences, which might be more suitable, e.g., as input for classifiers (since sentences tend to be about one topic, they allow for more fine-grained analyses). Part-of-speech (POS) tagging provides you with the functions of the different terms within the sentence. This might prove useful for tasks such as sentiment analysis. The final task `spacyr` can help you with is Named Entity Recognition (NER) which can be used for tasks such as sampling relevant documents. Since it is a wrapper for a Python package, it requires a Python environment that is correctly set up and connected to RStudio. Setting this up is usually a bit finicky, you can find the instructions [online](https://spacyr.quanteda.io/articles/using_spacyr.html). 
 
 ### Initializing spacy
 
-Before using `spacyr`, it needs to be initialized. What happens during this process is that R basically opens a connection to Python so that it can then run the `spacyr` functions in Python's `spaCy`. Once you have set up everything properly (see [instructions](https://spacyr.quanteda.io/articles/using_spacyr.html)), you can initialize it using `spacy_initialize(model)`. Different language models can be specified and an overview can be found [here](https://spacy.io/usage/models#languages). Note that a process of `spaCy` is started when you `spacy_initialize()` and continues running in the background. Hence, once you don't need it anymore, or want to load a different model, you should `spacy_finalize()`. 
+Before using `spacyr`, it needs to be initialized. What happens during this process is that R opens a connection to Python so that it can then run the `spacyr` functions in Python's `spaCy`. Once you have set up everything properly, you can initialize it using `spacy_initialize(model)`. Different language models can be specified and an overview can be found [here](https://spacy.io/usage/models#languages). Note that a process of `spaCy` is started when you `spacy_initialize()` and continues running in the background. Hence, once you don't need it anymore, or want to load a different model, you should `spacy_finalize()`. 
 
 ```{r}
 library(spacyr)
@@ -614,7 +615,7 @@ library(spacyr)
 spacy_initialize(model = "en_core_web_sm")
 
 # to download a new model -- here: French
-#spacy_finalize()
+#spacy_finalize() # closes the connection
 #spacy_download_langmodel(model = "fr_core_news_sm")
 #spacy_initialize(model = "fr_core_news_sm") #check that it has worked
 
@@ -622,9 +623,9 @@ spacy_initialize(model = "en_core_web_sm")
 #spacy_initialize(model = "de_core_web_sm") # for German
 ```
 
-## `spacy_parse()`
+### `spacy_parse()`
 
-`spacyr`'s main function is `spacy_parse()`. It takes a character vector or [TIF-compliant data frame](https://github.com/ropensci/tif). The latter is basically a tibble containing at least two columns, one named `doc_id` with unique document ids and one named `text`, containing the respective documents.
+`spacyr`'s main function is `spacy_parse()`. It takes a character vector or [TIF-compliant data frame](https://github.com/ropensci/tif). The latter is a tibble containing at least two columns, one named `doc_id` with unique document ids and one named `text`, containing the respective documents.
 
 ```{r}
 library(tif)
@@ -659,12 +660,12 @@ sotu_parsed %>% head(10)
 
 Note that this is already fairly similar to the output of `tidytext`'s `unnest_tokens()` function. The advantages are that the lemmas are more accurate, that we have a new sub-entity -- sentences --, and that there is now more information on the type and meanings of the words. 
 
-### POS tags, NER, and nounphrases
+### POS tags, NER, and noun phrases
 
 The abbreviations in the `pos` column follow the format of [Universal POS tags](https://universaldependencies.org/u/pos/all.html). Entities can be extracted by passing the parsed object on to `entity_extract()`.
 
 ```{r}
-entity_extract(sotu_parsed, type = "all")
+entity_extract(sotu_parsed, type = "all") %>% head(10)
 ```
 
 The following entities are recognized (overview taken from [this article](https://towardsdatascience.com/explorations-in-named-entity-recognition-and-was-eleanor-roosevelt-right-671271117218)):
@@ -691,13 +692,13 @@ The following entities are recognized (overview taken from [this article](https:
 To properly represent entities in our corpus, you can use `entity_consolidate()`. This collapses words that belong to the same entity into single tokens (e.g., "the" "white" "house" becomes "the_white_house"). 
 
 ```{r}
-entity_consolidate(sotu_parsed)
+entity_consolidate(sotu_parsed) %>% head(10)
 ```
 
 The same can be performed with noun phrases. 
 
 ```{r}
-nounphrase_extract(sotu_parsed)
+nounphrase_extract(sotu_parsed) %>% head(10)
 ```
 
 Usually, entities and noun phrases can give you a good idea of what texts are about. Therefore, you might want to only extract them without parsing the entire text.
@@ -707,19 +708,17 @@ spacy_extract_entity(sotu_speeches_tif %>% slice(1:3))
 spacy_extract_nounphrases(sotu_speeches_tif %>% slice(1:3))
 ```
 
-The `spacyr` package of course has some more functions such as dependency parsing. However, they will not be touched upon in the rest of the course and we will therefore leave them out for now. 
+The `spacyr` package of course has some more functions such as dependency parsing. However, they probably go beyond the scope of this script and we will therefore leave them out for now. 
 
 ## First analyses
 
-A common task in the quantitative analysis of text is to determine how documents differ from each other concerning word usage. This is usually achieved by identifying words that are particular for one document but not for another. These words are referred to by @monroe2008 as *fighting words* or, by @grimmer2022, *discriminating words*. To use the techniques that will be presented today, an already existing organization of the documents is assumed.
-
-In the following, I will present multiple methods according to which you can identify words that are related to different groups and can be used to distinguish them. I will present the methods and their implementation in R ordered from rather simple to more complicated. The order is inspired by @monroe2008. The methods have in common that, at their heart, they determine how often a word appears in a group of documents. Thereafter, the "importance" of a word in distinguishing the groups is determined through several weighting procedures.
+A common task in the quantitative analysis of text is to determine how documents differ from each other concerning word usage. This is usually achieved by identifying words that are particular for one document but not for another. These words are referred to by @monroe_fightin_2008 as *fighting words* or, by @grimmer_text_2022, *discriminating words*. To use the techniques that will be presented today, an already existing organization of the documents is assumed.
 
 ### Counting words per document
 
-The most simple approach to determine which words are more correlated to a certain group of documents is by merely counting them and determining their proportion in the document groups. For illustratory purposes, I use fairytales from H.C. Andersen which are contained in the `hcandersenr` package.
+The most simple approach to determine which words are more correlated to a certain group of documents is by merely counting them and determining their proportion in the document groups. For illustratory purposes, I use fairy tales from H.C. Andersen which are contained in the `hcandersenr` package.
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 library(lubridate)
 
 fairytales <- hcandersenr::hcandersen_en %>% 
@@ -781,7 +780,7 @@ This already looks quite nice, it is quite easy to see which plot belongs to the
 
 A better explanation for words that are particular to a group of documents is the ones that appear often in one group but rarely in the other one(s). So far, the measure of term frequency only accounts for how often terms are used in the respective document. I can take into account how often it appears in other documents by including the inverse document frequency. The resulting measure is called tf-idf and describes "the frequency of a term adjusted for how rarely it is used." [@silge_tidytext_2016: 31] If a term is rarely used overall but appears comparably often in a singular document, it might be safe to assume that it plays a bigger role in that document.
 
-The tf-idf of a word in a document is commonly^[Note that multiple implementations exist, for an overview see, ofr instance, @manning2008] calculated as follows:
+The tf-idf of a word in a document is commonly^[Note that multiple implementations exist, for an overview see, ofr instance, @manning_introduction_2008] calculated as follows:
 
 $$w_{i,j}=tf_{i,j}\times ln(\frac{N}{df_{i}})$$
 
@@ -869,7 +868,7 @@ A document-term matrix contains rows that represent a document and columns that 
 
 In R, a common implementation of DTMs is the `DocumentTermMatrix` class in the `tm` package. The `topicmodels` package which we will use for performing LDA comes with a collection of example data.
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 library(topicmodels)
 
 data("AssociatedPress")
@@ -909,7 +908,7 @@ associated_press_dfm %>%
 
 ### Document-feature matrix
 
-The so-called document-feature matrix is the data format used in the `quanteda` package. It is basically a document-term matrix, but the authors of the `quanteda` package chose the term feature over term to be more accurate: 
+The so-called document-feature matrix is the data format used in the `quanteda` package. It is a document-term matrix, but the authors of the `quanteda` package chose the term feature over term to be more accurate: 
 
 > "We call them 'features' rather than terms, because features are more general than terms: they can be defined as raw terms, stemmed terms, the parts of speech of terms, terms after stopwords have been removed, or a dictionary class to which a term belongs. Features can be entirely general, such as ngrams or syntactic dependencies, and we leave this open-ended." 
 
@@ -949,7 +948,7 @@ acq
 #str(acq %>% head(1))
 ```
 
-It is basically a list containing different elements that refer to metadata or the content. This is a nice and effective framework for storing documents, yet it does not lend itself nicely for analysis with tidy tools. You can use `tidy()` to clean it up a bit:
+It is a list containing different elements that refer to metadata or the content. This is a nice and effective framework for storing documents, yet it does not lend itself nicely for analysis with tidy tools. You can use `tidy()` to clean it up a bit:
 
 ```{r}
 acq_tbl <- acq %>% 

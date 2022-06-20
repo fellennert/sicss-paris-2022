@@ -12,7 +12,7 @@ bibliography: tm-course.bib
 # url: your book url like https://bookdown.org/yihui/bookdown
 # cover-image: path to the social sharing image like images/cover.jpg
 description: |
-  This book serves as accompanying script for the R sessions of the 2022 Summer Institute for Computational Social Science (SICSS), taking place at the Institut Polytechnique de Paris.
+  This book serves as an accompanying script for the R sessions of the 2022 Summer Institute for Computational Social Science (SICSS), taking place at the Institut Polytechnique de Paris.
 link-citations: yes
 always_allow_html: true
 ---
@@ -21,11 +21,11 @@ always_allow_html: true
 
 Dear student, 
 
-if you read this script, you are either participating in the SICSS itself or came across it while browsing for resources for your studies. In any case, if you find inconsistencies or mistakes, please do not hesitate point them out by shooting an email to <felix.lennert@ensae.fr>.
+if you read this script, you are either participating in the SICSS itself or came across it while browsing for resources for your studies. In any case, if you find inconsistencies or mistakes, please do not hesitate to point them out by shooting an email to <felix.lennert@ensae.fr>.
 
 ## Outline
 
-This script will introduce you to the automated acquisition and subsequent quantitative analysis of text data using R. Over the course of the last decades, more and more text has become readily available. Think for example of Social Networking Platforms, online fora, Google Books, newspaper articles, the fact that YouTube can generate subtitles for all of its videos, or the fact that administrative records are increasingly digitized. Social scientists of course have decades of experience analyzing these things, yet they used to be constrained by data availability and, hence, their data sets used to be way smaller and could be processed by humans. To make the most out of the newly available data sets we mentioned above and to repurpose them for social scientific research, we need to use tools from the information and computer sciences. Some are fairly old such as basic dictionary-based sentiment analysis whose precursors were introduced in the 1960s, others are as recent as the early 2000s (LDA) or even 2014 (word2vec).
+This script will introduce you to the automated acquisition and subsequent quantitative analysis of text data using R. Over the last decades, more and more text has become readily available. Think for example of Social Networking Platforms, online fora, Google Books, newspaper articles, the fact that YouTube can generate subtitles for all of its videos, or the fact that administrative records are increasingly digitized. Social scientists of course have decades of experience analyzing these things, yet they used to be constrained by data availability and, hence, their data sets used to be way smaller and could be processed by humans. To make the most out of the newly available data sets we mentioned above and to repurpose them for social scientific research, we need to use tools from the information and computer sciences. Some are fairly old such as basic dictionary-based sentiment analysis whose precursors were introduced in the 1960s, others are as recent as the early 2000s (LDA) or even 2014 (word2vec).
 
 This script will be split into 5 chapters. Each chapter can be seen as representing a day of the summer school. Each chapter contains a "further links" section and exercises. Data are provided through dropbox links that are directly executable from the script. The raw RMD files are stored in a [dedicated GitHub repository](https://github.com/fellennert/sicss-paris-2022)^[Hence, you can also file a pull request if you have found a flaw.].
 
@@ -33,15 +33,15 @@ This introductory chapter is intended to help you set up your RStudio by install
 
 Day \@ref(day2) introduces web scraping. You will become familiar with making calls to different structured web pages through `rvest` and `rselenium`). APIs and how you can tap them will be introduced, too.
 
-Day \@ref(day3) gives you insight to techniques for scraping unstructured web pages. This is usually achieved using CSS selectors.
+Day \@ref(day3) gives you insight into techniques for scraping unstructured web pages. This is usually achieved using CSS selectors.
 
 Day \@ref(day4) is dedicated to the featurization and descriptive analysis of text.
 
 Day \@ref(day5) introduces both unsupervised and supervised machine learning approaches for the classification and analysis of text. 
 
-Day \@ref(day6) provides a glimpse on how word embedding techniques can be used. It will showcase how `word2vec` can be used to learn embeddings from text from scratch, as well as some arithmetic calculations using these embeddings.
+Day \@ref(day6) provides a glimpse of how word embedding techniques can be used. It will showcase how `word2vec` can be used to learn embeddings from text from scratch, as well as some arithmetic calculations using these embeddings.
 
-The following chapters draw heavily on packages from the `tidyverse` [@wickham_welcome_2019], `tidytext` [@silge_tidytext_2016], and `tidymodels` [@kuhn_tidymodels_2020], as well as the two excellent books "Text Mining with R: A Tidy Approach" [@silge_teyt_2017] and "Supervised Machine Learning for Text Analysis in R" [@hvitfeldt_supervised_2022]. Examples and inspiration are often drawn from blog posts and/or other tutorials, and we will give credit wherever credit is due. Moreover, you will find further readings at the end of each section as well as exercises at the end of the respective chapter.
+The following chapters draw heavily on packages from the `tidyverse` [@wickham_welcome_2019], `tidytext` [@silge_tidytext_2016], and `tidymodels` [@kuhn_tidymodels_2020], as well as the two excellent books "Text Mining with R: A Tidy Approach" [@silge_text_2017] and "Supervised Machine Learning for Text Analysis in R" [@hvitfeldt_supervised_2022]. Examples and inspiration are often drawn from blog posts and/or other tutorials, and we will give credit wherever credit is due. Moreover, you will find further readings at the end of each section as well as exercises at the end of the respective chapter.
 
 ## Setup procedure
 
@@ -88,6 +88,7 @@ packages <- c(
   "word2vec",
   "wordcloud",
   "workflows", 
+  "vembedr",
   "yardstick"
   )
 
@@ -98,17 +99,17 @@ purrr::walk(packages, ~{
 if (!"tif" %in% installed.packages()[, 1]) devtools::install_github("ropensci/tif")
 ```
 
-While we would strongly advise you to integrate RStudio projects into your workflow, it is not required for SICSS-Paris. We will work with RMarkdown (RMD) documents which facilitate working with file paths significantly insofar as they automatically assume the folder they are stored in as current working directory. In our case, this is not necessary though, since everything can be directly downloaded from Dropbox.
+While we would strongly advise you to integrate RStudio projects into your workflow, it is not required for SICSS-Paris. We will work with RMarkdown (RMD) documents which facilitate working with file paths significantly insofar as they automatically assume the folder they are stored in as the current working directory. In our case, this is not necessary though, since everything can be directly downloaded from Dropbox.
 
 ### Registration for API usage
 
-In the section on APIs, we will play with the New York Times API. If you want to follow the script on your own machine, you need to sign up for access and acquire an API key. Find instructions for registering [here](https://developer.nytimes.com/get-started).
+In the section on APIs, we will play with the New York Times API. If you want to follow the script on your machine, you need to sign up for access and acquire an API key. Find instructions for registering [here](https://developer.nytimes.com/get-started).
 
 Also, if you want to play with the `rtweet` package, you need a Twitter account.
 
 ### Docker for `RSelenium` 
 
-When you work with `RSelenium`, what basically happens is that you simulate a browser which you then control through R. For multiple reasons, the preferred procedure is to run the headless browser in a Docker container, a virtual machine inside your laptop. Hence, if you are planning on using `RSelenium`, you should install Docker first and follow [this tutorial](https://callumgwtaylor.github.io/post/using-rselenium-and-docker-to-webscrape-in-r-using-the-who-snake-database/) to set it up properly. (Please note that if you're on a non-Intel Mac, like one of the authors of this script, you are screwed and Docker's browser module will not work. We have not found a functioning workaround yet. So no scraping with Selenium for you.)
+When you work with `RSelenium`, what happens is that you simulate a browser which you then control through R. For multiple reasons, the preferred procedure is to run the headless browser in a Docker container, a virtual machine inside your laptop. Hence, if you are planning on using `RSelenium`, you should install Docker first and follow [this tutorial](https://callumgwtaylor.github.io/post/using-rselenium-and-docker-to-webscrape-in-r-using-the-who-snake-database/) to set it up properly. (Please note that if you're on a non-Intel Mac, like one of the authors of this script, you are screwed and Docker's browser module will not work. We have not found a functioning workaround yet. So no scraping with Selenium for you.)
 
 ### Some useful functions
 
@@ -188,8 +189,8 @@ Each chapter will contain a *Further links* section, where we include useful onl
 
 * Further material for learning covering each section of this script can be found on the [RStudio website](https://rstudio.cloud/learn/primers).
 * A more accessible guide to singular tidyverse packages can be found in the `introverse` R package. Find instructions for how to install and use it [online](https://spielmanlab.github.io/introverse/index.html).
-* The [SICSS bootcamp](https://sicss.io/boot_camp/) gets you up and started in a timely manner; wondering if you require a recap? – take the quizzes before going through the material.
-* The [R4DS book](https://r4ds.had.co.nz/) is a good mix between approachable introduction, technical description, real-world examples, and interesting exercises. You can read it in a superficial as well as in an in-depth manner. [Solutions for the exercises](https://jrnold.github.io/r4ds-exercise-solutions/) are available as well. The following chapters are relevant (ordered from most to least relevant): 2-4-6-5-3-7-11-27-14-15-16-19-21. 
+* The [SICSS bootcamp](https://sicss.io/boot_camp/) gets you up and started promptly; wondering if you require a recap? – take the quizzes before going through the material.
+* The [R4DS book](https://r4ds.had.co.nz/) is a good mix of approachable introduction, technical description, real-world examples, and interesting exercises. You can read it in a superficial as well as in an in-depth manner. [Solutions for the exercises](https://jrnold.github.io/r4ds-exercise-solutions/) are available as well. The following chapters are relevant (ordered from most to least relevant): 2-4-6-5-3-7-11-27-14-15-16-19-21. 
 
 ## Last but not least
 

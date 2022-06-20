@@ -10,7 +10,7 @@ In today's session, you will learn different techniques to get your hands on dat
 
 The most basic form of making a request is by using `read_html()` from the `xml2` package.
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 library(rvest) # this also loads the xml2 package
 library(tidyverse)
 
@@ -95,7 +95,7 @@ session_with_ua %>% session_history()
 
 Sometimes we also want to provide certain input, e.g., to provide login credentials or to scrape a website more systematically. That information is usually provided using so-called [forms](https://www.w3schools.com/html/html_forms.asp). A `<form>` element can contain different other elements such as text fields or checkboxes. Basically, we use `html_form()` to extract the form, `html_form_set()` to define what we want to submit, and `html_form_submit()` to finally submit it. [For a basic example, I search for something on Google.](https://rvest.tidyverse.org/reference/html_form.html)
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 google <- read_html("http://www.google.com")
 search <- html_form(google)[[1]]
 
@@ -128,7 +128,7 @@ google_form <- read_html("http://www.google.com") %>%
 search_something <- google_form %>% html_form_set(q = "something")
 
 google_session <- session("http://www.google.com") %>% 
-  session_submit(search_something)
+  session_submit(search_something, submit = "btnG")
 
 google_session %>% 
   read_html()
@@ -161,7 +161,7 @@ While web scraping (or *screen scraping*, as you extract the stuff that appears 
 
 There are a bunch of different sorts of APIs, but the most common one is the REST API. REST stands for "Representational State Transfer" and describes a set of rules the API designers are supposed to obey when developing their particular interface. You can make different requests, such as *GET* content, *POST* a file to a server -- `PUT` is similar, or request to `DELETE` a file. We will only focus on the `GET` part. 
 
-APIs offer you a structured way to communicate with the platform via your machine. In our use case, this means that you can get the data you want in a usually well-structured format and without all the "dirt" that you need to scrape off tediously (enough web scraping metaphors for today). With APIs, you can generally quite clearly define what you want and how you want it. In R, we achieve this by using the `httr` [@wickham_httr_2020] package. Moreover, using APIs does not bear the risk of acquiring the information you are not supposed to access and you also do not need to worry about the server not being able to handle the load of your requests (usually, there are rate limits in place to address this particular issue). However, it's not all fun and games with APIs: they might give you their data in a special format, both XML and JSON are common. The former is the one `rvest` uses as well, the latter can be tamed using `jsonlite` [@ooms_jsonlite_2020] which is to be introduced as well. Moreover, you usually have to ask the platform for permission and perhaps pay to get it. Once you have received the keys you need, you can tell R to fill them automatically, similar to how your browser knows your Amazon password, etc.; `usethis` [@wickham_usethis_2021] can help you with such tasks. An overview of current existing APIs can be found on [The Programmable Web](https://www.programmableweb.com/apis/directory)
+APIs offer you a structured way to communicate with the platform via your machine. In our use case, this means that you can get the data you want in a usually well-structured format and without all the "dirt" that you need to scrape off tediously (enough web scraping metaphors for today). With APIs, you can generally quite clearly define what you want and how you want it. In R, we achieve this by using the `httr` [@wickham_httr_2020] package. Moreover, using APIs does not bear the risk of acquiring the information you are not supposed to access and you also do not need to worry about the server not being able to handle the load of your requests (usually, there are rate limits in place to address this particular issue). However, it's not all fun and games with APIs: they might give you their data in a special format, both XML and JSON are common. The former is the one `rvest` uses as well, the latter can be tamed using `jsonlite` [@ooms_jsonlite_2020] which is to be introduced as well. Moreover, you usually have to ask the platform for permission and perhaps pay to get it. Once you have received the keys you need, you can tell R to fill them automatically, similar to how your browser knows your Amazon password, etc.; `usethis` [@wickham_usethis_2021] can help you with such tasks. An overview of currently existing APIs can be found on [The Programmable Web](https://www.programmableweb.com/apis/directory)
 
 The best thing that can happen with APIs: some of them are so popular that people have already written specific R packages for working with them -- an overview can be found on the [ROpenSci website](https://ropensci.org/packages/data-access/). One example of this is Twitter and the `rtweet` package [@kearney_rtweet_2019] which will be introduced in the end. Less work for us, great.
 
@@ -220,7 +220,7 @@ writeLines(rawToChar(response$content))
 
 `jsonlite` helps us to bring this output into a data frame. 
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 library(jsonlite)
 
 response %>% 
