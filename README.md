@@ -8,7 +8,7 @@ The scripts are ordered in the way the material is taught. Throughout the course
 
 The following list connects the corresponding files:
 
-* Day 1: intro to CSS and ethical considerations ([Slides](), [R material](bookdown_script/index.Rmd)
+* Day 1: intro to CSS and ethical considerations ([Slides: Intro to CSS](slides/sicss-1_welcome.pdf), [R material](bookdown_script/index.Rmd)
 * Day 2: scraping structured content from the web ([slides](), [R material](bookdown_script/01-scraping_structured.Rmd))
 * Day 3: scraping unstructured content from the web ([slides](), [R material](bookdown_script/02-scraping_unstructured.Rmd))
 * Day 4: text preprocessing ([slides](), [R material](bookdown_script/03-scraping_unstructured.Rmd))
