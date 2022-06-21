@@ -1,6 +1,6 @@
 # Intro
 
-This repository contains the code and slides used for teaching the 2022 edition of the Summer Institute in Computational Social Science in Paris. The R script can also be found in bookdown form [here](https://bookdown.org/f_lennert/bookdown_script/). Relevant data are available from dropbox, code for directly loading the script into the session is included in the scripts. Hence, no data needs to be downloaded upfront.
+This repository contains the code and slides used for teaching the 2022 edition of the Summer Institute in Computational Social Science in Paris. The R script can also be found in bookdown form [here](https://bookdown.org/f_lennert/bookdown_script/). Relevant data sets are distributed via Dropbox, code for directly loading them into the session is included in the scripts. Hence, no data needs to be downloaded upfront.
 
 Make sure that you have installed a current version of R and RStudio before running the scripts. Start with the [index file](bookdown_script/index.Rmd) and run the first chunk. This will install all packages you require for running the code. We assume familiarity with R and mostly follow the "tidy dialect." If you are entirely unfamiliar with this, you can find introductory material in the final section of the [index file](bookdown_script/index.Rmd).
 
