@@ -275,8 +275,6 @@ uk_mps <- lists_members(
 * [APIs for social scientists:
 A collaborative review](https://bookdown.org/paul/apis_for_social_scientists/)
 
-[more to be added]
-
 ## Exercises
 
 1. Start a session with the tidyverse Wikipedia page. Adapt your user agent to some sort of different value. Proceed to Hadley Wickham's page. Go back. Go forth. Check the `session_history()` to see if it has worked.
