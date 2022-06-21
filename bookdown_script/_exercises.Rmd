@@ -26,9 +26,6 @@ base_session <- session("https://www.scrapethissite.com/pages/advanced/?gotcha=l
 
 3. Scrape 10 profile timelines from the following list. Check the [documentation](https://cran.r-project.org/web/packages/rtweet/vignettes/intro.html) for instructions.
 
-<details>
-  <summary>Solution. Click to expand!</summary>
-  
 ```{r eval=FALSE}
 library(rtweet)
 
