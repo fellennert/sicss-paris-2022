@@ -15,6 +15,6 @@ The following list connects the corresponding files:
 * Day 5: classification and prediction with text ([slides](), [R material](bookdown_script/04-scraping_unstructured.Rmd))
 * Day 6: advanced language modeling ([slides](), [R material](bookdown_script/02-scraping_unstructured.Rmd))
 
-The solutions to the exercises are included in the script. You can use [this RMD file](bookdown_script/_exercise_file.Rmd) to get the "raw exercises" without solutions. 
+The solutions to the exercises are included in the script. You can use [this RMD file](bookdown_script/_exercises.Rmd) to get the "raw exercises" without solutions. 
 
 
