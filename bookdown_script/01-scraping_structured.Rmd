@@ -17,19 +17,25 @@ library(tidyverse)
 page <- read_html("https://en.wikipedia.org/wiki/Tidyverse")
 
 page %>% str()
+
+#page %>% as.character() %>% write_lines("wiki.html")
 ```
 
 This is perfectly fine for making requests to static pages where you do not need to take any further action. Sometimes, however, this is not enough, and you want to accept cookies or move on the page.
 
 ### `session()`
 
-However, the slickest way to do this is by using a `session()`. In a session, R behaves like a normal browser, stores cookies, allows you to navigate between pages, by going `session_forward()` or `session_back()`, `session_follow_link()`s on the page itself or `session_jump_to()` a different URL, or submit `form()`s with `session_submit()`. Moreover, we can set a "useragent" in a session. This is how we can trick the server into thinking that we are humans instead of robots.
+However, the slickest way to do this is by using a `session()`. In a session, R behaves like a normal browser, stores cookies, allows you to navigate between pages, by going `session_forward()` or `session_back()`, `session_follow_link()`s on the page itself or `session_jump_to()` a different URL, or submit `form()`s with `session_submit()`. 
 
 First, you start the session by simply calling `session()`.
 
 ```{r}
 my_session <- session("https://scrapethissite.com/")
+```
 
+Some servers may not want robots to make requests and block you for this reason. To circumnavigate this, we can set a "user agent" in a session. The user agent contains data that the server receives from us when we make the request. Hence, by adapting it we can trick the server into thinking that we are humans instead of robots. Let's check the current user agent first:
+
+```{r}
 my_session$response$request$options$useragent
 ```
 
@@ -173,7 +179,7 @@ At most APIs, you will have to register first. As we will play with the New York
 
 #### Making queries
 
-A basic query is performed using the `GET()` function. However, first, you need to define the call you want to make. The different keys and values they can take can be found in the API documentation. Of course, there is also a neater way to deal with the key problem. I will show it later.
+A basic query is performed using the `GET()` function. However, first, you need to define the call you want to make. The different keys and values they can take can be found in the [API documentation](https://developer.nytimes.com/docs/articlesearch-product/1/routes/articlesearch.json/get). Of course, there is also a neater way to deal with the key problem. I will show it later.
 
 ```{r}
 library(httr)
