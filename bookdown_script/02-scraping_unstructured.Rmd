@@ -40,7 +40,7 @@ Those attributes will not appear in the actual content. Moreover, they are super
 
 ## Extracting content in `rvest`
 
-To scrape the web, the first step is to simply read in the web page. `rvest` then stores it in the XML format -- just another format to store information. For this, we use `rvest`'s `read_html()` function. Here, for instance, I download the Wikipedia page of U.S. American senators.
+To scrape the web, the first step is to simply read in the web page. `rvest` then stores it in the XML format -- just another format to store information. For this, we use `rvest`'s `read_html()` function.
 
 To demonstrate the usage of CSS selectors, I create my own, basic web page using the `rvest` function `minimal_html()`:
 
@@ -63,6 +63,8 @@ basic_html <- minimal_html('
 ')
 
 basic_html
+
+#https://htmledit.squarefree.com
 ```
 
 CSS is the abbreviation for cascading style sheets and is used to define the visual styling of HTML documents. CSS selectors map elements in the HTML code to the relevant styles in the CSS. Hence, they define patterns that allow us to easily select certain elements on the page. CSS selectors can be used in conjunction with the `rvest` function `html_elements()` which takes as arguments the read-in page and a CSS selector. Alternatively, you can also provide an XPath which is usually a bit more complicated and will not be covered in this tutorial.
@@ -246,7 +248,6 @@ In general, there are two ways to go about this. The first is to manually create
 
 For the first approach, we need to check the URLs first. How do they change as we navigate through the pages?
 
-
 ```{r}
 url_1 <- "https://www.r-bloggers.com/page/2/"
 url_2 <- "https://www.r-bloggers.com/page/3/"
@@ -271,6 +272,7 @@ urls
 You can run this in a for-loop, here's a quick revision. For the loop to run efficiently, space for every object should be pre-allocated (i.e., you create a list beforehand, and its length can be determined by an educated guess). 
 
 ```{r eval=FALSE}
+## THIS IS PSEUDO CODE!!!
 result_list <- vector(mode = "list", length = length(urls))
 starting_link <- 
 for (i in seq_along(urls)){
@@ -286,6 +288,7 @@ Extracting the link on the fly is the same thing, but in the end, you need to re
 Hence, our `while` loop in pseudo-code will look like this:
 
 ```{r eval=FALSE}
+## THIS IS PSEUDO CODE!!!
 output_list <- vector(mode = "list", length = 10L)
 i <- 0
 while (session$response$status_code == 200 && i <= 10) {
@@ -294,6 +297,11 @@ while (session$response$status_code == 200 && i <= 10) {
   get all stuff and store it in output_list[[i]]
   go to next page
 }
+
+### reminder: how to click a button in rvest
+
+session("https://www.scrapethissite.com/") %>% 
+  session_follow_link(css = ".btn-default") # just use selectorgadget to check for css selector of button
 ```
 
 ## Conclusion
@@ -304,17 +312,51 @@ while (session$response$status_code == 200 && i <= 10) {
 2. If 1. == FALSE: Is there an API where I can get the data (if TRUE, use it)
 3. If 1. == FALSE & 2. == FALSE: Is screen scraping an option and any structure in the data that you can harness?
 
+If you have to rely on screen scraping, also ask yourself the question how you can minimize the number of requests you make to the server. Going back and forth on web pages or navigating through them might not be the best option since it requires multiple requests. The most efficient way is usually to try to get a list of URLs of some sort which you can then just loop over.
+
 ## Further links
 
-[to be added]
+* [More on HTML](https://www.w3schools.com/html/default.asp)
+* [More on CSS selectors](https://www.w3schools.com/css/css_selectors.asp)
+* The [`rvest` vignette](https://rvest.tidyverse.org)
+* A "laymen's guide" on web scraping ([blog post](https://towardsdatascience.com/functions-with-r-and-rvest-a-laymens-guide-acda42325a77))
 
 ## Exercises
 
-1. Scrape the (British MPs Wikipedia page)[https://en.wikipedia.org/wiki/List_of_MPs_elected_in_the_2019_United_Kingdom_general_election].
+1. Download all movies from the (IMDb Top250 best movies of all time list)[https://www.imdb.com/chart/top/?ref_=nv_mv_250]. Put them in a tibble with the columns `rank` -- in numeric format, `title`, `url` to IMDb entry, `rating` -- in numeric format.
+
+<details>
+  <summary>Solution. Click to expand!</summary>
+
+```{r eval=FALSE}
+imdb_top250 <- read_html("https://www.imdb.com/chart/top/?ref_=nv_mv_250")
+
+tibble(
+  rank = imdb_top250 %>% 
+    html_elements(".titleColumn") %>% 
+    html_text2() %>% 
+    str_extract("^[0-9]+(?=\\.)") %>% 
+    parse_integer(),
+  title = imdb_top250 %>% 
+    html_elements(".titleColumn a") %>% 
+    html_text2(),
+  url = imdb_top250 %>% 
+    html_elements(".titleColumn a") %>% 
+    html_attr("href") %>% 
+    str_c("https://www.imdb.com", .),
+  rating = imdb_top250 %>% 
+    html_elements("strong") %>% 
+    html_text() %>% 
+    parse_double()
+)
+```
+</details>
+
+2. Scrape the (British MPs Wikipedia page)[https://en.wikipedia.org/wiki/List_of_MPs_elected_in_the_2019_United_Kingdom_general_election].
   a. Scrape the table containing data on all individual MPs. (Hint: you can select and remove single lines using `slice()`, e.g., `tbl %>% slice(1)` retains only the first line, `tbl %>% slice(-1)` removes only the first line.)
   b. Extract the links linking to individual pages. Make them readable using `url_absolute()` – `url_absolute("/kdfnndfkok", base = "https://wikipedia.com")` --> `"https://wikipedia.com/kdfnndfkok"`. Add the links to the table from 1a.
   c. Scrape the textual content of the **first** MP’s Wikipedia page.
-  d. (ADVANCED – feel free to move on to task 2.) Wrap 1c. in a function called `scrape_mp_wiki()`.
+  d. (ADVANCED!) Wrap 1c. in a function called `scrape_mp_wiki()`.
 
 <details>
   <summary>Solution. Click to expand!</summary>
@@ -372,36 +414,6 @@ mp_wiki_entries <- table_w_link$link[[1]] %>%
 
 mp_wiki_entries_tbl <- table_w_link %>% 
   left_join(mp_wiki_entries %>% bind_rows())
-```
-</details>
-
-
-2. Download all movies from the (IMDb Top250 best movies of all time list)[https://www.imdb.com/chart/top/?ref_=nv_mv_250]. Put them in a tibble with the columns `rank` -- in numeric format, `title`, `url` to IMDb entry, `rating` -- in numeric format.
-
-<details>
-  <summary>Solution. Click to expand!</summary>
-
-```{r eval=FALSE}
-imdb_top250 <- read_html("https://www.imdb.com/chart/top/?ref_=nv_mv_250")
-
-tibble(
-  rank = imdb_top250 %>% 
-    html_elements(".titleColumn") %>% 
-    html_text2() %>% 
-    str_extract("^[0-9]+(?=\\.)") %>% 
-    parse_integer(),
-  title = imdb_top250 %>% 
-    html_elements(".titleColumn a") %>% 
-    html_text2(),
-  url = imdb_top250 %>% 
-    html_elements(".titleColumn a") %>% 
-    html_attr("href") %>% 
-    str_c("https://www.imdb.com", .),
-  rating = imdb_top250 %>% 
-    html_elements("strong") %>% 
-    html_text() %>% 
-    parse_double()
-)
 ```
 </details>
 

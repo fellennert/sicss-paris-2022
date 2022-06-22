@@ -36,16 +36,25 @@ uk_mps <- lists_members(
 
 ## Day 3
 
-1. Scrape the (British MPs Wikipedia page)[https://en.wikipedia.org/wiki/List_of_MPs_elected_in_the_2019_United_Kingdom_general_election].
+1. Download all movies from the (IMDb Top250 best movies of all time list)[https://www.imdb.com/chart/top/?ref_=nv_mv_250]. Put them in a tibble with the columns `rank` -- in numeric format, `title`, `url` to IMDb entry, `rating` -- in numeric format.
+
+```{r}
+example_tbl <- tibble(
+  a = 1:10,
+  b = 11:20, # vectors must have the same length
+  c = "c" # or length 1
+)
+example_tbl
+```
+
+2. Scrape the (British MPs Wikipedia page)[https://en.wikipedia.org/wiki/List_of_MPs_elected_in_the_2019_United_Kingdom_general_election].
   a. Scrape the table containing data on all individual MPs. (Hint: you can select and remove single lines using `slice()`, e.g., `tbl %>% slice(1)` retains only the first line, `tbl %>% slice(-1)` removes only the first line.)
   b. Extract the links linking to individual pages. Make them readable using `url_absolute()` – `url_absolute("/kdfnndfkok", base = "https://wikipedia.com")` --> `"https://wikipedia.com/kdfnndfkok"`. Add the links to the table from 1a.
   c. Scrape the textual content of the **first** MP’s Wikipedia page.
-  d. (ADVANCED – feel free to move on to task 2.) Wrap 1c. in a function called `scrape_mp_wiki()`.
-
-2. Download all movies from the (IMDb Top250 best movies of all time list)[https://www.imdb.com/chart/top/?ref_=nv_mv_250]. Put them in a tibble with the columns `rank` -- in numeric format, `title`, `url` to IMDb entry, `rating` -- in numeric format.
+  d. (ADVANCED) Wrap 1c. in a function called `scrape_mp_wiki()`.
 
 3. Scrape the 10 first pages of [R-bloggers](https://www.r-bloggers.com) in an automated fashion. Make sure to take breaks between requests by including `Sys.sleep(2)`.
-  a. Do so using the url vector we created above.
+  a. Do so using the url vector we created.
   b. Do so by getting the link for the next page and a loop.
   c. Do so by using `html_session()` in a loop.
 

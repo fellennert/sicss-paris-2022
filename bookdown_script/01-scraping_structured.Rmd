@@ -100,7 +100,7 @@ session_with_ua %>% session_history()
 
 ### Forms
 
-Sometimes we also want to provide certain input, e.g., to provide login credentials or to scrape a website more systematically. That information is usually provided using so-called [forms](https://www.w3schools.com/html/html_forms.asp). A `<form>` element can contain different other elements such as text fields or checkboxes. Basically, we use `html_form()` to extract the form, `html_form_set()` to define what we want to submit, and `html_form_submit()` to finally submit it. [For a basic example, I search for something on Google.](https://rvest.tidyverse.org/reference/html_form.html)
+Sometimes we also want to provide certain input, e.g., to provide login credentials or to scrape a website more systematically. That information is usually provided using so-called [forms](https://www.w3schools.com/html/html_forms.asp). A `<form>` element can contain different other elements such as text fields or checkboxes. Basically, we use `html_form()` to extract the form, `html_form_set()` to define what we want to submit, and `html_form_submit()` to finally submit it. [For a basic example, wesearch for something on Google.](https://rvest.tidyverse.org/reference/html_form.html)
 
 ```{r message=FALSE, warning=FALSE}
 google <- read_html("http://www.google.com")
@@ -158,7 +158,7 @@ my_proxy <- httr::use_proxy(url = "http://example.com",
 my_session <- session("https://scrapethissite.com/", my_proxy)
 ```
 
-Find more useful information  -- including the stuff I just described -- and links on [this GitHub page](https://github.com/yusuzech/r-web-scraping-cheat-sheet/blob/master/README.md).
+Find more useful information  -- including the stuff we just described -- and links on [this GitHub page](https://github.com/yusuzech/r-web-scraping-cheat-sheet/blob/master/README.md).
  
 ## Application Programming Interfaces (APIs)
 
@@ -180,7 +180,7 @@ At most APIs, you will have to register first. As we will play with the New York
 
 #### Making queries
 
-A basic query is performed using the `GET()` function. However, first, you need to define the call you want to make. The different keys and values they can take can be found in the [API documentation](https://developer.nytimes.com/docs/articlesearch-product/1/routes/articlesearch.json/get). Of course, there is also a neater way to deal with the key problem. I will show it later.
+A basic query is performed using the `GET()` function. However, first, you need to define the call you want to make. The different keys and values they can take can be found in the [API documentation](https://developer.nytimes.com/docs/articlesearch-product/1/routes/articlesearch.json/get). Of course, there is also a neater way to deal with the key problem. We will show it later.
 
 ```{r}
 library(httr)
@@ -237,7 +237,7 @@ response %>%
 
 #### Dealing with authentification
 
-Well, as we saw before, I put my official NYT API key publicly visible in this script. This is bad practice and should be avoided, especially if you work on a joint project (where everybody uses their code) or if you put your scripts in public places (such as GitHub). The `usethis` package can help you here.
+Well, as we saw before, we would have to put our official NYT API key publicly visible in this script. This is bad practice and should be avoided, especially if you work on a joint project (where everybody uses their code) or if you put your scripts in public places (such as GitHub). The `usethis` package can help you here.
 
 ```{r eval=FALSE}
 #usethis::edit_r_environ() # save key there
@@ -261,7 +261,7 @@ modify_url(
 
 Twitter is quite popular among social scientists. The main reason for this is arguably its data accessibility. For R users, the package you want to use is `rtweet` by Michael Kearney (find an overview of the different packages and their capabilities [here](https://www.rdocumentation.org/packages/rtweet/versions/0.7.0)). There is a great and quite complete [presentation demonstrating its capabilities](https://mkearney.github.io/nicar_tworkshop/#1). This presentation is a bit outdated. The main difference to the package these days is that you will not need to register an app upfront anymore. All you need is a Twitter account. When you make your first request, a browser window will open where you log on to Twitter, authorize the app, and then you can just go for it. There are certain rate limits, too, which you will need to be aware of when you try to acquire data. Rate limits and the parameters you need to specify can be found in the extensive documentation.
 
-In the following, I will just link to the respective vignettes. Please, feel free to play around with the functions yourself. As a starting point, I provide you with the list of all British MPs and some tasks in exercise 3. A first introduction gives [this vignette](https://cran.r-project.org/web/packages/rtweet/vignettes/intro.html).
+In the following, we will just link to the respective vignettes. Please, feel free to play around with the functions yourself. As a starting point, we provide you with the list of all British MPs and some tasks in exercise 3. A first introduction gives [this vignette](https://cran.r-project.org/web/packages/rtweet/vignettes/intro.html).
 
 ```{r eval=FALSE}
 library(rtweet)
@@ -335,6 +335,10 @@ base_session <- session("https://www.scrapethissite.com/pages/advanced/?gotcha=l
   session_submit(login_form) 
 
 base_session %>% read_html() %>% html_text()
+```
+
+```{r eval=FALSE}
+base_session %>% read_html() %>% html_elements(".col-md-offset-4") %>% html_text2()
 ```
 
 </details>
