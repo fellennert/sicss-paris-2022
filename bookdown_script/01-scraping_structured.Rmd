@@ -11,6 +11,7 @@ In today's session, you will learn different techniques to get your hands on dat
 The most basic form of making a request is by using `read_html()` from the `xml2` package.
 
 ```{r message=FALSE, warning=FALSE}
+#install.packages("rvest")
 library(rvest) # this also loads the xml2 package
 library(tidyverse)
 
@@ -103,7 +104,7 @@ Sometimes we also want to provide certain input, e.g., to provide login credenti
 
 ```{r message=FALSE, warning=FALSE}
 google <- read_html("http://www.google.com")
-search <- html_form(google)[[1]]
+search <- html_form(google) %>% pluck(1)
 
 search %>% str()
 
@@ -332,6 +333,8 @@ login_form$action <- url # add url as action attribute
 # submit form
 base_session <- session("https://www.scrapethissite.com/pages/advanced/?gotcha=login") %>% 
   session_submit(login_form) 
+
+base_session %>% read_html() %>% html_text()
 ```
 
 </details>
