@@ -759,10 +759,14 @@ fairytales_top10 %>%
   theme(strip.text.x = element_blank())
 ```
 
-It is quite hard to draw inferences on which plot belongs to which book since the plots are crowded with stopwords. However, there are pre-made stopword lists I can harness to remove the noise and perhaps catch a bit more signal for determining the books.
+It is quite hard to draw inferences on which plot belongs to which book since the plots are crowded with stopwords. However, there are pre-made stopword lists I can harness to remove some of this "noise" and perhaps catch a bit more signal for determining the books.
 
 ```{r}
 library(stopwords)
+
+# get_stopwords()
+# stopwords_getsources()
+# stopwords_getlanguages(source = "snowball")
 
 fairytales_top10_nostop <- fairytales_tidy %>% 
   anti_join(get_stopwords(), by = c("token" = "word")) %>% 
@@ -786,9 +790,9 @@ This already looks quite nice, it is quite easy to see which plot belongs to the
 
 #### TF-IDF
 
-A better explanation for words that are particular to a group of documents is the ones that appear often in one group but rarely in the other one(s). So far, the measure of term frequency only accounts for how often terms are used in the respective document. I can take into account how often it appears in other documents by including the inverse document frequency. The resulting measure is called tf-idf and describes "the frequency of a term adjusted for how rarely it is used." [@silge_tidytext_2016: 31] If a term is rarely used overall but appears comparably often in a singular document, it might be safe to assume that it plays a bigger role in that document.
+A better definition of words that are particular to a group of documents is "the ones that appear often in one group but rarely in the other one(s)". So far, the measure of term frequency only accounts for how often terms are used in the respective document. I can take into account how often it appears in other documents by including the inverse document frequency. The resulting measure is called tf-idf and describes "the frequency of a term adjusted for how rarely it is used." [@silge_tidytext_2016: 31] If a term is rarely used overall but appears comparably often in a singular document, it might be safe to assume that it plays a bigger role in that document.
 
-The tf-idf of a word in a document is commonly^[Note that multiple implementations exist, for an overview see, ofr instance, @manning_introduction_2008] calculated as follows:
+The tf-idf of a word in a document is commonly^[Note that multiple implementations exist, for an overview see, for instance, @manning_introduction_2008. One implementation is calculated as follows:
 
 $$w_{i,j}=tf_{i,j}\times ln(\frac{N}{df_{i}})$$
 
@@ -817,10 +821,10 @@ fairytales_top10_tfidf %>%
   scale_y_reordered() +
   labs(y = "token") +
   facet_wrap(vars(book), scales = "free") +
-  #theme(strip.text.x = element_blank(),
-  #      axis.title.x = element_blank(),
-  #      axis.text.x = element_blank(),
-  #      axis.ticks.x = element_blank())
+  theme(strip.text.x = element_blank(),
+        axis.title.x = element_blank(),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank())
 ```
 
 Pretty good already! All the fairytales can be clearly identified. A problem with this representation is that I cannot straightforwardly interpret the x-axis values (they can be removed by uncommenting the last four lines). A way to mitigate this is using odds.
@@ -1026,11 +1030,10 @@ for_test == c(1.3, 2.01, 3.1)
 
 ### Preprocessing
 
-1. Download the Twitter timeline data (`timelines <- read_csv("https://www.dropbox.com/s/pat7muh816yhxlj/sample.csv?dl=1")`. Preprocess the Tweets. 
+1. Download Twitter timeline data (`timelines <- read_csv("https://www.dropbox.com/s/dpu5m3xqz4u4nv7/tweets_house_rep_party.csv?dl=1") %>% filter(!is.na(party))`. Let's look at abortion-related tweets and how the language may differ between parties. Filter relevant tweets using a vector of keywords and a regular expression (hint: `filter(str_detect(text, str_c(keywords, collapse = "|")))`). Preprocess the Tweets as follows: 
   a. Unnest the tokens.
   b. Remove stop words. 
   c. Perform stemming. 
-
 
 <details>
   <summary>Solution. Click to expand!</summary>
@@ -1040,7 +1043,10 @@ library(tidytext)
 library(stopwords)
 library(SnowballC)
 
+keywords <- c("abortion", "prolife", " roe ", " wade ", "roevswade", "baby", "fetus", "womb", "prochoice", "leak")
+
 preprocessed <- timelines %>% 
+  filter(str_detect(text, str_c(keywords, collapse = "|"))) %>% 
   unnest_tokens(word, text) %>% 
   anti_join(get_stopwords()) %>% 
   mutate(stemmed = wordStem(word))
@@ -1059,10 +1065,12 @@ library(spacyr)
 spacy_initialize()
 
 timelines_meta <- timelines %>% 
+  filter(str_detect(text, str_c(keywords, collapse = "|"))) %>% 
   rowid_to_column("doc_id") %>% 
   select(-text)
 
 timelines_spacy <- timelines %>% 
+  filter(str_detect(text, str_c(keywords, collapse = "|"))) %>% 
   select(text) %>% 
   rowid_to_column("doc_id") %>% 
   spacy_parse(entity = FALSE) %>% 
@@ -1079,14 +1087,14 @@ timelines_spacy <- timelines %>%
 
 ```{r eval=FALSE}
 df <- preprocessed %>% 
-  count(word, party) %>% 
+  count(stemmed, party) %>% 
   group_by(party) %>% 
   slice_max(n, n = 10, with_ties = FALSE)
   
 df %>% 
   group_by(party) %>% 
   ggplot()  +
-    geom_col(aes(x = n, y = reorder_within(word, n, party))) +
+    geom_col(aes(x = n, y = reorder_within(stemmed, n, party))) +
     scale_y_reordered() +
     labs(y = "token") +
     facet_wrap(vars(party), scales = "free") 
@@ -1095,14 +1103,22 @@ df %>%
 </details>
 
 
-  b. Is there more words you should add to your stopwords list?
+  b. Is there more words you should add to your stopwords list? Remove these terms using `filter(str_detect())` and a regex.
 
 
 <details>
   <summary>Solution. Click to expand!</summary>
 
 ```{r eval=FALSE}
-c("t.co", "https", "amp", "can", "just", "now", "like", "get", "ar", "see") 
+more_stopwords <- c("t.co", "http", "amp") 
+df %>% 
+  filter(!str_detect(stemmed, str_c(more_stopwords, collapse = "|"))) %>% 
+  group_by(party) %>% 
+  ggplot()  +
+    geom_col(aes(x = n, y = reorder_within(stemmed, n, party))) +
+    scale_y_reordered() +
+    labs(y = "token") +
+    facet_wrap(vars(party), scales = "free") 
 ```
 
 </details>
@@ -1192,14 +1208,21 @@ timelines_spacy %>%
 
 </details>
 
-5. What else could you have done in terms of preprocessing (think of the special characters and syntax Twitter uses here)?
+5. What else could you have done in terms of pre-processing (think of the special characters and syntax Twitter uses here)?
 
 
 <details>
   <summary>Solution. Click to expand!</summary>
   
-* Remove @…
-* Extract hashtags
+* Remove @… -- Regex: "[@][a-zA-Z0-9_]+"
+* Extract hashtags -- Regex: "[#][a-zA-Z0-9_]+"
+
+```{r}
+string <- "@FelixLennert checks if this works #sicss2022"
+
+str_remove_all(string, "[@][a-zA-Z0-9_]+")
+str_extract(string, "[#][a-zA-Z0-9_]+")
+```
+
 
 </details>
-

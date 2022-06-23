@@ -1,0 +1,2941 @@
+--- 
+title: "Course script for SICSS Paris"
+author:
+  - Germain Gauthier^[CREST, École Polytechnique]
+  - Felix Lennert^[CREST, École Polytechnique; to whom correspondence should be addressed, `felix.lennert@ensae.fr`]
+  - Étienne Ollion^[CREST, École Polytechnique]
+
+date: "`r Sys.Date()`"
+site: bookdown::bookdown_site
+documentclass: book
+bibliography: tm-course.bib
+# url: your book url like https://bookdown.org/yihui/bookdown
+# cover-image: path to the social sharing image like images/cover.jpg
+description: |
+  This book serves as an accompanying script for the R sessions of the 2022 Summer Institute for Computational Social Science (SICSS), taking place at the Institut Polytechnique de Paris.
+link-citations: yes
+always_allow_html: true
+---
+
+# Introduction {#day1}
+
+Dear student, 
+
+if you read this script, you are either participating in the SICSS itself or came across it while browsing for resources for your studies. In any case, if you find inconsistencies or mistakes, please do not hesitate to point them out by shooting an email to <felix.lennert@ensae.fr>.
+
+## Outline
+
+This script will introduce you to the automated acquisition and subsequent quantitative analysis of text data using R. Over the last decades, more and more text has become readily available. Think for example of Social Networking Platforms, online fora, Google Books, newspaper articles, the fact that YouTube can generate subtitles for all of its videos, or the fact that administrative records are increasingly digitized. Social scientists of course have decades of experience analyzing these things, yet they used to be constrained by data availability and, hence, their data sets used to be way smaller and could be processed by humans. To make the most out of the newly available data sets we mentioned above and to repurpose them for social scientific research, we need to use tools from the information and computer sciences. Some are fairly old such as basic dictionary-based sentiment analysis whose precursors were introduced in the 1960s, others are as recent as the early 2000s (LDA) or even 2014 (word2vec).
+
+This script will be split into 5 chapters. Each chapter can be seen as representing a day of the summer school. Each chapter contains a "further links" section and exercises. Data are provided through dropbox links that are directly executable from the script. The raw RMD files are stored in a [dedicated GitHub repository](https://github.com/fellennert/sicss-paris-2022)^[Hence, you can also file a pull request if you have found a flaw.].
+
+This introductory chapter is intended to help you set up your RStudio by installing all the required packages. Some of them (`spacyr`!) rely on a working Python interpreter and are therefore a bit more finicky to set up. We will provide links to step-by-step guides to help you with the process but not cover it in the tutorial. The script will heavily rely on packages from the `tidyverse` with which we assume familiarity, in particular with the `dplyr` and `purrr` packages. At the end of chapter 1, we include links to introductions we deem useful.
+
+Day \@ref(day2) introduces web scraping. You will become familiar with making calls to different structured web pages through `rvest` and `rselenium`). APIs and how you can tap them will be introduced, too.
+
+Day \@ref(day3) gives you insight into techniques for scraping unstructured web pages. This is usually achieved using CSS selectors.
+
+Day \@ref(day4) is dedicated to the featurization and descriptive analysis of text.
+
+Day \@ref(day5) introduces both unsupervised and supervised machine learning approaches for the classification and analysis of text. 
+
+Day \@ref(day6) provides a glimpse of how word embedding techniques can be used. It will showcase how `word2vec` can be used to learn embeddings from text from scratch, as well as some arithmetic calculations using these embeddings.
+
+The following chapters draw heavily on packages from the `tidyverse` [@wickham_welcome_2019], `tidytext` [@silge_tidytext_2016], and `tidymodels` [@kuhn_tidymodels_2020], as well as the two excellent books "Text Mining with R: A Tidy Approach" [@silge_text_2017] and "Supervised Machine Learning for Text Analysis in R" [@hvitfeldt_supervised_2022]. Examples and inspiration are often drawn from blog posts and/or other tutorials, and we will give credit wherever credit is due. Moreover, you will find further readings at the end of each section as well as exercises at the end of the respective chapter.
+
+## Setup procedure
+
+The next chunk serves the purpose of preparing your machine for the days to come. It will install all the necessary packages.
+
+```{r}
+if (!"tidyverse" %in% installed.packages()[, 1]) install.packages("tidyverse")
+
+packages <- c(
+  "broom",
+  "devtools",
+  "discrim",
+  "forcats",
+  "glmnet",
+  "hcandersenr",
+  "httr",
+  "irlba",
+  "janitor",
+  "jsonlite",
+  "ldatuning",
+  "LDAvis",
+  "lubridate", 
+  "magrittr",
+  "naivebayes",
+  "polite",
+  "ranger",
+  "RSelenium",
+  "rtweet",
+  "rvest",
+  "SnowballC",
+  "sotu",
+  "spacyr",
+  "stm", 
+  "stopwords",
+  "stminsights",
+  "textdata",
+  "textrecipes",
+  "tidymodels",
+  "tidytext", 
+  "tidyverse", 
+  "topicmodels", 
+  "tsne",
+  "tune",
+  "word2vec",
+  "wordcloud",
+  "workflows", 
+  "vembedr",
+  "yardstick"
+  )
+
+purrr::walk(packages, ~{
+  if (!.x %in% installed.packages()[, 1]) install.packages(.x)
+})
+
+if (!"tif" %in% installed.packages()[, 1]) devtools::install_github("ropensci/tif")
+```
+
+While we would strongly advise you to integrate RStudio projects into your workflow, it is not required for SICSS-Paris. We will work with RMarkdown (RMD) documents which facilitate working with file paths significantly insofar as they automatically assume the folder they are stored in as the current working directory. In our case, this is not necessary though, since everything can be directly downloaded from Dropbox.
+
+### Registration for API usage
+
+In the section on APIs, we will play with the New York Times API. If you want to follow the script on your machine, you need to sign up for access and acquire an API key. Find instructions for registering [here](https://developer.nytimes.com/get-started).
+
+Also, if you want to play with the `rtweet` package, you need a Twitter account.
+
+### Docker for `RSelenium` 
+
+When you work with `RSelenium`, what happens is that you simulate a browser which you then control through R. For multiple reasons, the preferred procedure is to run the headless browser in a Docker container, a virtual machine inside your laptop. Hence, if you are planning on using `RSelenium`, you should install Docker first and follow [this tutorial](https://callumgwtaylor.github.io/post/using-rselenium-and-docker-to-webscrape-in-r-using-the-who-snake-database/) to set it up properly. (Please note that if you're on a non-Intel Mac, like one of the authors of this script, you are screwed and Docker's browser module will not work. We have not found a functioning workaround yet. So no scraping with Selenium for you.)
+
+### Some useful functions
+
+We assume your familiarity with R. However, we are fully aware that coding styles (or "dialects") differ. Therefore, just a quick demonstration of some of the building blocks of the tidyverse.
+
+We use the "old" pipe -- `%>%`. The pipe takes its argument on the left and forwards it to the next function, including it there as the first argument unless a `.` placeholder is provided somewhere. `%<>%` takes the argument on the left and modifies it at the same time.
+
+```{r}
+library(magrittr)
+mean(c(2, 3)) == c(2, 3) %>% mean()
+
+mtcars %>% lm(mpg ~ cyl, data = .)
+# … is the same as…
+lm(mpg ~ cyl, data = mtcars)
+
+cars <- mtcars
+cars %<>% .[[1]] %>% mean()
+# … is the same as…
+cars <- cars %>% .[[1]] %>% mean()
+```
+
+The important terms in the `dplyr` package are `mutate()`, `select()`, `filter()`, `summarize()` (used with `group_by()`), and `arrange()`. `pull()` can be used to extract a vector. 
+```{r}
+library(tidyverse)
+
+mtcars %>%
+  rownames_to_column("model") %>% # add rownames as a column
+  select(model, mpg, cyl, hp) %>% # select 4 columns
+  arrange(cyl) %>% # arrange them according to number of cylinders
+ # filter(cyl %in% c(4, 6)) %>% # only retain values where condition is TRUE
+  mutate(model_lowercase = str_to_lower(model)) %>% # change modelnames to lowercase
+  group_by(cyl) %>% # change scope, effectively split up tibbles according to group_variable
+  summarize(mean_mpg = mean(mpg)) %>% # drop all other columns, collapse rows
+  pull(cyl) # pull vector
+```
+
+We also will work with lists. Lesser known functions here come from the `purrr` package. On one hand, we have the `map()` family, which applies functions over lists, and `pluck()` which extracts elements from the list. 
+
+```{r}
+raw_list <- list(1:4, 4:6, 10:42)
+str(raw_list)
+
+map(raw_list, mean)
+map(raw_list, ~{mean(.x) %>% sqrt()})
+map_dbl(raw_list, mean) # by specifying the type of output, you can reduce the list
+
+raw_list %>% pluck(1)
+```
+
+This can also be achieved using a loop. Here, you use an index to loop over objects and do something to their elements.
+
+```{r}
+for (p in seq_along(raw_list)){
+  raw_list[[p]] <- mean(raw_list[[p]])
+}
+```
+
+Another part of R is functions. They require arguments. Then they do something to these arguments. In the end, they return the last call (if it's not stored in an object). Otherwise, an object can be returned using `return()` -- this is usually unnecessary though.
+
+```{r}
+a_plus_b <- function(a, b){
+  a + b
+}
+
+a_plus_b(1, 2)
+
+a_plus_b <- function(a, b){
+ c <- a + b
+ return(c)
+}
+
+a_plus_b(1, 2)
+```
+
+## Further links
+
+Each chapter will contain a *Further links* section, where we include useful online resources which you can consume to delve deeper into the matters discussed in the respective chapter.
+
+* Further material for learning covering each section of this script can be found on the [RStudio website](https://rstudio.cloud/learn/primers).
+* A more accessible guide to singular tidyverse packages can be found in the `introverse` R package. Find instructions for how to install and use it [online](https://spielmanlab.github.io/introverse/index.html).
+* The [SICSS bootcamp](https://sicss.io/boot_camp/) gets you up and started promptly; wondering if you require a recap? – take the quizzes before going through the material.
+* The [R4DS book](https://r4ds.had.co.nz/) is a good mix of approachable introduction, technical description, real-world examples, and interesting exercises. You can read it in a superficial as well as in an in-depth manner. [Solutions for the exercises](https://jrnold.github.io/r4ds-exercise-solutions/) are available as well. The following chapters are relevant (ordered from most to least relevant): 2-4-6-5-3-7-11-27-14-15-16-19-21. 
+
+## Last but not least
+
+Learning R -- and programming in general -- is tough. More often than not, things will not go the way you want them to go. Mostly, this is due to minor typos or the fact that R is case-sensitive. However, don't fret. Only practice makes perfect. It is perfectly normal to not comprehend error messages. The following video illustrates this:
+
+```{r echo=FALSE}
+vembedr::embed_youtube("HluANRwPyNo")
+```
+
+If questions arise that a Google search cannot answer, we are always only one [email](mailto: felix.lennert@ensae.fr) away -- and will probably just hit Google right away, too, to figure something out for you.
+
+<!--chapter:end:index.Rmd-->
+
+# Scraping the web {#day2}
+
+Today's session will be dedicated to getting data from the web. This process is also called scraping since we scrape data off from the surface and remodel it for our inferences. The following picture shows you the [web scraping cheat sheet](https://github.com/yusuzech/r-web-scraping-cheat-sheet/) that outlines the process of scraping the web. On the left side, you can see the first step in scraping the web which is requesting the information from the server. This is basically what is going under the hood when you make requests using a browser. The response is the website, usually stored in an XML document, which is then the starting point for your subsequent queries and data extraction. 
+
+![Web scraping cheat sheet](https://raw.githubusercontent.com/yusuzech/r-web-scraping-cheat-sheet/master/resources/functions_and_classes.png)
+
+In today's session, you will learn different techniques to get your hands on data. In particular, this will encompass making simple URL requests with `read_html()`, using `session()`s to navigate around on a web page, submitting `html_form()`s to fill in forms on a web page, and making structured requests to APIs.
+
+## Making requests
+
+The most basic form of making a request is by using `read_html()` from the `xml2` package.
+
+```{r message=FALSE, warning=FALSE}
+#install.packages("rvest")
+library(rvest) # this also loads the xml2 package
+library(tidyverse)
+
+page <- read_html("https://en.wikipedia.org/wiki/Tidyverse")
+
+page %>% str()
+
+#page %>% as.character() %>% write_lines("wiki.html")
+```
+
+This is perfectly fine for making requests to static pages where you do not need to take any further action. Sometimes, however, this is not enough, and you want to accept cookies or move on the page.
+
+### `session()`
+
+However, the slickest way to do this is by using a `session()`. In a session, R behaves like a normal browser, stores cookies, allows you to navigate between pages, by going `session_forward()` or `session_back()`, `session_follow_link()`s on the page itself or `session_jump_to()` a different URL, or submit `form()`s with `session_submit()`. 
+
+First, you start the session by simply calling `session()`.
+
+```{r}
+my_session <- session("https://scrapethissite.com/")
+```
+
+Some servers may not want robots to make requests and block you for this reason. To circumnavigate this, we can set a "user agent" in a session. The user agent contains data that the server receives from us when we make the request. Hence, by adapting it we can trick the server into thinking that we are humans instead of robots. Let's check the current user agent first:
+
+```{r}
+my_session$response$request$options$useragent
+```
+
+Not very human. We can set it to a common one using the `httr` package (which powers `rvest`).
+
+```{r}
+user_a <- httr::user_agent("Mozilla/5.0 (Macintosh; Intel Mac OS X 12_0_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36")
+session_with_ua <- session("https://scrapethissite.com/", user_a)
+session_with_ua$response$request$options$useragent
+```
+
+You can check the response using `session$response$status_code` -- 200 is good.
+
+```{r}
+my_session$response$status_code
+```
+
+When you want to save a page from the session, do so using `read_html()`. 
+
+```{r}
+page <- read_html(session_with_ua)
+```
+
+If you want to open a new URL, hit `session_jump_to()`.
+
+```{r}
+library(magrittr)
+
+session_with_ua %<>% session_jump_to("https://www.scrapethissite.com/pages/")
+session_with_ua
+```
+
+Once you are familiar with CSS selectors -- which will be introduced tomorrow -- you can also click buttons on the page: 
+
+```{r}
+session_with_ua %<>% session_jump_to("https://www.scrapethissite.com/") %>% 
+  session_follow_link(css = ".btn-default")
+
+session_with_ua
+```
+
+Wanna go back -- `session_back()`; thereafter you can go `session_forward()`, too.
+
+```{r}
+session_with_ua %<>% 
+  session_back()
+
+session_with_ua
+
+session_with_ua %<>% 
+  session_forward()
+
+session_with_ua
+```
+
+You can look at what your scraper has done with `session_history()`.
+
+```{r}
+session_with_ua %>% session_history()
+```
+
+### Forms
+
+Sometimes we also want to provide certain input, e.g., to provide login credentials or to scrape a website more systematically. That information is usually provided using so-called [forms](https://www.w3schools.com/html/html_forms.asp). A `<form>` element can contain different other elements such as text fields or checkboxes. Basically, we use `html_form()` to extract the form, `html_form_set()` to define what we want to submit, and `html_form_submit()` to finally submit it. [For a basic example, wesearch for something on Google.](https://rvest.tidyverse.org/reference/html_form.html)
+
+```{r message=FALSE, warning=FALSE}
+google <- read_html("http://www.google.com")
+search <- html_form(google) %>% pluck(1)
+
+search %>% str()
+
+search_something <- search %>% html_form_set(q = "something")
+resp <- html_form_submit(search_something, submit = "btnG")
+read_html(resp)
+
+vals <- list(q = "web scraping", hl = "en")
+
+search <- search %>% html_form_set(!!!vals)
+
+resp <- html_form_submit(search)
+read_html(resp)
+```
+
+If you are working with a session, the workflow is as follows:
+
+1. Extract the form.
+2. Set it.
+3. Start your session on the page with the form.
+4. Submit the form using `session_submit()`.
+
+```{r}
+google_form <- read_html("http://www.google.com") %>% 
+  html_form() %>% 
+  pluck(1) #another way to do [[1]]
+
+search_something <- google_form %>% html_form_set(q = "something")
+
+google_session <- session("http://www.google.com") %>% 
+  session_submit(search_something, submit = "btnG")
+
+google_session %>% 
+  read_html()
+```
+
+### Scraping hacks
+
+Some web pages are a bit fancier than the ones we have looked at so far (i.e., they use JavaScript). `rvest` works nicely for static web pages, but for more advanced ones you need different tools such as [`RSelenium`](https://docs.ropensci.org/RSelenium/). This, however, goes beyond the scope of this tutorial.
+
+A web page may sometimes give you time-outs (i.e., it doesn't respond within a given time). This can break your loop. Wrapping your code in `safely()` or `insistently()` from the `purrr` package might help. The former moves on and notes down what has gone wrong, the latter keeps sending requests until it has been successful. They both work easiest if you put your scraping code in functions and wrap those with either [`insistently()`](https://purrr.tidyverse.org/reference/insistently.html) or [`safely()`](https://purrr.tidyverse.org/reference/safely.html).
+
+Sometimes a web page keeps blocking you. Consider using a proxy server. 
+
+```{r eval=FALSE}
+my_proxy <- httr::use_proxy(url = "http://example.com",
+                            user_name = "myusername",
+                            password = "mypassword",
+                            auth = "one of basic, digest, digest_ie, gssnegotiate, ntlm, any")
+
+my_session <- session("https://scrapethissite.com/", my_proxy)
+```
+
+Find more useful information  -- including the stuff we just described -- and links on [this GitHub page](https://github.com/yusuzech/r-web-scraping-cheat-sheet/blob/master/README.md).
+ 
+## Application Programming Interfaces (APIs)
+
+While web scraping (or *screen scraping*, as you extract the stuff that appears on your screen) is certainly fun, it should be seen as a last resort. More and more web platforms provide so-called Application Programming Interfaces (APIs). 
+
+>"An application programming interface (API) is a connection between computers or between computer programs." ([Wikipedia](https://en.wikipedia.org/wiki/API))
+
+There are a bunch of different sorts of APIs, but the most common one is the REST API. REST stands for "Representational State Transfer" and describes a set of rules the API designers are supposed to obey when developing their particular interface. You can make different requests, such as *GET* content, *POST* a file to a server -- `PUT` is similar, or request to `DELETE` a file. We will only focus on the `GET` part. 
+
+APIs offer you a structured way to communicate with the platform via your machine. In our use case, this means that you can get the data you want in a usually well-structured format and without all the "dirt" that you need to scrape off tediously (enough web scraping metaphors for today). With APIs, you can generally quite clearly define what you want and how you want it. In R, we achieve this by using the `httr` [@wickham_httr_2020] package. Moreover, using APIs does not bear the risk of acquiring the information you are not supposed to access and you also do not need to worry about the server not being able to handle the load of your requests (usually, there are rate limits in place to address this particular issue). However, it's not all fun and games with APIs: they might give you their data in a special format, both XML and JSON are common. The former is the one `rvest` uses as well, the latter can be tamed using `jsonlite` [@ooms_jsonlite_2020] which is to be introduced as well. Moreover, you usually have to ask the platform for permission and perhaps pay to get it. Once you have received the keys you need, you can tell R to fill them automatically, similar to how your browser knows your Amazon password, etc.; `usethis` [@wickham_usethis_2021] can help you with such tasks. An overview of currently existing APIs can be found on [The Programmable Web](https://www.programmableweb.com/apis/directory)
+
+The best thing that can happen with APIs: some of them are so popular that people have already written specific R packages for working with them -- an overview can be found on the [ROpenSci website](https://ropensci.org/packages/data-access/). One example of this is Twitter and the `rtweet` package [@kearney_rtweet_2019] which will be introduced in the end. Less work for us, great.
+
+### Obtaining their data
+
+API requests are performed using URLs. Those start with the basic address of the API (e.g., https://api.nytimes.com), followed by the endpoint that you want to use (e.g., /lists). They also contain so-called headers which are provided as key-value pairs. Those headers can contain for instance authentification tokens or different search parameters. A request to the New York Times API to obtain articles for January 2019 would then look like this: https://api.nytimes.com/svc/archive/v1/2019/1.json?api-key=yourkey.
+
+At most APIs, you will have to register first. As we will play with the New York Times API, do this [here](https://developer.nytimes.com/get-started).
+
+#### Making queries
+
+A basic query is performed using the `GET()` function. However, first, you need to define the call you want to make. The different keys and values they can take can be found in the [API documentation](https://developer.nytimes.com/docs/articlesearch-product/1/routes/articlesearch.json/get). Of course, there is also a neater way to deal with the key problem. We will show it later.
+
+```{r}
+library(httr)
+
+key <- "xxx"
+nyt_headlines <- modify_url(
+  url = "https://api.nytimes.com/",
+  path = "svc/news/v3/content/nyt/business.json",
+  query = list(`api-key` = key))
+
+response <- GET(nyt_headlines)
+```
+
+When it comes to the NYT news API, there is the problem that the type of section is specified not in the query but in the endpoint path itself. Hence, if we were to scrape the different sections, we would have to change the path itself, e.g., through `str_c()`. 
+
+The `Status:` code you want to see here is `200` which stands for success. If you want to put it inside a function, you might want to break the function once you get a non-successful query. `http_error()` or `http_status()` are your friends here. 
+
+```{r}
+response %>% http_error()
+response %>% http_status()
+```
+
+`content()` will give you the content of the request.
+
+```{r eval=FALSE}
+response %>% content() %>% glimpse()
+```
+
+What you see is also the content of the call -- which is what we want. It is in a format that we cannot work with right away, though, it is in JSON. 
+
+#### JSON
+
+The following unordered list is stolen from this [blog entry](https://www.earthdatascience.org/courses/earth-analytics/get-data-using-apis/intro-to-JSON/):
+
+* The data are in name/value pairs
+* Commas separate data objects
+* Curly braces {} hold objects
+* Square brackets [] hold arrays
+* Each data element is enclosed with quotes "" if it is a character, or without quotes if it is a numeric value
+
+```{r eval=FALSE}
+writeLines(rawToChar(response$content))
+```
+
+`jsonlite` helps us to bring this output into a data frame. 
+
+```{r message=FALSE, warning=FALSE}
+library(jsonlite)
+
+response %>% 
+  content(as = "text") %>%
+  fromJSON()
+```
+
+#### Dealing with authentification
+
+Well, as we saw before, we would have to put our official NYT API key publicly visible in this script. This is bad practice and should be avoided, especially if you work on a joint project (where everybody uses their code) or if you put your scripts in public places (such as GitHub). The `usethis` package can help you here.
+
+```{r eval=FALSE}
+#usethis::edit_r_environ() # save key there
+Sys.getenv("nyt_key")
+```
+
+Hence, if we now search for articles -- find the proper parameters [here](https://developer.nytimes.com/docs/articlesearch-product/1/routes/articlesearch.json/get), we provide the key by using the `Sys.getenv` function. So, if somebody wants to work with your code and their own key, all they need to make sure is that they have the API key stored in the environment with the same name.
+
+```{r}
+modify_url(
+  url = "http://api.nytimes.com/svc/search/v2/articlesearch.json",
+  query = list(q = "Trump",
+               pub = "20161101",
+               end_date = "20161110",
+               `api-key` = Sys.getenv("nyt_key"))
+) %>% 
+  GET()
+```
+
+### `rtweet`
+
+Twitter is quite popular among social scientists. The main reason for this is arguably its data accessibility. For R users, the package you want to use is `rtweet` by Michael Kearney (find an overview of the different packages and their capabilities [here](https://www.rdocumentation.org/packages/rtweet/versions/0.7.0)). There is a great and quite complete [presentation demonstrating its capabilities](https://mkearney.github.io/nicar_tworkshop/#1). This presentation is a bit outdated. The main difference to the package these days is that you will not need to register an app upfront anymore. All you need is a Twitter account. When you make your first request, a browser window will open where you log on to Twitter, authorize the app, and then you can just go for it. There are certain rate limits, too, which you will need to be aware of when you try to acquire data. Rate limits and the parameters you need to specify can be found in the extensive documentation.
+
+In the following, we will just link to the respective vignettes. Please, feel free to play around with the functions yourself. As a starting point, we provide you with the list of all British MPs and some tasks in exercise 3. A first introduction gives [this vignette](https://cran.r-project.org/web/packages/rtweet/vignettes/intro.html).
+
+```{r eval=FALSE}
+library(rtweet)
+
+uk_mps <- lists_members(
+  list_id = "217199644"
+)
+```
+
+## Further links
+
+* [APIs for social scientists:
+A collaborative review](https://bookdown.org/paul/apis_for_social_scientists/)
+
+## Exercises
+
+1. Start a session with the tidyverse Wikipedia page. Adapt your user agent to some sort of different value. Proceed to Hadley Wickham's page. Go back. Go forth. Check the `session_history()` to see if it has worked.
+
+<details>
+  <summary>Solution. Click to expand!</summary>
+  
+```{r eval=FALSE}
+tidyverse_wiki <- "https://en.wikipedia.org/wiki/Tidyverse"
+hadley_wiki <- "https://en.wikipedia.org/wiki/Hadley_Wickham"
+user_agent <- httr::user_agent("Hi, I'm Felix and I try to steal your data.")
+```
+
+```{r eval=FALSE}
+wiki_session <- session(tidyverse_wiki, user_agent)
+
+wiki_session %<>% session_jump_to(hadley_wiki) %>% 
+  session_back() %>% 
+  session_forward()
+
+wiki_session %>% session_history()
+```
+
+</details>
+
+2. Start a session on "https://www.scrapethissite.com/pages/advanced/?gotcha=login", fill out, and submit the form. Any value for login and password will do. (Disclaimer: you have to add the URL as an "action" attribute after creating the form, see [this tutorial](https://github.com/tidyverse/rvest/issues/319). -- `login_form$action <- url`)
+
+```{r eval=FALSE}
+url <- "https://www.scrapethissite.com/pages/advanced/?gotcha=login"
+
+#extract and set login form here
+
+login_form$action <- url # add url as action attribute
+
+# submit form
+base_session <- session("https://www.scrapethissite.com/pages/advanced/?gotcha=login") %>% 
+  session_submit(login_form) 
+```
+
+<details>
+  <summary>Solution. Click to expand!</summary>
+
+```{r eval=FALSE}
+url <- "https://www.scrapethissite.com/pages/advanced/?gotcha=login"
+
+#extract and set login form here
+login_form <- read_html(url) %>% 
+  html_form() %>% 
+  pluck(1) %>% 
+  html_form_set(user = "123",
+                pass = "456")
+
+login_form$action <- url # add url as action attribute
+
+# submit form
+base_session <- session("https://www.scrapethissite.com/pages/advanced/?gotcha=login") %>% 
+  session_submit(login_form) 
+
+base_session %>% read_html() %>% html_text()
+```
+
+```{r eval=FALSE}
+base_session %>% read_html() %>% html_elements(".col-md-offset-4") %>% html_text2()
+```
+
+</details>
+
+3. Scrape 10 profile timelines from the following list. Check the [documentation](https://cran.r-project.org/web/packages/rtweet/vignettes/intro.html) for instructions.
+
+<details>
+  <summary>Solution. Click to expand!</summary>
+  
+```{r eval=FALSE}
+library(rtweet)
+
+uk_mps <- lists_members(
+  list_id = "217199644"
+) 
+
+# get 10 profiles
+sample_uk_mps <- uk_mps %>% 
+  slice_sample(n = 10) %>% 
+  pull(screen_name)
+
+# get timelines
+## using purrr::map
+timelines <- sample_uk_mps %>% 
+  map(get_timeline)
+
+## using for-loop
+timelines <- vector(mode = "list", length = length(sample_uk_mps))
+
+for (i in seq_along(sample_uk_mps)){
+  timelines[[i]] <- get_timeline(user = sample_uk_mps[[i]])
+}
+```
+
+</details>
+
+<!--chapter:end:01-scraping_structured.Rmd-->
+
+# Scraping the web -- extracting data {#day3}
+
+In Chapter \@ref(day2) you were shown how to make calls to web pages and get responses. Moreover, you were introduced to making calls to APIs which (usually) give you content in a nice and structured manner. In this chapter, the guiding topic will be how you can extract content from web pages that give you unstructured content in a structured way. The (in our opinion) easiest way to achieve that is by harnessing the way the web is written. 
+
+## HTML 101
+
+Web content is usually written in HTML (**H**yper **T**ext **M**arkup **L**anguage). An HTML document is comprised of elements that are letting its content appear in a certain way.
+
+![The tree-like structure of an HTML document](https://www.w3schools.com/js/pic_htmltree.gif)
+
+The way these elements look is defined by so-called tags.
+
+![](https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web/HTML_basics/grumpy-cat-small.png)
+
+The opening tag is the name of the element (`p` in this case) in angle brackets, and the closing tag is the same with a forward slash before the name. `p` stands for a paragraph element and would look like this (since RMarkdown can handle HTML tags, the second line will showcase how it would appear on a web page:
+
+`<p> My cat is very grumpy. <p/>`
+
+<p> My cat is very grumpy. <p/>
+
+The `<p>` tag makes sure that the text is standing by itself and that a line break is included thereafter:
+
+`<p>My cat is very grumpy</p>. And so is my dog.` would look like this:
+
+<p>My cat is very grumpy</p>. And so is my dog.
+
+There do exist many types of tags indicating different kinds of elements (about 100). Every page must be in an `<html>` element with two children `<head>` and `<body>`. The former contains the page title and some metadata, the latter the contents you are seeing in your browser. So-called **block tags**, e.g., `<h1>` (heading 1), `<p>` (paragraph), or `<ol>` (ordered list), structure the page. **Inline tags** (`<b>` -- bold, `<a>` -- link) format text inside block tags.
+
+You can nest elements, e.g., if you want to make certain things bold, you can wrap text in `<b>`:
+
+<p>My cat is <b> very </b> grumpy</p>
+
+Then, the `<b>` element is considered the *child* of the `<p>` element. 
+
+Elements can also bear attributes:
+
+![](https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web/HTML_basics/grumpy-cat-attribute-small.png)
+
+Those attributes will not appear in the actual content. Moreover, they are super-handy for us as scrapers. Here, `class` is the attribute name and `"editor-note"` the value. Another important attribute is `id`. Combined with CSS, they control the appearance of the element on the actual page. A `class` can be used by multiple HTML elements whereas an `id` is unique. 
+
+## Extracting content in `rvest`
+
+To scrape the web, the first step is to simply read in the web page. `rvest` then stores it in the XML format -- just another format to store information. For this, we use `rvest`'s `read_html()` function.
+
+To demonstrate the usage of CSS selectors, I create my own, basic web page using the `rvest` function `minimal_html()`:
+
+```{r message=FALSE, warning=FALSE}
+library(rvest)
+library(tidyverse)
+
+basic_html <- minimal_html('
+  <html>
+  <head>
+    <title>Page title</title>
+  </head>
+  <body>
+    <h1 id="first">A heading</h1>
+    <p class="paragraph">Some text &amp; <b>some bold text.</b></p>
+    <a> Some more <i> italicized text which is not in a paragraph. </i> </a>
+    <a class="paragraph">even more text &amp; <i>some italicized text.</i></p>
+    <a id="link" href="www.nyt.com"> The New York Times </a>
+  </body>
+')
+
+basic_html
+
+#https://htmledit.squarefree.com
+```
+
+CSS is the abbreviation for cascading style sheets and is used to define the visual styling of HTML documents. CSS selectors map elements in the HTML code to the relevant styles in the CSS. Hence, they define patterns that allow us to easily select certain elements on the page. CSS selectors can be used in conjunction with the `rvest` function `html_elements()` which takes as arguments the read-in page and a CSS selector. Alternatively, you can also provide an XPath which is usually a bit more complicated and will not be covered in this tutorial.
+
+* `p` selects all `<p>` elements.
+
+```{r}
+basic_html %>% html_elements(css = "h1")
+```
+
+* `.title` selects all elements that are of `class` "title"
+
+```{r}
+basic_html %>% html_elements(css = ".title")
+```
+
+There are no elements of `class` "title". But some of `class` "paragraph".
+
+```{r}
+basic_html %>% html_elements(css = ".paragraph")
+```
+
+* `p.paragraph` analogously takes every `<p>` element which is of `class` "paragraph". 
+
+```{r}
+basic_html %>% html_elements(css = "p.paragraph")
+```
+
+* `#link` scrapes elements that are of `id` "link"
+
+```{r}
+basic_html %>% html_elements(css = "#link")
+```
+
+You can also connect children with their parents by using the ` ` combinator. For instance, to extract the italicized text from "a.paragraph," I can do "a.paragraph i". 
+
+```{r}
+basic_html %>% html_elements(css = "a.paragraph i")
+```
+
+You can also look at the children by using `html_children()`:
+
+```{r}
+basic_html %>% html_elements(css = "a.paragraph") %>% html_children()
+
+read_html("https://rvest.tidyverse.org") %>% 
+  html_elements("#installation , p")
+```
+
+Unfortunately, web pages in the wild are usually not as easily readable as the small example one I came up with. Hence, I would recommend you to use the [SelectorGadget](javascript:(function()%7Bvar%20s=document.createElement('div');s.innerHTML='Loading...';s.style.color='black';s.style.padding='20px';s.style.position='fixed';s.style.zIndex='9999';s.style.fontSize='3.0em';s.style.border='2px%20solid%20black';s.style.right='40px';s.style.top='40px';s.setAttribute('class','selector_gadget_loading');s.style.background='white';document.body.appendChild(s);s=document.createElement('script');s.setAttribute('type','text/javascript');s.setAttribute('src','https://dv0akt2986vzh.cloudfront.net/unstable/lib/selectorgadget.js');document.body.appendChild(s);%7D)();) -- just drag it into your bookmarks list.
+
+Its usage could hardly be simpler:
+
+1. Activate it -- i.e., click on the bookmark.
+2. Click on the content you want to scrape -- the things the CSS selector selects will appear green.
+3. Click on the green things that you don't want -- they will turn red; click on what's not green yet but what you want -- it will turn green.
+4. copy the CSS selector the gadget provides you with and paste it into the `html_elements()` function. 
+
+## Scraping HTML pages with `rvest`
+
+So far, I have shown you how HTML is written and how to select elements. However, what we want to achieve is extracting the data the elements contained in a proper format and storing it in some sort of tibble. Therefore, we need functions that allow us to grab the data.
+
+The following overview taken from the [web scraping cheatsheet](https://github.com/yusuzech/r-web-scraping-cheat-sheet) shows you the basic "flow" of scraping web pages plus the corresponding functions. In this tutorial, I will limit myself to `rvest` functions. Those are of course perfectly compatible with things, for instance, `RSelenium`, as long as you feed the content in XML format (i.e., by using `read_html()`).
+
+![](https://raw.githubusercontent.com/yusuzech/r-web-scraping-cheat-sheet/master/resources/functions_and_classes.png)
+
+In the first part, I will introduce you to scraping singular pages and extracting their contents. `rvest` also allows for proper sessions where you navigate on the web pages and fill out forms. This is to be introduced in the second part. 
+
+### `html_text()` and `html_text2()`
+
+Extracting text from HTML is easy. You use `html_text()` or `html_text2()`. The former is faster but will give you not-so-nice results. The latter will give you the text like it would be returned in a web browser. 
+
+The following example is taken from [the documentation](https://rvest.tidyverse.org/reference/html_text.html)
+
+```{r}
+# To understand the difference between html_text() and html_text2()
+# take the following html:
+
+html <- minimal_html(
+  "<p>This is a paragraph.
+    This is another sentence.<br>This should start on a new line"
+)
+```
+
+```{r}
+# html_text() returns the raw underlying text, which includes white space
+# that would be ignored by a browser, and ignores the <br>
+html %>% html_element("p") %>% html_text() %>% writeLines()
+```
+
+```{r}
+# html_text2() simulates what a browser would display. Non-significant
+# white space is collapsed, and <br> is turned into a line break
+html %>% html_element("p") %>% html_text2() %>% writeLines()
+```
+
+A "real example" would then look like this:
+
+```{r}
+us_senators <- read_html("https://en.wikipedia.org/wiki/List_of_current_United_States_senators")
+text <- us_senators %>%
+  html_elements(css = "p:nth-child(6)") %>% 
+  html_text2()
+```
+
+### Extracting tables
+
+The general output format we strive for is a tibble. Oftentimes, data is already stored online in a table format, basically ready for us to analyze them. In the next example, I want to get a table from the Wikipedia page that contains the senators of different States in the United States I have used before. For this first, basic example, I do not use selectors for extracting the right table. You can use `rvest::html_table()`. It will give you a list containing all tables on this particular page. We can inspect it using `str()` which returns an overview of the list and the tibbles it contains.
+
+```{r}
+tables <- us_senators %>% 
+  html_table()
+
+str(tables)
+```
+
+Here, the table I want is the sixth one. We can grab it by either using double square brackets -- `[[6]]` -- or `purrr`'s `pluck(6)`.
+
+```{r message=FALSE, warning=FALSE}
+library(janitor)
+senators <- tables %>% 
+  pluck(6)
+
+glimpse(senators)
+
+## alternative approach using css
+senators <- us_senators %>% 
+  html_elements(css = "#senators") %>% 
+  html_table() %>% 
+  pluck(1) %>% 
+  clean_names()
+```
+
+You can see that the tibble contains "dirty" names and that the party column appears twice -- which will make it impossible to work with the tibble later on. Hence, I use `clean_names()` from the `janitor` package to fix that. 
+
+### Extracting attributes 
+
+You can also extract attributes such as links using `html_attrs()`. An example would be to extract the headlines and their corresponding links from r-bloggers.com.
+
+```{r}
+rbloggers <- read_html("https://www.r-bloggers.com")
+```
+
+A quick check with the SelectorGadget told me that the element I am looking for is of class ".loop-title" and the child of it is "a", standing for normal text. With `html_attrs()` I can extract the attributes. This gives me a list of named vectors containing the name of the attribute and the value:
+
+```{r}
+r_blogger_postings <- rbloggers %>% html_elements(css = ".loop-title a")
+
+r_blogger_postings %>% html_attr("href")
+```
+
+Links are stored as attribute "href" -- hyperlink reference. `html_attr()` allows me to extract the attribute's value. Hence, building a tibble with the article's title and its corresponding hyperlink is straight-forward now:
+
+```{r}
+tibble(
+  title = r_blogger_postings %>% html_text2(),
+  link = r_blogger_postings %>% html_attr(name = "href")
+)
+```
+
+Another approach for this would be using the `polite` package and its function `html_attrs_dfr()` which binds together all the different attributes column-wise and the different elements row-wise.
+
+```{r message=FALSE, warning=FALSE}
+library(polite)
+
+rbloggers %>% 
+  html_elements(css = ".loop-title a") %>% 
+  html_attrs_dfr() %>% 
+  select(title = 3, 
+         link = 1) %>% 
+  glimpse()
+```
+
+## Automating scraping
+
+Well, grabbing singular points of data from websites is nice. However, if you want to do things such as collecting large amounts of data or multiple pages, you will not be able to do this without some automation.
+
+An example here would again be the R-bloggers page. It provides you with plenty of R-related content. If you were now eager to scrape all the articles, you would first need to acquire all the different links leading to the blog postings. Hence, you would need to navigate through the site's pages first to acquire the links.
+
+In general, there are two ways to go about this. The first is to manually create a list of URLs the scraper will visit and take the content you need, therefore not needing to identify where it needs to go next. The other one would be automatically acquiring its next destination from the page (i.e., identifying the "go on" button). Both strategies can also be nicely combined with some sort of `session()`. 
+
+### Looping over pages
+
+For the first approach, we need to check the URLs first. How do they change as we navigate through the pages?
+
+```{r}
+url_1 <- "https://www.r-bloggers.com/page/2/"
+url_2 <- "https://www.r-bloggers.com/page/3/"
+
+initial_dist <- adist(url_1, url_2, counts = TRUE) %>% 
+  attr("trafos") %>% 
+  diag() %>% 
+  str_locate_all("[^M]")
+
+  
+str_sub(url_1, start = initial_dist[[1]][1]-5, end = initial_dist[[1]][1]+5) # makes sense for longer urls
+str_sub(url_2, start = initial_dist[[1]][1]-5, end = initial_dist[[1]][1]+5)
+```
+
+There is some sort of underlying pattern and we can harness that. `url_1` refers to the second page, `url_2` to the third. Hence, if we just combine the basic URL and, say, the numbers from 1 to 10, we could then visit all the pages (exercise 3a) and extract the content we want.
+
+```{r}
+urls <- str_c("https://www.r-bloggers.com/page/", 1:10, "/") # this is the stringr equivalent of paste()
+urls
+```
+
+You can run this in a for-loop, here's a quick revision. For the loop to run efficiently, space for every object should be pre-allocated (i.e., you create a list beforehand, and its length can be determined by an educated guess). 
+
+```{r eval=FALSE}
+## THIS IS PSEUDO CODE!!!
+result_list <- vector(mode = "list", length = length(urls)) # pre-allocate space!!!
+starting_link <- 
+for (i in seq_along(urls)){
+  read in urls[[i]]
+  store page in result_list
+}
+```
+
+### Letting the scraper navigate on its own
+
+Extracting the link on the fly is the same thing, but in the end, you need to replace the link argument with the one you extracted. You will do this in exercise 3. It is probably easiest to perform those things in a `while` loop, hence here is a quick revision:
+
+Hence, our `while` loop in pseudo-code will look like this:
+
+```{r eval=FALSE}
+## THIS IS PSEUDO CODE!!!
+output_list <- vector(mode = "list", length = 10L)
+i <- 0
+while (session$response$status_code == 200 && i <= 10) {
+  session(start-url)
+  i <- i + 1
+  read in r-bloggers results list
+  get all stuff and store it in output_list[[i]]
+  move session to next page
+}
+
+### reminder: how to click a button in rvest
+
+session("https://www.scrapethissite.com/") %>% 
+  session_follow_link(css = ".btn-default") # just use selectorgadget to check for css selector of button
+```
+
+## Conclusion
+ 
+ To sum it up: when you have a good research idea that relies on Digital Trace Data that you need to collect, ask yourself the following questions:
+ 
+1. Is there an R package for the web service?
+2. If 1. == FALSE: Is there an API where I can get the data (if TRUE, use it)
+3. If 1. == FALSE & 2. == FALSE: Is screen scraping an option and any structure in the data that you can harness?
+
+If you have to rely on screen scraping, also ask yourself the question how you can minimize the number of requests you make to the server. Going back and forth on web pages or navigating through them might not be the best option since it requires multiple requests. The most efficient way is usually to try to get a list of URLs of some sort which you can then just loop over.
+
+## Further links
+
+* [More on HTML](https://www.w3schools.com/html/default.asp)
+* [More on CSS selectors](https://www.w3schools.com/css/css_selectors.asp)
+* The [`rvest` vignette](https://rvest.tidyverse.org)
+* A "laymen's guide" on web scraping ([blog post](https://towardsdatascience.com/functions-with-r-and-rvest-a-laymens-guide-acda42325a77))
+
+## Exercises
+
+1. Download all movies from the (IMDb Top250 best movies of all time list)[https://www.imdb.com/chart/top/?ref_=nv_mv_250]. Put them in a tibble with the columns `rank` -- in numeric format, `title`, `url` to IMDb entry, `rating` -- in numeric format.
+
+<details>
+  <summary>Solution. Click to expand!</summary>
+
+```{r eval=FALSE}
+imdb_top250 <- read_html("https://www.imdb.com/chart/top/?ref_=nv_mv_250")
+
+tibble(
+  rank = imdb_top250 %>% 
+    html_elements(".titleColumn") %>% 
+    html_text2() %>% 
+    str_extract("^[0-9]+(?=\\.)") %>% 
+    parse_integer(),
+  title = imdb_top250 %>% 
+    html_elements(".titleColumn a") %>% 
+    html_text2(),
+  url = imdb_top250 %>% 
+    html_elements(".titleColumn a") %>% 
+    html_attr("href") %>% 
+    str_c("https://www.imdb.com", .),
+  rating = imdb_top250 %>% 
+    html_elements("strong") %>% 
+    html_text() %>% 
+    parse_double()
+)
+
+imdb_top250 %>% 
+    html_elements("a") %>% 
+    html_text2()
+```
+</details>
+
+2. Scrape the (British MPs Wikipedia page)[https://en.wikipedia.org/wiki/List_of_MPs_elected_in_the_2019_United_Kingdom_general_election].
+  a. Scrape the table containing data on all individual MPs. (Hint: you can select and remove single lines using `slice()`, e.g., `tbl %>% slice(1)` retains only the first line, `tbl %>% slice(-1)` removes only the first line.)
+  b. Extract the links linking to individual pages. Make them readable using `url_absolute()` – `url_absolute("/kdfnndfkok", base = "https://wikipedia.com")` --> `"https://wikipedia.com/kdfnndfkok"`. Add the links to the table from 1a.
+  c. Scrape the textual content of the **first** MP’s Wikipedia page.
+  d. (ADVANCED!) Wrap 1c. in a function called `scrape_mp_wiki()`.
+
+<details>
+  <summary>Solution. Click to expand!</summary>
+
+```{r eval=FALSE}
+# scrape uk mps
+library(tidyverse)
+library(rvest)
+library(janitor)
+
+#a
+mp_table <- read_html("https://en.wikipedia.org/wiki/List_of_MPs_elected_in_the_2019_United_Kingdom_general_election") %>% 
+  html_element("#elected-mps") %>% 
+  html_table() %>% 
+  select(-2, -6) %>% 
+  slice(-651) %>% 
+  clean_names()
+
+#b  
+mp_links <- read_html("https://en.wikipedia.org/wiki/List_of_MPs_elected_in_the_2019_United_Kingdom_general_election") %>% 
+  html_elements("#elected-mps b a") %>% 
+  html_attr("href")
+
+table_w_link <- mp_table %>% 
+  mutate(link = mp_links %>% 
+           paste0("https://en.wikipedia.org", .))
+
+#c
+link <- table_w_link %>% 
+  slice(1) %>% 
+  pull(link) 
+
+link %>% 
+  read_html() %>% 
+  html_elements("p") %>% 
+  html_text2() %>% 
+  str_c(collapse = " ") %>% 
+  enframe(name = NULL, value = "wiki_article") %>% 
+  mutate(link = link)
+
+#d
+scrape_page <- function(link){
+  Sys.sleep(0.5)
+  
+  read_html(link) %>% 
+    html_elements("p") %>% 
+    html_text2() %>% 
+    str_c(collapse = " ") %>% 
+    enframe(name = NULL, value = "wiki_article") %>% 
+    mutate(link = link)
+}
+
+mp_wiki_entries <- table_w_link$link[[1]] %>% 
+  map(~{scrape_page(.x)})
+
+mp_wiki_entries_tbl <- table_w_link %>% 
+  left_join(mp_wiki_entries %>% bind_rows())
+```
+</details>
+
+3. Scrape the 10 first pages of [R-bloggers](https://www.r-bloggers.com) in an automated fashion. Make sure to take breaks between requests by including `Sys.sleep(2)`.
+  a. Do so using the url vector we created above.
+  b. Do so by getting the link for the next page and a loop.
+  c. Do so by using `session()` in a loop.
+
+<details>
+  <summary>Solution. Click to expand!</summary>
+  
+```{r eval=FALSE}
+
+# a: check running number in URL, create new URLs, map()
+
+urls <- str_c("https://www.r-bloggers.com/page/", 1:10, "/")
+
+scrape_r_bloggers <- function(url){
+  Sys.sleep(2)
+  read_html(url) %>% 
+    html_elements(css = ".loop-title a") %>% 
+    html_attrs_dfr()
+}
+
+map(urls, scrape_r_bloggers)
+
+
+# b: extract the next page and move forward in the loop
+
+rbloggers %>% html_elements(css = ".next") %>% html_attr("href")
+url <- "https://www.r-bloggers.com/"
+content <- vector(mode = "list", length = 10L)
+
+for (i in 1:10){
+  page <- read_html(url)
+  
+  content[[i]] <- page %>% 
+  html_elements(css = ".loop-title a") %>% 
+  html_attrs_dfr()
+  
+  url <- page %>% html_elements(css = ".next") %>% html_attr("href")
+  
+  Sys.sleep(2)
+}
+
+
+# c: session()
+
+session(url) %>% session_follow_link(css = ".next")
+content <- vector(mode = "list", length = 10L)
+session_page <- session(url)
+session_page$response$status_code
+
+for (i in 1:10){
+  content[[i]] <- session_page %>% 
+    html_elements(css = ".loop-title a") %>% 
+    html_attrs_dfr()
+  
+  session_page <- session_page %>% session_follow_link(css = ".next")
+}
+
+```
+
+</details>
+
+<!--chapter:end:02-scraping_unstructured.Rmd-->
+
+# Text preprocessing {#day4}
+
+When working with data, a significant number of variables will be in some sort of text format. When you want to manipulate these variables, an easy approach would be exporting the data to MS Excel and then just performing those manipulations by hand. This is very time-consuming, though, and, hence, we rather recommend the R way which scales well and works fast for data sets of varying sizes.
+
+Quick reminder: a string is an element of a character vector and can be created by simply wrapping some text in quotation marks:
+
+```{r}
+string <- "Hi, how are you doing?"
+vector_of_strings <- c("Hi, how are you doing?", "I'm doing well, HBY?", "Me too, thanks for asking.")
+```
+
+Note that you can either wrap your text in double quotation marks and use single ones in the string and vice versa:
+
+```{r}
+single_ones <- "what's up"
+double_ones <- 'he said: "I am fine"'
+```
+
+The `stringr` package [@wickham_stringr_2019] contains a multitude of commands (49 in total) that can be used to achieve a couple of things, mainly manipulating character vectors, and finding and matching patterns. These goals can also be achieved with base R functions, but `stringr`'s advantage is its consistency. The makers of `stringr` describe it as
+
+> A consistent, simple and easy-to-use set of wrappers around the fantastic `stringi` package. All function and argument names (and positions) are consistent, all functions deal with `NA`'s and zero-length vectors in the same way, and the output from one function is easy to feed into the input of another.
+
+Every `stringr` function starts with `str_` -- which facilitates finding the proper command: just type `str_` and RStudio's auto-suggest function should take care of the rest (if it doesn't pop up by itself, you can trigger it by hitting the tab key). Also, they take a vector of strings as their first argument, which facilitates using them in a ` %>% `-pipeline and adding them to a `mutate()`-call. 
+
+One important component of `stringr` functions is regular expressions which will be introduced later as well. 
+
+## Basic manipulations
+
+In the following, we will introduce you to several different operations that can be performed on strings.
+
+### Changing the case of the words
+
+A basic operation is changing words' cases.
+
+```{r}
+library(tidyverse) #stringr is part of the core tidyverse
+
+str_to_lower(vector_of_strings)
+str_to_upper(vector_of_strings)
+str_to_title(vector_of_strings)
+str_to_sentence(vector_of_strings)
+```
+
+### Determining a string's length
+
+Determining the string's number of characters goes as follows: 
+
+```{r}
+str_length(vector_of_strings)
+```
+
+### Extracting particular characters
+
+Characters can be extracted (by position) using `str_sub`
+
+```{r}
+str_sub(vector_of_strings, start = 1, end = 5) # extracting first to fifth character
+str_sub(vector_of_strings, start = -5, end = -1) # extracting fifth-to-last to last character
+```
+
+You can also use `str_sub()` to replace strings. E.g., to replace the last character by a full stop, you can do the following:
+
+```{r}
+str_sub(vector_of_strings, start = -1) <- "."
+vector_of_strings
+```
+
+However, in everyday use, you would probably go with `str_replace()` and regular expressions.
+
+### Concatenating strings
+
+Similar to how `c()` puts together different elements (or vectors of length 1) and other vectors into a single vector, `str_c()` can be used to concatenate several strings into a single string. This can, for instance, be used to write some birthday invitations.
+
+```{r}
+names <- c("Inger", "Peter", "Kalle", "Ingrid")
+
+str_c("Hi", names, "I hope you're doing well. As per this letter, I invite you to my birthday party.")
+```
+
+Well, this looks kind of ugly, as there are no spaces, and commas are lacking as well. You can fix that by determining a separator using the `sep` argument. 
+
+```{r}
+str_c("Hi", names, "I hope you're doing well. As per this letter, I invite you to my birthday party.", sep = ", ")
+```
+
+You could also collapse the strings contained in a vector together into one single string using the `collapse` argument. 
+
+```{r}
+str_c(names, collapse = ", ")
+```
+
+This can also be achieved using the `str_flatten()` function.
+
+```{r}
+str_flatten(names, collapse = ", ")
+```
+
+### Repetition
+
+Repeating (or duplicating) strings is performed using `str_dup()`. The function takes two arguments: the string to be duplicated and the number of times.
+
+```{r}
+str_dup("felix", 2)
+str_dup("felix", 1:3)
+str_dup(names, 2)
+str_dup(names, 1:4)
+```
+
+### Removing unnecessary whitespaces
+
+Often text contains unnecessary whitespaces. 
+```{r}
+unnecessary_whitespaces <- c("    on the left", "on the right    ", "    on both sides   ", "   literally    everywhere  ")
+```
+
+Removing the ones at the beginning of the end of a string can be accomplished using `str_trim()`.
+
+```{r}
+str_trim(unnecessary_whitespaces, side = "left")
+str_trim(unnecessary_whitespaces, side = "right")
+str_trim(unnecessary_whitespaces, side = "both") # the default option
+```
+
+`str_trim()` could not fix the last string though, where unnecessary whitespaces were also present in between words. Here, `str_squish` is more appropriate. It removes leading or trailing whitespaces as well as duplicated ones in between words.
+
+```{r}
+str_squish(unnecessary_whitespaces)
+```
+
+## Regular expressions
+
+Up to now, you have been introduced to the more basic functions of the `stringr` package. Those are useful, for sure, yet limited. However, to make use of the full potential of `stringr`, you will first have to acquaint yourself with regular expressions (also often abbreviated as "regex" with plural "regexes"). 
+
+Those regular expressions are patterns that can be used to describe certain strings. Exemplary use cases of regexes are the identification of phone numbers, email addresses, or whether a password you choose on a web page consists of enough characters, an uppercase character, and at least one special character. Hence, if you want to replace certain words with another one, you can write the proper regex and it will identify the strings you want to replace, and the `stringr` functions (i.e., `str_replace()`) will take care of the rest.
+
+Before you dive into regexes, beware that they are quite complicated at the beginning^[comment from Felix: "honestly, I was quite overwhelmed when I encountered them first"]. Yet, mastering them is very rewarding and will pay off in the future.
+
+### Literal characters
+
+The most basic regex patterns consist of literal characters only. `str_view()` tells you which parts of a string match a pattern is present in the element. 
+
+```{r}
+five_largest_cities <- c("Stockholm", "Göteborg", "Malmö", "Uppsala", "Västerås")
+```
+
+```{r eval=FALSE, include=FALSE}
+str_c(five_largest_cities, collapse = "\n") %>% cat()
+```
+
+Note that regexes are case-sensitive.
+
+```{r}
+str_view(five_largest_cities, "stockholm")
+```
+
+```{r}
+str_view(five_largest_cities, "Stockholm")
+```
+
+They also match parts of words:
+
+```{r}
+str_view(five_largest_cities, "borg")
+```
+
+Moreover, they are "greedy," they only match the first occurrence (in "Stockholm"):
+
+```{r}
+str_view(five_largest_cities, "o")
+```
+
+This can be addressed in the `stringr` package by using `str_._all()` functions -- but more on that later.
+
+If you want to match multiple literal characters (or words, for that sake), you can connect them using the `|` meta character (more on meta characters later).
+
+```{r}
+str_view(five_largest_cities, "Stockholm|Göteborg")
+```
+
+Every letter of the English alphabet (or number/or combination of those) can serve as a literal character. Those literal characters *match themselves*. This is, however, not the case with the other sort of characters, so-called meta characters.
+
+### Metacharacters
+
+When using regexes, the following characters are considered meta characters and have a special meaning:
+
+`. \ | ( ) { } [ ] ^ $ - * + ?`
+
+#### The wildcard
+
+Did you notice how we used the dot to refer to the entirety of the `str_._all()` functions? This is basically what the `.` meta-character does: it matches every character except for a new line. The first call extracts all function names from the `stringr` package, the second one shows the matches (i.e., the elements of the vector where it can find the pattern).
+
+```{r}
+stringr_functions <- ls("package:stringr")
+
+str_detect(stringr_functions, "str_._all")
+```
+
+```{r eval=FALSE, include=FALSE}
+str_c(stringr_functions, collapse = "\n") %>% cat()
+```
+
+Well, as you can see, there are none. This is because the `.` can only replace one character. We need some sort of multiplier to find them. The ones available are:
+
+* `?` -- zero or one
+* `*` -- zero or more
+* `+` -- one or more
+* `{n}` -- exactly n
+* `{n,}` -- n or more
+* `{n,m}` -- between n and m
+
+In our case, the appropriate one is `+`:
+
+```{r}
+str_detect(stringr_functions, "str_.+_all")
+```
+
+However, if you want to match the character dot? This problem may arise when searching for clock time. A naive regex might look like this:
+
+```{r}
+vectors_with_time <- c("13500", "13M00", "13.00")
+
+str_detect(vectors_with_time, "13.00")
+```
+
+```{r eval=FALSE, include=FALSE}
+str_c(vectors_with_time, collapse = "\n") %>% cat()
+```
+
+Yet, it matches everything. We need some sort of literal dot. Here, the metacharacter `\` comes in handy. By putting it in front of the metacharacter, it no longer has its special meaning and is interpreted as a literal character. This procedure is referred to as "escaping." Hence, `\` is also referred to as the "escape character." Note that you will need to escape `\` as well, and therefore it will look like this: `\\.`. 
+
+```{r}
+str_detect(vectors_with_time, "13\\.00")
+```
+
+### Sets of characters
+
+You can also define sets of multiple characters using the `[ ]` meta characters. This can be used to define multiple possible characters that can appear in the same place. 
+
+```{r}
+sp_ce <- c("spice", "space")
+
+str_view(sp_ce, "sp[ai]ce")
+```
+
+```{r eval=FALSE, include=FALSE}
+str_c(sp_ce, collapse = "\n") %>% cat()
+```
+
+You can also define certain ranges of characters using the `-` metacharacter:
+
+Same holds for numbers:
+
+```{r}
+american_phone_number <- "(555) 555-1234"
+
+str_view(american_phone_number, "\\([:digit:]{3}\\) [0-9]{3}-[0-9]{4}")
+```
+
+There are also predefined sets of characters, for instance, digits or letters, which are called *character classes*. You can find them on the [`stringr` cheatsheet](https://github.com/rstudio/cheatsheets/blob/master/strings.pdf). 
+
+Furthermore, you can put almost every meta character inside the square brackets without escaping them. This does not apply to the caret (`^`) in the first position, the dash `-`, the closing square bracket `]`, and the backslash `\`.
+
+```{r}
+str_view(vector_of_strings, "[.]")
+```
+
+```{r eval=FALSE, include=FALSE}
+str_c(vector_of_strings, collapse = "\n") %>% cat()
+```
+
+#### Negating sets of characters
+
+Sometimes you will also want to exclude certain sets of characters or words. To achieve this, you can use the `^` meta character at the beginning of the range or set you are defining. 
+
+```{r}
+str_view(sp_ce, "sp[^i]ce")
+```
+
+### Anchors
+
+There is also a way to define whether you want the pattern to be present in the beginning `^` or at the end `$` of a string. `sentences` are a couple of (i.e., 720) predefined example sentences. If we were now interested in the number of sentences that begin with a "the," we could write the following regex:
+
+```{r}
+shortened_sentences <- sentences[1:10]
+
+str_view(shortened_sentences, "^The") 
+```
+
+```{r eval=FALSE, include=FALSE}
+str_c(shortened_sentences, collapse = "\n") %>% cat()
+```
+
+If we wanted to know how many start with a "The" and end with a full stop, we could do this one:
+
+```{r}
+str_view(shortened_sentences, "^The.+\\.$") 
+```
+
+#### Boundaries
+
+Note that right now, the regex also matches the sentence which starts with a "These." To address this, we need to tell the machine that it should only accept a "The" if there starts a new word thereafter. In regex syntax, this is done using so-called boundaries. Those are defined as `\b` as a word boundary and `\B` as no word boundary. (Note that you will need an additional escape character as you will have to escape the escape character itself.)
+
+In my example, we would include the former if we were to search for sentences that begin with a single "The" and the latter if we were to search for sentences that begin with a word that starts with a "The" but are not "The" -- such as "These."
+
+```{r}
+str_view(shortened_sentences, "^The\\b.+\\.$") 
+str_view(shortened_sentences, "^The\\B.+\\.$") 
+```
+
+#### Lookarounds
+
+A final common task is to extract certain words or values based on what comes before or after them. Look at the following example:
+
+```{r}
+heights <- c("1m30cm", "2m01cm", "3m10cm")
+```
+
+```{r eval=FALSE, include=FALSE}
+str_c(heights, collapse = "\n") %>% cat()
+```
+
+Here, to identify the height in meters, the first task is to identify all the numbers that are followed by an "m". The regex syntax for this looks like this: `A(?=pattern)` with `A` being the entity that is supposed to be found (hence, in this case, [0-9]+).
+
+```{r}
+str_view(heights, "[0-9]+(?=m)")
+```
+
+The second step now is to identify the centimeters. This could of course be achieved using the same regex and replacing `m` with `cm`. However, we can also harness a so-called negative look ahead `A(?!pattern)`, a so-called look behind `(?<=pattern)A`. The negative counterpart, the negative look behind `(?<!pattern)A` could be used to extract the meters.
+
+The negative lookahead returns everything that is not followed by the defined pattern. The look behind returns everything that is preceded by the pattern, the negative look behind returns everything that is not preceded by the pattern.
+
+In the following, we demonstrate how you could extract the centimeters using negative look ahead and look behind.
+
+```{r}
+str_view(heights, "[0-9]+(?!m)") # negative look ahead
+```
+
+```{r}
+str_view(heights, "(?<=m)[0-9]+") # look behind
+```
+
+## More advanced string manipulation
+
+Now that you have learned about regexes, you can unleash the full power of `stringr`.
+
+The basic syntax of a `stringr` function looks as follows: `str_.*(string, regex(""))`. Some `stringr` functions also have the suffix `_all` which implies that they operate not only on the first match ("greedy") but on every match.
+
+To demonstrate the different functions, we will again rely on the subset of example sentences.
+
+### Detect matches
+
+`str_detect` can be used to determine whether a certain pattern is present in the string.
+
+```{r}
+str_detect(shortened_sentences, "The\\b")
+```
+
+This also works very well in a `dplyr::filter()` call. Finding all action movies in the IMDB data set can be solved like this:
+
+```{r}
+imdb_raw <- read_csv("https://www.dropbox.com/s/81o3zzdkw737vt0/imdb2006-2016.csv?dl=1")
+imdb_raw %>% 
+  filter(str_detect(Genre, "Action"))
+```
+
+If you want to know whether there are multiple matches present in each string, you can use `str_count`. Here, it might by advisable to set the `ignore_case` option to `TRUE`:
+
+```{r}
+str_count(shortened_sentences, regex("the\\b", ignore_case = TRUE))
+```
+
+If you want to locate the match in the string, use `str_locate`. This returns a matrix, which is a vector of multiple dimensions.
+
+```{r}
+str_locate(shortened_sentences, regex("The\\b", ignore_case = TRUE))
+```
+
+Moreover, this is a good example for the greediness of `stringr` functions. Hence, it is advisable to use `str_locate_all` which returns a list with one matrix for each element of the original vector:
+
+```{r}
+str_locate_all(shortened_sentences, regex("The\\b", ignore_case = TRUE)) %>% .[1:3]
+```
+
+### Mutating strings
+
+Mutating strings usually implies the replacement of certain elements (e.g., words) with other elements (or removing them, which is a special case of replacing them). In `stringr` this is performed using `str_replace(string, pattern, replacement)` and `str_replace_all(string, pattern, replacement)`. 
+
+If we wanted, for instance, to replace the first occurrence of "m" letters with "meters," we would go about this the following way:
+
+```{r}
+str_replace(heights, "m", "meters")
+```
+
+Note that `str_replace_all` would have lead to the following outcome:
+
+```{r}
+str_replace_all(heights, "m", "meters")
+```
+
+However, we also want to replace the "cm" with "centimeters," hence, we can harness another feature of `str_replace_all()`:
+
+```{r}
+str_replace_all(heights, c("m" = "meters", "cm" = "centimeters"))
+```
+
+What becomes obvious is that a "simple" regex containing just literal characters more often than not does not suffice. It will be your task to fix this. And while on it, you can also address the meter/meters problem -- a "1" needs meter instead of meters. Another feature is that the replacements are performed in order. You can harness this for solving the problem.
+
+<details>
+  <summary>Solution. Click to expand!</summary>
+Solution:
+```{r}
+str_replace_all(heights, c("(?<=[2-9]{1})m" = "meters", "(?<=[0-9]{2})m" = "meters", "(?<=1)m" = "meter", "(?<=01)cm$" = "centimeter", "cm$" = "centimeters"))
+```
+</details>
+
+### Extracting text
+
+`str_extract(_all)()` can be used to extract matching strings. In the `mtcars` data set, the first word describes the car brand. Here, we harness another regex, the `\\w` which stands for any word character. Its opponent is `\\W` for any non-word character.
+
+```{r}
+mtcars %>% 
+  rownames_to_column(var = "car_model") %>% 
+  transmute(manufacturer = str_extract(car_model, "^\\w+\\b")) %>% 
+  head(6)
+```
+
+### Split vectors
+
+Another use case here would have been to split it into two columns: manufacturer and model. One approach would be to use `str_split()`. This function splits the string at every occurrence of the predefined pattern. In this example, we use a word boundary as the pattern:
+
+```{r}
+manufacturer_model <- rownames(mtcars)
+str_split(manufacturer_model, "\\b") %>% 
+  head()
+```
+
+This outputs a list containing the different singular words/special characters. This doesn't make sense in this case. Here, however, the structure of the string is always roughly the same: "\\[manufacturer\\]\\[ \\]\\[model description\\]". Moreover, the manufacturer is only one word. Hence, the task can be fixed by splitting the string after the first word, which should indicate the manufacturer. This can be accomplished using `str_split_fixed()`. Fixed means that the number of splits is predefined. This returns a matrix that can easily become a tibble.
+
+```{r}
+str_split_fixed(manufacturer_model, "(?<=\\w)\\b", n = 2) %>% 
+  as_tibble() %>% 
+  rename(manufacturer = V1,
+         model = V2) %>% 
+  mutate(model = str_squish(model))
+```
+
+## Featurization of text
+
+After having learned about the basics of string manipulation, we are now turning to how you can turn your collection of documents, your corpus, into a representation that lends itself nicely to quantitative analyses of text. There are a couple of packages around which you can use for text mining, such as `quanteda` [@benoit_quanteda_2018], `tm` [@feinerer_text_2008], and `tidytext` [@silge_tidytext_2016], the latter being probably the most recent addition to them. A larger overview of relevant packages can be found on this [CRAN Task View](https://cran.r-project.org/web/views/NaturalLanguageProcessing.html).
+
+As you could probably tell from its name, `tidytext` obeys the tidy data principles. "Every observation is a row" translates here to "every token has its own row" -- "token" not necessarily relating to a singular term, but also so-called n-grams. In the following, we will demonstrate what text mining using tidy principles can look like in R. For this, we will first cover the preprocessing of text using tidy data principles. Thereafter, we will delve into more advanced preprocessing such as the lemmatization of words and part-of-speech (POS) tagging using `spaCy` [@honnibal_spacy_2017]. Finally, different R packages are using different representations of text data. Depending on the task at hand, you will therefore have to be able to transform the data into the proper format. This will be covered in the final part.
+
+### Pre-processing with `tidytext`
+
+The `sotu` package contains all of the so-called "State of the Union" addresses -- the president gives them to the congress annually -- since 1790.
+
+```{r message=FALSE, warning=FALSE}
+library(sotu)
+
+sotu_raw <- sotu_meta %>% 
+  bind_cols(sotu_text) %>% 
+  rename(text = `...6`) %>% 
+  distinct(text, .keep_all = TRUE)
+
+sotu_raw %>% glimpse()
+```
+
+Now that the data are read in, we need to put them into the proper format and clean them. For this purpose, we take a look at the first entry of the tibble.
+
+```{r}
+sotu_raw %>% slice(1) %>% pull(text) %>% str_sub(1, 500)
+```
+
+#### `unnest_tokens()`
+
+we will focus on the 20th-century SOTUs. Here, the `dplyr::between()` function comes in handy.
+
+```{r}
+sotu_20cent_raw <- sotu_raw %>% 
+  filter(between(year, 1900, 2000))
+```
+
+In a first step, we bring the data into a form that facilitates manipulation: a tibble. For this, we use `tidytext`'s `unnest_tokens()` function. It breaks the corpus up into tokens -- the respective words. In English, words are separated by whitespace. Therefore, tokenization could also be achieved doing `str_split(sep = " ")`.
+`
+```{r}
+library(tidytext)
+
+toy_example <- tibble(
+  text = "Look, this is a brief example for how tokenization works."
+)
+
+toy_example %>% 
+  pull(text) %>% 
+  str_split(pattern = " ") 
+
+toy_example %>% 
+  unnest_tokens(output = token, 
+                input = text)
+```
+
+Note that `unnest_tokens()` already reduces complexity for us by removing the comma and the full-stop and making everything lower-case.
+
+```{r}
+is_equal <- function(x, y) x == y
+is_equal(
+  toy_example %>% 
+    pull(text) %>% 
+    str_split(pattern = " ") %>% 
+    reduce(c) %>% 
+    str_remove_all("[:punct:]") %>% 
+    str_to_lower(),
+  toy_example %>% 
+    unnest_tokens(output = token, 
+                  input = text) %>% 
+  pull(token)
+)
+```
+
+```{r}
+sotu_20cent_tokenized <- sotu_20cent_raw %>% 
+  unnest_tokens(output = token, input = text)
+glimpse(sotu_20cent_tokenized)
+```
+
+The new tibble consists of `r sotu_20cent_tokenized %>% nrow()` rows. Please note that usually, you have to put some sort of id column into your original tibble before tokenizing it, e.g., by giving each case -- representing a document, or chapter, or whatever -- a separate id (e.g., using `tibble::rowid_to_column()`). This does not apply here, because my original tibble came with a bunch of metadata (president, year, party) which serve as sufficient identifiers.
+
+`unnest_ngrams()` can be used to split the text into ngrams. 
+
+```{r}
+sotu_20cent_raw %>% 
+  unnest_ngrams(output = ngrams, input = text, n = 3L, n_min = 2L)
+```
+
+
+#### Removal of unnecessary content
+
+The next step is to remove stop words -- they are not necessary for the analyses we want to perform. The `stopwords` [@benoit_stopwords_2020] package has a nice list for English.
+
+```{r}
+library(stopwords)
+
+stopwords_vec <- stopwords(language = "en")
+#stopwords(language = "de") # the german equivalent
+#stopwords_getlanguages() # find the languages that are available
+```
+
+Removing the stop words now is straight-forward:
+
+```{r}
+sotu_20cent_tokenized_nostopwords <- sotu_20cent_tokenized %>% 
+  filter(!token %in% stopwords_vec)
+```
+
+Another thing we forgot to remove are digits. They do not matter for the analyses either:
+
+```{r}
+sotu_20cent_tokenized_nostopwords_nonumbers <- sotu_20cent_tokenized_nostopwords %>% 
+  filter(!str_detect(token, "[:digit:]"))
+```
+
+The corpus now contains `r sotu_20cent_tokenized_nostopwords_nonumbers %>% distinct(token) %>% nrow()` different tokens, the so-called "vocabulary." `r (sotu_20cent_tokenized %>% distinct(token) %>% nrow()) - (sotu_20cent_tokenized_nostopwords_nonumbers %>% distinct(token) %>% nrow())` tokens were removed from the vocuabulary. This translates to a signifiant reduction in corpus size though, the new tibble only consists of `r sotu_20cent_tokenized_nostopwords_nonumbers %>% nrow()` rows, basically a 50 percent reduction. 
+
+#### Stemming
+
+To decrease the complexity of the vocabulary even further, we can reduce the tokens to their stem using the `SnowballC` package and its function `wordStem()`:
+
+```{r message=FALSE, warning=FALSE}
+library(SnowballC)
+
+sotu_20cent_tokenized_nostopwords_nonumbers_stemmed <- sotu_20cent_tokenized_nostopwords_nonumbers %>% 
+  mutate(token = wordStem(token, language = "en"))
+
+#SnowballC::getStemLanguages() # if you want to know the abbreviations for other languages as well
+```
+
+Maybe we should also remove insignificant words, i.e., ones that appear less than 0.1 percent of the time. 
+
+```{r}
+sotu_20cent_tokenized_nostopwords_nonumbers_stemmed %>% 
+  group_by(token) %>% 
+  filter(n() > nrow(.)/1000)
+```
+
+These steps have brought down the vocabulary from `r sotu_20cent_tokenized_nostopwords_nonumbers %>% distinct(token) %>% nrow()` to `r sotu_20cent_tokenized_nostopwords_nonumbers_stemmed %>% distinct(token) %>% nrow()`.
+
+#### In a nutshell
+
+Well, all those things could also be summarized in one nice cleaning pipeline:
+
+```{r}
+sotu_20cent_clean <- sotu_raw %>% 
+  filter(between(year, 1900, 2000)) %>% 
+  unnest_tokens(output = token, input = text) %>% 
+  anti_join(get_stopwords(), by = c("token" = "word")) %>% 
+  filter(!str_detect(token, "[:digit:]")) %>% 
+  mutate(token = wordStem(token, language = "en")) %>% 
+  group_by(token) %>% 
+  filter(n() > nrow(.)/1000)
+```
+
+Now we have created a nice tibble containing the SOTU addresses of the 20th century in a tidy format. This is a great point of departure for subsequent analyses.
+
+## Preprocessing with `spaCy`
+
+Similar things (and more!) can also be achieved with `spaCy` [@honnibal_spacy_2017]. `spacyr` [@benoit_spacyr_2020] is an R wrapper around the `spaCy` Python package and, therefore, a bit tricky to install at first, you can find instructions [here](https://spacyr.quanteda.io/articles/using_spacyr.html). 
+
+The functionalities `spacyr` offers you are the following^[overview copied from their webpage]: 
+
+* parsing texts into tokens or sentences;
+* lemmatizing tokens;
+* parsing dependencies (to identify the grammatical structure of the sentence); and
+* identifying, extracting, or consolidating token sequences that form named entities or noun phrases.
+
+In brief, preprocessing with `spacyr` is computationally more expensive than using, for instance, `tidytext`, but will give you more [accurate lemmatization instead of "stupid," rule-based stemming.](https://stackoverflow.com/questions/1787110/what-is-the-difference-between-lemmatization-vs-stemming). Also, it allows you to break up documents into smaller entities, sentences, which might be more suitable, e.g., as input for classifiers (since sentences tend to be about one topic, they allow for more fine-grained analyses). Part-of-speech (POS) tagging provides you with the functions of the different terms within the sentence. This might prove useful for tasks such as sentiment analysis. The final task `spacyr` can help you with is Named Entity Recognition (NER) which can be used for tasks such as sampling relevant documents. Since it is a wrapper for a Python package, it requires a Python environment that is correctly set up and connected to RStudio. Setting this up is usually a bit finicky, you can find the instructions [online](https://spacyr.quanteda.io/articles/using_spacyr.html). 
+
+### Initializing spacy
+
+Before using `spacyr`, it needs to be initialized. What happens during this process is that R opens a connection to Python so that it can then run the `spacyr` functions in Python's `spaCy`. Once you have set up everything properly, you can initialize it using `spacy_initialize(model)`. Different language models can be specified and an overview can be found [here](https://spacy.io/usage/models#languages). Note that a process of `spaCy` is started when you `spacy_initialize()` and continues running in the background. Hence, once you don't need it anymore, or want to load a different model, you should `spacy_finalize()`. 
+
+```{r}
+library(spacyr)
+
+spacy_initialize(model = "en_core_web_sm")
+
+# to download a new model -- here: French
+#spacy_finalize() # closes the connection
+#spacy_download_langmodel(model = "fr_core_news_sm")
+#spacy_initialize(model = "fr_core_news_sm") #check that it has worked
+
+#spacy_finalize()
+#spacy_initialize(model = "de_core_web_sm") # for German
+```
+
+### `spacy_parse()`
+
+`spacyr`'s main function is `spacy_parse()`. It takes a character vector or [TIF-compliant data frame](https://github.com/ropensci/tif). The latter is a tibble containing at least two columns, one named `doc_id` with unique document ids and one named `text`, containing the respective documents.
+
+```{r}
+library(tif)
+
+tif_toy_example <- tibble(
+  doc_id = "doc1",
+  text = "Look, this is a brief example for how tokenization works. This second sentence allows me to demonstrate another functionality of spacy."
+)
+tif_is_corpus_df(tif_toy_example)
+
+toy_example_vec <- tif_toy_example$text
+```
+
+The output of `spacy_parse()` looks as follows:
+
+```{r}
+sotu_speeches_tif <- sotu_20cent_raw %>% 
+  mutate(doc_id = str_c("sotu", year, sep = "_"))
+
+sotu_parsed <- spacy_parse(sotu_speeches_tif %>% slice(1:3),
+                           pos = TRUE,
+                           tag = TRUE,
+                           lemma = TRUE,
+                           entity = TRUE,
+                           dependency = TRUE,
+                           nounphrase = TRUE,
+                           multithread = TRUE)
+
+sotu_parsed %>% head(10)
+
+```
+
+Note that this is already fairly similar to the output of `tidytext`'s `unnest_tokens()` function. The advantages are that the lemmas are more accurate, that we have a new sub-entity -- sentences --, and that there is now more information on the type and meanings of the words. 
+
+### POS tags, NER, and noun phrases
+
+The abbreviations in the `pos` column follow the format of [Universal POS tags](https://universaldependencies.org/u/pos/all.html). Entities can be extracted by passing the parsed object on to `entity_extract()`.
+
+```{r}
+entity_extract(sotu_parsed, type = "all") %>% head(10)
+```
+
+The following entities are recognized (overview taken from [this article](https://towardsdatascience.com/explorations-in-named-entity-recognition-and-was-eleanor-roosevelt-right-671271117218)):
+
+* PERSON: People, including fictional.
+* NORP: Nationalities or religious or political groups.
+* FAC: Buildings, airports, highways, bridges, etc.
+* ORG: Companies, agencies, institutions, etc.
+* GPE: Countries, cities, states.
+* LOC: Non-GPE locations, mountain ranges, bodies of water.
+* PRODUCT: Objects, vehicles, foods, etc. (Not services.)
+* EVENT: Named hurricanes, battles, wars, sports events, etc.
+* WORK_OF_ART: Titles of books, songs, etc.
+* LAW: Named documents made into laws.
+* LANGUAGE: Any named language.
+* DATE: Absolute or relative dates or periods.
+* TIME: Times smaller than a day.
+* PERCENT: Percentage, including "%".
+* MONEY: Monetary values, including unit.
+* QUANTITY: Measurements, as of weight or distance.
+* ORDINAL: "first," "second," etc.
+* CARDINAL: Numerals that do not fall under another type.
+
+To properly represent entities in our corpus, you can use `entity_consolidate()`. This collapses words that belong to the same entity into single tokens (e.g., "the" "white" "house" becomes "the_white_house"). 
+
+```{r}
+entity_consolidate(sotu_parsed) %>% head(10)
+```
+
+The same can be performed with noun phrases. 
+
+```{r}
+nounphrase_extract(sotu_parsed) %>% head(10)
+```
+
+Usually, entities and noun phrases can give you a good idea of what texts are about. Therefore, you might want to only extract them without parsing the entire text.
+
+```{r}
+spacy_extract_entity(sotu_speeches_tif %>% slice(1:3))
+spacy_extract_nounphrases(sotu_speeches_tif %>% slice(1:3))
+```
+
+The `spacyr` package of course has some more functions such as dependency parsing. However, they probably go beyond the scope of this script and we will therefore leave them out for now. 
+
+## First analyses
+
+A common task in the quantitative analysis of text is to determine how documents differ from each other concerning word usage. This is usually achieved by identifying words that are particular for one document but not for another. These words are referred to by @monroe_fightin_2008 as *fighting words* or, by @grimmer_text_2022, *discriminating words*. To use the techniques that will be presented today, an already existing organization of the documents is assumed.
+
+### Counting words per document
+
+The most simple approach to determine which words are more correlated to a certain group of documents is by merely counting them and determining their proportion in the document groups. For illustratory purposes, I use fairy tales from H.C. Andersen which are contained in the `hcandersenr` package.
+
+```{r message=FALSE, warning=FALSE}
+library(lubridate)
+
+fairytales <- hcandersenr::hcandersen_en %>% 
+  filter(book %in% c("The princess and the pea",
+                     "The little mermaid",
+                     "The emperor's new suit"))
+
+fairytales_tidy <- fairytales %>% 
+  unnest_tokens(output = token, input = text)
+```
+
+#### Naive approach: raw counts
+
+For a first, naive analysis, I can merely count the times the terms appear in the texts. Since the text is in `tidytext` format, I can do so using means from traditional `tidyverse` packages. I will then visualize the results with a bar plot. 
+
+```{r}
+fairytales_top10 <- fairytales_tidy %>% 
+  group_by(book) %>% 
+  count(token) %>% 
+  slice_max(n, n = 10)
+```
+
+```{r}
+fairytales_top10 %>% 
+  ggplot()  +
+  geom_col(aes(x = n, y = reorder_within(token, n, book))) +
+  scale_y_reordered() +
+  labs(y = "token") +
+  facet_wrap(vars(book), scales = "free") +
+  theme(strip.text.x = element_blank())
+```
+
+It is quite hard to draw inferences on which plot belongs to which book since the plots are crowded with stopwords. However, there are pre-made stopword lists I can harness to remove some of this "noise" and perhaps catch a bit more signal for determining the books.
+
+```{r}
+library(stopwords)
+
+# get_stopwords()
+# stopwords_getsources()
+# stopwords_getlanguages(source = "snowball")
+
+fairytales_top10_nostop <- fairytales_tidy %>% 
+  anti_join(get_stopwords(), by = c("token" = "word")) %>% 
+  group_by(book) %>% 
+  count(token) %>% 
+  slice_max(n, n = 10, with_ties = FALSE)
+```
+
+```{r}
+fairytales_top10_nostop %>% 
+  ggplot()  +
+  geom_col(aes(x = n, y = reorder_within(token, n, book))) +
+  scale_y_reordered() +
+  labs(y = "token") +
+  facet_wrap(vars(book), scales = "free") +
+  scale_x_continuous(breaks = scales::pretty_breaks()) +
+  theme(strip.text.x = element_blank())
+```
+
+This already looks quite nice, it is quite easy to see which plot belongs to the respective book. 
+
+#### TF-IDF
+
+A better definition of words that are particular to a group of documents is "the ones that appear often in one group but rarely in the other one(s)". So far, the measure of term frequency only accounts for how often terms are used in the respective document. I can take into account how often it appears in other documents by including the inverse document frequency. The resulting measure is called tf-idf and describes "the frequency of a term adjusted for how rarely it is used." [@silge_tidytext_2016: 31] If a term is rarely used overall but appears comparably often in a singular document, it might be safe to assume that it plays a bigger role in that document.
+
+The tf-idf of a word in a document is commonly^[Note that multiple implementations exist, for an overview see, for instance, @manning_introduction_2008. One implementation is calculated as follows:
+
+$$w_{i,j}=tf_{i,j}\times ln(\frac{N}{df_{i}})$$
+
+--\> $tf_{i,j}$: number of occurrences of term $i$ in document $j$
+
+--\> $df_{i}$: number of documents containing $i$
+
+--\> $N$: total number of documents
+
+Note that the $ln$ is included so that words that appear in all documents -- and do therefore not have discriminatory power -- will automatically get a value of 0. This is because $ln(1) = 0$. On the other hand, if a term appears in, say, 4 out of 20 documents, its ln(idf) is $ln(20/4) = ln(5) = 1.6$.
+
+The `tidytext` package provides a neat implementation for calculating the tf-idf called `bind_tfidf()`. It takes as input the columns containing the `term`, the `document`, and the document-term counts `n`.
+
+```{r}
+fairytales_top10_tfidf <- fairytales_tidy %>% 
+  group_by(book) %>% 
+  count(token) %>% 
+  bind_tf_idf(token, book, n) %>% 
+  slice_max(tf_idf, n = 10)
+```
+
+```{r}
+fairytales_top10_tfidf %>% 
+  ggplot()  +
+  geom_col(aes(x = tf_idf, y = reorder_within(token, tf_idf, book))) +
+  scale_y_reordered() +
+  labs(y = "token") +
+  facet_wrap(vars(book), scales = "free") +
+  theme(strip.text.x = element_blank(),
+        axis.title.x = element_blank(),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank())
+```
+
+Pretty good already! All the fairytales can be clearly identified. A problem with this representation is that I cannot straightforwardly interpret the x-axis values (they can be removed by uncommenting the last four lines). A way to mitigate this is using odds.
+
+Another shortcoming becomes visible when I take the terms with the highest TF-IDF as compared to all other fairytales.
+
+```{r}
+tfidf_vs_full <- hcandersenr::hcandersen_en %>% 
+  unnest_tokens(output = token, input = text) %>% 
+  count(token, book) %>% 
+  bind_tf_idf(book, token, n) %>% 
+  filter(book %in% c("The princess and the pea",
+                     "The little mermaid",
+                     "The emperor's new suit")) 
+
+plot_tf_idf <- function(df, group_var){
+  df %>% 
+    group_by({{ group_var }}) %>% 
+    slice_max(tf_idf, n = 10, with_ties = FALSE) %>% 
+    ggplot()  +
+    geom_col(aes(x = tf_idf, y = reorder_within(token, tf_idf, {{ group_var }}))) +
+    scale_y_reordered() +
+    labs(y = "token") +
+    facet_wrap(vars({{ group_var }}), scales = "free") +
+    #theme(strip.text.x = element_blank()) +
+    theme(axis.title.x=element_blank(),
+          axis.text.x=element_blank(),
+          axis.ticks.x=element_blank())
+} 
+  
+plot_tf_idf(tfidf_vs_full, book)
+```
+
+The tokens are far too specific to make any sense. Introducing a lower threshold (i.e., limiting the analysis to terms that appear at least x times in the document) might mitigate that. Yet, this threshold is of course arbitrary.
+
+```{r}
+tfidf_vs_full %>% 
+  group_by(token) %>% 
+  filter(n > 3) %>% 
+  ungroup() %>% 
+  plot_tf_idf(book)
+```
+
+## Converting between formats
+
+While the `tidytext` format lends itself nicely to "basic" operations and visualizations, you will have to use different representations of text data for other applications such as topic models or word embeddings. On the other hand, you might want to harness, for instance, the `ggplot2` package for visualization. In this case, you will need to project the data into a tidy format. The former operations are performed using multiple `cast_.*()` functions, the latter using the `tidy()` function from the `broom` package whose purpose is to bring data from foreign structures to tidy representations.
+
+In the following, we will briefly explain common representations and the packages that use them. Thereby, we draw heavily on the [chapter in Tidy Text Mining with R that is dedicated to the topic](https://www.tidytextmining.com/dtm.html).  
+
+### Document-term matrix
+
+A document-term matrix contains rows that represent a document and columns that represent terms. The values usually correspond to how often the term appears in the respective document.
+
+In R, a common implementation of DTMs is the `DocumentTermMatrix` class in the `tm` package. The `topicmodels` package which we will use for performing LDA comes with a collection of example data.
+
+```{r message=FALSE, warning=FALSE}
+library(topicmodels)
+
+data("AssociatedPress")
+
+class(AssociatedPress)
+AssociatedPress
+```
+
+This data set contains 2246 Associated Press articles which consist of 10,473 different terms. Moreover, the matrix is 99% sparse, meaning that 99% of word-document pairs are zero. The weighting is by term frequency, hence the values correspond to the number of appearances a word has in an article.
+
+```{r}
+AssociatedPress %>% 
+  head(2) %>% 
+  as.matrix() %>% 
+  .[, 1:10]
+```
+
+Bringing these data into a tidy format is performed as follows:
+
+```{r}
+associated_press_tidy <- tidy(AssociatedPress)
+
+glimpse(associated_press_tidy)
+```
+
+Transforming the data set into a DTM, the opposite operation, is achieved using `cast_dtm(data, document, term, value)`:
+
+```{r}
+associated_press_dfm <- associated_press_tidy %>% 
+  cast_dtm(document, term, count)
+
+associated_press_dfm %>% 
+  head(2) %>% 
+  as.matrix() %>% 
+  .[, 1:10]
+```
+
+### Document-feature matrix
+
+The so-called document-feature matrix is the data format used in the `quanteda` package. It is a document-term matrix, but the authors of the `quanteda` package chose the term feature over term to be more accurate: 
+
+> "We call them 'features' rather than terms, because features are more general than terms: they can be defined as raw terms, stemmed terms, the parts of speech of terms, terms after stopwords have been removed, or a dictionary class to which a term belongs. Features can be entirely general, such as ngrams or syntactic dependencies, and we leave this open-ended." 
+
+```{r}
+data("data_corpus_inaugural", package = "quanteda")
+inaug_dfm <- data_corpus_inaugural %>%
+  quanteda::tokens() %>%
+  quanteda::dfm(verbose = FALSE)
+
+inaug_dfm
+```
+
+This, again, can just be `tidy()`ed.
+
+```{r}
+inaug_tidy <- tidy(inaug_dfm)
+
+glimpse(inaug_tidy)
+```
+
+Of course, the resulting tibble can now be cast back into the DFM format using `cast_dfm(data, document, term, value)`. Here, the value corresponds to the number of appearances of the term in the respective document.
+
+```{r}
+inaug_tidy %>% 
+  cast_dfm(document, term, count)
+```
+
+### Corpus objects
+
+Another common way of storing data is in so-called corpora. This is usually a collection of raw documents and metadata. An example would be the collection of State of the Union speeches we worked with earlier. The `tm` package has a class for corpora. 
+
+```{r}
+data("acq", package = "tm")
+
+acq
+
+#str(acq %>% head(1))
+```
+
+It is a list containing different elements that refer to metadata or the content. This is a nice and effective framework for storing documents, yet it does not lend itself nicely for analysis with tidy tools. You can use `tidy()` to clean it up a bit:
+
+```{r}
+acq_tbl <- acq %>% 
+  tidy()
+```
+
+This results in a tibble that contains the relevant metadata and a `text` column. A good point of departure for subsequent tidy analyses.
+
+## Further links
+
+* The [`stringr` cheatsheet](https://github.com/rstudio/cheatsheets/blob/master/strings.pdf).
+* A [YouTube video](https://www.youtube.com/watch?v=NvHjYOilOf8) on regexes by Johns Hopkins professor Roger Peng.
+* And a [chapter](https://bookdown.org/rdpeng/rprogdatascience/regular-expressions.html#the-stringr-package) by Roger Peng.
+* A [website for practicing regexes](https://regexone.com).
+* You can also consult the `introverse` package if you need help with the packages covered here -- `introverse::show_topics("stringr")` will give you an overview of the `stringr` package's functions, and `get_help("name of function")` will help you with the respective function.
+* [Tidy text mining with R](https://www.tidytextmining.com/index.html).
+* A more general [introduction by Christopher Bail](https://cbail.github.io/textasdata/Text_as_Data.html).
+* [A guide to Using spacyr](https://spacy.io/api/token#attributes).
+
+## Exercises
+
+### Regexes
+
+1.Write a regex for Swedish mobile number. Test it with `str_detect("+46 71-738 25 33", "[insert your regex here]")`. 
+2. Find all Mercedes in the `mtcars` data set.
+3. Take the IMDb file (`imdb <- read_csv("https://www.dropbox.com/s/81o3zzdkw737vt0/imdb2006-2016.csv?dl=1")`) and split the `Genre` column into different columns (hint: look at the `tidyr::separate()` function). How would you do it if `Genre` were a vector using `str_split_fixed()`?
+4. Take this vector of heights: `heights <- c("1m30cm", "2m01cm", "3m10cm")`
+    a. How can you extract the meters using the negative look behind?
+    b. Bring it into numeric format (i.e., your_solution == c(1.3, 2.01, 3.1)) using regexes and `stringr` commands.
+
+<details>
+  <summary>Solution. Click to expand!</summary>
+
+```{r eval=FALSE}
+#1
+str_detect("+46 71-738 25 33", "\\+46 [0-9]{2}\\-[0-9]{3} [0-9]{2} [0-9]{2}")
+
+#2
+mtcars %>% 
+  rownames_to_column("model") %>% 
+  filter(str_detect(model, "Merc"))
+
+#3
+imdb <- read_csv("https://www.dropbox.com/s/81o3zzdkw737vt0/imdb2006-2016.csv?dl=1")
+
+imdb %>% 
+  separate(Genre, sep = ",", into = c("genre_1", "genre_2", "genre_3"))
+
+imdb$Genre %>% 
+  str_split_fixed(pattern = ",", 3)
+
+#4
+heights <- c("1m30cm", "2m01cm", "3m10cm")
+
+#a
+meters <- str_extract(heights, "(?<!m)[0-9]")
+
+#b
+for_test <- str_replace(heights, "(?<=[0-9])m", "\\.") %>% 
+  str_replace("cm", "") %>% 
+  as.numeric() 
+
+for_test == c(1.3, 2.01, 3.1)
+```
+
+</details>
+
+### Preprocessing
+
+1. Download Twitter timeline data (`timelines <- read_csv("https://www.dropbox.com/s/dpu5m3xqz4u4nv7/tweets_house_rep_party.csv?dl=1") %>% filter(!is.na(party))`. Let's look at abortion-related tweets and how the language may differ between parties. Filter relevant tweets using a vector of keywords and a regular expression (hint: `filter(str_detect(text, str_c(keywords, collapse = "|")))`). Preprocess the Tweets as follows: 
+  a. Unnest the tokens.
+  b. Remove stop words. 
+  c. Perform stemming. 
+
+<details>
+  <summary>Solution. Click to expand!</summary>
+
+```{r eval=FALSE}
+library(tidytext)
+library(stopwords)
+library(SnowballC)
+
+keywords <- c("abortion", "prolife", " roe ", " wade ", "roevswade", "baby", "fetus", "womb", "prochoice", "leak")
+
+preprocessed <- timelines %>% 
+  filter(str_detect(text, str_c(keywords, collapse = "|"))) %>% 
+  unnest_tokens(word, text) %>% 
+  anti_join(get_stopwords()) %>% 
+  mutate(stemmed = wordStem(word))
+```
+
+</details>
+
+2. Perform the same steps, but using `spacyr`. What works better, lemmatization or stemming?
+
+
+<details>
+  <summary>Solution. Click to expand!</summary>
+
+```{r eval=FALSE}
+library(spacyr)
+spacy_initialize()
+
+timelines_meta <- timelines %>% 
+  filter(str_detect(text, str_c(keywords, collapse = "|"))) %>% 
+  rowid_to_column("doc_id") %>% 
+  select(-text)
+
+timelines_spacy <- timelines %>% 
+  filter(str_detect(text, str_c(keywords, collapse = "|"))) %>% 
+  select(text) %>% 
+  rowid_to_column("doc_id") %>% 
+  spacy_parse(entity = FALSE) %>% 
+  anti_join(get_stopwords(), by = c("token" = "word"))
+```
+
+</details>
+
+3. Count the terms per party. 
+  a. Do you see party-specific differences with regard to their ten most common terms (hint: `slice_max(tf_idf, n = 10, with_ties = FALSE)`)? Use the following code to plot them.
+
+<details>
+  <summary>Solution. Click to expand!</summary>
+
+```{r eval=FALSE}
+df <- preprocessed %>% 
+  count(stemmed, party) %>% 
+  group_by(party) %>% 
+  slice_max(n, n = 10, with_ties = FALSE)
+  
+df %>% 
+  group_by(party) %>% 
+  ggplot()  +
+    geom_col(aes(x = n, y = reorder_within(stemmed, n, party))) +
+    scale_y_reordered() +
+    labs(y = "token") +
+    facet_wrap(vars(party), scales = "free") 
+```
+
+</details>
+
+
+  b. Is there more words you should add to your stopwords list? Remove these terms using `filter(str_detect())` and a regex.
+
+
+<details>
+  <summary>Solution. Click to expand!</summary>
+
+```{r eval=FALSE}
+more_stopwords <- c("t.co", "http", "amp") 
+df %>% 
+  filter(!str_detect(stemmed, str_c(more_stopwords, collapse = "|"))) %>% 
+  group_by(party) %>% 
+  ggplot()  +
+    geom_col(aes(x = n, y = reorder_within(stemmed, n, party))) +
+    scale_y_reordered() +
+    labs(y = "token") +
+    facet_wrap(vars(party), scales = "free") 
+```
+
+</details>
+
+
+  c. Do the same thing but using the spacy output and filtering only `NOUN`s and `PROPN`ouns. 
+  
+<details>
+  <summary>Solution. Click to expand!</summary>
+
+```{r eval=FALSE}
+timelines_spacy %>% 
+  filter(pos %in% c("PROPN", "NOUN")) %>% 
+  left_join(timelines_meta %>% mutate(doc_id = as.character(doc_id)), by = "doc_id") %>% 
+  count(token, party) %>%
+  group_by(party) %>% 
+  slice_max(n, n = 10, with_ties = FALSE) %>% 
+  ggplot()  +
+    geom_col(aes(x = n, y = reorder_within(token, n, party))) +
+    scale_y_reordered() +
+    labs(y = "token") +
+    facet_wrap(vars(party), scales = "free") 
+```
+
+</details>
+
+  d. Again, is there stuff to be removed? Do so using a Regex.
+  
+  
+<details>
+  <summary>Solution. Click to expand!</summary>
+
+```{r eval=FALSE}
+timelines_spacy %>% 
+  filter(pos %in% c("PROPN", "NOUN"),
+         !str_detect(token, "^@|[^a-z]|^amp$")) %>% 
+  left_join(timelines_meta %>% mutate(doc_id = as.character(doc_id)), by = "doc_id") %>% 
+  count(token, party) %>%
+  group_by(party) %>% 
+  slice_max(n, n = 10, with_ties = FALSE) %>% 
+  ggplot()  +
+    geom_col(aes(x = n, y = reorder_within(token, n, party))) +
+    scale_y_reordered() +
+    labs(y = "token") +
+    facet_wrap(vars(party), scales = "free") 
+```
+
+</details>
+
+
+4. Do the same thing as in 3. but use TF-IDF instead of raw counts. How does this alter your results?
+
+<details>
+  <summary>Solution. Click to expand!</summary>
+
+```{r eval=FALSE}
+df_tf_idf <- preprocessed %>% 
+  count(word, party) %>% 
+  bind_tf_idf(word, party, n) %>% 
+  group_by(party) %>% 
+  slice_max(tf_idf, n = 10, with_ties = FALSE)
+  
+df_tf_idf %>% 
+  group_by(party) %>% 
+  ggplot()  +
+    geom_col(aes(x = tf_idf, y = reorder_within(word, tf_idf, party))) +
+    scale_y_reordered() +
+    labs(y = "token") +
+    facet_wrap(vars(party), scales = "free") 
+
+
+timelines_spacy %>% 
+  filter(pos %in% c("PROPN", "NOUN")) %>% 
+  left_join(timelines_meta %>% mutate(doc_id = as.character(doc_id)), by = "doc_id") %>% 
+  count(token, party) %>%
+  filter(str_detect(token, "[a-z]")) %>% 
+  filter(!str_detect(token, "^@")) %>% 
+  bind_tf_idf(token, party, n) %>% 
+  group_by(party) %>% 
+  slice_max(n, n = 10, with_ties = FALSE) %>% 
+  ggplot()  +
+    geom_col(aes(x = tf_idf, y = reorder_within(token, tf_idf, party))) +
+    scale_y_reordered() +
+    labs(y = "token") +
+    facet_wrap(vars(party), scales = "free") 
+```
+
+</details>
+
+5. What else could you have done in terms of pre-processing (think of the special characters and syntax Twitter uses here)?
+
+
+<details>
+  <summary>Solution. Click to expand!</summary>
+  
+* Remove @… -- Regex: "[@][a-zA-Z0-9_]+"
+* Extract hashtags -- Regex: "[#][a-zA-Z0-9_]+"
+
+```{r}
+string <- "@FelixLennert checks if this works #sicss2022"
+
+str_remove_all(string, "[@][a-zA-Z0-9_]+")
+str_extract(string, "[#][a-zA-Z0-9_]+")
+```
+
+
+</details>
+
+<!--chapter:end:03-text_preprocessing.Rmd-->
+
+# Machine Learning {#day5}
+
+In the following script, we will introduce you to the supervised and unsupervised classification of text. Supervised means that we will need to "show" the machine a data set that already contains the value or label we want to predict (the "dependent variable") as well as all the variables that are used to predict the class/value (the independent variables or, in ML lingo, *features*). In the examples we will showcase, the features are the tokens that are contained in a document. Dependent variables are in our example sentiment.
+
+Overall, the process of supervised classification using text in R encompasses the following steps: 
+
+1. Split data into training and test set
+2. Pre-processing and featurization
+3. Training
+4. Evaluation and tuning (through cross-validation)
+(… repeat 2.-4. as often as necessary)
+5. Applying the model to the held-out test set
+6. Final evaluation
+
+This is mirrored in the `workflow()` function from the `workflows` [@vaughan_workflows_2022] package. There, you define the pre-processing procedure (`add_recipe()` -- created through the `recipe()` function from the `recipes` [@kuhn_recipes_2022] and/or `textrecipes` [@hvitfeldt_textrecipes_2022] package(s)), the model specification with `add_spec()` -- taking a model specification as created by the `parsnip` [@kuhn_parsnip_2022] package.
+
+![Workflow overview](figures/workflow.png)
+
+In the next part, other approaches such as Support Vector Machines (SVM), penalized logistic regression models (penalized here means, loosely speaking, that insignificant predictors which contribute little will be shrunk and ignored -- as the text contains many tokens that might not contribute much, those models lend themselves nicely to such tasks), random forest models, or XGBoost will be introduced. Those approaches are not to be explained in-depth, third-party articles will be linked though, but their intuition and the particularities of their implementation will be described. Since we use the `tidymodels` [@kuhn_tidymodels_2020] framework for implementation, trying out different approaches is straightforward. Also, the pre-processing differs, `recipes` and `textrecipes` facilitate this task decisively. Third, the evaluation of different classifiers will be described. Finally, the entire workflow will be demonstrated using the abortion Tweet data set.
+
+## Split data 
+
+The example for today's session is the IMDb data set. First, we load a whole bunch of packages and the data set.
+
+```{r message=FALSE, warning=FALSE}
+library(tidymodels)
+library(textrecipes)
+library(workflows)
+library(discrim)
+library(glmnet)
+library(tidytext)
+library(tidyverse)
+
+imdb_data <- read_csv("https://www.dropbox.com/s/0cfr4rkthtfryyp/imdb_reviews.csv?dl=1")
+```
+
+The first step is to divide the data into training and test sets using `initial_split()`. You need to make sure that the test and training set are fairly balanced which is achieved by using `strata =`. `prop =` refers to the proportion of rows that make it into the training set.
+
+```{r}
+split <- initial_split(imdb_data, prop = 0.8, strata = sentiment)
+
+imdb_train <- training(split)
+imdb_test <- testing(split)
+
+glimpse(imdb_train)
+imdb_train %>% count(sentiment)
+```
+
+## Pre-processing and featurization
+
+In the `tidymodels` framework, pre-processing and featurization are performed through so-called `recipes`. For text data, so-called `textrecipes` are available. 
+
+### `textrecipes` -- basic example
+
+In the initial call, the formula needs to be provided. In our example, we want to predict the sentiment ("positive" or "negative") using the text in the review. Then, different steps for pre-processing are added. Similar to what you have learned in the prior chapters containing measures based on the bag of words assumption, the first step is usually tokenization, achieved through `step_tokenize()`. In the end, the features need to be quantified, either through `step_tf()`, for raw term frequencies, or `step_tfidf()`, for TF-IDF. In between, various pre-processing steps such as word normalization (i.e., stemming or lemmatization), and removal of rare or common words Hence, a recipe for a very basic model just using raw frequencies and the 1,000 most common words would look as follows:
+
+```{r}
+imdb_basic_recipe <- recipe(sentiment ~ text, data = imdb_train) %>% 
+  step_tokenize(text) %>% # tokenize text
+  step_tokenfilter(text, max_tokens = 1000) %>% # only retain 1000 most common words
+  # additional pre-processing steps can be added, see next chapter
+  step_tf(text) # final step: add term frequencies
+```
+
+In case you want to know what the data set for the classification task looks like, you can `prep()` and finally `bake()` the recipe. Note that we need to specify the data set we want to pre-process in the recipe's manner. In our case, we want to perform the operations on the data specified in the `basic_recipe` and, hence, need to specify `new_data = NULL`.
+
+```{r}
+imdb_basic_recipe %>% 
+  prep() %>% 
+  bake(new_data = NULL)
+```
+
+### `textrecipes` -- further preprocessing steps
+
+More steps exist. These always follow the same structure: their first two arguments are the recipe (which in practice does not matter, because they are generally used in a "pipeline") and the variable that is affected (in our example "text" because it is the one to be modified). The rest of the arguments depends on the function. In the following, we will briefly list them and their most important arguments. Find the exhaustive list [here](https://cran.r-project.org/web/packages/textrecipes/textrecipes.pdf),
+
+* `step_tokenfilter()`: filters tokens
+  + `max_times =` upper threshold for how often a term can appear (removes common words)
+  + `min_times =` lower threshold for how often a term can appear (removes rare words)
+  + `max_tokens =` maximum number of tokens to be retained; will only keep the ones that appear the most often
+  + you should filter before using `step_tf` or `step_tfidf` to limit the number of variables that are created
+* `step_lemma()`: allows you to extract the lemma
+  + in case you want to use it, make sure you tokenize via `spacyr` (by using `step_tokenize(text, engine = "spacyr"))`
+* `step_pos_filter()`: adds the Part-of-speech tags
+  + `keep_tags =` character vector that specifies the types of tags to retain (default is "NOUN", for more details see [here](https://github.com/explosion/spaCy/blob/master/spacy/glossary.py) or consult chapter \@ref(day4))
+  + in case you want to use it, make sure you tokenize via `spacyr` (by using `step_tokenize(text, engine = "spacyr"))`
+* `step_stem()`: stems tokens 
+  + `custom_stem =` specifies the stemming function. Defaults to `SnowballC`. Custom functions can be provided.
+  + `options =` can be used to provide arguments (stored as named elements of a list) to the stemming function. E.g., `step_stem(text, custom_stem = "SnowballC", options = list(language = "russian"))`
+* `step_stopwords()`: removes stopwords
+  + `source =` alternative stopword lists can be used; potential values are contained in `stopwords::stopwords_getsources()`
+  + `custom_stopword_source =` provide your own stopword list
+  + `language =` specify language of stop word list; potential values can be found in `stopwords::stopwords_getlanguages()`
+* `step_ngram()`: takes into account order of terms, provides more context
+  + `num_tokens =` number of tokens in n-gram -- defaults to 3 -- trigrams
+  + `min_num_tokens =` minimal number of tokens in n-gram -- `step_ngram(text, num_tokens = 3, min_num_tokens = 1)` will return all uni-, bi-, and trigrams.
+* `step_word_embeddings()`: use pre-trained embeddings for words
+  + `embeddings()`: tibble of pre-trained embeddings
+* `step_normalize()`: performs unicode normalization as a preprocessing step
+  + `normalization_form =` which Unicode Normalization to use, overview in [`stringi::stri_trans_nfc()`](https://www.rdocumentation.org/packages/stringi/versions/1.7.6/topics/stri_trans_nfc)
+* `themis::step_upsample()` takes care of unbalanced dependent variables (which need to be specified in the call)
+  + `over_ratio =` ratio of desired minority-to-minority frequencies
+
+## Model specification
+
+Now that the data is ready, the model can be specified. The `parsnip` package is used for this. It contains a model specification, the type, and the engine. For Naïve Bayes, this would look like the following (note that you will need to install the relevant packages -- here: `discrim` -- before using them): 
+
+```{r}
+nb_spec <- naive_Bayes() %>% # the initial function, coming from the parsnip package
+  set_mode("classification") %>% # classification for discrete values, regression for continuous ones
+  set_engine("naivebayes") # needs to be installed
+```
+
+Other model specifications you might deem relevant:
+
+* Logistic regression
+
+```{r}
+lr_spec <- logistic_reg() %>%
+  set_engine("glm") %>%
+  set_mode("classification")
+```
+
+* Logistic regression (penalized with Lasso):
+
+```{r}
+lasso_spec <- logistic_reg(mixture = 1) %>%
+  set_engine("glm") %>%
+  set_mode("classification") 
+```
+
+* SVM (here, `step_normalize(all_predictors())` needs to be the last step in the recipe)
+
+```{r}
+svm_spec <- svm_linear() %>%
+  set_mode("regression") %>% # can also be "classification"
+  set_engine("LiblineaR")
+```
+
+* Random Forest (with 1000 decision trees):
+
+```{r}
+rf_spec <- rand_forest(trees = 1000) %>%
+  set_engine("ranger") %>%
+  set_mode("regression") # can also be "classification"
+```
+
+* xgBoost (with 20 decision trees):
+
+```{r}
+xg_spec <- boost_tree(trees = 20) %>% 
+  set_engine("xgboost") %>%
+  set_mode("regression") # can also be classification
+```
+
+## Model training -- `workflows`
+
+A workflow can be defined to train the model. It will contain the recipe, hence taking care of the pre-processing, and the model specification. In the end, it can be used to fit the model.
+
+```{r}
+imdb_nb_wf <- workflow() %>% 
+  add_recipe(imdb_basic_recipe) %>% 
+  add_model(nb_spec)
+```
+
+It can then be fit using `fit()`.
+
+```{r}
+imdb_nb_basic <- imdb_nb_wf %>% fit(data = imdb_train)
+```
+
+
+## Model evaluation
+
+Now that a first model has been trained, its performance can be evaluated. In theory, we have a test set for this. However, the test set is precious and should only be used once we are sure that we have found a good model. Hence, for these intermediary tuning steps, we need to come up with another solution. So-called cross-validation lends itself nicely to this task. The rationale behind it is that chunks from the training set are used as test sets. So, in the case of 10-fold cross-validation, the test set is divided into 10 distinctive chunks of data. Then, 10 models are trained on the respective 9/10 of the training set that is not used for evaluation. Finally, each model is evaluated against the respective held-out "test set" and the performance metrics averaged.
+
+![Graph taken from https://scikit-learn.org/stable/modules/cross_validation.html/](https://scikit-learn.org/stable/_images/grid_search_cross_validation.png)
+
+First, the folds need to be determined. we set a seed in the beginning to ensure reproducibility.
+```{r}
+library(tune)
+
+set.seed(123)
+imdb_folds <- vfold_cv(imdb_train)
+```
+
+`fit_resamples()` trains models on the respective samples. (Note that for this to work, no model must have been fit to this workflow before. Hence, you either need to define a new workflow first or restart the session and skip the fit-line from before.)
+
+```{r eval=FALSE}
+imdb_nb_resampled <- fit_resamples(
+  imdb_nb_wf,
+  imdb_folds,
+  control = control_resamples(save_pred = TRUE),
+  metrics = metric_set(accuracy, recall, precision)
+)
+```
+
+```{r eval=TRUE, include=FALSE}
+imdb_nb_resampled <- read_rds("https://www.dropbox.com/s/hulz4m6g3xrkemv/imdb_nb_resampled.rds?dl=1")
+```
+
+`collect_metrics()` can be used to evaluate the results. 
+
+* Accuracy tells me the share of correct predictions overall
+* Precision tells me the number of correct positive predictions
+* Recall tells me how many actual positives are predicted properly
+
+In all cases, values close to 1 are better. 
+
+`collect_predictions()` will give you the predicted values. 
+
+```{r}
+nb_rs_metrics <- collect_metrics(imdb_nb_resampled)
+nb_rs_predictions <- collect_predictions(imdb_nb_resampled)
+```
+
+This can also be used to create the confusion matrix by hand.
+
+```{r}
+confusion_mat <- nb_rs_predictions %>% 
+  group_by(id) %>% 
+  mutate(confusion_class = case_when(.pred_class == "positive" & sentiment == "positive" ~ "TP",
+                                     .pred_class == "positive" & sentiment == "negative" ~ "FP",
+                                     .pred_class == "negative" & sentiment == "negative" ~ "TN",
+                                     .pred_class == "negative" & sentiment == "positive" ~ "FN")) %>% 
+  count(confusion_class) %>% 
+  ungroup() %>% 
+  pivot_wider(names_from = confusion_class, values_from = n)
+```
+
+Now you can go back and adapt the pre-processing recipe, fit a new model, or try a different classifier, and evaluate it against the same set of folds. Once you are satisfied, you can proceed to check the workflow on the held-out test data. 
+
+### Hyperparameter tuning
+
+Some models also require the tuning of hyperparameters (for instance, lasso regression). If we wanted to tune these values, we could do so using the `tune` package. There, the parameter that needs to be tuned gets a placeholder in the model specification. Through variation of the placeholder, the optimal solution can be empirically determined.
+
+So, in the first example, we will try to determine a good penalty value for LASSO regression. 
+
+```{r}
+lasso_tune_spec <- logistic_reg(penalty = tune(), mixture = 1) %>%
+  set_mode("classification") %>%
+  set_engine("glmnet")
+```
+
+we will also play with the numbers of tokens to be included:
+
+```{r}
+imdb_tune_basic_recipe <- recipe(sentiment ~ text, data = imdb_train) %>% 
+  step_tokenize(text) %>%
+  step_tokenfilter(text, max_tokens = tune()) %>% 
+  step_tf(text)
+```
+
+The `dials` [@kuhn_dials_2022] package provides the handy `grid_regular()` function which chooses suitable values for certain parameters. 
+
+```{r}
+lambda_grid <- grid_regular(
+  penalty(range = c(-4, 0)), 
+  max_tokens(range = c(1e3, 2e3)),
+  levels = c(penalty = 3, max_tokens = 2)
+)
+```
+
+Then, we need to define a new workflow, too. 
+
+```{r}
+lasso_tune_wf <- workflow() %>% 
+  add_recipe(imdb_tune_basic_recipe) %>%
+  add_model(lasso_tune_spec)
+```
+
+For the resampling, we can use tune_grid() which will use the workflow, a set of folds (we use the ones we created earlier), and a grid containing the different parameters. 
+
+```{r eval=FALSE}
+set.seed(123)
+
+tune_lasso_rs <- tune_grid(
+  lasso_tune_wf,
+  imdb_folds,
+  grid = lambda_grid,
+  metrics = metric_set(accuracy, sensitivity, specificity)
+)
+```
+
+```{r include=FALSE}
+tune_lasso_rs <- read_rds("https://www.dropbox.com/s/pbkeugsbzw7pgh2/tuned_lasso.rds?dl=1")
+```
+
+
+Again, we can access the resulting metrics using `collect_metrics()`:
+
+```{r}
+collect_metrics(tune_lasso_rs)
+```
+
+`autoplot()` can be used to visualize them:
+
+```{r}
+autoplot(tune_lasso_rs) +
+  labs(
+    title = "Lasso model performance across 3 regularization penalties"
+  )
+```
+
+Also, we can use `show_best()` to look at the best result. Subsequently, `select_best()` allows me to choose it. In real life, we would choose the best trade-off between a model as simple and as good as possible. Using `select_by_pct_loss()`, we choose the one that performs still more or less on par with the best option (i.e., within 2 percent accuracy) but is considerably simpler. Finally, once we are satisfied with the outcome, we can `finalize_workflow()` and fit the final model to the test data.
+
+```{r}
+show_best(tune_lasso_rs, "accuracy")
+
+final_lasso_imdb <- finalize_workflow(lasso_tune_wf, select_by_pct_loss(tune_lasso_rs, metric = "accuracy", -penalty))
+```
+
+## Final fit
+
+Now we can finally fit our model to the training data and predict on the test data. `last_fit()` is the way to go. It takes the workflow and the split (as defined by `initial_split()`) as parameters.
+
+```{r}
+final_fitted <- last_fit(final_lasso_imdb, split)
+
+collect_metrics(final_fitted)
+
+collect_predictions(final_fitted) %>%
+  conf_mat(truth = sentiment, estimate = .pred_class) %>%
+  autoplot(type = "heatmap")
+```
+
+
+## Latent Dirichlet Allocation (LDA)
+
+In the former section, I, first, explored how the sentiment in the SOTU addresses has evolved over the 20th century. Then, we looked at the decade-specific vocabulary. This, paired with previous knowledge of what happened throughout the 20th century, sufficed to gain some sort of insight. However, another approach to infer meaning from text is to search it for topics. This is also possible with the SOTU corpus which we have at hand.
+
+The two main assumptions of LDA are as follows:
+
+-   Every document is a mixture of topics.
+-   Every topic is a mixture of words.
+
+Hence, singular documents do not necessarily be distinct in terms of their content. They can be related -- if they contain the same topics. This is more in line with natural language use.
+
+The following graphic depicts a flowchart of text analysis with the `tidytext` package.
+
+![Text analysis flowchart](https://www.tidytextmining.com/images/tmwr_0601.png)
+
+What becomes evident is that the actual topic modeling does not happen within `tidytext`. For this, the text needs to be transformed into a document-term-matrix and then passed on to the `topicmodels` package [@grun_topicmodels_2020], which will take care of the modeling process. Thereafter, the results are turned back into a tidy format, using `broom` so that they can be visualized using `ggplot2`.
+
+### Document-term matrix
+
+To search for the topics which are prevalent in the singular addresses through LDA, we need to transform the tidy tibble into a document-term matrix first. This can be achieved with `cast_dtm()`.
+
+```{r}
+library(sotu)
+library(tidytext)
+library(SnowballC)
+
+sotu_clean <- sotu_meta %>% 
+  mutate(text = sotu_text %>% 
+           str_replace_all("[,.]", " ")) %>% 
+  filter(between(year, 1900, 2000)) %>% 
+  unnest_tokens(output = token, input = text) %>% 
+  anti_join(get_stopwords(), by = c("token" = "word")) %>% 
+  filter(!str_detect(token, "[:digit:]")) %>% 
+  mutate(token = wordStem(token, language = "en"))
+
+sotu_dtm <- sotu_clean %>% 
+  filter(str_length(token) > 1) %>% 
+  count(year, token) %>% 
+  #filter(between(year, 1900, 2000)) %>% 
+  group_by(token) %>% 
+  filter(n() < 95) %>% 
+  cast_dtm(document = year, term = token, value = n)
+```
+
+A DTM contains  Documents (rows) and Terms (columns) and specifies how often a term appears in a document.
+
+```{r}
+sotu_dtm %>% as.matrix() %>% .[1:5, 1:5]
+```
+
+### Inferring the number of topics
+
+We need to tell the model in advance how many topics we assume to be present within the document. Since we have neither read all the SOTU addresses (if so, we would hardly need to use the topic model), we cannot make an educated guess on how many topics are in there.
+
+#### Making guesses
+
+One approach might be to just provide it with wild guesses on how many topics might be in there and then try to make sense of them afterward.
+
+```{r include=FALSE}
+sotu_lda_k10_tidied <- read_rds("https://www.dropbox.com/s/lxrcy44aqz16sgb/sotu_lda_k10.rds?dl=1")
+```
+
+```{r eval=FALSE}
+library(topicmodels)
+library(broom)
+
+sotu_lda_k10 <- LDA(sotu_dtm, k = 10, control = list(seed = 123))
+
+sotu_lda_k10_tidied <- tidy(sotu_lda_k10)
+```
+
+The `tidy()` function from the `broom` package [@robinson_broom_2020] brings the LDA output back into a tidy format. It consists of three columns: the topic, the term, and `beta`, which is the probability that the term stems from this topic. 
+
+```{r}
+sotu_lda_k10_tidied %>% glimpse()
+```
+
+Now, we can wrangle it a bit, and then visualize it with `ggplot2`.
+
+```{r}
+top_terms_k10 <- sotu_lda_k10_tidied %>%
+  group_by(topic) %>%
+  slice_max(beta, n = 5, with_ties = FALSE) %>%
+  ungroup() %>%
+  arrange(topic, -beta)
+
+top_terms_k10 %>%
+  mutate(topic = factor(topic),
+         term = reorder_within(term, beta, topic)) %>%
+  ggplot(aes(term, beta, fill = topic)) +
+  geom_bar(stat = "identity", show.legend = FALSE) +
+  scale_x_reordered() +
+  facet_wrap(~topic, scales = "free", ncol = 2) +
+  coord_flip()
+```
+
+Now the hard part begins: inductively making sense of it. But, of course, there is a large probability that we just chose the wrong number of topics. Therefore, before scratching our heads trying to come to meaningful conclusions, we should first assess what the optimal number of topics is.
+
+#### More elaborate methods
+
+LDA offers a couple of parameters to tune, but the most crucial one probably is `k`, the number of topics. 
+
+```{r}
+library(ldatuning)
+```
+
+```{r eval=FALSE}
+determine_k <- FindTopicsNumber(
+  sotu_dtm,
+  topics = seq(from = 2, to = 30, by = 1),
+  metrics = c("Griffiths2004", "CaoJuan2009", "Arun2010", "Deveaud2014"),
+  method = "Gibbs",
+  control = list(seed = 77),
+  mc.cores = 16L,
+  verbose = TRUE
+)
+
+determine_k %>% write_rds("lda_tuning.rds")
+```
+
+```{r include=FALSE}
+determine_k <- read_rds("https://www.dropbox.com/s/1jtehujx1b6f0rp/lda_tuning.rds?dl=1")
+```
+
+```{r}
+FindTopicsNumber_plot(determine_k)
+```
+
+We would go with the 16 topics here, as they seem to maximize the metrics that shall be maximized and minimizes the other ones quite well. 
+
+```{r eval=FALSE}
+sotu_lda_k16 <- LDA(sotu_dtm, k = 16, control = list(seed = 77))
+
+sotu_lda_k16_tidied <- tidy(sotu_lda_k16)
+
+write_rds(sotu_lda_k16, "lda_16.rds")
+```
+
+```{r include=FALSE}
+library(topicmodels)
+sotu_lda_k16 <- read_rds("https://www.dropbox.com/s/ffq762eq7ytzyb8/lda_16.rds?dl=1")
+sotu_lda_k16_tidied <- tidy(sotu_lda_k16)
+```
+
+### Sense-making
+
+Now, the harder part begins: making sense of the different topics. In LDA, words can exist across topics, making them not perfectly distinguishable. Also, as the number of topics becomes greater, plotting them doesn't make too much sense anymore. 
+
+```{r}
+topic_list <- sotu_lda_k16_tidied %>% 
+  group_by(topic) %>% 
+  group_split() %>% 
+  map_dfc(~.x %>% 
+            slice_max(beta, n = 20, with_ties = FALSE) %>%
+            arrange(-beta) %>% 
+            select(term)) %>% 
+  set_names(str_c("topic", 1:16, sep = "_"))
+```
+
+### Document-topic probabilities
+
+Another thing to assess is document-topic probabilities `gamma`: which document belongs to which topic. By doing so, you can choose the documents that have the highest probability of belonging to a topic and then read these specifically. This might give you a better understanding of what the different topics might imply. 
+
+```{r}
+sotu_lda_k16_document <- tidy(sotu_lda_k16, matrix = "gamma")
+```
+
+This shows you the proportion of words in the document which were drawn from the specific topics. In 1990, for instance, many words were drawn from the first topic.
+
+```{r}
+sotu_lda_k16_document %>% 
+  group_by(document) %>% 
+  slice_max(gamma, n = 1) %>% 
+  mutate(gamma = round(gamma, 3))
+```
+
+An interesting pattern is that the topics show some time-dependency. This intuitively makes sense, as they might represent some sort of deeper underlying issue.
+
+#### `LDAvis`
+
+`LDAvis` is a handy tool we can use to inspect our model visually. Preprocessing the data is a bit tricky though, therefore we define a quick function first.
+
+```{r}
+library(LDAvis)
+
+prep_lda_output <- function(dtm, lda_output){
+  doc_length <- dtm %>% 
+    as.matrix() %>% 
+    as_tibble() %>% 
+    rowwise() %>% 
+    summarize(doc_sum = c_across() %>% sum()) %>% 
+    pull(doc_sum)
+  phi <- posterior(lda_output)$terms %>% as.matrix()
+  theta <- posterior(lda_output)$topics %>% as.matrix()
+  vocab <- colnames(dtm)
+  term_sums <- dtm %>% 
+    as.matrix() %>% 
+    as_tibble() %>% 
+    summarize(across(everything(), ~sum(.x))) %>% 
+    as.matrix()
+  svd_tsne <- function(x) tsne::tsne(svd(x)$u)
+  LDAvis::createJSON(phi = phi, 
+                     theta = theta,
+                     vocab = vocab,
+                     doc.length = doc_length,
+                     term.frequency = term_sums[1,],
+                     mds.method = svd_tsne
+  )
+}
+
+json_lda <- prep_lda_output(sotu_dtm, sotu_lda_k16)
+```
+
+```{r eval=FALSE}
+serVis(json_lda, out.dir = 'vis', open.browser = TRUE)
+
+servr::daemon_stop(1)
+```
+
+### Structural Topic Models
+
+Structural Topic Models offer a framework for incorporating metadata into topic models. In particular, you can have these metadata affect the *topical prevalence*, i.e., the frequency a certain *topic* is discussed can vary depending on some observed non-textual property of the document. On the other hand, the topical content, i.e., the terms that constitute topics, may vary depending on certain covariates.
+
+Structural Topic Models are implemented in R via a dedicated package. The following overview provides information on the workflow and the functions that facilitate it. 
+
+![@roberts_stm_2019](https://warin.ca/shiny/stm/images/fig02.png)
+In the following example, I will use the State of the Union addresses to run you through the process of training and evaluating an STM. 
+
+```{r}
+library(stm)
+
+sotu_stm <- sotu_meta %>% 
+  mutate(text = sotu_text) %>% 
+  distinct(text, .keep_all = TRUE) %>% 
+  filter(between(year, 1900, 2000))
+```
+
+The package requires a particular data structure and has included several functions that help you preprocess your data. `textProcessor()` takes care of preprocessing the data. It takes as a first argument the text as a character vector as well as the tibble containing the metadata. Its output is a list containing a document list containing word indices and counts, a vocabulary vector containing words associated with these word indices, and a data.frame containing associated metadata. `prepDocuments()` finally brings the resulting list into a shape that is appropriate for training an STM. It has certain threshold parameters which are geared towards further reducing the vocabulary. `lower.thresh = n` removes words that are not present in at least n documents, `upper.thresh = m` removes words that are present in more than m documents. The ramifications of these parameter settings can be explored graphically using the `plotRemoved()` function.
+
+```{r}
+processed <- textProcessor(sotu_stm$text, metadata = sotu_stm %>% select(-text))
+#, custompunctuation = "-")
+#?textProcessor() # check out the different arguments 
+
+#?prepDocuments()
+
+plotRemoved(processed$documents, lower.thresh = seq(1, 50, by = 2))
+
+prepped_docs <- prepDocuments(processed$documents, processed$vocab, processed$meta, lower.thresh = 3, upper.thresh = 80)
+```
+
+Now that the data is properly preprocessed and prepared, we can estimate the actual model. As mentioned before, covariates can influence topical prevalence as well as their content. I assume topical prevalence to be influenced by the party of the speaker as well as the year the SOTU was held. The latter is assumed to influence the topical prevalence in a non-linear way (SOTU addresses usually deal with acute topics which do not gradually build over time) and is therefore estimated with a spline through the `s()` function that comes from the `stm` package. It defaults to a spline with 10 degrees of freedom. Moreover, I assume the content of topics to be influenced by party affiliation. Both `prevalence =` and `content =` take their arguments in formula notation.
+
+As determined before, I assume the presence of `K = 16` topics (`stm` also offers the `searchK()` function to tune this hyperparameter)
+
+```{r eval=FALSE}
+sotu_content_fit <- stm(documents = prepped_docs$documents, 
+                        vocab = prepped_docs$vocab, 
+                        K = 16, 
+                        prevalence = ~party + s(year),
+                        content = ~party,
+                        max.em.its = 75, 
+                        data = prepped_docs$meta, 
+                        init.type = "Spectral",
+                        verbose = FALSE)
+```
+
+Let's look at a summary of the topics and their prevalence. For this, we can use a [shiny app developed by Carsten Schwemmer](https://github.com/cschwem2er/stminsights)
+
+```{r eval=FALSE, include=FALSE}
+sotu_stm <- read_rds("https://www.dropbox.com/s/65bukmm42byq0dy/sotu_stm_k16.rds?dl=1")
+```
+
+```{r eval=FALSE}
+library(stminsights)
+
+prepped_docs$meta$party <- as.factor(prepped_docs$meta$party)
+prep <- estimateEffect(1:16 ~ party + s(year), sotu_content_fit, meta = prepped_docs$meta, uncertainty = "Global")
+map(1:16, ~summary(prep, topics = .x))
+
+save(prepped_docs, sotu_stm, prep, file = "stm_insights.RData")
+
+run_stminsights()
+```
+
+## Further readings
+
+* Check out the [SMLTAR book](https://smltar.com)
+* More on [tidymodels](https://www.tidymodels.org)
+* Basic [descriptions of ML models](https://www.simplilearn.com/10-algorithms-machine-learning-engineers-need-to-know-article)
+* More on prediction with text using [tidymodels](https://www.tidymodels.org/learn/work/tune-text/)
+* A `shiny` [introduction to STM](https://warin.ca/shiny/stm/#section-the-structural-topic-model) by Thierry Warin
+
+
+<!--chapter:end:04-ml.Rmd-->
+
+# Word Embeddings {#day6}
+
+<!--chapter:end:05-word_embeddings.Rmd-->
+
+# References
+
+::: {#refs}
+:::
+
+<!--chapter:end:06-references.Rmd-->
+

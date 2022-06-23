@@ -62,12 +62,12 @@ example_tbl
 
 ### Regexes
 
-1.Write a regex for Swedish mobile number. Test it with `str_detect("+46 71-738 25 33", "[insert your regex here]")`. 
+1.Write a regex for Swedish mobile number. Test it with `str_detect("+46 71-738 25 33", "insert your regex here")`. 
 2. Find all Mercedes in the `mtcars` data set.
 3. Take the IMDb file (`imdb <- read_csv("https://www.dropbox.com/s/81o3zzdkw737vt0/imdb2006-2016.csv?dl=1")`) and split the `Genre` column into different columns (hint: look at the `tidyr::separate()` function). How would you do it if `Genre` were a vector using `str_split_fixed()`?
 4. Take this vector of heights: `heights <- c("1m30cm", "2m01cm", "3m10cm")`
     a. How can you extract the meters using the negative look behind?
-    b. Bring it into numeric format (i.e., your_solution == c(1.3, 2.01, 3.1)) using regexes and `stringr` commands.
+    b. Bring it into numeric format (i.e., `your_solution == c(1.3, 2.01, 3.1)`) using regexes and `stringr` commands (and `as.numeric()` in the end).
 
 ### Preprocessing and analyses
 
@@ -76,12 +76,19 @@ example_tbl
   b. Remove stop words. 
   c. Perform stemming. 
 
-2. Optional: Perform the same steps, but using `spacyr`. What works better, lemmatization or stemming?
+2. OPTIONAL: Perform the same steps, but using `spacyr`. What works better, lemmatization or stemming?
 
 3. Count the terms per party. 
-  a. Do you see party-specific differences with regard to their ten most common terms (hint: `slice_max(tf_idf, n = 10, with_ties = FALSE)`)? Use the following code to plot them.
+  a. Do you see party-specific differences with regard to their ten most common stemmed terms (hint: `tbl %>% slice_max(n, n = 10, with_ties = FALSE)`)? Use the following code to plot them.
+```{r eval=FALSE}
+ ggplot(tbl)  +
+    geom_col(aes(x = n, y = reorder_within(stemmed, n, party))) +
+    scale_y_reordered() +
+    labs(y = "token") +
+    facet_wrap(vars(party), scales = "free") 
+```
   b. Is there more words you should add to your stopwords list?
-  c. Do the same thing but using the spacy output and filtering only `NOUN`s and `PROPN`ouns. 
+  c. OPTIONAL: Do the same thing but using the spacy output and filtering only `NOUN`s and `PROPN`ouns. 
   d. Again, is there stuff to be removed? Do so using a Regex.
 
 4. Do the same thing as in 3. but use TF-IDF instead of raw counts. How does this alter your results?
