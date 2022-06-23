@@ -25,7 +25,7 @@
 <meta name="author" content="Étienne Ollion" />
 
 
-<meta name="date" content="2022-06-22" />
+<meta name="date" content="2022-06-23" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -374,9 +374,9 @@ My cat is <b> very </b> grumpy
 <ul>
 <li><code>p</code> selects all <code>&lt;p&gt;</code> elements.</li>
 </ul>
-<div class="sourceCode" id="cb84"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb84-1"><a href="day3.html#cb84-1" aria-hidden="true" tabindex="-1"></a>basic_html <span class="sc">%&gt;%</span> <span class="fu">html_elements</span>(<span class="at">css =</span> <span class="st">&quot;p&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb84"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb84-1"><a href="day3.html#cb84-1" aria-hidden="true" tabindex="-1"></a>basic_html <span class="sc">%&gt;%</span> <span class="fu">html_elements</span>(<span class="at">css =</span> <span class="st">&quot;h1&quot;</span>)</span></code></pre></div>
 <pre><code>## {xml_nodeset (1)}
-## [1] &lt;p class=&quot;paragraph&quot;&gt;Some text &amp;amp; &lt;b&gt;some bold text.&lt;/b&gt;&lt;/p&gt;</code></pre>
+## [1] &lt;h1 id=&quot;first&quot;&gt;A heading&lt;/h1&gt;</code></pre>
 <ul>
 <li><code>.title</code> selects all elements that are of <code>class</code> “title”</li>
 </ul>
@@ -390,9 +390,9 @@ My cat is <b> very </b> grumpy
 <ul>
 <li><code>p.paragraph</code> analogously takes every <code>&lt;p&gt;</code> element which is of <code>class</code> “paragraph”.</li>
 </ul>
-<div class="sourceCode" id="cb90"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb90-1"><a href="day3.html#cb90-1" aria-hidden="true" tabindex="-1"></a>basic_html <span class="sc">%&gt;%</span> <span class="fu">html_elements</span>(<span class="at">css =</span> <span class="st">&quot;a.paragraph&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb90"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb90-1"><a href="day3.html#cb90-1" aria-hidden="true" tabindex="-1"></a>basic_html <span class="sc">%&gt;%</span> <span class="fu">html_elements</span>(<span class="at">css =</span> <span class="st">&quot;p.paragraph&quot;</span>)</span></code></pre></div>
 <pre><code>## {xml_nodeset (1)}
-## [1] &lt;a class=&quot;paragraph&quot;&gt;even more text &amp;amp; &lt;i&gt;some italicized text.&lt;/i&gt;\n  ...</code></pre>
+## [1] &lt;p class=&quot;paragraph&quot;&gt;Some text &amp;amp; &lt;b&gt;some bold text.&lt;/b&gt;&lt;/p&gt;</code></pre>
 <ul>
 <li><code>#link</code> scrapes elements that are of <code>id</code> “link”</li>
 </ul>
@@ -407,6 +407,18 @@ My cat is <b> very </b> grumpy
 <div class="sourceCode" id="cb96"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb96-1"><a href="day3.html#cb96-1" aria-hidden="true" tabindex="-1"></a>basic_html <span class="sc">%&gt;%</span> <span class="fu">html_elements</span>(<span class="at">css =</span> <span class="st">&quot;a.paragraph&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">html_children</span>()</span></code></pre></div>
 <pre><code>## {xml_nodeset (1)}
 ## [1] &lt;i&gt;some italicized text.&lt;/i&gt;</code></pre>
+<div class="sourceCode" id="cb98"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb98-1"><a href="day3.html#cb98-1" aria-hidden="true" tabindex="-1"></a><span class="fu">read_html</span>(<span class="st">&quot;https://rvest.tidyverse.org&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb98-2"><a href="day3.html#cb98-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_elements</span>(<span class="st">&quot;#installation , p&quot;</span>)</span></code></pre></div>
+<pre><code>## {xml_nodeset (9)}
+## [1] &lt;p&gt;rvest helps you scrape (or harvest) data from web pages. It is designe ...
+## [2] &lt;p&gt;If you’re scraping multiple pages, I highly recommend using rvest in c ...
+## [3] &lt;h2 id=&quot;installation&quot;&gt;Installation&lt;a class=&quot;anchor&quot; aria-label=&quot;anchor&quot; h ...
+## [4] &lt;p&gt;If the page contains tabular data you can convert it directly to a dat ...
+## [5] &lt;p&gt;Please note that the rvest project is released with a &lt;a href=&quot;https:/ ...
+## [6] &lt;p&gt;&lt;/p&gt;
+## [7] &lt;p&gt;Developed by &lt;a href=&quot;http://hadley.nz&quot; class=&quot;external-link&quot;&gt;Hadley W ...
+## [8] &lt;p&gt;&lt;/p&gt;
+## [9] &lt;p&gt;Site built with &lt;a href=&quot;https://pkgdown.r-lib.org/&quot; class=&quot;external-l ...</code></pre>
 <p>Unfortunately, web pages in the wild are usually not as easily readable as the small example one I came up with. Hence, I would recommend you to use the <a href="javascript:(function()%7Bvar%20s=document.createElement(&#39;div&#39;);s.innerHTML=&#39;Loading...&#39;;s.style.color=&#39;black&#39;;s.style.padding=&#39;20px&#39;;s.style.position=&#39;fixed&#39;;s.style.zIndex=&#39;9999&#39;;s.style.fontSize=&#39;3.0em&#39;;s.style.border=&#39;2px%20solid%20black&#39;;s.style.right=&#39;40px&#39;;s.style.top=&#39;40px&#39;;s.setAttribute(&#39;class&#39;,&#39;selector_gadget_loading&#39;);s.style.background=&#39;white&#39;;document.body.appendChild(s);s=document.createElement(&#39;script&#39;);s.setAttribute(&#39;type&#39;,&#39;text/javascript&#39;);s.setAttribute(&#39;src&#39;,&#39;https://dv0akt2986vzh.cloudfront.net/unstable/lib/selectorgadget.js&#39;);document.body.appendChild(s);%7D)();">SelectorGadget</a> – just drag it into your bookmarks list.</p>
 <p>Its usage could hardly be simpler:</p>
 <ol style="list-style-type: decimal">
@@ -426,42 +438,256 @@ My cat is <b> very </b> grumpy
 <h3><span class="header-section-number">3.3.1</span> <code>html_text()</code> and <code>html_text2()</code><a href="day3.html#html_text-and-html_text2" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Extracting text from HTML is easy. You use <code>html_text()</code> or <code>html_text2()</code>. The former is faster but will give you not-so-nice results. The latter will give you the text like it would be returned in a web browser.</p>
 <p>The following example is taken from <a href="https://rvest.tidyverse.org/reference/html_text.html">the documentation</a></p>
-<div class="sourceCode" id="cb98"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb98-1"><a href="day3.html#cb98-1" aria-hidden="true" tabindex="-1"></a><span class="co"># To understand the difference between html_text() and html_text2()</span></span>
-<span id="cb98-2"><a href="day3.html#cb98-2" aria-hidden="true" tabindex="-1"></a><span class="co"># take the following html:</span></span>
-<span id="cb98-3"><a href="day3.html#cb98-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb98-4"><a href="day3.html#cb98-4" aria-hidden="true" tabindex="-1"></a>html <span class="ot">&lt;-</span> <span class="fu">minimal_html</span>(</span>
-<span id="cb98-5"><a href="day3.html#cb98-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;&lt;p&gt;This is a paragraph.</span></span>
-<span id="cb98-6"><a href="day3.html#cb98-6" aria-hidden="true" tabindex="-1"></a><span class="st">    This is another sentence.&lt;br&gt;This should start on a new line&quot;</span></span>
-<span id="cb98-7"><a href="day3.html#cb98-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
-<div class="sourceCode" id="cb99"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb99-1"><a href="day3.html#cb99-1" aria-hidden="true" tabindex="-1"></a><span class="co"># html_text() returns the raw underlying text, which includes white space</span></span>
-<span id="cb99-2"><a href="day3.html#cb99-2" aria-hidden="true" tabindex="-1"></a><span class="co"># that would be ignored by a browser, and ignores the &lt;br&gt;</span></span>
-<span id="cb99-3"><a href="day3.html#cb99-3" aria-hidden="true" tabindex="-1"></a>html <span class="sc">%&gt;%</span> <span class="fu">html_element</span>(<span class="st">&quot;p&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">html_text</span>() <span class="sc">%&gt;%</span> <span class="fu">writeLines</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb100"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb100-1"><a href="day3.html#cb100-1" aria-hidden="true" tabindex="-1"></a><span class="co"># To understand the difference between html_text() and html_text2()</span></span>
+<span id="cb100-2"><a href="day3.html#cb100-2" aria-hidden="true" tabindex="-1"></a><span class="co"># take the following html:</span></span>
+<span id="cb100-3"><a href="day3.html#cb100-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb100-4"><a href="day3.html#cb100-4" aria-hidden="true" tabindex="-1"></a>html <span class="ot">&lt;-</span> <span class="fu">minimal_html</span>(</span>
+<span id="cb100-5"><a href="day3.html#cb100-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;&lt;p&gt;This is a paragraph.</span></span>
+<span id="cb100-6"><a href="day3.html#cb100-6" aria-hidden="true" tabindex="-1"></a><span class="st">    This is another sentence.&lt;br&gt;This should start on a new line&quot;</span></span>
+<span id="cb100-7"><a href="day3.html#cb100-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb101"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb101-1"><a href="day3.html#cb101-1" aria-hidden="true" tabindex="-1"></a><span class="co"># html_text() returns the raw underlying text, which includes white space</span></span>
+<span id="cb101-2"><a href="day3.html#cb101-2" aria-hidden="true" tabindex="-1"></a><span class="co"># that would be ignored by a browser, and ignores the &lt;br&gt;</span></span>
+<span id="cb101-3"><a href="day3.html#cb101-3" aria-hidden="true" tabindex="-1"></a>html <span class="sc">%&gt;%</span> <span class="fu">html_element</span>(<span class="st">&quot;p&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">html_text</span>() <span class="sc">%&gt;%</span> <span class="fu">writeLines</span>()</span></code></pre></div>
 <pre><code>## This is a paragraph.
 ##     This is another sentence.This should start on a new line</code></pre>
-<div class="sourceCode" id="cb101"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb101-1"><a href="day3.html#cb101-1" aria-hidden="true" tabindex="-1"></a><span class="co"># html_text2() simulates what a browser would display. Non-significant</span></span>
-<span id="cb101-2"><a href="day3.html#cb101-2" aria-hidden="true" tabindex="-1"></a><span class="co"># white space is collapsed, and &lt;br&gt; is turned into a line break</span></span>
-<span id="cb101-3"><a href="day3.html#cb101-3" aria-hidden="true" tabindex="-1"></a>html <span class="sc">%&gt;%</span> <span class="fu">html_element</span>(<span class="st">&quot;p&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">html_text2</span>() <span class="sc">%&gt;%</span> <span class="fu">writeLines</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb103"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb103-1"><a href="day3.html#cb103-1" aria-hidden="true" tabindex="-1"></a><span class="co"># html_text2() simulates what a browser would display. Non-significant</span></span>
+<span id="cb103-2"><a href="day3.html#cb103-2" aria-hidden="true" tabindex="-1"></a><span class="co"># white space is collapsed, and &lt;br&gt; is turned into a line break</span></span>
+<span id="cb103-3"><a href="day3.html#cb103-3" aria-hidden="true" tabindex="-1"></a>html <span class="sc">%&gt;%</span> <span class="fu">html_element</span>(<span class="st">&quot;p&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">html_text2</span>() <span class="sc">%&gt;%</span> <span class="fu">writeLines</span>()</span></code></pre></div>
 <pre><code>## This is a paragraph. This is another sentence.
 ## This should start on a new line</code></pre>
 <p>A “real example” would then look like this:</p>
-<div class="sourceCode" id="cb103"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb103-1"><a href="day3.html#cb103-1" aria-hidden="true" tabindex="-1"></a>us_senators <span class="ot">&lt;-</span> <span class="fu">read_html</span>(<span class="st">&quot;https://en.wikipedia.org/wiki/List_of_current_United_States_senators&quot;</span>)</span>
-<span id="cb103-2"><a href="day3.html#cb103-2" aria-hidden="true" tabindex="-1"></a>text <span class="ot">&lt;-</span> us_senators <span class="sc">%&gt;%</span></span>
-<span id="cb103-3"><a href="day3.html#cb103-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_element</span>(<span class="at">css =</span> <span class="st">&quot;p:nth-child(6)&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb103-4"><a href="day3.html#cb103-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_text2</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb105"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb105-1"><a href="day3.html#cb105-1" aria-hidden="true" tabindex="-1"></a>us_senators <span class="ot">&lt;-</span> <span class="fu">read_html</span>(<span class="st">&quot;https://en.wikipedia.org/wiki/List_of_current_United_States_senators&quot;</span>)</span>
+<span id="cb105-2"><a href="day3.html#cb105-2" aria-hidden="true" tabindex="-1"></a>text <span class="ot">&lt;-</span> us_senators <span class="sc">%&gt;%</span></span>
+<span id="cb105-3"><a href="day3.html#cb105-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_elements</span>(<span class="at">css =</span> <span class="st">&quot;p:nth-child(6)&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb105-4"><a href="day3.html#cb105-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_text2</span>()</span></code></pre></div>
 </div>
 <div id="extracting-tables" class="section level3 hasAnchor" number="3.3.2">
 <h3><span class="header-section-number">3.3.2</span> Extracting tables<a href="day3.html#extracting-tables" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>The general output format we strive for is a tibble. Oftentimes, data is already stored online in a table format, basically ready for us to analyze them. In the next example, I want to get a table from the Wikipedia page that contains the senators of different States in the United States I have used before. For this first, basic example, I do not use selectors for extracting the right table. You can use <code>rvest::html_table()</code>. It will give you a list containing all tables on this particular page. We can inspect it using <code>str()</code> which returns an overview of the list and the tibbles it contains.</p>
-<div class="sourceCode" id="cb104"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb104-1"><a href="day3.html#cb104-1" aria-hidden="true" tabindex="-1"></a>tables <span class="ot">&lt;-</span> us_senators <span class="sc">%&gt;%</span> </span>
-<span id="cb104-2"><a href="day3.html#cb104-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_table</span>()</span>
-<span id="cb104-3"><a href="day3.html#cb104-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb104-4"><a href="day3.html#cb104-4" aria-hidden="true" tabindex="-1"></a><span class="co"># str(tables)</span></span></code></pre></div>
+<div class="sourceCode" id="cb106"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb106-1"><a href="day3.html#cb106-1" aria-hidden="true" tabindex="-1"></a>tables <span class="ot">&lt;-</span> us_senators <span class="sc">%&gt;%</span> </span>
+<span id="cb106-2"><a href="day3.html#cb106-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_table</span>()</span>
+<span id="cb106-3"><a href="day3.html#cb106-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb106-4"><a href="day3.html#cb106-4" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(tables)</span></code></pre></div>
+<pre><code>## List of 22
+##  $ : tibble [4 × 3] (S3: tbl_df/tbl/data.frame)
+##   ..$ Affiliation: chr [1:4] &quot;&quot; &quot;&quot; &quot;&quot; &quot;Total&quot;
+##   ..$ Affiliation: chr [1:4] &quot;Republican Party&quot; &quot;Democratic Party&quot; &quot;Independent&quot; &quot;Total&quot;
+##   ..$ Members    : chr [1:4] &quot;50&quot; &quot;48&quot; &quot;2[a]&quot; &quot;100&quot;
+##  $ : tibble [11 × 1] (S3: tbl_df/tbl/data.frame)
+##   ..$ X1: chr [1:11] &quot;This article is part of a series on the&quot; &quot;United States Senate&quot; &quot;&quot; &quot;History of the United States Senate&quot; ...
+##  $ : tibble [2 × 6] (S3: tbl_df/tbl/data.frame)
+##   ..$ Office : chr [1:2] &quot;President of the Senate[b]&quot; &quot;President pro tempore&quot;
+##   ..$ Party  : chr [1:2] &quot;Democratic&quot; &quot;Democratic&quot;
+##   ..$ Officer: logi [1:2] NA NA
+##   ..$ Officer: chr [1:2] &quot;Kamala Harris&quot; &quot;Patrick Leahy&quot;
+##   ..$ State  : chr [1:2] &quot;CA[c]&quot; &quot;VT&quot;
+##   ..$ Since  : chr [1:2] &quot;January 20, 2021&quot; &quot;January 20, 2021Party dean since December 17, 2012&quot;
+##  $ : tibble [15 × 4] (S3: tbl_df/tbl/data.frame)
+##   ..$ Office : chr [1:15] &quot;Senate Majority LeaderChair, Senate Democratic Caucus&quot; &quot;Senate Majority Whip&quot; &quot;Senate Assistant Democratic Leader&quot; &quot;Chair, Senate Democratic Policy and Communications Committee&quot; ...
+##   ..$ Officer: chr [1:15] &quot;Chuck Schumer&quot; &quot;Dick Durbin&quot; &quot;Patty Murray&quot; &quot;Debbie Stabenow&quot; ...
+##   ..$ State  : chr [1:15] &quot;NY&quot; &quot;IL&quot; &quot;WA&quot; &quot;MI&quot; ...
+##   ..$ Since  : chr [1:15] &quot;January 20, 2021Party leader since January 3, 2017&quot; &quot;January 20, 2021Party whip since January 3, 2005&quot; &quot;January 3, 2017&quot; &quot;January 3, 2017&quot; ...
+##  $ : tibble [9 × 4] (S3: tbl_df/tbl/data.frame)
+##   ..$ Office : chr [1:9] &quot;Senate Minority Leader&quot; &quot;Senate Minority Whip&quot; &quot;Chair, Senate Republican Conference&quot; &quot;Chair, Senate Republican Policy Committee&quot; ...
+##   ..$ Officer: chr [1:9] &quot;Mitch McConnell&quot; &quot;John Thune&quot; &quot;John Barrasso&quot; &quot;Roy Blunt&quot; ...
+##   ..$ State  : chr [1:9] &quot;KY&quot; &quot;SD&quot; &quot;WY&quot; &quot;MO&quot; ...
+##   ..$ Since  : chr [1:9] &quot;January 20, 2021Party leader since January 3, 2007&quot; &quot;January 20, 2021Party whip since January 3, 2019&quot; &quot;January 3, 2019&quot; &quot;January 3, 2019&quot; ...
+##  $ : tibble [100 × 12] (S3: tbl_df/tbl/data.frame)
+##   ..$ State                     : chr [1:100] &quot;Alabama&quot; &quot;Alabama&quot; &quot;Alaska&quot; &quot;Alaska&quot; ...
+##   ..$ Portrait                  : logi [1:100] NA NA NA NA NA NA ...
+##   ..$ Senator                   : chr [1:100] &quot;Richard Shelby&quot; &quot;Tommy Tuberville&quot; &quot;Lisa Murkowski&quot; &quot;Dan Sullivan&quot; ...
+##   ..$ Party                     : logi [1:100] NA NA NA NA NA NA ...
+##   ..$ Party                     : chr [1:100] &quot;Republican[d]&quot; &quot;Republican&quot; &quot;Republican&quot; &quot;Republican&quot; ...
+##   ..$ Born                      : chr [1:100] &quot;(1934-05-06) May 6, 1934 (age 88)&quot; &quot;(1954-09-18) September 18, 1954 (age 67)&quot; &quot;(1957-05-22) May 22, 1957 (age 65)&quot; &quot;(1964-11-13) November 13, 1964 (age 57)&quot; ...
+##   ..$ Occupation(s)             : chr [1:100] &quot;Lawyer&quot; &quot;College football coachPartner, investment management firm&quot; &quot;Lawyer&quot; &quot;U.S. Marine Corps officerLawyerAssistant Secretary of State for Economic and Business Affairs&quot; ...
+##   ..$ Previous electiveoffice(s): chr [1:100] &quot;U.S. HouseAlabama Senate&quot; &quot;None&quot; &quot;Alaska House of Representatives&quot; &quot;Alaska Attorney General&quot; ...
+##   ..$ Education                 : chr [1:100] &quot;University of Alabama (BA, LLB)\nBirmingham School of Law (JD)&quot; &quot;Southern Arkansas University (BS)&quot; &quot;Georgetown University (AB)\nWillamette University (JD)&quot; &quot;Harvard University (AB)\nGeorgetown University (MS, JD)&quot; ...
+##   ..$ Assumed office            : chr [1:100] &quot;January 3, 1987&quot; &quot;January 3, 2021&quot; &quot;December 20, 2002[e]&quot; &quot;January 3, 2015&quot; ...
+##   ..$ Class                     : chr [1:100] &quot;2022Class 3&quot; &quot;2026Class 2&quot; &quot;2022Class 3&quot; &quot;2026Class 2&quot; ...
+##   ..$ Residence[2]              : chr [1:100] &quot;Tuscaloosa&quot; &quot;Auburn[3]&quot; &quot;Girdwood&quot; &quot;Anchorage&quot; ...
+##  $ : tibble [3 × 3] (S3: tbl_df/tbl/data.frame)
+##   ..$ vteCurrent United States senators: chr [1:3] &quot;President: ▌ Kamala Harris (D) ‧ President pro tempore: ▌ Patrick Leahy (D)&quot; &quot;.mw-parser-output .div-col{margin-top:0.3em;column-width:30em}.mw-parser-output .div-col-small{font-size:90%}.m&quot;| __truncated__ &quot;▌ Republican: 50\n▌ Democratic: 48\n▌ Independent: 2&quot;
+##   ..$ vteCurrent United States senators: chr [1:3] &quot;President: ▌ Kamala Harris (D) ‧ President pro tempore: ▌ Patrick Leahy (D)&quot; &quot;.mw-parser-output .div-col{margin-top:0.3em;column-width:30em}.mw-parser-output .div-col-small{font-size:90%}.m&quot;| __truncated__ &quot;▌ Republican: 50\n▌ Democratic: 48\n▌ Independent: 2&quot;
+##   ..$ vteCurrent United States senators: chr [1:3] &quot;President: ▌ Kamala Harris (D) ‧ President pro tempore: ▌ Patrick Leahy (D)&quot; &quot;&quot; &quot;▌ Republican: 50\n▌ Democratic: 48\n▌ Independent: 2&quot;
+##  $ : tibble [49 × 36] (S3: tbl_df/tbl/data.frame)
+##   ..$ vteUnited States Congress: chr [1:49] &quot;House of Representatives\nSenate\nJoint session\n(116th ← 117th → 118th)\nLists of United States Congress&quot; &quot;Members and leadersMembershipMembers\nBy length of service\nBy shortness of service\nFreshmen\nYoungest members&quot;| __truncated__ &quot;Members and leaders&quot; &quot;MembershipMembers\nBy length of service\nBy shortness of service\nFreshmen\nYoungest members\nNon-voting member&quot;| __truncated__ ...
+##   ..$ vteUnited States Congress: chr [1:49] &quot;House of Representatives\nSenate\nJoint session\n(116th ← 117th → 118th)\nLists of United States Congress&quot; &quot;Members and leadersMembershipMembers\nBy length of service\nBy shortness of service\nFreshmen\nYoungest members&quot;| __truncated__ &quot;Members and leaders&quot; &quot;MembershipMembers\nBy length of service\nBy shortness of service\nFreshmen\nYoungest members\nNon-voting member&quot;| __truncated__ ...
+##   ..$                          : chr [1:49] NA &quot;Members and leaders&quot; NA &quot;Membership&quot; ...
+##   ..$                          : chr [1:49] NA &quot;Members and leaders&quot; NA &quot;Members\nBy length of service\nBy shortness of service\nFreshmen\nYoungest members\nNon-voting members\nUnseate&quot;| __truncated__ ...
+##   ..$                          : chr [1:49] NA &quot;MembershipMembers\nBy length of service\nBy shortness of service\nFreshmen\nYoungest members\nNon-voting member&quot;| __truncated__ NA &quot;Members&quot; ...
+##   ..$                          : chr [1:49] NA &quot;MembershipMembers\nBy length of service\nBy shortness of service\nFreshmen\nYoungest members\nNon-voting member&quot;| __truncated__ NA &quot;By length of service\nBy shortness of service\nFreshmen\nYoungest members\nNon-voting members\nUnseated members&quot; ...
+##   ..$                          : chr [1:49] NA &quot;Membership&quot; NA &quot;Senate&quot; ...
+##   ..$                          : chr [1:49] NA &quot;Members\nBy length of service\nBy shortness of service\nFreshmen\nYoungest members\nNon-voting members\nUnseate&quot;| __truncated__ NA &quot;Members\nseniority\nDean\nFormer\nExpelled or censured\nClasses\nBorn outside the U.S.\nResigned\nAppointed\nSwitched parties&quot; ...
+##   ..$                          : chr [1:49] NA &quot;Members&quot; NA &quot;House&quot; ...
+##   ..$                          : chr [1:49] NA &quot;By length of service\nBy shortness of service\nFreshmen\nYoungest members\nNon-voting members\nUnseated members&quot; NA &quot;Members\nseniority\nDean\nFormer\nExpelled, censured, and reprimanded\nServed a single term\nSwitched parties\n&quot;| __truncated__ ...
+##   ..$                          : chr [1:49] NA &quot;Senate&quot; NA &quot;Leaders&quot; ...
+##   ..$                          : chr [1:49] NA &quot;Members\nseniority\nDean\nFormer\nExpelled or censured\nClasses\nBorn outside the U.S.\nResigned\nAppointed\nSwitched parties&quot; NA &quot;Senate\nPresident\nlist\nPresident pro tempore\nlist\nLeaders\nDemocratic Caucus\nChair\nSecretary\nPolicy Comm&quot;| __truncated__ ...
+##   ..$                          : chr [1:49] NA &quot;House&quot; NA &quot;Senate&quot; ...
+##   ..$                          : chr [1:49] NA &quot;Members\nseniority\nDean\nFormer\nExpelled, censured, and reprimanded\nServed a single term\nSwitched parties\n&quot;| __truncated__ NA &quot;President\nlist\nPresident pro tempore\nlist\nLeaders\nDemocratic Caucus\nChair\nSecretary\nPolicy Committee Ch&quot;| __truncated__ ...
+##   ..$                          : chr [1:49] NA &quot;Leaders&quot; NA &quot;House&quot; ...
+##   ..$                          : chr [1:49] NA &quot;Senate\nPresident\nlist\nPresident pro tempore\nlist\nLeaders\nDemocratic Caucus\nChair\nSecretary\nPolicy Comm&quot;| __truncated__ NA &quot;Speaker\nlist\nLeaders\nBipartisan Legal Advisory Group\nDemocratic Caucus\nRepublican Conference&quot; ...
+##   ..$                          : chr [1:49] NA &quot;Senate&quot; NA &quot;Districts&quot; ...
+##   ..$                          : chr [1:49] NA &quot;President\nlist\nPresident pro tempore\nlist\nLeaders\nDemocratic Caucus\nChair\nSecretary\nPolicy Committee Ch&quot;| __truncated__ NA &quot;List\nApportionment\nGerrymandering&quot; ...
+##   ..$                          : chr [1:49] NA &quot;House&quot; NA &quot;Groups&quot; ...
+##   ..$                          : chr [1:49] NA &quot;Speaker\nlist\nLeaders\nBipartisan Legal Advisory Group\nDemocratic Caucus\nRepublican Conference&quot; NA &quot;Congressional caucus\nCaucuses of the United States CongressEthnic and racial\nAfrican-American members\nSenate&quot;| __truncated__ ...
+##   ..$                          : chr [1:49] NA &quot;Districts&quot; NA &quot;Congressional caucus&quot; ...
+##   ..$                          : chr [1:49] NA &quot;List\nApportionment\nGerrymandering&quot; NA &quot;Caucuses of the United States Congress&quot; ...
+##   ..$                          : chr [1:49] NA &quot;Groups&quot; NA &quot;Ethnic and racial&quot; ...
+##   ..$                          : chr [1:49] NA &quot;Congressional caucus\nCaucuses of the United States CongressEthnic and racial\nAfrican-American members\nSenate&quot;| __truncated__ NA &quot;African-American members\nSenate\nHouse\nBlack Caucus\nArab and Middle Eastern members\nAsian Pacific American &quot;| __truncated__ ...
+##   ..$                          : chr [1:49] NA &quot;Congressional caucus&quot; NA &quot;Gender and sexual identity&quot; ...
+##   ..$                          : chr [1:49] NA &quot;Caucuses of the United States Congress&quot; NA &quot;LGBT members\nLGBT Equality Caucus\nWomen\nSenate\nHouse\nIssues Caucus\nCurrent House&quot; ...
+##   ..$                          : chr [1:49] NA &quot;Ethnic and racial&quot; NA &quot;Occupation&quot; ...
+##   ..$                          : chr [1:49] NA &quot;African-American members\nSenate\nHouse\nBlack Caucus\nArab and Middle Eastern members\nAsian Pacific American &quot;| __truncated__ NA &quot;Physicians&quot; ...
+##   ..$                          : chr [1:49] NA &quot;Gender and sexual identity&quot; NA &quot;Religion&quot; ...
+##   ..$                          : chr [1:49] NA &quot;LGBT members\nLGBT Equality Caucus\nWomen\nSenate\nHouse\nIssues Caucus\nCurrent House&quot; NA &quot;Buddhist members\nHindu members\nJewish members\nMormon (LDS) members\nMuslim members&quot; ...
+##   ..$                          : chr [1:49] NA &quot;Occupation&quot; NA &quot;Related&quot; ...
+##   ..$                          : chr [1:49] NA &quot;Physicians&quot; NA &quot;By length of service historically\nCurrent members by wealth\nFrom multiple states\nDied in office\n1790–1899\n&quot;| __truncated__ ...
+##   ..$                          : chr [1:49] NA &quot;Religion&quot; NA NA ...
+##   ..$                          : chr [1:49] NA &quot;Buddhist members\nHindu members\nJewish members\nMormon (LDS) members\nMuslim members&quot; NA NA ...
+##   ..$                          : chr [1:49] NA &quot;Related&quot; NA NA ...
+##   ..$                          : chr [1:49] NA &quot;By length of service historically\nCurrent members by wealth\nFrom multiple states\nDied in office\n1790–1899\n&quot;| __truncated__ NA NA ...
+##  $ : tibble [16 × 32] (S3: tbl_df/tbl/data.frame)
+##   ..$ Members and leaders: chr [1:16] &quot;MembershipMembers\nBy length of service\nBy shortness of service\nFreshmen\nYoungest members\nNon-voting member&quot;| __truncated__ &quot;Membership&quot; &quot;Members&quot; &quot;Senate&quot; ...
+##   ..$ Members and leaders: chr [1:16] &quot;MembershipMembers\nBy length of service\nBy shortness of service\nFreshmen\nYoungest members\nNon-voting member&quot;| __truncated__ &quot;Members\nBy length of service\nBy shortness of service\nFreshmen\nYoungest members\nNon-voting members\nUnseate&quot;| __truncated__ &quot;By length of service\nBy shortness of service\nFreshmen\nYoungest members\nNon-voting members\nUnseated members&quot; &quot;Members\nseniority\nDean\nFormer\nExpelled or censured\nClasses\nBorn outside the U.S.\nResigned\nAppointed\nSwitched parties&quot; ...
+##   ..$                    : chr [1:16] &quot;Membership&quot; &quot;Members&quot; NA NA ...
+##   ..$                    : chr [1:16] &quot;Members\nBy length of service\nBy shortness of service\nFreshmen\nYoungest members\nNon-voting members\nUnseate&quot;| __truncated__ &quot;By length of service\nBy shortness of service\nFreshmen\nYoungest members\nNon-voting members\nUnseated members&quot; NA NA ...
+##   ..$                    : chr [1:16] &quot;Members&quot; &quot;Senate&quot; NA NA ...
+##   ..$                    : chr [1:16] &quot;By length of service\nBy shortness of service\nFreshmen\nYoungest members\nNon-voting members\nUnseated members&quot; &quot;Members\nseniority\nDean\nFormer\nExpelled or censured\nClasses\nBorn outside the U.S.\nResigned\nAppointed\nSwitched parties&quot; NA NA ...
+##   ..$                    : chr [1:16] &quot;Senate&quot; &quot;House&quot; NA NA ...
+##   ..$                    : chr [1:16] &quot;Members\nseniority\nDean\nFormer\nExpelled or censured\nClasses\nBorn outside the U.S.\nResigned\nAppointed\nSwitched parties&quot; &quot;Members\nseniority\nDean\nFormer\nExpelled, censured, and reprimanded\nServed a single term\nSwitched parties\n&quot;| __truncated__ NA NA ...
+##   ..$                    : chr [1:16] &quot;House&quot; NA NA NA ...
+##   ..$                    : chr [1:16] &quot;Members\nseniority\nDean\nFormer\nExpelled, censured, and reprimanded\nServed a single term\nSwitched parties\n&quot;| __truncated__ NA NA NA ...
+##   ..$                    : chr [1:16] &quot;Leaders&quot; NA NA NA ...
+##   ..$                    : chr [1:16] &quot;Senate\nPresident\nlist\nPresident pro tempore\nlist\nLeaders\nDemocratic Caucus\nChair\nSecretary\nPolicy Comm&quot;| __truncated__ NA NA NA ...
+##   ..$                    : chr [1:16] &quot;Senate&quot; NA NA NA ...
+##   ..$                    : chr [1:16] &quot;President\nlist\nPresident pro tempore\nlist\nLeaders\nDemocratic Caucus\nChair\nSecretary\nPolicy Committee Ch&quot;| __truncated__ NA NA NA ...
+##   ..$                    : chr [1:16] &quot;House&quot; NA NA NA ...
+##   ..$                    : chr [1:16] &quot;Speaker\nlist\nLeaders\nBipartisan Legal Advisory Group\nDemocratic Caucus\nRepublican Conference&quot; NA NA NA ...
+##   ..$                    : chr [1:16] &quot;Districts&quot; NA NA NA ...
+##   ..$                    : chr [1:16] &quot;List\nApportionment\nGerrymandering&quot; NA NA NA ...
+##   ..$                    : chr [1:16] &quot;Groups&quot; NA NA NA ...
+##   ..$                    : chr [1:16] &quot;Congressional caucus\nCaucuses of the United States CongressEthnic and racial\nAfrican-American members\nSenate&quot;| __truncated__ NA NA NA ...
+##   ..$                    : chr [1:16] &quot;Congressional caucus&quot; NA NA NA ...
+##   ..$                    : chr [1:16] &quot;Caucuses of the United States Congress&quot; NA NA NA ...
+##   ..$                    : chr [1:16] &quot;Ethnic and racial&quot; NA NA NA ...
+##   ..$                    : chr [1:16] &quot;African-American members\nSenate\nHouse\nBlack Caucus\nArab and Middle Eastern members\nAsian Pacific American &quot;| __truncated__ NA NA NA ...
+##   ..$                    : chr [1:16] &quot;Gender and sexual identity&quot; NA NA NA ...
+##   ..$                    : chr [1:16] &quot;LGBT members\nLGBT Equality Caucus\nWomen\nSenate\nHouse\nIssues Caucus\nCurrent House&quot; NA NA NA ...
+##   ..$                    : chr [1:16] &quot;Occupation&quot; NA NA NA ...
+##   ..$                    : chr [1:16] &quot;Physicians&quot; NA NA NA ...
+##   ..$                    : chr [1:16] &quot;Religion&quot; NA NA NA ...
+##   ..$                    : chr [1:16] &quot;Buddhist members\nHindu members\nJewish members\nMormon (LDS) members\nMuslim members&quot; NA NA NA ...
+##   ..$                    : chr [1:16] &quot;Related&quot; NA NA NA ...
+##   ..$                    : chr [1:16] &quot;By length of service historically\nCurrent members by wealth\nFrom multiple states\nDied in office\n1790–1899\n&quot;| __truncated__ NA NA NA ...
+##  $ : tibble [15 × 12] (S3: tbl_df/tbl/data.frame)
+##   ..$ X1 : chr [1:15] &quot;Membership&quot; &quot;Members&quot; &quot;Senate&quot; &quot;House&quot; ...
+##   ..$ X2 : chr [1:15] &quot;Members\nBy length of service\nBy shortness of service\nFreshmen\nYoungest members\nNon-voting members\nUnseate&quot;| __truncated__ &quot;By length of service\nBy shortness of service\nFreshmen\nYoungest members\nNon-voting members\nUnseated members&quot; &quot;Members\nseniority\nDean\nFormer\nExpelled or censured\nClasses\nBorn outside the U.S.\nResigned\nAppointed\nSwitched parties&quot; &quot;Members\nseniority\nDean\nFormer\nExpelled, censured, and reprimanded\nServed a single term\nSwitched parties\n&quot;| __truncated__ ...
+##   ..$ X3 : chr [1:15] &quot;Members&quot; NA NA NA ...
+##   ..$ X4 : chr [1:15] &quot;By length of service\nBy shortness of service\nFreshmen\nYoungest members\nNon-voting members\nUnseated members&quot; NA NA NA ...
+##   ..$ X5 : chr [1:15] &quot;Senate&quot; NA NA NA ...
+##   ..$ X6 : chr [1:15] &quot;Members\nseniority\nDean\nFormer\nExpelled or censured\nClasses\nBorn outside the U.S.\nResigned\nAppointed\nSwitched parties&quot; NA NA NA ...
+##   ..$ X7 : chr [1:15] &quot;House&quot; NA NA NA ...
+##   ..$ X8 : chr [1:15] &quot;Members\nseniority\nDean\nFormer\nExpelled, censured, and reprimanded\nServed a single term\nSwitched parties\n&quot;| __truncated__ NA NA NA ...
+##   ..$ X9 : chr [1:15] NA NA NA NA ...
+##   ..$ X10: chr [1:15] NA NA NA NA ...
+##   ..$ X11: chr [1:15] NA NA NA NA ...
+##   ..$ X12: chr [1:15] NA NA NA NA ...
+##  $ : tibble [3 × 2] (S3: tbl_df/tbl/data.frame)
+##   ..$ X1: chr [1:3] &quot;Members&quot; &quot;Senate&quot; &quot;House&quot;
+##   ..$ X2: chr [1:3] &quot;By length of service\nBy shortness of service\nFreshmen\nYoungest members\nNon-voting members\nUnseated members&quot; &quot;Members\nseniority\nDean\nFormer\nExpelled or censured\nClasses\nBorn outside the U.S.\nResigned\nAppointed\nSwitched parties&quot; &quot;Members\nseniority\nDean\nFormer\nExpelled, censured, and reprimanded\nServed a single term\nSwitched parties\n&quot;| __truncated__
+##  $ : tibble [2 × 2] (S3: tbl_df/tbl/data.frame)
+##   ..$ X1: chr [1:2] &quot;Senate&quot; &quot;House&quot;
+##   ..$ X2: chr [1:2] &quot;President\nlist\nPresident pro tempore\nlist\nLeaders\nDemocratic Caucus\nChair\nSecretary\nPolicy Committee Ch&quot;| __truncated__ &quot;Speaker\nlist\nLeaders\nBipartisan Legal Advisory Group\nDemocratic Caucus\nRepublican Conference&quot;
+##  $ : tibble [5 × 2] (S3: tbl_df/tbl/data.frame)
+##   ..$ X1: chr [1:5] &quot;Congressional caucus&quot; &quot;Ethnic and racial&quot; &quot;Gender and sexual identity&quot; &quot;Occupation&quot; ...
+##   ..$ X2: chr [1:5] &quot;Caucuses of the United States Congress&quot; &quot;African-American members\nSenate\nHouse\nBlack Caucus\nArab and Middle Eastern members\nAsian Pacific American &quot;| __truncated__ &quot;LGBT members\nLGBT Equality Caucus\nWomen\nSenate\nHouse\nIssues Caucus\nCurrent House&quot; &quot;Physicians&quot; ...
+##  $ : tibble [10 × 20] (S3: tbl_df/tbl/data.frame)
+##   ..$ Powers, privileges, procedure, committees, history, media: chr [1:10] &quot;Powers\nArticle I\nCopyright\nCommerce (Dormant)\nContempt of Congress\nDeclaration of war\nImpeachment\nNatura&quot;| __truncated__ &quot;Powers&quot; &quot;Privileges&quot; &quot;Procedure&quot; ...
+##   ..$ Powers, privileges, procedure, committees, history, media: chr [1:10] &quot;Powers\nArticle I\nCopyright\nCommerce (Dormant)\nContempt of Congress\nDeclaration of war\nImpeachment\nNatura&quot;| __truncated__ &quot;Article I\nCopyright\nCommerce (Dormant)\nContempt of Congress\nDeclaration of war\nImpeachment\nNaturalization&quot;| __truncated__ &quot;Salaries\nFranking\nImmunity&quot; &quot;Act of Congress\nlist\nAppropriation bill\nBill\nBlue slip\nBudget process\nCensure\nClosed sessions\nHouse\nSe&quot;| __truncated__ ...
+##   ..$                                                          : chr [1:10] &quot;Powers&quot; NA NA NA ...
+##   ..$                                                          : chr [1:10] &quot;Article I\nCopyright\nCommerce (Dormant)\nContempt of Congress\nDeclaration of war\nImpeachment\nNaturalization&quot;| __truncated__ NA NA NA ...
+##   ..$                                                          : chr [1:10] &quot;Privileges&quot; NA NA NA ...
+##   ..$                                                          : chr [1:10] &quot;Salaries\nFranking\nImmunity&quot; NA NA NA ...
+##   ..$                                                          : chr [1:10] &quot;Procedure&quot; NA NA NA ...
+##   ..$                                                          : chr [1:10] &quot;Act of Congress\nlist\nAppropriation bill\nBill\nBlue slip\nBudget process\nCensure\nClosed sessions\nHouse\nSe&quot;| __truncated__ NA NA NA ...
+##   ..$                                                          : chr [1:10] &quot;Senate-specific&quot; NA NA NA ...
+##   ..$                                                          : chr [1:10] &quot;Advice and consent\nClasses\nExecutive communication\nExecutive session\nFilibuster\nJefferson&#39;s Manual\nSenate&quot;| __truncated__ NA NA NA ...
+##   ..$                                                          : chr [1:10] &quot;Committees&quot; NA NA NA ...
+##   ..$                                                          : chr [1:10] &quot;Chairman and ranking member\nOf the Whole\nConference\nDischarge petition\nHearings\nMarkup\nOversight\nList (J&quot;| __truncated__ NA NA NA ...
+##   ..$                                                          : chr [1:10] &quot;Items&quot; NA NA NA ...
+##   ..$                                                          : chr [1:10] &quot;Gavels\nMace of the House\nSeal of the Senate&quot; NA NA NA ...
+##   ..$                                                          : chr [1:10] &quot;History&quot; NA NA NA ...
+##   ..$                                                          : chr [1:10] &quot;House history\nMemoirs\nSpeaker elections\nSenate history\nElection disputes\nMemoirs\nContinental Congress\nFe&quot;| __truncated__ NA NA NA ...
+##   ..$                                                          : chr [1:10] &quot;House history\nMemoirs\nSpeaker elections\nSenate history\nElection disputes\nMemoirs\nContinental Congress\nFe&quot;| __truncated__ NA NA NA ...
+##   ..$                                                          : chr [1:10] &quot;House history\nMemoirs\nSpeaker elections\nSenate history\nElection disputes\nMemoirs\nContinental Congress\nFe&quot;| __truncated__ NA NA NA ...
+##   ..$                                                          : chr [1:10] &quot;Media&quot; NA NA NA ...
+##   ..$                                                          : chr [1:10] &quot;C-SPAN\nCongressional Quarterly\nThe Hill\nPolitico\nRoll Call&quot; NA NA NA ...
+##  $ : tibble [9 × 4] (S3: tbl_df/tbl/data.frame)
+##   ..$ X1: chr [1:9] &quot;Powers&quot; &quot;Privileges&quot; &quot;Procedure&quot; &quot;Senate-specific&quot; ...
+##   ..$ X2: chr [1:9] &quot;Article I\nCopyright\nCommerce (Dormant)\nContempt of Congress\nDeclaration of war\nImpeachment\nNaturalization&quot;| __truncated__ &quot;Salaries\nFranking\nImmunity&quot; &quot;Act of Congress\nlist\nAppropriation bill\nBill\nBlue slip\nBudget process\nCensure\nClosed sessions\nHouse\nSe&quot;| __truncated__ &quot;Advice and consent\nClasses\nExecutive communication\nExecutive session\nFilibuster\nJefferson&#39;s Manual\nSenate&quot;| __truncated__ ...
+##   ..$ X3: chr [1:9] NA NA NA NA ...
+##   ..$ X4: chr [1:9] NA NA NA NA ...
+##  $ : tibble [1 × 2] (S3: tbl_df/tbl/data.frame)
+##   ..$ X1: chr &quot;House history\nMemoirs\nSpeaker elections\nSenate history\nElection disputes\nMemoirs\nContinental Congress\nFe&quot;| __truncated__
+##   ..$ X2: chr &quot;House history\nMemoirs\nSpeaker elections\nSenate history\nElection disputes\nMemoirs\nContinental Congress\nFe&quot;| __truncated__
+##  $ : tibble [16 × 32] (S3: tbl_df/tbl/data.frame)
+##   ..$ Capitol Complex (Capitol Hill): chr [1:16] &quot;Legislativeoffices\nCongressional staff\nGov. Accountability Office (GAO)\nComptroller General\nArchitect of th&quot;| __truncated__ &quot;Legislativeoffices&quot; &quot;Offices&quot; &quot;Senate&quot; ...
+##   ..$ Capitol Complex (Capitol Hill): chr [1:16] &quot;Legislativeoffices\nCongressional staff\nGov. Accountability Office (GAO)\nComptroller General\nArchitect of th&quot;| __truncated__ &quot;Congressional staff\nGov. Accountability Office (GAO)\nComptroller General\nArchitect of the Capitol\nCap. Poli&quot;| __truncated__ &quot;Senate\nCurator\nHistorical\nLibraryHouse\nCongr. Ethics\nEmergency Planning, Preparedness, and Operations\nInt&quot;| __truncated__ &quot;Curator\nHistorical\nLibrary&quot; ...
+##   ..$                               : chr [1:16] &quot;Legislativeoffices&quot; NA &quot;Senate&quot; NA ...
+##   ..$                               : chr [1:16] &quot;Congressional staff\nGov. Accountability Office (GAO)\nComptroller General\nArchitect of the Capitol\nCap. Poli&quot;| __truncated__ NA &quot;Curator\nHistorical\nLibrary&quot; NA ...
+##   ..$                               : chr [1:16] &quot;Offices&quot; NA &quot;House&quot; NA ...
+##   ..$                               : chr [1:16] &quot;Senate\nCurator\nHistorical\nLibraryHouse\nCongr. Ethics\nEmergency Planning, Preparedness, and Operations\nInt&quot;| __truncated__ NA &quot;Congr. Ethics\nEmergency Planning, Preparedness, and Operations\nInterparliamentary Affairs\nLaw Revision Couns&quot;| __truncated__ NA ...
+##   ..$                               : chr [1:16] &quot;Senate&quot; NA NA NA ...
+##   ..$                               : chr [1:16] &quot;Curator\nHistorical\nLibrary&quot; NA NA NA ...
+##   ..$                               : chr [1:16] &quot;House&quot; NA NA NA ...
+##   ..$                               : chr [1:16] &quot;Congr. Ethics\nEmergency Planning, Preparedness, and Operations\nInterparliamentary Affairs\nLaw Revision Couns&quot;| __truncated__ NA NA NA ...
+##   ..$                               : chr [1:16] &quot;Employees&quot; NA NA NA ...
+##   ..$                               : chr [1:16] &quot;Senate\nSecretary\nChaplain\nCurator\nHistorian\nLibrarian\nPages\nParliamentarian\nSergeant at Arms and Doorke&quot;| __truncated__ NA NA NA ...
+##   ..$                               : chr [1:16] &quot;Senate&quot; NA NA NA ...
+##   ..$                               : chr [1:16] &quot;Secretary\nChaplain\nCurator\nHistorian\nLibrarian\nPages\nParliamentarian\nSergeant at Arms and Doorkeeper&quot; NA NA NA ...
+##   ..$                               : chr [1:16] &quot;House&quot; NA NA NA ...
+##   ..$                               : chr [1:16] &quot;Chaplain\nChief Administrative Officer\nClerk\nDoorkeeper\nFloor Operations\nFloor Services Chief\nHistorian\nP&quot;| __truncated__ NA NA NA ...
+##   ..$                               : chr [1:16] &quot;Library ofCongress&quot; NA NA NA ...
+##   ..$                               : chr [1:16] &quot;Congressional Research Service\nReports\nCopyright Office\nRegister of Copyrights\nLaw Library\nPoet Laureate\n&quot;| __truncated__ NA NA NA ...
+##   ..$                               : chr [1:16] &quot;Gov.Publishing Office&quot; NA NA NA ...
+##   ..$                               : chr [1:16] &quot;Public Printer\nCongressional Pictorial Directory\nCongressional Record\nOfficial Congressional Directory\nU.S.&quot;| __truncated__ NA NA NA ...
+##   ..$                               : chr [1:16] &quot;Capitol Building&quot; NA NA NA ...
+##   ..$                               : chr [1:16] &quot;Brumidi Corridors\nCongressional Prayer Room\nCrypt\nDome\nStatue of Freedom\nRotunda\nHall of Columns\nStatuar&quot;| __truncated__ NA NA NA ...
+##   ..$                               : chr [1:16] &quot;Officebuildings&quot; NA NA NA ...
+##   ..$                               : chr [1:16] &quot;Senate\nDirksen\nHart\nMountains and Clouds\nRussellHouse\nBuilding Commission\nCannon\nFord\nLongworth\nO&#39;Neill\nRayburn&quot; NA NA NA ...
+##   ..$                               : chr [1:16] &quot;Senate&quot; NA NA NA ...
+##   ..$                               : chr [1:16] &quot;Dirksen\nHart\nMountains and Clouds\nRussell&quot; NA NA NA ...
+##   ..$                               : chr [1:16] &quot;House&quot; NA NA NA ...
+##   ..$                               : chr [1:16] &quot;Building Commission\nCannon\nFord\nLongworth\nO&#39;Neill\nRayburn&quot; NA NA NA ...
+##   ..$                               : chr [1:16] &quot;Otherfacilities&quot; NA NA NA ...
+##   ..$                               : chr [1:16] &quot;Botanic Garden\nHealth and Fitness Facility\nHouse Recording Studio\nSenate chamber\nOld Senate Chamber\nOld Su&quot;| __truncated__ NA NA NA ...
+##   ..$                               : chr [1:16] &quot;Related&quot; NA NA NA ...
+##   ..$                               : chr [1:16] &quot;Capitol Hill\nUnited States Capitol cornerstone laying&quot; NA NA NA ...
+##  $ : tibble [15 × 6] (S3: tbl_df/tbl/data.frame)
+##   ..$ X1: chr [1:15] &quot;Legislativeoffices&quot; &quot;Offices&quot; &quot;Senate&quot; &quot;House&quot; ...
+##   ..$ X2: chr [1:15] &quot;Congressional staff\nGov. Accountability Office (GAO)\nComptroller General\nArchitect of the Capitol\nCap. Poli&quot;| __truncated__ &quot;Senate\nCurator\nHistorical\nLibraryHouse\nCongr. Ethics\nEmergency Planning, Preparedness, and Operations\nInt&quot;| __truncated__ &quot;Curator\nHistorical\nLibrary&quot; &quot;Congr. Ethics\nEmergency Planning, Preparedness, and Operations\nInterparliamentary Affairs\nLaw Revision Couns&quot;| __truncated__ ...
+##   ..$ X3: chr [1:15] NA &quot;Senate&quot; NA NA ...
+##   ..$ X4: chr [1:15] NA &quot;Curator\nHistorical\nLibrary&quot; NA NA ...
+##   ..$ X5: chr [1:15] NA &quot;House&quot; NA NA ...
+##   ..$ X6: chr [1:15] NA &quot;Congr. Ethics\nEmergency Planning, Preparedness, and Operations\nInterparliamentary Affairs\nLaw Revision Couns&quot;| __truncated__ NA NA ...
+##  $ : tibble [2 × 2] (S3: tbl_df/tbl/data.frame)
+##   ..$ X1: chr [1:2] &quot;Senate&quot; &quot;House&quot;
+##   ..$ X2: chr [1:2] &quot;Curator\nHistorical\nLibrary&quot; &quot;Congr. Ethics\nEmergency Planning, Preparedness, and Operations\nInterparliamentary Affairs\nLaw Revision Couns&quot;| __truncated__
+##  $ : tibble [2 × 2] (S3: tbl_df/tbl/data.frame)
+##   ..$ X1: chr [1:2] &quot;Senate&quot; &quot;House&quot;
+##   ..$ X2: chr [1:2] &quot;Secretary\nChaplain\nCurator\nHistorian\nLibrarian\nPages\nParliamentarian\nSergeant at Arms and Doorkeeper&quot; &quot;Chaplain\nChief Administrative Officer\nClerk\nDoorkeeper\nFloor Operations\nFloor Services Chief\nHistorian\nP&quot;| __truncated__
+##  $ : tibble [2 × 2] (S3: tbl_df/tbl/data.frame)
+##   ..$ X1: chr [1:2] &quot;Senate&quot; &quot;House&quot;
+##   ..$ X2: chr [1:2] &quot;Dirksen\nHart\nMountains and Clouds\nRussell&quot; &quot;Building Commission\nCannon\nFord\nLongworth\nO&#39;Neill\nRayburn&quot;
+##  $ : tibble [2 × 2] (S3: tbl_df/tbl/data.frame)
+##   ..$ vteOrder of precedence in the United States*: chr [1:2] &quot;PresidentVice President\nGovernor (of the state in which the event is held)\nSpeaker of the House\nChief Justic&quot;| __truncated__ &quot;*not including acting officeholders, visiting dignitaries, auxiliary executive and military personnel and most diplomats&quot;
+##   ..$ vteOrder of precedence in the United States*: chr [1:2] &quot;PresidentVice President\nGovernor (of the state in which the event is held)\nSpeaker of the House\nChief Justic&quot;| __truncated__ &quot;*not including acting officeholders, visiting dignitaries, auxiliary executive and military personnel and most diplomats&quot;</code></pre>
 <p>Here, the table I want is the sixth one. We can grab it by either using double square brackets – <code>[[6]]</code> – or <code>purrr</code>’s <code>pluck(6)</code>.</p>
-<div class="sourceCode" id="cb105"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb105-1"><a href="day3.html#cb105-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor)</span>
-<span id="cb105-2"><a href="day3.html#cb105-2" aria-hidden="true" tabindex="-1"></a>senators <span class="ot">&lt;-</span> tables <span class="sc">%&gt;%</span> </span>
-<span id="cb105-3"><a href="day3.html#cb105-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pluck</span>(<span class="dv">6</span>)</span>
-<span id="cb105-4"><a href="day3.html#cb105-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-5"><a href="day3.html#cb105-5" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(senators)</span></code></pre></div>
+<div class="sourceCode" id="cb108"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb108-1"><a href="day3.html#cb108-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor)</span>
+<span id="cb108-2"><a href="day3.html#cb108-2" aria-hidden="true" tabindex="-1"></a>senators <span class="ot">&lt;-</span> tables <span class="sc">%&gt;%</span> </span>
+<span id="cb108-3"><a href="day3.html#cb108-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pluck</span>(<span class="dv">6</span>)</span>
+<span id="cb108-4"><a href="day3.html#cb108-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb108-5"><a href="day3.html#cb108-5" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(senators)</span></code></pre></div>
 <pre><code>## Rows: 100
 ## Columns: 12
 ## $ State                        &lt;chr&gt; &quot;Alabama&quot;, &quot;Alabama&quot;, &quot;Alaska&quot;, &quot;Alaska&quot;,…
@@ -476,56 +702,83 @@ My cat is <b> very </b> grumpy
 ## $ `Assumed office`             &lt;chr&gt; &quot;January 3, 1987&quot;, &quot;January 3, 2021&quot;, &quot;De…
 ## $ Class                        &lt;chr&gt; &quot;2022Class 3&quot;, &quot;2026Class 2&quot;, &quot;2022Class …
 ## $ `Residence[2]`               &lt;chr&gt; &quot;Tuscaloosa&quot;, &quot;Auburn[3]&quot;, &quot;Girdwood&quot;, &quot;A…</code></pre>
-<div class="sourceCode" id="cb107"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb107-1"><a href="day3.html#cb107-1" aria-hidden="true" tabindex="-1"></a><span class="do">## alternative approach using css</span></span>
-<span id="cb107-2"><a href="day3.html#cb107-2" aria-hidden="true" tabindex="-1"></a>senators <span class="ot">&lt;-</span> us_senators <span class="sc">%&gt;%</span> </span>
-<span id="cb107-3"><a href="day3.html#cb107-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_elements</span>(<span class="st">&quot;#senators&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb107-4"><a href="day3.html#cb107-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_table</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb107-5"><a href="day3.html#cb107-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pluck</span>(<span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb107-6"><a href="day3.html#cb107-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clean_names</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb110"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb110-1"><a href="day3.html#cb110-1" aria-hidden="true" tabindex="-1"></a><span class="do">## alternative approach using css</span></span>
+<span id="cb110-2"><a href="day3.html#cb110-2" aria-hidden="true" tabindex="-1"></a>senators <span class="ot">&lt;-</span> us_senators <span class="sc">%&gt;%</span> </span>
+<span id="cb110-3"><a href="day3.html#cb110-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_elements</span>(<span class="at">css =</span> <span class="st">&quot;#senators&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb110-4"><a href="day3.html#cb110-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_table</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb110-5"><a href="day3.html#cb110-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pluck</span>(<span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb110-6"><a href="day3.html#cb110-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clean_names</span>()</span></code></pre></div>
 <p>You can see that the tibble contains “dirty” names and that the party column appears twice – which will make it impossible to work with the tibble later on. Hence, I use <code>clean_names()</code> from the <code>janitor</code> package to fix that.</p>
 </div>
 <div id="extracting-attributes" class="section level3 hasAnchor" number="3.3.3">
 <h3><span class="header-section-number">3.3.3</span> Extracting attributes<a href="day3.html#extracting-attributes" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>You can also extract attributes such as links using <code>html_attrs()</code>. An example would be to extract the headlines and their corresponding links from r-bloggers.com.</p>
-<div class="sourceCode" id="cb108"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb108-1"><a href="day3.html#cb108-1" aria-hidden="true" tabindex="-1"></a>rbloggers <span class="ot">&lt;-</span> <span class="fu">read_html</span>(<span class="st">&quot;https://www.r-bloggers.com&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb111"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb111-1"><a href="day3.html#cb111-1" aria-hidden="true" tabindex="-1"></a>rbloggers <span class="ot">&lt;-</span> <span class="fu">read_html</span>(<span class="st">&quot;https://www.r-bloggers.com&quot;</span>)</span></code></pre></div>
 <p>A quick check with the SelectorGadget told me that the element I am looking for is of class “.loop-title” and the child of it is “a”, standing for normal text. With <code>html_attrs()</code> I can extract the attributes. This gives me a list of named vectors containing the name of the attribute and the value:</p>
-<div class="sourceCode" id="cb109"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb109-1"><a href="day3.html#cb109-1" aria-hidden="true" tabindex="-1"></a>r_blogger_postings <span class="ot">&lt;-</span> rbloggers <span class="sc">%&gt;%</span> <span class="fu">html_elements</span>(<span class="at">css =</span> <span class="st">&quot;.loop-title a&quot;</span>)</span>
-<span id="cb109-2"><a href="day3.html#cb109-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb109-3"><a href="day3.html#cb109-3" aria-hidden="true" tabindex="-1"></a>r_blogger_postings <span class="sc">%&gt;%</span> <span class="fu">html_attrs</span>() <span class="sc">%&gt;%</span> .[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>] </span></code></pre></div>
-<pre><code>## [[1]]
-##                                                                                                 href 
-## &quot;https://www.r-bloggers.com/2022/06/offload-shinys-workload-covid-19-processing-for-the-who-europe/&quot; 
-##                                                                                                  rel 
-##                                                                                           &quot;bookmark&quot; 
-## 
-## [[2]]
-##                                                                                              href 
-## &quot;https://www.r-bloggers.com/2022/06/bind-together-two-data-frames-by-their-rows-or-columns-in-r/&quot; 
-##                                                                                               rel 
-##                                                                                        &quot;bookmark&quot;</code></pre>
+<div class="sourceCode" id="cb112"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb112-1"><a href="day3.html#cb112-1" aria-hidden="true" tabindex="-1"></a>r_blogger_postings <span class="ot">&lt;-</span> rbloggers <span class="sc">%&gt;%</span> <span class="fu">html_elements</span>(<span class="at">css =</span> <span class="st">&quot;.loop-title a&quot;</span>)</span>
+<span id="cb112-2"><a href="day3.html#cb112-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb112-3"><a href="day3.html#cb112-3" aria-hidden="true" tabindex="-1"></a>r_blogger_postings <span class="sc">%&gt;%</span> <span class="fu">html_attr</span>(<span class="st">&quot;href&quot;</span>)</span></code></pre></div>
+<pre><code>##  [1] &quot;https://www.r-bloggers.com/2022/06/the-poisson-distribution-from-basic-probability-theory-to-regression-models/&quot; 
+##  [2] &quot;https://www.r-bloggers.com/2022/06/visualizing-the-invasion-of-the-soviet-union-with-luftwaffe-locations/&quot;       
+##  [3] &quot;https://www.r-bloggers.com/2022/06/r-shiny-google-analytics-how-to-add-ga-to-shiny-apps/&quot;                        
+##  [4] &quot;https://www.r-bloggers.com/2022/06/offload-shinys-workload-covid-19-processing-for-the-who-europe/&quot;              
+##  [5] &quot;https://www.r-bloggers.com/2022/06/bind-together-two-data-frames-by-their-rows-or-columns-in-r/&quot;                 
+##  [6] &quot;https://www.r-bloggers.com/2022/06/create-new-variables-from-existing-variables-in-r/&quot;                           
+##  [7] &quot;https://www.r-bloggers.com/2022/06/learning-from-failure-nitinol-fracture-mechanics-in-r/&quot;                       
+##  [8] &quot;https://www.r-bloggers.com/2022/06/esp-curso-de-introduccion-a-shiny/&quot;                                           
+##  [9] &quot;https://www.r-bloggers.com/2022/06/curso-de-introduccion-a-r-para-usuarios-de-excel-esp-3-hrs/&quot;                  
+## [10] &quot;https://www.r-bloggers.com/2022/06/on-a-mobius-transformation/&quot;                                                  
+## [11] &quot;https://www.r-bloggers.com/2022/06/presentamos-a-la-nueva-community-manager-de-ropensci-yanina-bellini-saibene/&quot; 
+## [12] &quot;https://www.r-bloggers.com/2022/06/introducing-ropensci-new-community-manager-yanina-bellini-saibene/&quot;           
+## [13] &quot;https://www.r-bloggers.com/2022/06/francophone-satrday-conference-coming-soon-save-the-date/&quot;                    
+## [14] &quot;https://www.r-bloggers.com/2022/06/r-percentile/&quot;                                                                
+## [15] &quot;https://www.r-bloggers.com/2022/06/r-min-and-max/&quot;                                                               
+## [16] &quot;https://www.r-bloggers.com/2022/06/r-factors/&quot;                                                                   
+## [17] &quot;https://www.r-bloggers.com/2022/06/r-data-frame/&quot;                                                                
+## [18] &quot;https://www.r-bloggers.com/2022/06/r-array/&quot;                                                                     
+## [19] &quot;https://www.r-bloggers.com/2022/06/r-list/&quot;                                                                      
+## [20] &quot;https://www.r-bloggers.com/2022/06/little-useless-useful-r-functions-plotting-the-decimal-and-binary-conversion/&quot;</code></pre>
 <p>Links are stored as attribute “href” – hyperlink reference. <code>html_attr()</code> allows me to extract the attribute’s value. Hence, building a tibble with the article’s title and its corresponding hyperlink is straight-forward now:</p>
-<div class="sourceCode" id="cb111"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb111-1"><a href="day3.html#cb111-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
-<span id="cb111-2"><a href="day3.html#cb111-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> r_blogger_postings <span class="sc">%&gt;%</span> <span class="fu">html_text2</span>(),</span>
-<span id="cb111-3"><a href="day3.html#cb111-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">link =</span> r_blogger_postings <span class="sc">%&gt;%</span> <span class="fu">html_attr</span>(<span class="at">name =</span> <span class="st">&quot;href&quot;</span>)</span>
-<span id="cb111-4"><a href="day3.html#cb111-4" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span> </span>
-<span id="cb111-5"><a href="day3.html#cb111-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">glimpse</span>()</span></code></pre></div>
-<pre><code>## Rows: 20
-## Columns: 2
-## $ title &lt;chr&gt; &quot;Offload Shiny’s Workload: COVID-19 processing for the WHO/Europ…
-## $ link  &lt;chr&gt; &quot;https://www.r-bloggers.com/2022/06/offload-shinys-workload-covi…</code></pre>
+<div class="sourceCode" id="cb114"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb114-1"><a href="day3.html#cb114-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
+<span id="cb114-2"><a href="day3.html#cb114-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> r_blogger_postings <span class="sc">%&gt;%</span> <span class="fu">html_text2</span>(),</span>
+<span id="cb114-3"><a href="day3.html#cb114-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">link =</span> r_blogger_postings <span class="sc">%&gt;%</span> <span class="fu">html_attr</span>(<span class="at">name =</span> <span class="st">&quot;href&quot;</span>)</span>
+<span id="cb114-4"><a href="day3.html#cb114-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<pre><code>## # A tibble: 20 × 2
+##    title                                                                   link 
+##    &lt;chr&gt;                                                                   &lt;chr&gt;
+##  1 The Poisson distribution: From basic probability theory to regression … http…
+##  2 Visualizing the Invasion of the Soviet Union with Luftwaffe Locations   http…
+##  3 R Shiny Google Analytics: How to Add GA to Shiny Apps                   http…
+##  4 Offload Shiny’s Workload: COVID-19 processing for the WHO/Europe        http…
+##  5 Bind together two data frames by their rows or columns in R             http…
+##  6 Create new variables from existing variables in R                       http…
+##  7 Learning from Failure – Nitinol Fracture Mechanics in R                 http…
+##  8 [ESP] Curso de introducción a Shiny                                     http…
+##  9 Curso de introducción a R para usuarios de Excel [ESP, 3 hrs]           http…
+## 10 On a Möbius transformation                                              http…
+## 11 Presentamos a la nueva Community Manager de rOpenSci, Yanina Bellini S… http…
+## 12 Introducing rOpenSci new Community Manager, Yanina Bellini Saibene      http…
+## 13 Francophone SatRday Conference Coming Soon – Save the Date!             http…
+## 14 R Percentile                                                            http…
+## 15 R min() and max()                                                       http…
+## 16 R Factors                                                               http…
+## 17 R Data Frame                                                            http…
+## 18 R Array                                                                 http…
+## 19 R List                                                                  http…
+## 20 Little useless-useful R functions – Plotting the decimal and binary co… http…</code></pre>
 <p>Another approach for this would be using the <code>polite</code> package and its function <code>html_attrs_dfr()</code> which binds together all the different attributes column-wise and the different elements row-wise.</p>
-<div class="sourceCode" id="cb113"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb113-1"><a href="day3.html#cb113-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(polite)</span>
-<span id="cb113-2"><a href="day3.html#cb113-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb113-3"><a href="day3.html#cb113-3" aria-hidden="true" tabindex="-1"></a>rbloggers <span class="sc">%&gt;%</span> </span>
-<span id="cb113-4"><a href="day3.html#cb113-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_elements</span>(<span class="at">css =</span> <span class="st">&quot;.loop-title a&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb113-5"><a href="day3.html#cb113-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_attrs_dfr</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb113-6"><a href="day3.html#cb113-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="at">title =</span> <span class="dv">3</span>, </span>
-<span id="cb113-7"><a href="day3.html#cb113-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">link =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb113-8"><a href="day3.html#cb113-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">glimpse</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb116"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb116-1"><a href="day3.html#cb116-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(polite)</span>
+<span id="cb116-2"><a href="day3.html#cb116-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb116-3"><a href="day3.html#cb116-3" aria-hidden="true" tabindex="-1"></a>rbloggers <span class="sc">%&gt;%</span> </span>
+<span id="cb116-4"><a href="day3.html#cb116-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_elements</span>(<span class="at">css =</span> <span class="st">&quot;.loop-title a&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb116-5"><a href="day3.html#cb116-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_attrs_dfr</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb116-6"><a href="day3.html#cb116-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="at">title =</span> <span class="dv">3</span>, </span>
+<span id="cb116-7"><a href="day3.html#cb116-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">link =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb116-8"><a href="day3.html#cb116-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">glimpse</span>()</span></code></pre></div>
 <pre><code>## Rows: 20
 ## Columns: 2
-## $ title &lt;chr&gt; &quot;Offload Shiny’s Workload: COVID-19 processing for the WHO/Europ…
-## $ link  &lt;chr&gt; &quot;https://www.r-bloggers.com/2022/06/offload-shinys-workload-covi…</code></pre>
+## $ title &lt;chr&gt; &quot;The Poisson distribution: From basic probability theory to regr…
+## $ link  &lt;chr&gt; &quot;https://www.r-bloggers.com/2022/06/the-poisson-distribution-fro…</code></pre>
 </div>
 </div>
 <div id="automating-scraping" class="section level2 hasAnchor" number="3.4">
@@ -536,55 +789,55 @@ My cat is <b> very </b> grumpy
 <div id="looping-over-pages" class="section level3 hasAnchor" number="3.4.1">
 <h3><span class="header-section-number">3.4.1</span> Looping over pages<a href="day3.html#looping-over-pages" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>For the first approach, we need to check the URLs first. How do they change as we navigate through the pages?</p>
-<div class="sourceCode" id="cb115"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb115-1"><a href="day3.html#cb115-1" aria-hidden="true" tabindex="-1"></a>url_1 <span class="ot">&lt;-</span> <span class="st">&quot;https://www.r-bloggers.com/page/2/&quot;</span></span>
-<span id="cb115-2"><a href="day3.html#cb115-2" aria-hidden="true" tabindex="-1"></a>url_2 <span class="ot">&lt;-</span> <span class="st">&quot;https://www.r-bloggers.com/page/3/&quot;</span></span>
-<span id="cb115-3"><a href="day3.html#cb115-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb115-4"><a href="day3.html#cb115-4" aria-hidden="true" tabindex="-1"></a>initial_dist <span class="ot">&lt;-</span> <span class="fu">adist</span>(url_1, url_2, <span class="at">counts =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb115-5"><a href="day3.html#cb115-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">attr</span>(<span class="st">&quot;trafos&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb115-6"><a href="day3.html#cb115-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">diag</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb115-7"><a href="day3.html#cb115-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">str_locate_all</span>(<span class="st">&quot;[^M]&quot;</span>)</span>
-<span id="cb115-8"><a href="day3.html#cb115-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb115-9"><a href="day3.html#cb115-9" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb115-10"><a href="day3.html#cb115-10" aria-hidden="true" tabindex="-1"></a><span class="fu">str_sub</span>(url_1, <span class="at">start =</span> initial_dist[[<span class="dv">1</span>]][<span class="dv">1</span>]<span class="sc">-</span><span class="dv">5</span>, <span class="at">end =</span> initial_dist[[<span class="dv">1</span>]][<span class="dv">1</span>]<span class="sc">+</span><span class="dv">5</span>) <span class="co"># makes sense for longer urls</span></span></code></pre></div>
+<div class="sourceCode" id="cb118"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb118-1"><a href="day3.html#cb118-1" aria-hidden="true" tabindex="-1"></a>url_1 <span class="ot">&lt;-</span> <span class="st">&quot;https://www.r-bloggers.com/page/2/&quot;</span></span>
+<span id="cb118-2"><a href="day3.html#cb118-2" aria-hidden="true" tabindex="-1"></a>url_2 <span class="ot">&lt;-</span> <span class="st">&quot;https://www.r-bloggers.com/page/3/&quot;</span></span>
+<span id="cb118-3"><a href="day3.html#cb118-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb118-4"><a href="day3.html#cb118-4" aria-hidden="true" tabindex="-1"></a>initial_dist <span class="ot">&lt;-</span> <span class="fu">adist</span>(url_1, url_2, <span class="at">counts =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb118-5"><a href="day3.html#cb118-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">attr</span>(<span class="st">&quot;trafos&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb118-6"><a href="day3.html#cb118-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">diag</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb118-7"><a href="day3.html#cb118-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">str_locate_all</span>(<span class="st">&quot;[^M]&quot;</span>)</span>
+<span id="cb118-8"><a href="day3.html#cb118-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb118-9"><a href="day3.html#cb118-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb118-10"><a href="day3.html#cb118-10" aria-hidden="true" tabindex="-1"></a><span class="fu">str_sub</span>(url_1, <span class="at">start =</span> initial_dist[[<span class="dv">1</span>]][<span class="dv">1</span>]<span class="sc">-</span><span class="dv">5</span>, <span class="at">end =</span> initial_dist[[<span class="dv">1</span>]][<span class="dv">1</span>]<span class="sc">+</span><span class="dv">5</span>) <span class="co"># makes sense for longer urls</span></span></code></pre></div>
 <pre><code>## [1] &quot;page/2/&quot;</code></pre>
-<div class="sourceCode" id="cb117"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb117-1"><a href="day3.html#cb117-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str_sub</span>(url_2, <span class="at">start =</span> initial_dist[[<span class="dv">1</span>]][<span class="dv">1</span>]<span class="sc">-</span><span class="dv">5</span>, <span class="at">end =</span> initial_dist[[<span class="dv">1</span>]][<span class="dv">1</span>]<span class="sc">+</span><span class="dv">5</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb120"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb120-1"><a href="day3.html#cb120-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str_sub</span>(url_2, <span class="at">start =</span> initial_dist[[<span class="dv">1</span>]][<span class="dv">1</span>]<span class="sc">-</span><span class="dv">5</span>, <span class="at">end =</span> initial_dist[[<span class="dv">1</span>]][<span class="dv">1</span>]<span class="sc">+</span><span class="dv">5</span>)</span></code></pre></div>
 <pre><code>## [1] &quot;page/3/&quot;</code></pre>
 <p>There is some sort of underlying pattern and we can harness that. <code>url_1</code> refers to the second page, <code>url_2</code> to the third. Hence, if we just combine the basic URL and, say, the numbers from 1 to 10, we could then visit all the pages (exercise 3a) and extract the content we want.</p>
-<div class="sourceCode" id="cb119"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb119-1"><a href="day3.html#cb119-1" aria-hidden="true" tabindex="-1"></a>urls <span class="ot">&lt;-</span> <span class="fu">str_c</span>(<span class="st">&quot;https://www.r-bloggers.com/page/&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="st">&quot;/&quot;</span>) <span class="co"># this is the stringr equivalent of paste()</span></span>
-<span id="cb119-2"><a href="day3.html#cb119-2" aria-hidden="true" tabindex="-1"></a>urls</span></code></pre></div>
+<div class="sourceCode" id="cb122"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb122-1"><a href="day3.html#cb122-1" aria-hidden="true" tabindex="-1"></a>urls <span class="ot">&lt;-</span> <span class="fu">str_c</span>(<span class="st">&quot;https://www.r-bloggers.com/page/&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="st">&quot;/&quot;</span>) <span class="co"># this is the stringr equivalent of paste()</span></span>
+<span id="cb122-2"><a href="day3.html#cb122-2" aria-hidden="true" tabindex="-1"></a>urls</span></code></pre></div>
 <pre><code>##  [1] &quot;https://www.r-bloggers.com/page/1/&quot;  &quot;https://www.r-bloggers.com/page/2/&quot; 
 ##  [3] &quot;https://www.r-bloggers.com/page/3/&quot;  &quot;https://www.r-bloggers.com/page/4/&quot; 
 ##  [5] &quot;https://www.r-bloggers.com/page/5/&quot;  &quot;https://www.r-bloggers.com/page/6/&quot; 
 ##  [7] &quot;https://www.r-bloggers.com/page/7/&quot;  &quot;https://www.r-bloggers.com/page/8/&quot; 
 ##  [9] &quot;https://www.r-bloggers.com/page/9/&quot;  &quot;https://www.r-bloggers.com/page/10/&quot;</code></pre>
 <p>You can run this in a for-loop, here’s a quick revision. For the loop to run efficiently, space for every object should be pre-allocated (i.e., you create a list beforehand, and its length can be determined by an educated guess).</p>
-<div class="sourceCode" id="cb121"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb121-1"><a href="day3.html#cb121-1" aria-hidden="true" tabindex="-1"></a><span class="do">## THIS IS PSEUDO CODE!!!</span></span>
-<span id="cb121-2"><a href="day3.html#cb121-2" aria-hidden="true" tabindex="-1"></a>result_list <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="at">mode =</span> <span class="st">&quot;list&quot;</span>, <span class="at">length =</span> <span class="fu">length</span>(urls)) <span class="co"># pre-allocate space!!!</span></span>
-<span id="cb121-3"><a href="day3.html#cb121-3" aria-hidden="true" tabindex="-1"></a>starting_link <span class="ot">&lt;-</span> </span>
-<span id="cb121-4"><a href="day3.html#cb121-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(urls)){</span>
-<span id="cb121-5"><a href="day3.html#cb121-5" aria-hidden="true" tabindex="-1"></a>  read <span class="cf">in</span> urls[[i]]</span>
-<span id="cb121-6"><a href="day3.html#cb121-6" aria-hidden="true" tabindex="-1"></a>  store page <span class="cf">in</span> result_list</span>
-<span id="cb121-7"><a href="day3.html#cb121-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb124"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb124-1"><a href="day3.html#cb124-1" aria-hidden="true" tabindex="-1"></a><span class="do">## THIS IS PSEUDO CODE!!!</span></span>
+<span id="cb124-2"><a href="day3.html#cb124-2" aria-hidden="true" tabindex="-1"></a>result_list <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="at">mode =</span> <span class="st">&quot;list&quot;</span>, <span class="at">length =</span> <span class="fu">length</span>(urls)) <span class="co"># pre-allocate space!!!</span></span>
+<span id="cb124-3"><a href="day3.html#cb124-3" aria-hidden="true" tabindex="-1"></a>starting_link <span class="ot">&lt;-</span> </span>
+<span id="cb124-4"><a href="day3.html#cb124-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(urls)){</span>
+<span id="cb124-5"><a href="day3.html#cb124-5" aria-hidden="true" tabindex="-1"></a>  read <span class="cf">in</span> urls[[i]]</span>
+<span id="cb124-6"><a href="day3.html#cb124-6" aria-hidden="true" tabindex="-1"></a>  store page <span class="cf">in</span> result_list</span>
+<span id="cb124-7"><a href="day3.html#cb124-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 </div>
 <div id="letting-the-scraper-navigate-on-its-own" class="section level3 hasAnchor" number="3.4.2">
 <h3><span class="header-section-number">3.4.2</span> Letting the scraper navigate on its own<a href="day3.html#letting-the-scraper-navigate-on-its-own" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Extracting the link on the fly is the same thing, but in the end, you need to replace the link argument with the one you extracted. You will do this in exercise 3. It is probably easiest to perform those things in a <code>while</code> loop, hence here is a quick revision:</p>
 <p>Hence, our <code>while</code> loop in pseudo-code will look like this:</p>
-<div class="sourceCode" id="cb122"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb122-1"><a href="day3.html#cb122-1" aria-hidden="true" tabindex="-1"></a><span class="do">## THIS IS PSEUDO CODE!!!</span></span>
-<span id="cb122-2"><a href="day3.html#cb122-2" aria-hidden="true" tabindex="-1"></a>output_list <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="at">mode =</span> <span class="st">&quot;list&quot;</span>, <span class="at">length =</span> 10L)</span>
-<span id="cb122-3"><a href="day3.html#cb122-3" aria-hidden="true" tabindex="-1"></a>i <span class="ot">&lt;-</span> <span class="dv">0</span></span>
-<span id="cb122-4"><a href="day3.html#cb122-4" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> (session<span class="sc">$</span>response<span class="sc">$</span>status_code <span class="sc">==</span> <span class="dv">200</span> <span class="sc">&amp;&amp;</span> i <span class="sc">&lt;=</span> <span class="dv">10</span>) {</span>
-<span id="cb122-5"><a href="day3.html#cb122-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">session</span>(start<span class="sc">-</span>url)</span>
-<span id="cb122-6"><a href="day3.html#cb122-6" aria-hidden="true" tabindex="-1"></a>  i <span class="ot">&lt;-</span> i <span class="sc">+</span> <span class="dv">1</span></span>
-<span id="cb122-7"><a href="day3.html#cb122-7" aria-hidden="true" tabindex="-1"></a>  read <span class="cf">in</span> r<span class="sc">-</span>bloggers results list</span>
-<span id="cb122-8"><a href="day3.html#cb122-8" aria-hidden="true" tabindex="-1"></a>  get all stuff and store it <span class="cf">in</span> output_list[[i]]</span>
-<span id="cb122-9"><a href="day3.html#cb122-9" aria-hidden="true" tabindex="-1"></a>  move session to <span class="cf">next</span> page</span>
-<span id="cb122-10"><a href="day3.html#cb122-10" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb122-11"><a href="day3.html#cb122-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb122-12"><a href="day3.html#cb122-12" aria-hidden="true" tabindex="-1"></a><span class="do">### reminder: how to click a button in rvest</span></span>
-<span id="cb122-13"><a href="day3.html#cb122-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb122-14"><a href="day3.html#cb122-14" aria-hidden="true" tabindex="-1"></a><span class="fu">session</span>(<span class="st">&quot;https://www.scrapethissite.com/&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb122-15"><a href="day3.html#cb122-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">session_follow_link</span>(<span class="at">css =</span> <span class="st">&quot;.btn-default&quot;</span>) <span class="co"># just use selectorgadget to check for css selector of button</span></span></code></pre></div>
+<div class="sourceCode" id="cb125"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb125-1"><a href="day3.html#cb125-1" aria-hidden="true" tabindex="-1"></a><span class="do">## THIS IS PSEUDO CODE!!!</span></span>
+<span id="cb125-2"><a href="day3.html#cb125-2" aria-hidden="true" tabindex="-1"></a>output_list <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="at">mode =</span> <span class="st">&quot;list&quot;</span>, <span class="at">length =</span> 10L)</span>
+<span id="cb125-3"><a href="day3.html#cb125-3" aria-hidden="true" tabindex="-1"></a>i <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb125-4"><a href="day3.html#cb125-4" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> (session<span class="sc">$</span>response<span class="sc">$</span>status_code <span class="sc">==</span> <span class="dv">200</span> <span class="sc">&amp;&amp;</span> i <span class="sc">&lt;=</span> <span class="dv">10</span>) {</span>
+<span id="cb125-5"><a href="day3.html#cb125-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">session</span>(start<span class="sc">-</span>url)</span>
+<span id="cb125-6"><a href="day3.html#cb125-6" aria-hidden="true" tabindex="-1"></a>  i <span class="ot">&lt;-</span> i <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb125-7"><a href="day3.html#cb125-7" aria-hidden="true" tabindex="-1"></a>  read <span class="cf">in</span> r<span class="sc">-</span>bloggers results list</span>
+<span id="cb125-8"><a href="day3.html#cb125-8" aria-hidden="true" tabindex="-1"></a>  get all stuff and store it <span class="cf">in</span> output_list[[i]]</span>
+<span id="cb125-9"><a href="day3.html#cb125-9" aria-hidden="true" tabindex="-1"></a>  move session to <span class="cf">next</span> page</span>
+<span id="cb125-10"><a href="day3.html#cb125-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb125-11"><a href="day3.html#cb125-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb125-12"><a href="day3.html#cb125-12" aria-hidden="true" tabindex="-1"></a><span class="do">### reminder: how to click a button in rvest</span></span>
+<span id="cb125-13"><a href="day3.html#cb125-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb125-14"><a href="day3.html#cb125-14" aria-hidden="true" tabindex="-1"></a><span class="fu">session</span>(<span class="st">&quot;https://www.scrapethissite.com/&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb125-15"><a href="day3.html#cb125-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">session_follow_link</span>(<span class="at">css =</span> <span class="st">&quot;.btn-default&quot;</span>) <span class="co"># just use selectorgadget to check for css selector of button</span></span></code></pre></div>
 </div>
 </div>
 <div id="conclusion" class="section level2 hasAnchor" number="3.5">
@@ -615,26 +868,30 @@ My cat is <b> very </b> grumpy
 <summary>
 Solution. Click to expand!
 </summary>
-<div class="sourceCode" id="cb123"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb123-1"><a href="day3.html#cb123-1" aria-hidden="true" tabindex="-1"></a>imdb_top250 <span class="ot">&lt;-</span> <span class="fu">read_html</span>(<span class="st">&quot;https://www.imdb.com/chart/top/?ref_=nv_mv_250&quot;</span>)</span>
-<span id="cb123-2"><a href="day3.html#cb123-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb123-3"><a href="day3.html#cb123-3" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
-<span id="cb123-4"><a href="day3.html#cb123-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">rank =</span> imdb_top250 <span class="sc">%&gt;%</span> </span>
-<span id="cb123-5"><a href="day3.html#cb123-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_elements</span>(<span class="st">&quot;.titleColumn&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb123-6"><a href="day3.html#cb123-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_text2</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb123-7"><a href="day3.html#cb123-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">str_extract</span>(<span class="st">&quot;^[0-9]+(?=</span><span class="sc">\\</span><span class="st">.)&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb123-8"><a href="day3.html#cb123-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">parse_integer</span>(),</span>
-<span id="cb123-9"><a href="day3.html#cb123-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> imdb_top250 <span class="sc">%&gt;%</span> </span>
-<span id="cb123-10"><a href="day3.html#cb123-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_elements</span>(<span class="st">&quot;.titleColumn a&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb123-11"><a href="day3.html#cb123-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_text2</span>(),</span>
-<span id="cb123-12"><a href="day3.html#cb123-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">url =</span> imdb_top250 <span class="sc">%&gt;%</span> </span>
-<span id="cb123-13"><a href="day3.html#cb123-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_elements</span>(<span class="st">&quot;.titleColumn a&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb123-14"><a href="day3.html#cb123-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_attr</span>(<span class="st">&quot;href&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb123-15"><a href="day3.html#cb123-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">str_c</span>(<span class="st">&quot;https://www.imdb.com&quot;</span>, .),</span>
-<span id="cb123-16"><a href="day3.html#cb123-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">rating =</span> imdb_top250 <span class="sc">%&gt;%</span> </span>
-<span id="cb123-17"><a href="day3.html#cb123-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_elements</span>(<span class="st">&quot;strong&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb123-18"><a href="day3.html#cb123-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_text</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb123-19"><a href="day3.html#cb123-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">parse_double</span>()</span>
-<span id="cb123-20"><a href="day3.html#cb123-20" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb126"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb126-1"><a href="day3.html#cb126-1" aria-hidden="true" tabindex="-1"></a>imdb_top250 <span class="ot">&lt;-</span> <span class="fu">read_html</span>(<span class="st">&quot;https://www.imdb.com/chart/top/?ref_=nv_mv_250&quot;</span>)</span>
+<span id="cb126-2"><a href="day3.html#cb126-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb126-3"><a href="day3.html#cb126-3" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
+<span id="cb126-4"><a href="day3.html#cb126-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">rank =</span> imdb_top250 <span class="sc">%&gt;%</span> </span>
+<span id="cb126-5"><a href="day3.html#cb126-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_elements</span>(<span class="st">&quot;.titleColumn&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb126-6"><a href="day3.html#cb126-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_text2</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb126-7"><a href="day3.html#cb126-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">str_extract</span>(<span class="st">&quot;^[0-9]+(?=</span><span class="sc">\\</span><span class="st">.)&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb126-8"><a href="day3.html#cb126-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">parse_integer</span>(),</span>
+<span id="cb126-9"><a href="day3.html#cb126-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> imdb_top250 <span class="sc">%&gt;%</span> </span>
+<span id="cb126-10"><a href="day3.html#cb126-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_elements</span>(<span class="st">&quot;.titleColumn a&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb126-11"><a href="day3.html#cb126-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_text2</span>(),</span>
+<span id="cb126-12"><a href="day3.html#cb126-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">url =</span> imdb_top250 <span class="sc">%&gt;%</span> </span>
+<span id="cb126-13"><a href="day3.html#cb126-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_elements</span>(<span class="st">&quot;.titleColumn a&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb126-14"><a href="day3.html#cb126-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_attr</span>(<span class="st">&quot;href&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb126-15"><a href="day3.html#cb126-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">str_c</span>(<span class="st">&quot;https://www.imdb.com&quot;</span>, .),</span>
+<span id="cb126-16"><a href="day3.html#cb126-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">rating =</span> imdb_top250 <span class="sc">%&gt;%</span> </span>
+<span id="cb126-17"><a href="day3.html#cb126-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_elements</span>(<span class="st">&quot;strong&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb126-18"><a href="day3.html#cb126-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_text</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb126-19"><a href="day3.html#cb126-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">parse_double</span>()</span>
+<span id="cb126-20"><a href="day3.html#cb126-20" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb126-21"><a href="day3.html#cb126-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb126-22"><a href="day3.html#cb126-22" aria-hidden="true" tabindex="-1"></a>imdb_top250 <span class="sc">%&gt;%</span> </span>
+<span id="cb126-23"><a href="day3.html#cb126-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_elements</span>(<span class="st">&quot;a&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb126-24"><a href="day3.html#cb126-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_text2</span>()</span></code></pre></div>
 </details>
 <ol start="2" style="list-style-type: decimal">
 <li>Scrape the (British MPs Wikipedia page)[<a href="https://en.wikipedia.org/wiki/List_of_MPs_elected_in_the_2019_United_Kingdom_general_election" class="uri">https://en.wikipedia.org/wiki/List_of_MPs_elected_in_the_2019_United_Kingdom_general_election</a>].</li>
@@ -649,58 +906,58 @@ Solution. Click to expand!
 <summary>
 Solution. Click to expand!
 </summary>
-<div class="sourceCode" id="cb124"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb124-1"><a href="day3.html#cb124-1" aria-hidden="true" tabindex="-1"></a><span class="co"># scrape uk mps</span></span>
-<span id="cb124-2"><a href="day3.html#cb124-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb124-3"><a href="day3.html#cb124-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rvest)</span>
-<span id="cb124-4"><a href="day3.html#cb124-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor)</span>
-<span id="cb124-5"><a href="day3.html#cb124-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb124-6"><a href="day3.html#cb124-6" aria-hidden="true" tabindex="-1"></a><span class="co">#a</span></span>
-<span id="cb124-7"><a href="day3.html#cb124-7" aria-hidden="true" tabindex="-1"></a>mp_table <span class="ot">&lt;-</span> <span class="fu">read_html</span>(<span class="st">&quot;https://en.wikipedia.org/wiki/List_of_MPs_elected_in_the_2019_United_Kingdom_general_election&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb124-8"><a href="day3.html#cb124-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_element</span>(<span class="st">&quot;#elected-mps&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb124-9"><a href="day3.html#cb124-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_table</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb124-10"><a href="day3.html#cb124-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="sc">-</span><span class="dv">6</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb124-11"><a href="day3.html#cb124-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="sc">-</span><span class="dv">651</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb124-12"><a href="day3.html#cb124-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clean_names</span>()</span>
-<span id="cb124-13"><a href="day3.html#cb124-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb124-14"><a href="day3.html#cb124-14" aria-hidden="true" tabindex="-1"></a><span class="co">#b  </span></span>
-<span id="cb124-15"><a href="day3.html#cb124-15" aria-hidden="true" tabindex="-1"></a>mp_names <span class="ot">&lt;-</span> <span class="fu">read_html</span>(<span class="st">&quot;https://en.wikipedia.org/wiki/List_of_MPs_elected_in_the_2019_United_Kingdom_general_election&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb124-16"><a href="day3.html#cb124-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_elements</span>(<span class="st">&quot;#elected-mps b a&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb124-17"><a href="day3.html#cb124-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_attr</span>(<span class="st">&quot;href&quot;</span>)</span>
-<span id="cb124-18"><a href="day3.html#cb124-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb124-19"><a href="day3.html#cb124-19" aria-hidden="true" tabindex="-1"></a>table_w_link <span class="ot">&lt;-</span> mp_table <span class="sc">%&gt;%</span> </span>
-<span id="cb124-20"><a href="day3.html#cb124-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">link =</span> mp_names <span class="sc">%&gt;%</span> </span>
-<span id="cb124-21"><a href="day3.html#cb124-21" aria-hidden="true" tabindex="-1"></a>           <span class="fu">url_absolute</span>(<span class="st">&quot;https://en.wikipedia.org/&quot;</span>))</span>
-<span id="cb124-22"><a href="day3.html#cb124-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb124-23"><a href="day3.html#cb124-23" aria-hidden="true" tabindex="-1"></a><span class="co">#c</span></span>
-<span id="cb124-24"><a href="day3.html#cb124-24" aria-hidden="true" tabindex="-1"></a>link <span class="ot">&lt;-</span> table_w_link <span class="sc">%&gt;%</span> </span>
-<span id="cb124-25"><a href="day3.html#cb124-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb124-26"><a href="day3.html#cb124-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(link) </span>
-<span id="cb124-27"><a href="day3.html#cb124-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb124-28"><a href="day3.html#cb124-28" aria-hidden="true" tabindex="-1"></a>link <span class="sc">%&gt;%</span> </span>
-<span id="cb124-29"><a href="day3.html#cb124-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">read_html</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb124-30"><a href="day3.html#cb124-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_elements</span>(<span class="st">&quot;p&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb124-31"><a href="day3.html#cb124-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_text2</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb124-32"><a href="day3.html#cb124-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">str_c</span>(<span class="at">collapse =</span> <span class="st">&quot; &quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb124-33"><a href="day3.html#cb124-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">enframe</span>(<span class="at">name =</span> <span class="cn">NULL</span>, <span class="at">value =</span> <span class="st">&quot;wiki_article&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb124-34"><a href="day3.html#cb124-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">link =</span> link)</span>
-<span id="cb124-35"><a href="day3.html#cb124-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb124-36"><a href="day3.html#cb124-36" aria-hidden="true" tabindex="-1"></a><span class="co">#d</span></span>
-<span id="cb124-37"><a href="day3.html#cb124-37" aria-hidden="true" tabindex="-1"></a>scrape_page <span class="ot">&lt;-</span> <span class="cf">function</span>(link){</span>
-<span id="cb124-38"><a href="day3.html#cb124-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">Sys.sleep</span>(<span class="fl">0.5</span>)</span>
-<span id="cb124-39"><a href="day3.html#cb124-39" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb124-40"><a href="day3.html#cb124-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">read_html</span>(link) <span class="sc">%&gt;%</span> </span>
-<span id="cb124-41"><a href="day3.html#cb124-41" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_elements</span>(<span class="st">&quot;p&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb124-42"><a href="day3.html#cb124-42" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_text2</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb124-43"><a href="day3.html#cb124-43" aria-hidden="true" tabindex="-1"></a>    <span class="fu">str_c</span>(<span class="at">collapse =</span> <span class="st">&quot; &quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb124-44"><a href="day3.html#cb124-44" aria-hidden="true" tabindex="-1"></a>    <span class="fu">enframe</span>(<span class="at">name =</span> <span class="cn">NULL</span>, <span class="at">value =</span> <span class="st">&quot;wiki_article&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb124-45"><a href="day3.html#cb124-45" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">link =</span> link)</span>
-<span id="cb124-46"><a href="day3.html#cb124-46" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb124-47"><a href="day3.html#cb124-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb124-48"><a href="day3.html#cb124-48" aria-hidden="true" tabindex="-1"></a>mp_wiki_entries <span class="ot">&lt;-</span> table_w_link<span class="sc">$</span>link[[<span class="dv">1</span>]] <span class="sc">%&gt;%</span> </span>
-<span id="cb124-49"><a href="day3.html#cb124-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(<span class="sc">~</span>{<span class="fu">scrape_page</span>(.x)})</span>
-<span id="cb124-50"><a href="day3.html#cb124-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb124-51"><a href="day3.html#cb124-51" aria-hidden="true" tabindex="-1"></a>mp_wiki_entries_tbl <span class="ot">&lt;-</span> table_w_link <span class="sc">%&gt;%</span> </span>
-<span id="cb124-52"><a href="day3.html#cb124-52" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(mp_wiki_entries <span class="sc">%&gt;%</span> <span class="fu">bind_rows</span>())</span></code></pre></div>
+<div class="sourceCode" id="cb127"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb127-1"><a href="day3.html#cb127-1" aria-hidden="true" tabindex="-1"></a><span class="co"># scrape uk mps</span></span>
+<span id="cb127-2"><a href="day3.html#cb127-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb127-3"><a href="day3.html#cb127-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rvest)</span>
+<span id="cb127-4"><a href="day3.html#cb127-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor)</span>
+<span id="cb127-5"><a href="day3.html#cb127-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb127-6"><a href="day3.html#cb127-6" aria-hidden="true" tabindex="-1"></a><span class="co">#a</span></span>
+<span id="cb127-7"><a href="day3.html#cb127-7" aria-hidden="true" tabindex="-1"></a>mp_table <span class="ot">&lt;-</span> <span class="fu">read_html</span>(<span class="st">&quot;https://en.wikipedia.org/wiki/List_of_MPs_elected_in_the_2019_United_Kingdom_general_election&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb127-8"><a href="day3.html#cb127-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_element</span>(<span class="st">&quot;#elected-mps&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb127-9"><a href="day3.html#cb127-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_table</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb127-10"><a href="day3.html#cb127-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="sc">-</span><span class="dv">6</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb127-11"><a href="day3.html#cb127-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="sc">-</span><span class="dv">651</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb127-12"><a href="day3.html#cb127-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clean_names</span>()</span>
+<span id="cb127-13"><a href="day3.html#cb127-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb127-14"><a href="day3.html#cb127-14" aria-hidden="true" tabindex="-1"></a><span class="co">#b  </span></span>
+<span id="cb127-15"><a href="day3.html#cb127-15" aria-hidden="true" tabindex="-1"></a>mp_links <span class="ot">&lt;-</span> <span class="fu">read_html</span>(<span class="st">&quot;https://en.wikipedia.org/wiki/List_of_MPs_elected_in_the_2019_United_Kingdom_general_election&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb127-16"><a href="day3.html#cb127-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_elements</span>(<span class="st">&quot;#elected-mps b a&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb127-17"><a href="day3.html#cb127-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_attr</span>(<span class="st">&quot;href&quot;</span>)</span>
+<span id="cb127-18"><a href="day3.html#cb127-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb127-19"><a href="day3.html#cb127-19" aria-hidden="true" tabindex="-1"></a>table_w_link <span class="ot">&lt;-</span> mp_table <span class="sc">%&gt;%</span> </span>
+<span id="cb127-20"><a href="day3.html#cb127-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">link =</span> mp_links <span class="sc">%&gt;%</span> </span>
+<span id="cb127-21"><a href="day3.html#cb127-21" aria-hidden="true" tabindex="-1"></a>           <span class="fu">paste0</span>(<span class="st">&quot;https://en.wikipedia.org&quot;</span>, .))</span>
+<span id="cb127-22"><a href="day3.html#cb127-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb127-23"><a href="day3.html#cb127-23" aria-hidden="true" tabindex="-1"></a><span class="co">#c</span></span>
+<span id="cb127-24"><a href="day3.html#cb127-24" aria-hidden="true" tabindex="-1"></a>link <span class="ot">&lt;-</span> table_w_link <span class="sc">%&gt;%</span> </span>
+<span id="cb127-25"><a href="day3.html#cb127-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb127-26"><a href="day3.html#cb127-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(link) </span>
+<span id="cb127-27"><a href="day3.html#cb127-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb127-28"><a href="day3.html#cb127-28" aria-hidden="true" tabindex="-1"></a>link <span class="sc">%&gt;%</span> </span>
+<span id="cb127-29"><a href="day3.html#cb127-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">read_html</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb127-30"><a href="day3.html#cb127-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_elements</span>(<span class="st">&quot;p&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb127-31"><a href="day3.html#cb127-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_text2</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb127-32"><a href="day3.html#cb127-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">str_c</span>(<span class="at">collapse =</span> <span class="st">&quot; &quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb127-33"><a href="day3.html#cb127-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">enframe</span>(<span class="at">name =</span> <span class="cn">NULL</span>, <span class="at">value =</span> <span class="st">&quot;wiki_article&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb127-34"><a href="day3.html#cb127-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">link =</span> link)</span>
+<span id="cb127-35"><a href="day3.html#cb127-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb127-36"><a href="day3.html#cb127-36" aria-hidden="true" tabindex="-1"></a><span class="co">#d</span></span>
+<span id="cb127-37"><a href="day3.html#cb127-37" aria-hidden="true" tabindex="-1"></a>scrape_page <span class="ot">&lt;-</span> <span class="cf">function</span>(link){</span>
+<span id="cb127-38"><a href="day3.html#cb127-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">Sys.sleep</span>(<span class="fl">0.5</span>)</span>
+<span id="cb127-39"><a href="day3.html#cb127-39" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb127-40"><a href="day3.html#cb127-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">read_html</span>(link) <span class="sc">%&gt;%</span> </span>
+<span id="cb127-41"><a href="day3.html#cb127-41" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_elements</span>(<span class="st">&quot;p&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb127-42"><a href="day3.html#cb127-42" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_text2</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb127-43"><a href="day3.html#cb127-43" aria-hidden="true" tabindex="-1"></a>    <span class="fu">str_c</span>(<span class="at">collapse =</span> <span class="st">&quot; &quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb127-44"><a href="day3.html#cb127-44" aria-hidden="true" tabindex="-1"></a>    <span class="fu">enframe</span>(<span class="at">name =</span> <span class="cn">NULL</span>, <span class="at">value =</span> <span class="st">&quot;wiki_article&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb127-45"><a href="day3.html#cb127-45" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">link =</span> link)</span>
+<span id="cb127-46"><a href="day3.html#cb127-46" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb127-47"><a href="day3.html#cb127-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb127-48"><a href="day3.html#cb127-48" aria-hidden="true" tabindex="-1"></a>mp_wiki_entries <span class="ot">&lt;-</span> table_w_link<span class="sc">$</span>link[[<span class="dv">1</span>]] <span class="sc">%&gt;%</span> </span>
+<span id="cb127-49"><a href="day3.html#cb127-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(<span class="sc">~</span>{<span class="fu">scrape_page</span>(.x)})</span>
+<span id="cb127-50"><a href="day3.html#cb127-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb127-51"><a href="day3.html#cb127-51" aria-hidden="true" tabindex="-1"></a>mp_wiki_entries_tbl <span class="ot">&lt;-</span> table_w_link <span class="sc">%&gt;%</span> </span>
+<span id="cb127-52"><a href="day3.html#cb127-52" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(mp_wiki_entries <span class="sc">%&gt;%</span> <span class="fu">bind_rows</span>())</span></code></pre></div>
 </details>
 <ol start="3" style="list-style-type: decimal">
 <li>Scrape the 10 first pages of <a href="https://www.r-bloggers.com">R-bloggers</a> in an automated fashion. Make sure to take breaks between requests by including <code>Sys.sleep(2)</code>.</li>
@@ -708,59 +965,59 @@ Solution. Click to expand!
 <ol style="list-style-type: lower-alpha">
 <li>Do so using the url vector we created above.</li>
 <li>Do so by getting the link for the next page and a loop.</li>
-<li>Do so by using <code>html_session()</code> in a loop.</li>
+<li>Do so by using <code>session()</code> in a loop.</li>
 </ol>
 <details>
 <summary>
 Solution. Click to expand!
 </summary>
-<div class="sourceCode" id="cb125"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb125-1"><a href="day3.html#cb125-1" aria-hidden="true" tabindex="-1"></a><span class="co"># a: check running number in URL, create new URLs, map()</span></span>
-<span id="cb125-2"><a href="day3.html#cb125-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb125-3"><a href="day3.html#cb125-3" aria-hidden="true" tabindex="-1"></a>urls <span class="ot">&lt;-</span> <span class="fu">str_c</span>(<span class="st">&quot;https://www.r-bloggers.com/page/&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="st">&quot;/&quot;</span>)</span>
-<span id="cb125-4"><a href="day3.html#cb125-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb125-5"><a href="day3.html#cb125-5" aria-hidden="true" tabindex="-1"></a>scrape_r_bloggers <span class="ot">&lt;-</span> <span class="cf">function</span>(url){</span>
-<span id="cb125-6"><a href="day3.html#cb125-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">Sys.sleep</span>(<span class="dv">2</span>)</span>
-<span id="cb125-7"><a href="day3.html#cb125-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">read_html</span>(url) <span class="sc">%&gt;%</span> </span>
-<span id="cb125-8"><a href="day3.html#cb125-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_elements</span>(<span class="at">css =</span> <span class="st">&quot;.loop-title a&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb125-9"><a href="day3.html#cb125-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_attrs_dfr</span>()</span>
-<span id="cb125-10"><a href="day3.html#cb125-10" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb125-11"><a href="day3.html#cb125-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb125-12"><a href="day3.html#cb125-12" aria-hidden="true" tabindex="-1"></a><span class="fu">map</span>(urls, scrape_r_bloggers)</span>
-<span id="cb125-13"><a href="day3.html#cb125-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb125-14"><a href="day3.html#cb125-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb125-15"><a href="day3.html#cb125-15" aria-hidden="true" tabindex="-1"></a><span class="co"># b: extract the next page and move forward in the loop</span></span>
-<span id="cb125-16"><a href="day3.html#cb125-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb125-17"><a href="day3.html#cb125-17" aria-hidden="true" tabindex="-1"></a>rbloggers <span class="sc">%&gt;%</span> <span class="fu">html_elements</span>(<span class="at">css =</span> <span class="st">&quot;.next&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">html_attr</span>(<span class="st">&quot;href&quot;</span>)</span>
-<span id="cb125-18"><a href="day3.html#cb125-18" aria-hidden="true" tabindex="-1"></a>url <span class="ot">&lt;-</span> <span class="st">&quot;https://www.r-bloggers.com/&quot;</span></span>
-<span id="cb125-19"><a href="day3.html#cb125-19" aria-hidden="true" tabindex="-1"></a>content <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="at">mode =</span> <span class="st">&quot;list&quot;</span>, <span class="at">length =</span> 10L)</span>
-<span id="cb125-20"><a href="day3.html#cb125-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb125-21"><a href="day3.html#cb125-21" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>){</span>
-<span id="cb125-22"><a href="day3.html#cb125-22" aria-hidden="true" tabindex="-1"></a>  page <span class="ot">&lt;-</span> <span class="fu">read_html</span>(url)</span>
-<span id="cb125-23"><a href="day3.html#cb125-23" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb125-24"><a href="day3.html#cb125-24" aria-hidden="true" tabindex="-1"></a>  content[[i]] <span class="ot">&lt;-</span> page <span class="sc">%&gt;%</span> </span>
-<span id="cb125-25"><a href="day3.html#cb125-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_elements</span>(<span class="at">css =</span> <span class="st">&quot;.loop-title a&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb125-26"><a href="day3.html#cb125-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_attrs_dfr</span>()</span>
-<span id="cb125-27"><a href="day3.html#cb125-27" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb125-28"><a href="day3.html#cb125-28" aria-hidden="true" tabindex="-1"></a>  url <span class="ot">&lt;-</span> page <span class="sc">%&gt;%</span> <span class="fu">html_elements</span>(<span class="at">css =</span> <span class="st">&quot;.next&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">html_attr</span>(<span class="st">&quot;href&quot;</span>)</span>
-<span id="cb125-29"><a href="day3.html#cb125-29" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb125-30"><a href="day3.html#cb125-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">Sys.sleep</span>(<span class="dv">2</span>)</span>
-<span id="cb125-31"><a href="day3.html#cb125-31" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb125-32"><a href="day3.html#cb125-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb125-33"><a href="day3.html#cb125-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb125-34"><a href="day3.html#cb125-34" aria-hidden="true" tabindex="-1"></a><span class="co"># c: session()</span></span>
-<span id="cb125-35"><a href="day3.html#cb125-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb125-36"><a href="day3.html#cb125-36" aria-hidden="true" tabindex="-1"></a><span class="fu">session</span>(url) <span class="sc">%&gt;%</span> <span class="fu">session_follow_link</span>(<span class="at">css =</span> <span class="st">&quot;.next&quot;</span>)</span>
-<span id="cb125-37"><a href="day3.html#cb125-37" aria-hidden="true" tabindex="-1"></a>content <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="at">mode =</span> <span class="st">&quot;list&quot;</span>, <span class="at">length =</span> 10L)</span>
-<span id="cb125-38"><a href="day3.html#cb125-38" aria-hidden="true" tabindex="-1"></a>session_page <span class="ot">&lt;-</span> <span class="fu">session</span>(url)</span>
-<span id="cb125-39"><a href="day3.html#cb125-39" aria-hidden="true" tabindex="-1"></a>session_page<span class="sc">$</span>response<span class="sc">$</span>status_code</span>
-<span id="cb125-40"><a href="day3.html#cb125-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb125-41"><a href="day3.html#cb125-41" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>){</span>
-<span id="cb125-42"><a href="day3.html#cb125-42" aria-hidden="true" tabindex="-1"></a>  content[[i]] <span class="ot">&lt;-</span> session_page <span class="sc">%&gt;%</span> </span>
-<span id="cb125-43"><a href="day3.html#cb125-43" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_elements</span>(<span class="at">css =</span> <span class="st">&quot;.loop-title a&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb125-44"><a href="day3.html#cb125-44" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_attrs_dfr</span>()</span>
-<span id="cb125-45"><a href="day3.html#cb125-45" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb125-46"><a href="day3.html#cb125-46" aria-hidden="true" tabindex="-1"></a>  session_page <span class="ot">&lt;-</span> session_page <span class="sc">%&gt;%</span> <span class="fu">session_follow_link</span>(<span class="at">css =</span> <span class="st">&quot;.next&quot;</span>)</span>
-<span id="cb125-47"><a href="day3.html#cb125-47" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb128"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb128-1"><a href="day3.html#cb128-1" aria-hidden="true" tabindex="-1"></a><span class="co"># a: check running number in URL, create new URLs, map()</span></span>
+<span id="cb128-2"><a href="day3.html#cb128-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb128-3"><a href="day3.html#cb128-3" aria-hidden="true" tabindex="-1"></a>urls <span class="ot">&lt;-</span> <span class="fu">str_c</span>(<span class="st">&quot;https://www.r-bloggers.com/page/&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="st">&quot;/&quot;</span>)</span>
+<span id="cb128-4"><a href="day3.html#cb128-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb128-5"><a href="day3.html#cb128-5" aria-hidden="true" tabindex="-1"></a>scrape_r_bloggers <span class="ot">&lt;-</span> <span class="cf">function</span>(url){</span>
+<span id="cb128-6"><a href="day3.html#cb128-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">Sys.sleep</span>(<span class="dv">2</span>)</span>
+<span id="cb128-7"><a href="day3.html#cb128-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">read_html</span>(url) <span class="sc">%&gt;%</span> </span>
+<span id="cb128-8"><a href="day3.html#cb128-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_elements</span>(<span class="at">css =</span> <span class="st">&quot;.loop-title a&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb128-9"><a href="day3.html#cb128-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_attrs_dfr</span>()</span>
+<span id="cb128-10"><a href="day3.html#cb128-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb128-11"><a href="day3.html#cb128-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb128-12"><a href="day3.html#cb128-12" aria-hidden="true" tabindex="-1"></a><span class="fu">map</span>(urls, scrape_r_bloggers)</span>
+<span id="cb128-13"><a href="day3.html#cb128-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb128-14"><a href="day3.html#cb128-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb128-15"><a href="day3.html#cb128-15" aria-hidden="true" tabindex="-1"></a><span class="co"># b: extract the next page and move forward in the loop</span></span>
+<span id="cb128-16"><a href="day3.html#cb128-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb128-17"><a href="day3.html#cb128-17" aria-hidden="true" tabindex="-1"></a>rbloggers <span class="sc">%&gt;%</span> <span class="fu">html_elements</span>(<span class="at">css =</span> <span class="st">&quot;.next&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">html_attr</span>(<span class="st">&quot;href&quot;</span>)</span>
+<span id="cb128-18"><a href="day3.html#cb128-18" aria-hidden="true" tabindex="-1"></a>url <span class="ot">&lt;-</span> <span class="st">&quot;https://www.r-bloggers.com/&quot;</span></span>
+<span id="cb128-19"><a href="day3.html#cb128-19" aria-hidden="true" tabindex="-1"></a>content <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="at">mode =</span> <span class="st">&quot;list&quot;</span>, <span class="at">length =</span> 10L)</span>
+<span id="cb128-20"><a href="day3.html#cb128-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb128-21"><a href="day3.html#cb128-21" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>){</span>
+<span id="cb128-22"><a href="day3.html#cb128-22" aria-hidden="true" tabindex="-1"></a>  page <span class="ot">&lt;-</span> <span class="fu">read_html</span>(url)</span>
+<span id="cb128-23"><a href="day3.html#cb128-23" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb128-24"><a href="day3.html#cb128-24" aria-hidden="true" tabindex="-1"></a>  content[[i]] <span class="ot">&lt;-</span> page <span class="sc">%&gt;%</span> </span>
+<span id="cb128-25"><a href="day3.html#cb128-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_elements</span>(<span class="at">css =</span> <span class="st">&quot;.loop-title a&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb128-26"><a href="day3.html#cb128-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_attrs_dfr</span>()</span>
+<span id="cb128-27"><a href="day3.html#cb128-27" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb128-28"><a href="day3.html#cb128-28" aria-hidden="true" tabindex="-1"></a>  url <span class="ot">&lt;-</span> page <span class="sc">%&gt;%</span> <span class="fu">html_elements</span>(<span class="at">css =</span> <span class="st">&quot;.next&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">html_attr</span>(<span class="st">&quot;href&quot;</span>)</span>
+<span id="cb128-29"><a href="day3.html#cb128-29" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb128-30"><a href="day3.html#cb128-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">Sys.sleep</span>(<span class="dv">2</span>)</span>
+<span id="cb128-31"><a href="day3.html#cb128-31" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb128-32"><a href="day3.html#cb128-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb128-33"><a href="day3.html#cb128-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb128-34"><a href="day3.html#cb128-34" aria-hidden="true" tabindex="-1"></a><span class="co"># c: session()</span></span>
+<span id="cb128-35"><a href="day3.html#cb128-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb128-36"><a href="day3.html#cb128-36" aria-hidden="true" tabindex="-1"></a><span class="fu">session</span>(url) <span class="sc">%&gt;%</span> <span class="fu">session_follow_link</span>(<span class="at">css =</span> <span class="st">&quot;.next&quot;</span>)</span>
+<span id="cb128-37"><a href="day3.html#cb128-37" aria-hidden="true" tabindex="-1"></a>content <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="at">mode =</span> <span class="st">&quot;list&quot;</span>, <span class="at">length =</span> 10L)</span>
+<span id="cb128-38"><a href="day3.html#cb128-38" aria-hidden="true" tabindex="-1"></a>session_page <span class="ot">&lt;-</span> <span class="fu">session</span>(url)</span>
+<span id="cb128-39"><a href="day3.html#cb128-39" aria-hidden="true" tabindex="-1"></a>session_page<span class="sc">$</span>response<span class="sc">$</span>status_code</span>
+<span id="cb128-40"><a href="day3.html#cb128-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb128-41"><a href="day3.html#cb128-41" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>){</span>
+<span id="cb128-42"><a href="day3.html#cb128-42" aria-hidden="true" tabindex="-1"></a>  content[[i]] <span class="ot">&lt;-</span> session_page <span class="sc">%&gt;%</span> </span>
+<span id="cb128-43"><a href="day3.html#cb128-43" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_elements</span>(<span class="at">css =</span> <span class="st">&quot;.loop-title a&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb128-44"><a href="day3.html#cb128-44" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_attrs_dfr</span>()</span>
+<span id="cb128-45"><a href="day3.html#cb128-45" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb128-46"><a href="day3.html#cb128-46" aria-hidden="true" tabindex="-1"></a>  session_page <span class="ot">&lt;-</span> session_page <span class="sc">%&gt;%</span> <span class="fu">session_follow_link</span>(<span class="at">css =</span> <span class="st">&quot;.next&quot;</span>)</span>
+<span id="cb128-47"><a href="day3.html#cb128-47" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 </details>
 
 </div>
