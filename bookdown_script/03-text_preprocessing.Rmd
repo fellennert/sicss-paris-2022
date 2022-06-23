@@ -145,6 +145,9 @@ five_largest_cities <- c("Stockholm", "Göteborg", "Malmö", "Uppsala", "Väster
 
 ```{r eval=FALSE, include=FALSE}
 str_c(five_largest_cities, collapse = "\n") %>% cat()
+
+#remotes::install_github("gadenbuie/regexplain")
+regexplain::regexplain_gadget()
 ```
 
 Note that regexes are case-sensitive.
@@ -197,6 +200,7 @@ str_detect(stringr_functions, "str_._all")
 
 ```{r eval=FALSE, include=FALSE}
 str_c(stringr_functions, collapse = "\n") %>% cat()
+regexplain::regexplain_gadget()
 ```
 
 Well, as you can see, there are none. This is because the `.` can only replace one character. We need some sort of multiplier to find them. The ones available are:
@@ -214,7 +218,7 @@ In our case, the appropriate one is `+`:
 str_detect(stringr_functions, "str_.+_all")
 ```
 
-However, if you want to match the character dot? This problem may arise when searching for clock time. A naive regex might look like this:
+However, if you want to match the character "."? This problem may arise when searching for clock time. A naive regex might look like this:
 
 ```{r}
 vectors_with_time <- c("13500", "13M00", "13.00")
@@ -266,6 +270,7 @@ str_view(vector_of_strings, "[.]")
 
 ```{r eval=FALSE, include=FALSE}
 str_c(vector_of_strings, collapse = "\n") %>% cat()
+regexplain::regexplain_gadget()
 ```
 
 #### Negating sets of characters
@@ -288,6 +293,7 @@ str_view(shortened_sentences, "^The")
 
 ```{r eval=FALSE, include=FALSE}
 str_c(shortened_sentences, collapse = "\n") %>% cat()
+regexplain::regexplain_gadget()
 ```
 
 If we wanted to know how many start with a "The" and end with a full stop, we could do this one:
@@ -317,6 +323,7 @@ heights <- c("1m30cm", "2m01cm", "3m10cm")
 
 ```{r eval=FALSE, include=FALSE}
 str_c(heights, collapse = "\n") %>% cat()
+regexplain::regexplain_gadget()
 ```
 
 Here, to identify the height in meters, the first task is to identify all the numbers that are followed by an "m". The regex syntax for this looks like this: `A(?=pattern)` with `A` being the entity that is supposed to be found (hence, in this case, [0-9]+).
@@ -383,7 +390,7 @@ str_locate_all(shortened_sentences, regex("The\\b", ignore_case = TRUE)) %>% .[1
 
 ### Mutating strings
 
-Mutating strings usually implies the replacement of certain elements (e.g., words) with other elements (or removing them, which is a special case of replacing them). In `stringr` this is performed using `str_replace(string, pattern, replacement)` and `str_replace_all(string, pattern, replacement)`. 
+Mutating strings usually implies the replacement of certain elements (e.g., words) with other elements (or removing them, which is a special case of replacing them with nothing). In `stringr` this is performed using `str_replace(string, pattern, replacement)` and `str_replace_all(string, pattern, replacement)`. 
 
 If we wanted, for instance, to replace the first occurrence of "m" letters with "meters," we would go about this the following way:
 
@@ -397,7 +404,7 @@ Note that `str_replace_all` would have lead to the following outcome:
 str_replace_all(heights, "m", "meters")
 ```
 
-However, we also want to replace the "cm" with "centimeters," hence, we can harness another feature of `str_replace_all()`:
+However, we also want to replace the "cm" with "centimeters," hence, we can harness another feature of `str_replace_all()`, providing multiple replacements:
 
 ```{r}
 str_replace_all(heights, c("m" = "meters", "cm" = "centimeters"))
@@ -448,7 +455,7 @@ str_split_fixed(manufacturer_model, "(?<=\\w)\\b", n = 2) %>%
 
 After having learned about the basics of string manipulation, we are now turning to how you can turn your collection of documents, your corpus, into a representation that lends itself nicely to quantitative analyses of text. There are a couple of packages around which you can use for text mining, such as `quanteda` [@benoit_quanteda_2018], `tm` [@feinerer_text_2008], and `tidytext` [@silge_tidytext_2016], the latter being probably the most recent addition to them. A larger overview of relevant packages can be found on this [CRAN Task View](https://cran.r-project.org/web/views/NaturalLanguageProcessing.html).
 
-As you could probably tell from its name, `tidytext` obeys the tidy data principles. "Every observation is a row" translates here to "every token has its own row" -- "token" not necessarily relating to a singular term, but also so-called n-grams. In the following, we will demonstrate what text mining using tidy principles can look like in R. For this, we will first cover the preprocessing of text using tidy data principles. Thereafter, we will delve into more advanced preprocessing such as the lemmatization of words and part-of-speech (POS) tagging using `spaCy` [@honnibal_spacy_2017]. Finally, different R packages are using different representations of text data. Depending on the task at hand, you will therefore have to be able to transform the data into the proper format. This will be covered in the final part.
+As you could probably tell from its name, `tidytext` obeys the tidy data principles^[Each observation has its own row, each variable its own column, each value has its own cell, find more [here](https://cfss.uchicago.edu/notes/tidy-data/)]. "Every observation is a row" translates here to "every token has its own row" -- "token" not necessarily relating to a singular term, but also so-called n-grams. In the following, we will demonstrate what text mining using tidy principles can look like in R. For this, we will first cover the preprocessing of text using tidy data principles. Thereafter, we will delve into more advanced preprocessing such as the lemmatization of words and part-of-speech (POS) tagging using `spaCy` [@honnibal_spacy_2017]. Finally, different R packages are using different representations of text data. Depending on the task at hand, you will therefore have to be able to transform the data into the proper format. This will be covered in the final part.
 
 ### Pre-processing with `tidytext`
 
