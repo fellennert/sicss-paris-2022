@@ -249,6 +249,7 @@ div.csl-indent {
 <li class="chapter" data-level="4.6" data-path="day4.html"><a href="day4.html#first-analyses"><i class="fa fa-check"></i><b>4.6</b> First analyses</a>
 <ul>
 <li class="chapter" data-level="4.6.1" data-path="day4.html"><a href="day4.html#counting-words-per-document"><i class="fa fa-check"></i><b>4.6.1</b> Counting words per document</a></li>
+<li class="chapter" data-level="4.6.2" data-path="day4.html"><a href="day4.html#tf-idf"><i class="fa fa-check"></i><b>4.6.2</b> TF-IDF</a></li>
 </ul></li>
 <li class="chapter" data-level="4.7" data-path="day4.html"><a href="day4.html#converting-between-formats"><i class="fa fa-check"></i><b>4.7</b> Converting between formats</a>
 <ul>
@@ -433,24 +434,24 @@ div.csl-indent {
 <div class="sourceCode" id="cb172"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb172-1"><a href="day4.html#cb172-1" aria-hidden="true" tabindex="-1"></a>five_largest_cities <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Stockholm&quot;</span>, <span class="st">&quot;Göteborg&quot;</span>, <span class="st">&quot;Malmö&quot;</span>, <span class="st">&quot;Uppsala&quot;</span>, <span class="st">&quot;Västerås&quot;</span>)</span></code></pre></div>
 <p>Note that regexes are case-sensitive.</p>
 <div class="sourceCode" id="cb173"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb173-1"><a href="day4.html#cb173-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str_view</span>(five_largest_cities, <span class="st">&quot;stockholm&quot;</span>)</span></code></pre></div>
-<div id="htmlwidget-0ec048996b9e7b64f27f" style="width:960px;height:100%;" class="str_view html-widget"></div>
-<script type="application/json" data-for="htmlwidget-0ec048996b9e7b64f27f">{"x":{"html":"<ul>\n  <li>Stockholm<\/li>\n  <li>Göteborg<\/li>\n  <li>Malmö<\/li>\n  <li>Uppsala<\/li>\n  <li>Västerås<\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-9898e5bba3c8260d00e3" style="width:960px;height:100%;" class="str_view html-widget"></div>
+<script type="application/json" data-for="htmlwidget-9898e5bba3c8260d00e3">{"x":{"html":"<ul>\n  <li>Stockholm<\/li>\n  <li>Göteborg<\/li>\n  <li>Malmö<\/li>\n  <li>Uppsala<\/li>\n  <li>Västerås<\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
 <div class="sourceCode" id="cb174"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb174-1"><a href="day4.html#cb174-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str_view</span>(five_largest_cities, <span class="st">&quot;Stockholm&quot;</span>)</span></code></pre></div>
-<div id="htmlwidget-7fc848cc06168c73d893" style="width:960px;height:100%;" class="str_view html-widget"></div>
-<script type="application/json" data-for="htmlwidget-7fc848cc06168c73d893">{"x":{"html":"<ul>\n  <li><span class='match'>Stockholm<\/span><\/li>\n  <li>Göteborg<\/li>\n  <li>Malmö<\/li>\n  <li>Uppsala<\/li>\n  <li>Västerås<\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-6cdcab4f30447a15ea26" style="width:960px;height:100%;" class="str_view html-widget"></div>
+<script type="application/json" data-for="htmlwidget-6cdcab4f30447a15ea26">{"x":{"html":"<ul>\n  <li><span class='match'>Stockholm<\/span><\/li>\n  <li>Göteborg<\/li>\n  <li>Malmö<\/li>\n  <li>Uppsala<\/li>\n  <li>Västerås<\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
 <p>They also match parts of words:</p>
 <div class="sourceCode" id="cb175"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb175-1"><a href="day4.html#cb175-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str_view</span>(five_largest_cities, <span class="st">&quot;borg&quot;</span>)</span></code></pre></div>
-<div id="htmlwidget-7496a7ad6b322b1eca08" style="width:960px;height:100%;" class="str_view html-widget"></div>
-<script type="application/json" data-for="htmlwidget-7496a7ad6b322b1eca08">{"x":{"html":"<ul>\n  <li>Stockholm<\/li>\n  <li>Göte<span class='match'>borg<\/span><\/li>\n  <li>Malmö<\/li>\n  <li>Uppsala<\/li>\n  <li>Västerås<\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-807ce0c5d8796287f4ab" style="width:960px;height:100%;" class="str_view html-widget"></div>
+<script type="application/json" data-for="htmlwidget-807ce0c5d8796287f4ab">{"x":{"html":"<ul>\n  <li>Stockholm<\/li>\n  <li>Göte<span class='match'>borg<\/span><\/li>\n  <li>Malmö<\/li>\n  <li>Uppsala<\/li>\n  <li>Västerås<\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
 <p>Moreover, they are “greedy,” they only match the first occurrence (in “Stockholm”):</p>
 <div class="sourceCode" id="cb176"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb176-1"><a href="day4.html#cb176-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str_view</span>(five_largest_cities, <span class="st">&quot;o&quot;</span>)</span></code></pre></div>
-<div id="htmlwidget-53195c32239f93bd8ca7" style="width:960px;height:100%;" class="str_view html-widget"></div>
-<script type="application/json" data-for="htmlwidget-53195c32239f93bd8ca7">{"x":{"html":"<ul>\n  <li>St<span class='match'>o<\/span>ckholm<\/li>\n  <li>Göteb<span class='match'>o<\/span>rg<\/li>\n  <li>Malmö<\/li>\n  <li>Uppsala<\/li>\n  <li>Västerås<\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-6b5ff67be8c79541772c" style="width:960px;height:100%;" class="str_view html-widget"></div>
+<script type="application/json" data-for="htmlwidget-6b5ff67be8c79541772c">{"x":{"html":"<ul>\n  <li>St<span class='match'>o<\/span>ckholm<\/li>\n  <li>Göteb<span class='match'>o<\/span>rg<\/li>\n  <li>Malmö<\/li>\n  <li>Uppsala<\/li>\n  <li>Västerås<\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
 <p>This can be addressed in the <code>stringr</code> package by using <code>str_._all()</code> functions – but more on that later.</p>
 <p>If you want to match multiple literal characters (or words, for that sake), you can connect them using the <code>|</code> meta character (more on meta characters later).</p>
 <div class="sourceCode" id="cb177"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb177-1"><a href="day4.html#cb177-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str_view</span>(five_largest_cities, <span class="st">&quot;Stockholm|Göteborg&quot;</span>)</span></code></pre></div>
-<div id="htmlwidget-32e006dd7655091cd891" style="width:960px;height:100%;" class="str_view html-widget"></div>
-<script type="application/json" data-for="htmlwidget-32e006dd7655091cd891">{"x":{"html":"<ul>\n  <li><span class='match'>Stockholm<\/span><\/li>\n  <li><span class='match'>Göteborg<\/span><\/li>\n  <li>Malmö<\/li>\n  <li>Uppsala<\/li>\n  <li>Västerås<\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-003d8b6db706a7f6c4f6" style="width:960px;height:100%;" class="str_view html-widget"></div>
+<script type="application/json" data-for="htmlwidget-003d8b6db706a7f6c4f6">{"x":{"html":"<ul>\n  <li><span class='match'>Stockholm<\/span><\/li>\n  <li><span class='match'>Göteborg<\/span><\/li>\n  <li>Malmö<\/li>\n  <li>Uppsala<\/li>\n  <li>Västerås<\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
 <p>Every letter of the English alphabet (or number/or combination of those) can serve as a literal character. Those literal characters <em>match themselves</em>. This is, however, not the case with the other sort of characters, so-called meta characters.</p>
 </div>
 <div id="metacharacters" class="section level3 hasAnchor" number="4.2.2">
@@ -500,26 +501,26 @@ div.csl-indent {
 <div class="sourceCode" id="cb186"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb186-1"><a href="day4.html#cb186-1" aria-hidden="true" tabindex="-1"></a>sp_ce <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;spice&quot;</span>, <span class="st">&quot;space&quot;</span>)</span>
 <span id="cb186-2"><a href="day4.html#cb186-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb186-3"><a href="day4.html#cb186-3" aria-hidden="true" tabindex="-1"></a><span class="fu">str_view</span>(sp_ce, <span class="st">&quot;sp[ai]ce&quot;</span>)</span></code></pre></div>
-<div id="htmlwidget-26b8e0e7462999fc7343" style="width:960px;height:100%;" class="str_view html-widget"></div>
-<script type="application/json" data-for="htmlwidget-26b8e0e7462999fc7343">{"x":{"html":"<ul>\n  <li><span class='match'>spice<\/span><\/li>\n  <li><span class='match'>space<\/span><\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-aed397c049cf4a1f6f91" style="width:960px;height:100%;" class="str_view html-widget"></div>
+<script type="application/json" data-for="htmlwidget-aed397c049cf4a1f6f91">{"x":{"html":"<ul>\n  <li><span class='match'>spice<\/span><\/li>\n  <li><span class='match'>space<\/span><\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
 <p>You can also define certain ranges of characters using the <code>-</code> metacharacter:</p>
 <p>Same holds for numbers:</p>
 <div class="sourceCode" id="cb187"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb187-1"><a href="day4.html#cb187-1" aria-hidden="true" tabindex="-1"></a>american_phone_number <span class="ot">&lt;-</span> <span class="st">&quot;(555) 555-1234&quot;</span></span>
 <span id="cb187-2"><a href="day4.html#cb187-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb187-3"><a href="day4.html#cb187-3" aria-hidden="true" tabindex="-1"></a><span class="fu">str_view</span>(american_phone_number, <span class="st">&quot;</span><span class="sc">\\</span><span class="st">([:digit:]{3}</span><span class="sc">\\</span><span class="st">) [0-9]{3}-[0-9]{4}&quot;</span>)</span></code></pre></div>
-<div id="htmlwidget-01fe0bd89d9e52f2333a" style="width:960px;height:100%;" class="str_view html-widget"></div>
-<script type="application/json" data-for="htmlwidget-01fe0bd89d9e52f2333a">{"x":{"html":"<ul>\n  <li><span class='match'>(555) 555-1234<\/span><\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-eba0d55222a1eadbdaa9" style="width:960px;height:100%;" class="str_view html-widget"></div>
+<script type="application/json" data-for="htmlwidget-eba0d55222a1eadbdaa9">{"x":{"html":"<ul>\n  <li><span class='match'>(555) 555-1234<\/span><\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
 <p>There are also predefined sets of characters, for instance, digits or letters, which are called <em>character classes</em>. You can find them on the <a href="https://github.com/rstudio/cheatsheets/blob/master/strings.pdf"><code>stringr</code> cheatsheet</a>.</p>
 <p>Furthermore, you can put almost every meta character inside the square brackets without escaping them. This does not apply to the caret (<code>^</code>) in the first position, the dash <code>-</code>, the closing square bracket <code>]</code>, and the backslash <code>\</code>.</p>
 <div class="sourceCode" id="cb188"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb188-1"><a href="day4.html#cb188-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str_view</span>(vector_of_strings, <span class="st">&quot;[.]&quot;</span>)</span></code></pre></div>
-<div id="htmlwidget-5442b8763bf87d83f8f4" style="width:960px;height:100%;" class="str_view html-widget"></div>
-<script type="application/json" data-for="htmlwidget-5442b8763bf87d83f8f4">{"x":{"html":"<ul>\n  <li>Hi, how are you doing<span class='match'>.<\/span><\/li>\n  <li>I'm doing well, HBY<span class='match'>.<\/span><\/li>\n  <li>Me too, thanks for asking<span class='match'>.<\/span><\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-827125f5bcc6bd1e0de4" style="width:960px;height:100%;" class="str_view html-widget"></div>
+<script type="application/json" data-for="htmlwidget-827125f5bcc6bd1e0de4">{"x":{"html":"<ul>\n  <li>Hi, how are you doing<span class='match'>.<\/span><\/li>\n  <li>I'm doing well, HBY<span class='match'>.<\/span><\/li>\n  <li>Me too, thanks for asking<span class='match'>.<\/span><\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
 <div id="negating-sets-of-characters" class="section level4 hasAnchor" number="4.2.3.1">
 <h4><span class="header-section-number">4.2.3.1</span> Negating sets of characters<a href="day4.html#negating-sets-of-characters" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>Sometimes you will also want to exclude certain sets of characters or words. To achieve this, you can use the <code>^</code> meta character at the beginning of the range or set you are defining.</p>
 <div class="sourceCode" id="cb189"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb189-1"><a href="day4.html#cb189-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str_view</span>(sp_ce, <span class="st">&quot;sp[^i]ce&quot;</span>)</span></code></pre></div>
-<div id="htmlwidget-1d0ae415f71a836eab4b" style="width:960px;height:100%;" class="str_view html-widget"></div>
-<script type="application/json" data-for="htmlwidget-1d0ae415f71a836eab4b">{"x":{"html":"<ul>\n  <li>spice<\/li>\n  <li><span class='match'>space<\/span><\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-c428d314d22060097a33" style="width:960px;height:100%;" class="str_view html-widget"></div>
+<script type="application/json" data-for="htmlwidget-c428d314d22060097a33">{"x":{"html":"<ul>\n  <li>spice<\/li>\n  <li><span class='match'>space<\/span><\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <div id="anchors" class="section level3 hasAnchor" number="4.2.4">
@@ -528,22 +529,22 @@ div.csl-indent {
 <div class="sourceCode" id="cb190"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb190-1"><a href="day4.html#cb190-1" aria-hidden="true" tabindex="-1"></a>shortened_sentences <span class="ot">&lt;-</span> sentences[<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>]</span>
 <span id="cb190-2"><a href="day4.html#cb190-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb190-3"><a href="day4.html#cb190-3" aria-hidden="true" tabindex="-1"></a><span class="fu">str_view</span>(shortened_sentences, <span class="st">&quot;^The&quot;</span>) </span></code></pre></div>
-<div id="htmlwidget-7115c46a1529bfac3e57" style="width:960px;height:100%;" class="str_view html-widget"></div>
-<script type="application/json" data-for="htmlwidget-7115c46a1529bfac3e57">{"x":{"html":"<ul>\n  <li><span class='match'>The<\/span> birch canoe slid on the smooth planks.<\/li>\n  <li>Glue the sheet to the dark blue background.<\/li>\n  <li>It's easy to tell the depth of a well.<\/li>\n  <li><span class='match'>The<\/span>se days a chicken leg is a rare dish.<\/li>\n  <li>Rice is often served in round bowls.<\/li>\n  <li><span class='match'>The<\/span> juice of lemons makes fine punch.<\/li>\n  <li><span class='match'>The<\/span> box was thrown beside the parked truck.<\/li>\n  <li><span class='match'>The<\/span> hogs were fed chopped corn and garbage.<\/li>\n  <li>Four hours of steady work faced us.<\/li>\n  <li>Large size in stockings is hard to sell.<\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-1e2a58d59606af02a301" style="width:960px;height:100%;" class="str_view html-widget"></div>
+<script type="application/json" data-for="htmlwidget-1e2a58d59606af02a301">{"x":{"html":"<ul>\n  <li><span class='match'>The<\/span> birch canoe slid on the smooth planks.<\/li>\n  <li>Glue the sheet to the dark blue background.<\/li>\n  <li>It's easy to tell the depth of a well.<\/li>\n  <li><span class='match'>The<\/span>se days a chicken leg is a rare dish.<\/li>\n  <li>Rice is often served in round bowls.<\/li>\n  <li><span class='match'>The<\/span> juice of lemons makes fine punch.<\/li>\n  <li><span class='match'>The<\/span> box was thrown beside the parked truck.<\/li>\n  <li><span class='match'>The<\/span> hogs were fed chopped corn and garbage.<\/li>\n  <li>Four hours of steady work faced us.<\/li>\n  <li>Large size in stockings is hard to sell.<\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
 <p>If we wanted to know how many start with a “The” and end with a full stop, we could do this one:</p>
 <div class="sourceCode" id="cb191"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb191-1"><a href="day4.html#cb191-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str_view</span>(shortened_sentences, <span class="st">&quot;^The.+</span><span class="sc">\\</span><span class="st">.$&quot;</span>) </span></code></pre></div>
-<div id="htmlwidget-906bf838a741b1cc4553" style="width:960px;height:100%;" class="str_view html-widget"></div>
-<script type="application/json" data-for="htmlwidget-906bf838a741b1cc4553">{"x":{"html":"<ul>\n  <li><span class='match'>The birch canoe slid on the smooth planks.<\/span><\/li>\n  <li>Glue the sheet to the dark blue background.<\/li>\n  <li>It's easy to tell the depth of a well.<\/li>\n  <li><span class='match'>These days a chicken leg is a rare dish.<\/span><\/li>\n  <li>Rice is often served in round bowls.<\/li>\n  <li><span class='match'>The juice of lemons makes fine punch.<\/span><\/li>\n  <li><span class='match'>The box was thrown beside the parked truck.<\/span><\/li>\n  <li><span class='match'>The hogs were fed chopped corn and garbage.<\/span><\/li>\n  <li>Four hours of steady work faced us.<\/li>\n  <li>Large size in stockings is hard to sell.<\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-49368de9f71caf3a8e16" style="width:960px;height:100%;" class="str_view html-widget"></div>
+<script type="application/json" data-for="htmlwidget-49368de9f71caf3a8e16">{"x":{"html":"<ul>\n  <li><span class='match'>The birch canoe slid on the smooth planks.<\/span><\/li>\n  <li>Glue the sheet to the dark blue background.<\/li>\n  <li>It's easy to tell the depth of a well.<\/li>\n  <li><span class='match'>These days a chicken leg is a rare dish.<\/span><\/li>\n  <li>Rice is often served in round bowls.<\/li>\n  <li><span class='match'>The juice of lemons makes fine punch.<\/span><\/li>\n  <li><span class='match'>The box was thrown beside the parked truck.<\/span><\/li>\n  <li><span class='match'>The hogs were fed chopped corn and garbage.<\/span><\/li>\n  <li>Four hours of steady work faced us.<\/li>\n  <li>Large size in stockings is hard to sell.<\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
 <div id="boundaries" class="section level4 hasAnchor" number="4.2.4.1">
 <h4><span class="header-section-number">4.2.4.1</span> Boundaries<a href="day4.html#boundaries" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>Note that right now, the regex also matches the sentence which starts with a “These.” To address this, we need to tell the machine that it should only accept a “The” if there starts a new word thereafter. In regex syntax, this is done using so-called boundaries. Those are defined as <code>\b</code> as a word boundary and <code>\B</code> as no word boundary. (Note that you will need an additional escape character as you will have to escape the escape character itself.)</p>
 <p>In my example, we would include the former if we were to search for sentences that begin with a single “The” and the latter if we were to search for sentences that begin with a word that starts with a “The” but are not “The” – such as “These.”</p>
 <div class="sourceCode" id="cb192"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb192-1"><a href="day4.html#cb192-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str_view</span>(shortened_sentences, <span class="st">&quot;^The</span><span class="sc">\\</span><span class="st">b.+</span><span class="sc">\\</span><span class="st">.$&quot;</span>) </span></code></pre></div>
-<div id="htmlwidget-7cca58b30811096ef081" style="width:960px;height:100%;" class="str_view html-widget"></div>
-<script type="application/json" data-for="htmlwidget-7cca58b30811096ef081">{"x":{"html":"<ul>\n  <li><span class='match'>The birch canoe slid on the smooth planks.<\/span><\/li>\n  <li>Glue the sheet to the dark blue background.<\/li>\n  <li>It's easy to tell the depth of a well.<\/li>\n  <li>These days a chicken leg is a rare dish.<\/li>\n  <li>Rice is often served in round bowls.<\/li>\n  <li><span class='match'>The juice of lemons makes fine punch.<\/span><\/li>\n  <li><span class='match'>The box was thrown beside the parked truck.<\/span><\/li>\n  <li><span class='match'>The hogs were fed chopped corn and garbage.<\/span><\/li>\n  <li>Four hours of steady work faced us.<\/li>\n  <li>Large size in stockings is hard to sell.<\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-9cbe508b6e74efe55b05" style="width:960px;height:100%;" class="str_view html-widget"></div>
+<script type="application/json" data-for="htmlwidget-9cbe508b6e74efe55b05">{"x":{"html":"<ul>\n  <li><span class='match'>The birch canoe slid on the smooth planks.<\/span><\/li>\n  <li>Glue the sheet to the dark blue background.<\/li>\n  <li>It's easy to tell the depth of a well.<\/li>\n  <li>These days a chicken leg is a rare dish.<\/li>\n  <li>Rice is often served in round bowls.<\/li>\n  <li><span class='match'>The juice of lemons makes fine punch.<\/span><\/li>\n  <li><span class='match'>The box was thrown beside the parked truck.<\/span><\/li>\n  <li><span class='match'>The hogs were fed chopped corn and garbage.<\/span><\/li>\n  <li>Four hours of steady work faced us.<\/li>\n  <li>Large size in stockings is hard to sell.<\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
 <div class="sourceCode" id="cb193"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb193-1"><a href="day4.html#cb193-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str_view</span>(shortened_sentences, <span class="st">&quot;^The</span><span class="sc">\\</span><span class="st">B.+</span><span class="sc">\\</span><span class="st">.$&quot;</span>) </span></code></pre></div>
-<div id="htmlwidget-ab9548fe3001ad0fdb68" style="width:960px;height:100%;" class="str_view html-widget"></div>
-<script type="application/json" data-for="htmlwidget-ab9548fe3001ad0fdb68">{"x":{"html":"<ul>\n  <li>The birch canoe slid on the smooth planks.<\/li>\n  <li>Glue the sheet to the dark blue background.<\/li>\n  <li>It's easy to tell the depth of a well.<\/li>\n  <li><span class='match'>These days a chicken leg is a rare dish.<\/span><\/li>\n  <li>Rice is often served in round bowls.<\/li>\n  <li>The juice of lemons makes fine punch.<\/li>\n  <li>The box was thrown beside the parked truck.<\/li>\n  <li>The hogs were fed chopped corn and garbage.<\/li>\n  <li>Four hours of steady work faced us.<\/li>\n  <li>Large size in stockings is hard to sell.<\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-aac276dd36218eafcbb0" style="width:960px;height:100%;" class="str_view html-widget"></div>
+<script type="application/json" data-for="htmlwidget-aac276dd36218eafcbb0">{"x":{"html":"<ul>\n  <li>The birch canoe slid on the smooth planks.<\/li>\n  <li>Glue the sheet to the dark blue background.<\/li>\n  <li>It's easy to tell the depth of a well.<\/li>\n  <li><span class='match'>These days a chicken leg is a rare dish.<\/span><\/li>\n  <li>Rice is often served in round bowls.<\/li>\n  <li>The juice of lemons makes fine punch.<\/li>\n  <li>The box was thrown beside the parked truck.<\/li>\n  <li>The hogs were fed chopped corn and garbage.<\/li>\n  <li>Four hours of steady work faced us.<\/li>\n  <li>Large size in stockings is hard to sell.<\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
 </div>
 <div id="lookarounds" class="section level4 hasAnchor" number="4.2.4.2">
 <h4><span class="header-section-number">4.2.4.2</span> Lookarounds<a href="day4.html#lookarounds" class="anchor-section" aria-label="Anchor link to header"></a></h4>
@@ -551,17 +552,17 @@ div.csl-indent {
 <div class="sourceCode" id="cb194"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb194-1"><a href="day4.html#cb194-1" aria-hidden="true" tabindex="-1"></a>heights <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;1m30cm&quot;</span>, <span class="st">&quot;2m01cm&quot;</span>, <span class="st">&quot;3m10cm&quot;</span>)</span></code></pre></div>
 <p>Here, to identify the height in meters, the first task is to identify all the numbers that are followed by an “m”. The regex syntax for this looks like this: <code>A(?=pattern)</code> with <code>A</code> being the entity that is supposed to be found (hence, in this case, [0-9]+).</p>
 <div class="sourceCode" id="cb195"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb195-1"><a href="day4.html#cb195-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str_view</span>(heights, <span class="st">&quot;[0-9]+(?=m)&quot;</span>)</span></code></pre></div>
-<div id="htmlwidget-717c2c69cf8916800b89" style="width:960px;height:100%;" class="str_view html-widget"></div>
-<script type="application/json" data-for="htmlwidget-717c2c69cf8916800b89">{"x":{"html":"<ul>\n  <li><span class='match'>1<\/span>m30cm<\/li>\n  <li><span class='match'>2<\/span>m01cm<\/li>\n  <li><span class='match'>3<\/span>m10cm<\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-9ff68b2e5a713e307498" style="width:960px;height:100%;" class="str_view html-widget"></div>
+<script type="application/json" data-for="htmlwidget-9ff68b2e5a713e307498">{"x":{"html":"<ul>\n  <li><span class='match'>1<\/span>m30cm<\/li>\n  <li><span class='match'>2<\/span>m01cm<\/li>\n  <li><span class='match'>3<\/span>m10cm<\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
 <p>The second step now is to identify the centimeters. This could of course be achieved using the same regex and replacing <code>m</code> with <code>cm</code>. However, we can also harness a so-called negative look ahead <code>A(?!pattern)</code>, a so-called look behind <code>(?&lt;=pattern)A</code>. The negative counterpart, the negative look behind <code>(?&lt;!pattern)A</code> could be used to extract the meters.</p>
 <p>The negative lookahead returns everything that is not followed by the defined pattern. The look behind returns everything that is preceded by the pattern, the negative look behind returns everything that is not preceded by the pattern.</p>
 <p>In the following, we demonstrate how you could extract the centimeters using negative look ahead and look behind.</p>
 <div class="sourceCode" id="cb196"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb196-1"><a href="day4.html#cb196-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str_view</span>(heights, <span class="st">&quot;[0-9]+(?!m)&quot;</span>) <span class="co"># negative look ahead</span></span></code></pre></div>
-<div id="htmlwidget-55e9665f700bd263d264" style="width:960px;height:100%;" class="str_view html-widget"></div>
-<script type="application/json" data-for="htmlwidget-55e9665f700bd263d264">{"x":{"html":"<ul>\n  <li>1m<span class='match'>30<\/span>cm<\/li>\n  <li>2m<span class='match'>01<\/span>cm<\/li>\n  <li>3m<span class='match'>10<\/span>cm<\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-b373a105b79ecd185d42" style="width:960px;height:100%;" class="str_view html-widget"></div>
+<script type="application/json" data-for="htmlwidget-b373a105b79ecd185d42">{"x":{"html":"<ul>\n  <li>1m<span class='match'>30<\/span>cm<\/li>\n  <li>2m<span class='match'>01<\/span>cm<\/li>\n  <li>3m<span class='match'>10<\/span>cm<\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
 <div class="sourceCode" id="cb197"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb197-1"><a href="day4.html#cb197-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str_view</span>(heights, <span class="st">&quot;(?&lt;=m)[0-9]+&quot;</span>) <span class="co"># look behind</span></span></code></pre></div>
-<div id="htmlwidget-c91a9d5e991bbadcd6bb" style="width:960px;height:100%;" class="str_view html-widget"></div>
-<script type="application/json" data-for="htmlwidget-c91a9d5e991bbadcd6bb">{"x":{"html":"<ul>\n  <li>1m<span class='match'>30<\/span>cm<\/li>\n  <li>2m<span class='match'>01<\/span>cm<\/li>\n  <li>3m<span class='match'>10<\/span>cm<\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-1882c43a268e6175e139" style="width:960px;height:100%;" class="str_view html-widget"></div>
+<script type="application/json" data-for="htmlwidget-1882c43a268e6175e139">{"x":{"html":"<ul>\n  <li>1m<span class='match'>30<\/span>cm<\/li>\n  <li>2m<span class='match'>01<\/span>cm<\/li>\n  <li>3m<span class='match'>10<\/span>cm<\/li>\n<\/ul>"},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 </div>
@@ -46556,8 +46557,6 @@ Solution. Click to expand!
 <div id="first-analyses" class="section level2 hasAnchor" number="4.6">
 <h2><span class="header-section-number">4.6</span> First analyses<a href="day4.html#first-analyses" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>A common task in the quantitative analysis of text is to determine how documents differ from each other concerning word usage. This is usually achieved by identifying words that are particular for one document but not for another. These words are referred to by <span class="citation">Monroe, Colaresi, and Quinn (<a href="#ref-monroe_fightin_2008" role="doc-biblioref">2008</a>)</span> as <em>fighting words</em> or, by <span class="citation">Grimmer, Roberts, and Stewart (<a href="#ref-grimmer_text_2022" role="doc-biblioref">2022</a>)</span>, <em>discriminating words</em>. To use the techniques that will be presented today, an already existing organization of the documents is assumed.</p>
-<div id="counting-words-per-document" class="section level3 hasAnchor" number="4.6.1">
-<h3><span class="header-section-number">4.6.1</span> Counting words per document<a href="day4.html#counting-words-per-document" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>The most simple approach to determine which words are more correlated to a certain group of documents is by merely counting them and determining their proportion in the document groups. For illustratory purposes, I use fairy tales from H.C. Andersen which are contained in the <code>hcandersenr</code> package.</p>
 <div class="sourceCode" id="cb268"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb268-1"><a href="day4.html#cb268-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
 <span id="cb268-2"><a href="day4.html#cb268-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -46568,8 +46567,8 @@ Solution. Click to expand!
 <span id="cb268-7"><a href="day4.html#cb268-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb268-8"><a href="day4.html#cb268-8" aria-hidden="true" tabindex="-1"></a>fairytales_tidy <span class="ot">&lt;-</span> fairytales <span class="sc">%&gt;%</span> </span>
 <span id="cb268-9"><a href="day4.html#cb268-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_tokens</span>(<span class="at">output =</span> token, <span class="at">input =</span> text)</span></code></pre></div>
-<div id="naive-approach-raw-counts" class="section level4 hasAnchor" number="4.6.1.1">
-<h4><span class="header-section-number">4.6.1.1</span> Naive approach: raw counts<a href="day4.html#naive-approach-raw-counts" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div id="counting-words-per-document" class="section level3 hasAnchor" number="4.6.1">
+<h3><span class="header-section-number">4.6.1</span> Counting words per document<a href="day4.html#counting-words-per-document" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>For a first, naive analysis, I can merely count the times the terms appear in the texts. Since the text is in <code>tidytext</code> format, I can do so using means from traditional <code>tidyverse</code> packages. I will then visualize the results with a bar plot.</p>
 <div class="sourceCode" id="cb269"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb269-1"><a href="day4.html#cb269-1" aria-hidden="true" tabindex="-1"></a>fairytales_top10 <span class="ot">&lt;-</span> fairytales_tidy <span class="sc">%&gt;%</span> </span>
 <span id="cb269-2"><a href="day4.html#cb269-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(book) <span class="sc">%&gt;%</span> </span>
@@ -46606,8 +46605,8 @@ Solution. Click to expand!
 <p><img src="_main_files/figure-html/unnamed-chunk-138-1.png" width="672" /></p>
 <p>This already looks quite nice, it is quite easy to see which plot belongs to the respective book.</p>
 </div>
-<div id="tf-idf" class="section level4 hasAnchor" number="4.6.1.2">
-<h4><span class="header-section-number">4.6.1.2</span> TF-IDF<a href="day4.html#tf-idf" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div id="tf-idf" class="section level3 hasAnchor" number="4.6.2">
+<h3><span class="header-section-number">4.6.2</span> TF-IDF<a href="day4.html#tf-idf" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>A better definition of words that are particular to a group of documents is “the ones that appear often in one group but rarely in the other one(s)”. So far, the measure of term frequency only accounts for how often terms are used in the respective document. I can take into account how often it appears in other documents by including the inverse document frequency. The resulting measure is called tf-idf and describes “the frequency of a term adjusted for how rarely it is used.” <span class="citation">(<a href="#ref-silge_tidytext_2016" role="doc-biblioref">Silge and Robinson 2016</a>: 31)</span> If a term is rarely used overall but appears comparably often in a singular document, it might be safe to assume that it plays a bigger role in that document.</p>
 <p>The tf-idf of a word in a document is commonly^[Note that multiple implementations exist, for an overview see, for instance, <span class="citation">Manning, Raghavan, and Schütze (<a href="#ref-manning_introduction_2008" role="doc-biblioref">2008</a>)</span>. One implementation is calculated as follows:</p>
 <p><span class="math display">\[w_{i,j}=tf_{i,j}\times ln(\frac{N}{df_{i}})\]</span></p>
@@ -46668,7 +46667,6 @@ Solution. Click to expand!
 <p><img src="_main_files/figure-html/unnamed-chunk-142-1.png" width="672" /></p>
 </div>
 </div>
-</div>
 <div id="converting-between-formats" class="section level2 hasAnchor" number="4.7">
 <h2><span class="header-section-number">4.7</span> Converting between formats<a href="day4.html#converting-between-formats" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>While the <code>tidytext</code> format lends itself nicely to “basic” operations and visualizations, you will have to use different representations of text data for other applications such as topic models or word embeddings. On the other hand, you might want to harness, for instance, the <code>ggplot2</code> package for visualization. In this case, you will need to project the data into a tidy format. The former operations are performed using multiple <code>cast_.*()</code> functions, the latter using the <code>tidy()</code> function from the <code>broom</code> package whose purpose is to bring data from foreign structures to tidy representations.</p>
@@ -46691,13 +46689,16 @@ Solution. Click to expand!
 ## Weighting          : term frequency (tf)</code></pre>
 <p>This data set contains 2246 Associated Press articles which consist of 10,473 different terms. Moreover, the matrix is 99% sparse, meaning that 99% of word-document pairs are zero. The weighting is by term frequency, hence the values correspond to the number of appearances a word has in an article.</p>
 <div class="sourceCode" id="cb281"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb281-1"><a href="day4.html#cb281-1" aria-hidden="true" tabindex="-1"></a>AssociatedPress <span class="sc">%&gt;%</span> </span>
-<span id="cb281-2"><a href="day4.html#cb281-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">2</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb281-2"><a href="day4.html#cb281-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">5</span>) <span class="sc">%&gt;%</span> </span>
 <span id="cb281-3"><a href="day4.html#cb281-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.matrix</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb281-4"><a href="day4.html#cb281-4" aria-hidden="true" tabindex="-1"></a>  .[, <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>]</span></code></pre></div>
+<span id="cb281-4"><a href="day4.html#cb281-4" aria-hidden="true" tabindex="-1"></a>  .[, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>]</span></code></pre></div>
 <pre><code>##       Terms
-## Docs   aaron abandon abandoned abandoning abbott abboud abc abcs abctvs abdomen
-##   [1,]     0       0         0          0      0      0   0    0      0       0
-##   [2,]     0       0         0          0      0      0   0    0      0       0</code></pre>
+## Docs   aaron abandon abandoned abandoning abbott
+##   [1,]     0       0         0          0      0
+##   [2,]     0       0         0          0      0
+##   [3,]     0       0         0          0      0
+##   [4,]     0       0         0          0      0
+##   [5,]     0       0         0          0      0</code></pre>
 <p>Bringing these data into a tidy format is performed as follows:</p>
 <div class="sourceCode" id="cb283"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb283-1"><a href="day4.html#cb283-1" aria-hidden="true" tabindex="-1"></a>associated_press_tidy <span class="ot">&lt;-</span> <span class="fu">tidy</span>(AssociatedPress)</span>
 <span id="cb283-2"><a href="day4.html#cb283-2" aria-hidden="true" tabindex="-1"></a></span>
