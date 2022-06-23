@@ -9,11 +9,11 @@ The scripts are ordered in the way the material is taught. Throughout the course
 The following list connects the corresponding files:
 
 * Day 1: intro to CSS and ethical considerations ([slides: Intro to CSS](slides/sicss2022-day1.1_welcome.pdf), [slides: Logistics](slides/sicss2022-day1.2_logistics.pdf), [slides: Ethical considerations](slides/sicss2022-day1.3_scraping-ethics.pdf), [R material](bookdown_script/index.Rmd)
-* Day 2: scraping structured content from the web ([slides: scraping structured format](slides/sicss2022-day2_scraping-structured.pdf), [R material](bookdown_script/01-scraping_structured.Rmd))
-* Day 3: scraping unstructured content from the web ([slides](slides/sicss2022-day3_unstructured.pdf), [R material](bookdown_script/02-scraping_unstructured.Rmd))
-* Day 4: text preprocessing ([slides](), [R material](bookdown_script/03-scraping_unstructured.Rmd))
-* Day 5: classification and prediction with text ([slides](), [R material](bookdown_script/04-scraping_unstructured.Rmd))
-* Day 6: advanced language modeling ([slides](), [R material](bookdown_script/02-scraping_unstructured.Rmd))
+* Day 2: scraping the web ([slides: scraping structured format](slides/sicss2022-day2_how_the_web.pdf), [R material](bookdown_script/01-scraping_structured.Rmd))
+* Day 3: scraping unstructured content from the web ([slides](slides/sicss2022-day3_structured.pdf), [R material](bookdown_script/02-scraping_unstructured.Rmd))
+* Day 4: text preprocessing ([slides on regexes](sicss2022-day4.1_unstructured), [slides on text as data](slides/sicss2022-day4.2_text-as-data.pdf), [R material](bookdown_script/03-text_preprocessing.Rmd))
+* Day 5: classification and prediction with text ([slides](), [R material](bookdown_script/04-ml.Rmd))
+* Day 6: advanced language modeling ([slides](), [R material]())
 
 The solutions to the exercises are included in the script. You can use [this RMD file](bookdown_script/_exercises.Rmd) to get the "raw exercises" without solutions. 
 
