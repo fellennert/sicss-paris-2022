@@ -524,6 +524,14 @@ glimpse(sotu_20cent_tokenized)
 
 The new tibble consists of `r sotu_20cent_tokenized %>% nrow()` rows. Please note that usually, you have to put some sort of id column into your original tibble before tokenizing it, e.g., by giving each case -- representing a document, or chapter, or whatever -- a separate id (e.g., using `tibble::rowid_to_column()`). This does not apply here, because my original tibble came with a bunch of metadata (president, year, party) which serve as sufficient identifiers.
 
+`unnest_ngrams()` can be used to split the text into ngrams. 
+
+```{r}
+sotu_20cent_raw %>% 
+  unnest_ngrams(output = ngrams, input = text, n = 3L, n_min = 2L)
+```
+
+
 #### Removal of unnecessary content
 
 The next step is to remove stop words -- they are not necessary for the analyses we want to perform. The `stopwords` [@benoit_stopwords_2020] package has a nice list for English.
@@ -790,7 +798,7 @@ $$w_{i,j}=tf_{i,j}\times ln(\frac{N}{df_{i}})$$
 
 --\> $N$: total number of documents
 
-Note that the $ln$ is included so that words that appear in all documents -- and do therefore not have discriminatory power -- will automatically get a value of 0. This is because $ln(1) = 0$. On the other hand, if a term appears in, say, 4 out of 20 documents, its idf is $ln(20/4) = ln(5) = 1.6$.
+Note that the $ln$ is included so that words that appear in all documents -- and do therefore not have discriminatory power -- will automatically get a value of 0. This is because $ln(1) = 0$. On the other hand, if a term appears in, say, 4 out of 20 documents, its ln(idf) is $ln(20/4) = ln(5) = 1.6$.
 
 The `tidytext` package provides a neat implementation for calculating the tf-idf called `bind_tfidf()`. It takes as input the columns containing the `term`, the `document`, and the document-term counts `n`.
 
@@ -809,13 +817,13 @@ fairytales_top10_tfidf %>%
   scale_y_reordered() +
   labs(y = "token") +
   facet_wrap(vars(book), scales = "free") +
-  theme(strip.text.x = element_blank(),
-        axis.title.x = element_blank(),
-        axis.text.x = element_blank(),
-        axis.ticks.x = element_blank())
+  #theme(strip.text.x = element_blank(),
+  #      axis.title.x = element_blank(),
+  #      axis.text.x = element_blank(),
+  #      axis.ticks.x = element_blank())
 ```
 
-Pretty good already! All the fairytales can be clearly identified. A problem with this representation is that I cannot straightforwardly interpret the x-axis values (they can be removed by uncommenting the last three lines). A way to mitigate this is using odds.
+Pretty good already! All the fairytales can be clearly identified. A problem with this representation is that I cannot straightforwardly interpret the x-axis values (they can be removed by uncommenting the last four lines). A way to mitigate this is using odds.
 
 Another shortcoming becomes visible when I take the terms with the highest TF-IDF as compared to all other fairytales.
 
