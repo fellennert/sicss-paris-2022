@@ -71,7 +71,7 @@ example_tbl
 
 ### Preprocessing and analyses
 
-1. Download the Twitter timeline data (`timelines <- read_csv("https://www.dropbox.com/s/pat7muh816yhxlj/sample.csv?dl=1")`. Preprocess the Tweets. 
+1. Download the Twitter timeline data (`timelines <- read_csv(""https://www.dropbox.com/s/dpu5m3xqz4u4nv7/tweets_house_rep_party.csv?dl=1"")`. Preprocess the Tweets. 
   a. Unnest the tokens.
   b. Remove stop words. 
   c. Perform stemming. 
