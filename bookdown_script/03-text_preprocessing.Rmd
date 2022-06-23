@@ -538,7 +538,6 @@ sotu_20cent_raw %>%
   unnest_ngrams(output = ngrams, input = text, n = 3L, n_min = 2L)
 ```
 
-
 #### Removal of unnecessary content
 
 The next step is to remove stop words -- they are not necessary for the analyses we want to perform. The `stopwords` [@benoit_stopwords_2020] package has a nice list for English.
@@ -729,8 +728,6 @@ The `spacyr` package of course has some more functions such as dependency parsin
 
 A common task in the quantitative analysis of text is to determine how documents differ from each other concerning word usage. This is usually achieved by identifying words that are particular for one document but not for another. These words are referred to by @monroe_fightin_2008 as *fighting words* or, by @grimmer_text_2022, *discriminating words*. To use the techniques that will be presented today, an already existing organization of the documents is assumed.
 
-### Counting words per document
-
 The most simple approach to determine which words are more correlated to a certain group of documents is by merely counting them and determining their proportion in the document groups. For illustratory purposes, I use fairy tales from H.C. Andersen which are contained in the `hcandersenr` package.
 
 ```{r message=FALSE, warning=FALSE}
@@ -745,7 +742,7 @@ fairytales_tidy <- fairytales %>%
   unnest_tokens(output = token, input = text)
 ```
 
-#### Naive approach: raw counts
+### Counting words per document
 
 For a first, naive analysis, I can merely count the times the terms appear in the texts. Since the text is in `tidytext` format, I can do so using means from traditional `tidyverse` packages. I will then visualize the results with a bar plot. 
 
@@ -795,7 +792,7 @@ fairytales_top10_nostop %>%
 
 This already looks quite nice, it is quite easy to see which plot belongs to the respective book. 
 
-#### TF-IDF
+### TF-IDF
 
 A better definition of words that are particular to a group of documents is "the ones that appear often in one group but rarely in the other one(s)". So far, the measure of term frequency only accounts for how often terms are used in the respective document. I can take into account how often it appears in other documents by including the inverse document frequency. The resulting measure is called tf-idf and describes "the frequency of a term adjusted for how rarely it is used." [@silge_tidytext_2016: 31] If a term is rarely used overall but appears comparably often in a singular document, it might be safe to assume that it plays a bigger role in that document.
 
@@ -900,9 +897,9 @@ This data set contains 2246 Associated Press articles which consist of 10,473 di
 
 ```{r}
 AssociatedPress %>% 
-  head(2) %>% 
+  head(5) %>% 
   as.matrix() %>% 
-  .[, 1:10]
+  .[, 1:5]
 ```
 
 Bringing these data into a tidy format is performed as follows:

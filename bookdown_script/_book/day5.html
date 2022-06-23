@@ -350,7 +350,7 @@ div.csl-indent {
 <span id="cb310-6"><a href="day5.html#cb310-6" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(imdb_train)</span></code></pre></div>
 <pre><code>## Rows: 20,000
 ## Columns: 2
-## $ text      &lt;chr&gt; &quot;Once again Mr. Costner has dragged out a movie for far long…
+## $ text      &lt;chr&gt; &quot;This is an example of why the majority of action films are …
 ## $ sentiment &lt;chr&gt; &quot;negative&quot;, &quot;negative&quot;, &quot;negative&quot;, &quot;negative&quot;, &quot;negative&quot;, …</code></pre>
 <div class="sourceCode" id="cb312"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb312-1"><a href="day5.html#cb312-1" aria-hidden="true" tabindex="-1"></a>imdb_train <span class="sc">%&gt;%</span> <span class="fu">count</span>(sentiment)</span></code></pre></div>
 <pre><code>## # A tibble: 2 × 2
@@ -377,14 +377,14 @@ div.csl-indent {
 <pre><code>## # A tibble: 20,000 × 1,001
 ##    sentiment tf_text_1 tf_text_10 tf_text_2 tf_text_20 tf_text_3 tf_text_4
 ##    &lt;fct&gt;         &lt;dbl&gt;      &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
-##  1 negative          0          0         0          0         0         0
+##  1 negative          0          1         0          0         0         1
 ##  2 negative          1          0         1          0         0         0
 ##  3 negative          0          0         0          0         1         0
 ##  4 negative          0          0         0          0         0         0
 ##  5 negative          0          0         0          0         0         0
-##  6 negative          0          0         0          0         0         0
+##  6 negative          0          1         1          0         0         0
 ##  7 negative          0          0         0          0         0         0
-##  8 negative          0          0         0          0         0         0
+##  8 negative          1          0         1          0         0         0
 ##  9 negative          0          0         0          0         0         0
 ## 10 negative          0          0         0          0         0         0
 ## # … with 19,990 more rows, and 994 more variables: tf_text_5 &lt;dbl&gt;,
@@ -615,8 +615,8 @@ div.csl-indent {
 <pre><code>## # A tibble: 2 × 4
 ##   .metric  .estimator .estimate .config             
 ##   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
-## 1 accuracy binary         0.856 Preprocessor1_Model1
-## 2 roc_auc  binary         0.929 Preprocessor1_Model1</code></pre>
+## 1 accuracy binary         0.855 Preprocessor1_Model1
+## 2 roc_auc  binary         0.927 Preprocessor1_Model1</code></pre>
 <div class="sourceCode" id="cb342"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb342-1"><a href="day5.html#cb342-1" aria-hidden="true" tabindex="-1"></a><span class="fu">collect_predictions</span>(final_fitted) <span class="sc">%&gt;%</span></span>
 <span id="cb342-2"><a href="day5.html#cb342-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">conf_mat</span>(<span class="at">truth =</span> sentiment, <span class="at">estimate =</span> .pred_class) <span class="sc">%&gt;%</span></span>
 <span id="cb342-3"><a href="day5.html#cb342-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">autoplot</span>(<span class="at">type =</span> <span class="st">&quot;heatmap&quot;</span>)</span></code></pre></div>
