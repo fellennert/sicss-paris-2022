@@ -72,7 +72,7 @@ CSS is the abbreviation for cascading style sheets and is used to define the vis
 * `p` selects all `<p>` elements.
 
 ```{r}
-basic_html %>% html_elements(css = "p")
+basic_html %>% html_elements(css = "h1")
 ```
 
 * `.title` selects all elements that are of `class` "title"
@@ -90,7 +90,7 @@ basic_html %>% html_elements(css = ".paragraph")
 * `p.paragraph` analogously takes every `<p>` element which is of `class` "paragraph". 
 
 ```{r}
-basic_html %>% html_elements(css = "a.paragraph")
+basic_html %>% html_elements(css = "p.paragraph")
 ```
 
 * `#link` scrapes elements that are of `id` "link"
@@ -109,6 +109,9 @@ You can also look at the children by using `html_children()`:
 
 ```{r}
 basic_html %>% html_elements(css = "a.paragraph") %>% html_children()
+
+read_html("https://rvest.tidyverse.org") %>% 
+  html_elements("#installation , p")
 ```
 
 Unfortunately, web pages in the wild are usually not as easily readable as the small example one I came up with. Hence, I would recommend you to use the [SelectorGadget](javascript:(function()%7Bvar%20s=document.createElement('div');s.innerHTML='Loading...';s.style.color='black';s.style.padding='20px';s.style.position='fixed';s.style.zIndex='9999';s.style.fontSize='3.0em';s.style.border='2px%20solid%20black';s.style.right='40px';s.style.top='40px';s.setAttribute('class','selector_gadget_loading');s.style.background='white';document.body.appendChild(s);s=document.createElement('script');s.setAttribute('type','text/javascript');s.setAttribute('src','https://dv0akt2986vzh.cloudfront.net/unstable/lib/selectorgadget.js');document.body.appendChild(s);%7D)();) -- just drag it into your bookmarks list.
@@ -163,7 +166,7 @@ A "real example" would then look like this:
 ```{r}
 us_senators <- read_html("https://en.wikipedia.org/wiki/List_of_current_United_States_senators")
 text <- us_senators %>%
-  html_element(css = "p:nth-child(6)") %>% 
+  html_elements(css = "p:nth-child(6)") %>% 
   html_text2()
 ```
 
@@ -175,7 +178,7 @@ The general output format we strive for is a tibble. Oftentimes, data is already
 tables <- us_senators %>% 
   html_table()
 
-# str(tables)
+str(tables)
 ```
 
 Here, the table I want is the sixth one. We can grab it by either using double square brackets -- `[[6]]` -- or `purrr`'s `pluck(6)`.
@@ -189,7 +192,7 @@ glimpse(senators)
 
 ## alternative approach using css
 senators <- us_senators %>% 
-  html_elements("#senators") %>% 
+  html_elements(css = "#senators") %>% 
   html_table() %>% 
   pluck(1) %>% 
   clean_names()
@@ -210,7 +213,7 @@ A quick check with the SelectorGadget told me that the element I am looking for 
 ```{r}
 r_blogger_postings <- rbloggers %>% html_elements(css = ".loop-title a")
 
-r_blogger_postings %>% html_attrs() %>% .[1:2] 
+r_blogger_postings %>% html_attr("href")
 ```
 
 Links are stored as attribute "href" -- hyperlink reference. `html_attr()` allows me to extract the attribute's value. Hence, building a tibble with the article's title and its corresponding hyperlink is straight-forward now:
@@ -219,8 +222,7 @@ Links are stored as attribute "href" -- hyperlink reference. `html_attr()` allow
 tibble(
   title = r_blogger_postings %>% html_text2(),
   link = r_blogger_postings %>% html_attr(name = "href")
-) %>% 
-  glimpse()
+)
 ```
 
 Another approach for this would be using the `polite` package and its function `html_attrs_dfr()` which binds together all the different attributes column-wise and the different elements row-wise.
@@ -265,7 +267,7 @@ str_sub(url_2, start = initial_dist[[1]][1]-5, end = initial_dist[[1]][1]+5)
 There is some sort of underlying pattern and we can harness that. `url_1` refers to the second page, `url_2` to the third. Hence, if we just combine the basic URL and, say, the numbers from 1 to 10, we could then visit all the pages (exercise 3a) and extract the content we want.
 
 ```{r}
-urls <- str_c("https://www.r-bloggers.com/page/", 1:10, "/")
+urls <- str_c("https://www.r-bloggers.com/page/", 1:10, "/") # this is the stringr equivalent of paste()
 urls
 ```
 
@@ -273,7 +275,7 @@ You can run this in a for-loop, here's a quick revision. For the loop to run eff
 
 ```{r eval=FALSE}
 ## THIS IS PSEUDO CODE!!!
-result_list <- vector(mode = "list", length = length(urls))
+result_list <- vector(mode = "list", length = length(urls)) # pre-allocate space!!!
 starting_link <- 
 for (i in seq_along(urls)){
   read in urls[[i]]
@@ -292,10 +294,11 @@ Hence, our `while` loop in pseudo-code will look like this:
 output_list <- vector(mode = "list", length = 10L)
 i <- 0
 while (session$response$status_code == 200 && i <= 10) {
+  session(start-url)
   i <- i + 1
   read in r-bloggers results list
   get all stuff and store it in output_list[[i]]
-  go to next page
+  move session to next page
 }
 
 ### reminder: how to click a button in rvest
@@ -349,6 +352,10 @@ tibble(
     html_text() %>% 
     parse_double()
 )
+
+imdb_top250 %>% 
+    html_elements("a") %>% 
+    html_text2()
 ```
 </details>
 
@@ -376,13 +383,13 @@ mp_table <- read_html("https://en.wikipedia.org/wiki/List_of_MPs_elected_in_the_
   clean_names()
 
 #b  
-mp_names <- read_html("https://en.wikipedia.org/wiki/List_of_MPs_elected_in_the_2019_United_Kingdom_general_election") %>% 
+mp_links <- read_html("https://en.wikipedia.org/wiki/List_of_MPs_elected_in_the_2019_United_Kingdom_general_election") %>% 
   html_elements("#elected-mps b a") %>% 
   html_attr("href")
 
 table_w_link <- mp_table %>% 
-  mutate(link = mp_names %>% 
-           url_absolute("https://en.wikipedia.org/"))
+  mutate(link = mp_links %>% 
+           paste0("https://en.wikipedia.org", .))
 
 #c
 link <- table_w_link %>% 
@@ -420,7 +427,7 @@ mp_wiki_entries_tbl <- table_w_link %>%
 3. Scrape the 10 first pages of [R-bloggers](https://www.r-bloggers.com) in an automated fashion. Make sure to take breaks between requests by including `Sys.sleep(2)`.
   a. Do so using the url vector we created above.
   b. Do so by getting the link for the next page and a loop.
-  c. Do so by using `html_session()` in a loop.
+  c. Do so by using `session()` in a loop.
 
 <details>
   <summary>Solution. Click to expand!</summary>

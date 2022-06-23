@@ -25,7 +25,7 @@
 <meta name="author" content="Étienne Ollion" />
 
 
-<meta name="date" content="2022-06-20" />
+<meta name="date" content="2022-06-22" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -345,65 +345,66 @@ My cat is <b> very </b> grumpy
 </div>
 <div id="extracting-content-in-rvest" class="section level2 hasAnchor" number="3.2">
 <h2><span class="header-section-number">3.2</span> Extracting content in <code>rvest</code><a href="day3.html#extracting-content-in-rvest" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>To scrape the web, the first step is to simply read in the web page. <code>rvest</code> then stores it in the XML format – just another format to store information. For this, we use <code>rvest</code>’s <code>read_html()</code> function. Here, for instance, I download the Wikipedia page of U.S. American senators.</p>
+<p>To scrape the web, the first step is to simply read in the web page. <code>rvest</code> then stores it in the XML format – just another format to store information. For this, we use <code>rvest</code>’s <code>read_html()</code> function.</p>
 <p>To demonstrate the usage of CSS selectors, I create my own, basic web page using the <code>rvest</code> function <code>minimal_html()</code>:</p>
-<div class="sourceCode" id="cb78"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb78-1"><a href="day3.html#cb78-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rvest)</span>
-<span id="cb78-2"><a href="day3.html#cb78-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb78-3"><a href="day3.html#cb78-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb78-4"><a href="day3.html#cb78-4" aria-hidden="true" tabindex="-1"></a>basic_html <span class="ot">&lt;-</span> <span class="fu">minimal_html</span>(<span class="st">&#39;</span></span>
-<span id="cb78-5"><a href="day3.html#cb78-5" aria-hidden="true" tabindex="-1"></a><span class="st">  &lt;html&gt;</span></span>
-<span id="cb78-6"><a href="day3.html#cb78-6" aria-hidden="true" tabindex="-1"></a><span class="st">  &lt;head&gt;</span></span>
-<span id="cb78-7"><a href="day3.html#cb78-7" aria-hidden="true" tabindex="-1"></a><span class="st">    &lt;title&gt;Page title&lt;/title&gt;</span></span>
-<span id="cb78-8"><a href="day3.html#cb78-8" aria-hidden="true" tabindex="-1"></a><span class="st">  &lt;/head&gt;</span></span>
-<span id="cb78-9"><a href="day3.html#cb78-9" aria-hidden="true" tabindex="-1"></a><span class="st">  &lt;body&gt;</span></span>
-<span id="cb78-10"><a href="day3.html#cb78-10" aria-hidden="true" tabindex="-1"></a><span class="st">    &lt;h1 id=&quot;first&quot;&gt;A heading&lt;/h1&gt;</span></span>
-<span id="cb78-11"><a href="day3.html#cb78-11" aria-hidden="true" tabindex="-1"></a><span class="st">    &lt;p class=&quot;paragraph&quot;&gt;Some text &amp;amp; &lt;b&gt;some bold text.&lt;/b&gt;&lt;/p&gt;</span></span>
-<span id="cb78-12"><a href="day3.html#cb78-12" aria-hidden="true" tabindex="-1"></a><span class="st">    &lt;a&gt; Some more &lt;i&gt; italicized text which is not in a paragraph. &lt;/i&gt; &lt;/a&gt;</span></span>
-<span id="cb78-13"><a href="day3.html#cb78-13" aria-hidden="true" tabindex="-1"></a><span class="st">    &lt;a class=&quot;paragraph&quot;&gt;even more text &amp;amp; &lt;i&gt;some italicized text.&lt;/i&gt;&lt;/p&gt;</span></span>
-<span id="cb78-14"><a href="day3.html#cb78-14" aria-hidden="true" tabindex="-1"></a><span class="st">    &lt;a id=&quot;link&quot; href=&quot;www.nyt.com&quot;&gt; The New York Times &lt;/a&gt;</span></span>
-<span id="cb78-15"><a href="day3.html#cb78-15" aria-hidden="true" tabindex="-1"></a><span class="st">  &lt;/body&gt;</span></span>
-<span id="cb78-16"><a href="day3.html#cb78-16" aria-hidden="true" tabindex="-1"></a><span class="st">&#39;</span>)</span>
-<span id="cb78-17"><a href="day3.html#cb78-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb78-18"><a href="day3.html#cb78-18" aria-hidden="true" tabindex="-1"></a>basic_html</span></code></pre></div>
+<div class="sourceCode" id="cb81"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb81-1"><a href="day3.html#cb81-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rvest)</span>
+<span id="cb81-2"><a href="day3.html#cb81-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb81-3"><a href="day3.html#cb81-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-4"><a href="day3.html#cb81-4" aria-hidden="true" tabindex="-1"></a>basic_html <span class="ot">&lt;-</span> <span class="fu">minimal_html</span>(<span class="st">&#39;</span></span>
+<span id="cb81-5"><a href="day3.html#cb81-5" aria-hidden="true" tabindex="-1"></a><span class="st">  &lt;html&gt;</span></span>
+<span id="cb81-6"><a href="day3.html#cb81-6" aria-hidden="true" tabindex="-1"></a><span class="st">  &lt;head&gt;</span></span>
+<span id="cb81-7"><a href="day3.html#cb81-7" aria-hidden="true" tabindex="-1"></a><span class="st">    &lt;title&gt;Page title&lt;/title&gt;</span></span>
+<span id="cb81-8"><a href="day3.html#cb81-8" aria-hidden="true" tabindex="-1"></a><span class="st">  &lt;/head&gt;</span></span>
+<span id="cb81-9"><a href="day3.html#cb81-9" aria-hidden="true" tabindex="-1"></a><span class="st">  &lt;body&gt;</span></span>
+<span id="cb81-10"><a href="day3.html#cb81-10" aria-hidden="true" tabindex="-1"></a><span class="st">    &lt;h1 id=&quot;first&quot;&gt;A heading&lt;/h1&gt;</span></span>
+<span id="cb81-11"><a href="day3.html#cb81-11" aria-hidden="true" tabindex="-1"></a><span class="st">    &lt;p class=&quot;paragraph&quot;&gt;Some text &amp;amp; &lt;b&gt;some bold text.&lt;/b&gt;&lt;/p&gt;</span></span>
+<span id="cb81-12"><a href="day3.html#cb81-12" aria-hidden="true" tabindex="-1"></a><span class="st">    &lt;a&gt; Some more &lt;i&gt; italicized text which is not in a paragraph. &lt;/i&gt; &lt;/a&gt;</span></span>
+<span id="cb81-13"><a href="day3.html#cb81-13" aria-hidden="true" tabindex="-1"></a><span class="st">    &lt;a class=&quot;paragraph&quot;&gt;even more text &amp;amp; &lt;i&gt;some italicized text.&lt;/i&gt;&lt;/p&gt;</span></span>
+<span id="cb81-14"><a href="day3.html#cb81-14" aria-hidden="true" tabindex="-1"></a><span class="st">    &lt;a id=&quot;link&quot; href=&quot;www.nyt.com&quot;&gt; The New York Times &lt;/a&gt;</span></span>
+<span id="cb81-15"><a href="day3.html#cb81-15" aria-hidden="true" tabindex="-1"></a><span class="st">  &lt;/body&gt;</span></span>
+<span id="cb81-16"><a href="day3.html#cb81-16" aria-hidden="true" tabindex="-1"></a><span class="st">&#39;</span>)</span>
+<span id="cb81-17"><a href="day3.html#cb81-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-18"><a href="day3.html#cb81-18" aria-hidden="true" tabindex="-1"></a>basic_html</span></code></pre></div>
 <pre><code>## {html_document}
 ## &lt;html&gt;
 ## [1] &lt;head&gt;\n&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=UTF-8 ...
 ## [2] &lt;body&gt;\n    &lt;h1 id=&quot;first&quot;&gt;A heading&lt;/h1&gt;\n    &lt;p class=&quot;paragraph&quot;&gt;Some  ...</code></pre>
+<div class="sourceCode" id="cb83"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb83-1"><a href="day3.html#cb83-1" aria-hidden="true" tabindex="-1"></a><span class="co">#https://htmledit.squarefree.com</span></span></code></pre></div>
 <p>CSS is the abbreviation for cascading style sheets and is used to define the visual styling of HTML documents. CSS selectors map elements in the HTML code to the relevant styles in the CSS. Hence, they define patterns that allow us to easily select certain elements on the page. CSS selectors can be used in conjunction with the <code>rvest</code> function <code>html_elements()</code> which takes as arguments the read-in page and a CSS selector. Alternatively, you can also provide an XPath which is usually a bit more complicated and will not be covered in this tutorial.</p>
 <ul>
 <li><code>p</code> selects all <code>&lt;p&gt;</code> elements.</li>
 </ul>
-<div class="sourceCode" id="cb80"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb80-1"><a href="day3.html#cb80-1" aria-hidden="true" tabindex="-1"></a>basic_html <span class="sc">%&gt;%</span> <span class="fu">html_elements</span>(<span class="at">css =</span> <span class="st">&quot;p&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb84"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb84-1"><a href="day3.html#cb84-1" aria-hidden="true" tabindex="-1"></a>basic_html <span class="sc">%&gt;%</span> <span class="fu">html_elements</span>(<span class="at">css =</span> <span class="st">&quot;p&quot;</span>)</span></code></pre></div>
 <pre><code>## {xml_nodeset (1)}
 ## [1] &lt;p class=&quot;paragraph&quot;&gt;Some text &amp;amp; &lt;b&gt;some bold text.&lt;/b&gt;&lt;/p&gt;</code></pre>
 <ul>
 <li><code>.title</code> selects all elements that are of <code>class</code> “title”</li>
 </ul>
-<div class="sourceCode" id="cb82"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb82-1"><a href="day3.html#cb82-1" aria-hidden="true" tabindex="-1"></a>basic_html <span class="sc">%&gt;%</span> <span class="fu">html_elements</span>(<span class="at">css =</span> <span class="st">&quot;.title&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb86"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb86-1"><a href="day3.html#cb86-1" aria-hidden="true" tabindex="-1"></a>basic_html <span class="sc">%&gt;%</span> <span class="fu">html_elements</span>(<span class="at">css =</span> <span class="st">&quot;.title&quot;</span>)</span></code></pre></div>
 <pre><code>## {xml_nodeset (0)}</code></pre>
 <p>There are no elements of <code>class</code> “title”. But some of <code>class</code> “paragraph”.</p>
-<div class="sourceCode" id="cb84"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb84-1"><a href="day3.html#cb84-1" aria-hidden="true" tabindex="-1"></a>basic_html <span class="sc">%&gt;%</span> <span class="fu">html_elements</span>(<span class="at">css =</span> <span class="st">&quot;.paragraph&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb88"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb88-1"><a href="day3.html#cb88-1" aria-hidden="true" tabindex="-1"></a>basic_html <span class="sc">%&gt;%</span> <span class="fu">html_elements</span>(<span class="at">css =</span> <span class="st">&quot;.paragraph&quot;</span>)</span></code></pre></div>
 <pre><code>## {xml_nodeset (2)}
 ## [1] &lt;p class=&quot;paragraph&quot;&gt;Some text &amp;amp; &lt;b&gt;some bold text.&lt;/b&gt;&lt;/p&gt;
 ## [2] &lt;a class=&quot;paragraph&quot;&gt;even more text &amp;amp; &lt;i&gt;some italicized text.&lt;/i&gt;\n  ...</code></pre>
 <ul>
 <li><code>p.paragraph</code> analogously takes every <code>&lt;p&gt;</code> element which is of <code>class</code> “paragraph”.</li>
 </ul>
-<div class="sourceCode" id="cb86"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb86-1"><a href="day3.html#cb86-1" aria-hidden="true" tabindex="-1"></a>basic_html <span class="sc">%&gt;%</span> <span class="fu">html_elements</span>(<span class="at">css =</span> <span class="st">&quot;a.paragraph&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb90"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb90-1"><a href="day3.html#cb90-1" aria-hidden="true" tabindex="-1"></a>basic_html <span class="sc">%&gt;%</span> <span class="fu">html_elements</span>(<span class="at">css =</span> <span class="st">&quot;a.paragraph&quot;</span>)</span></code></pre></div>
 <pre><code>## {xml_nodeset (1)}
 ## [1] &lt;a class=&quot;paragraph&quot;&gt;even more text &amp;amp; &lt;i&gt;some italicized text.&lt;/i&gt;\n  ...</code></pre>
 <ul>
 <li><code>#link</code> scrapes elements that are of <code>id</code> “link”</li>
 </ul>
-<div class="sourceCode" id="cb88"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb88-1"><a href="day3.html#cb88-1" aria-hidden="true" tabindex="-1"></a>basic_html <span class="sc">%&gt;%</span> <span class="fu">html_elements</span>(<span class="at">css =</span> <span class="st">&quot;#link&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb92"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb92-1"><a href="day3.html#cb92-1" aria-hidden="true" tabindex="-1"></a>basic_html <span class="sc">%&gt;%</span> <span class="fu">html_elements</span>(<span class="at">css =</span> <span class="st">&quot;#link&quot;</span>)</span></code></pre></div>
 <pre><code>## {xml_nodeset (1)}
 ## [1] &lt;a id=&quot;link&quot; href=&quot;www.nyt.com&quot;&gt; The New York Times &lt;/a&gt;</code></pre>
 <p>You can also connect children with their parents by using the <code></code> combinator. For instance, to extract the italicized text from “a.paragraph,” I can do “a.paragraph i”.</p>
-<div class="sourceCode" id="cb90"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb90-1"><a href="day3.html#cb90-1" aria-hidden="true" tabindex="-1"></a>basic_html <span class="sc">%&gt;%</span> <span class="fu">html_elements</span>(<span class="at">css =</span> <span class="st">&quot;a.paragraph i&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb94"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb94-1"><a href="day3.html#cb94-1" aria-hidden="true" tabindex="-1"></a>basic_html <span class="sc">%&gt;%</span> <span class="fu">html_elements</span>(<span class="at">css =</span> <span class="st">&quot;a.paragraph i&quot;</span>)</span></code></pre></div>
 <pre><code>## {xml_nodeset (1)}
 ## [1] &lt;i&gt;some italicized text.&lt;/i&gt;</code></pre>
 <p>You can also look at the children by using <code>html_children()</code>:</p>
-<div class="sourceCode" id="cb92"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb92-1"><a href="day3.html#cb92-1" aria-hidden="true" tabindex="-1"></a>basic_html <span class="sc">%&gt;%</span> <span class="fu">html_elements</span>(<span class="at">css =</span> <span class="st">&quot;a.paragraph&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">html_children</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb96"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb96-1"><a href="day3.html#cb96-1" aria-hidden="true" tabindex="-1"></a>basic_html <span class="sc">%&gt;%</span> <span class="fu">html_elements</span>(<span class="at">css =</span> <span class="st">&quot;a.paragraph&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">html_children</span>()</span></code></pre></div>
 <pre><code>## {xml_nodeset (1)}
 ## [1] &lt;i&gt;some italicized text.&lt;/i&gt;</code></pre>
 <p>Unfortunately, web pages in the wild are usually not as easily readable as the small example one I came up with. Hence, I would recommend you to use the <a href="javascript:(function()%7Bvar%20s=document.createElement(&#39;div&#39;);s.innerHTML=&#39;Loading...&#39;;s.style.color=&#39;black&#39;;s.style.padding=&#39;20px&#39;;s.style.position=&#39;fixed&#39;;s.style.zIndex=&#39;9999&#39;;s.style.fontSize=&#39;3.0em&#39;;s.style.border=&#39;2px%20solid%20black&#39;;s.style.right=&#39;40px&#39;;s.style.top=&#39;40px&#39;;s.setAttribute(&#39;class&#39;,&#39;selector_gadget_loading&#39;);s.style.background=&#39;white&#39;;document.body.appendChild(s);s=document.createElement(&#39;script&#39;);s.setAttribute(&#39;type&#39;,&#39;text/javascript&#39;);s.setAttribute(&#39;src&#39;,&#39;https://dv0akt2986vzh.cloudfront.net/unstable/lib/selectorgadget.js&#39;);document.body.appendChild(s);%7D)();">SelectorGadget</a> – just drag it into your bookmarks list.</p>
@@ -425,42 +426,42 @@ My cat is <b> very </b> grumpy
 <h3><span class="header-section-number">3.3.1</span> <code>html_text()</code> and <code>html_text2()</code><a href="day3.html#html_text-and-html_text2" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Extracting text from HTML is easy. You use <code>html_text()</code> or <code>html_text2()</code>. The former is faster but will give you not-so-nice results. The latter will give you the text like it would be returned in a web browser.</p>
 <p>The following example is taken from <a href="https://rvest.tidyverse.org/reference/html_text.html">the documentation</a></p>
-<div class="sourceCode" id="cb94"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb94-1"><a href="day3.html#cb94-1" aria-hidden="true" tabindex="-1"></a><span class="co"># To understand the difference between html_text() and html_text2()</span></span>
-<span id="cb94-2"><a href="day3.html#cb94-2" aria-hidden="true" tabindex="-1"></a><span class="co"># take the following html:</span></span>
-<span id="cb94-3"><a href="day3.html#cb94-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb94-4"><a href="day3.html#cb94-4" aria-hidden="true" tabindex="-1"></a>html <span class="ot">&lt;-</span> <span class="fu">minimal_html</span>(</span>
-<span id="cb94-5"><a href="day3.html#cb94-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;&lt;p&gt;This is a paragraph.</span></span>
-<span id="cb94-6"><a href="day3.html#cb94-6" aria-hidden="true" tabindex="-1"></a><span class="st">    This is another sentence.&lt;br&gt;This should start on a new line&quot;</span></span>
-<span id="cb94-7"><a href="day3.html#cb94-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
-<div class="sourceCode" id="cb95"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb95-1"><a href="day3.html#cb95-1" aria-hidden="true" tabindex="-1"></a><span class="co"># html_text() returns the raw underlying text, which includes white space</span></span>
-<span id="cb95-2"><a href="day3.html#cb95-2" aria-hidden="true" tabindex="-1"></a><span class="co"># that would be ignored by a browser, and ignores the &lt;br&gt;</span></span>
-<span id="cb95-3"><a href="day3.html#cb95-3" aria-hidden="true" tabindex="-1"></a>html <span class="sc">%&gt;%</span> <span class="fu">html_element</span>(<span class="st">&quot;p&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">html_text</span>() <span class="sc">%&gt;%</span> <span class="fu">writeLines</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb98"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb98-1"><a href="day3.html#cb98-1" aria-hidden="true" tabindex="-1"></a><span class="co"># To understand the difference between html_text() and html_text2()</span></span>
+<span id="cb98-2"><a href="day3.html#cb98-2" aria-hidden="true" tabindex="-1"></a><span class="co"># take the following html:</span></span>
+<span id="cb98-3"><a href="day3.html#cb98-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb98-4"><a href="day3.html#cb98-4" aria-hidden="true" tabindex="-1"></a>html <span class="ot">&lt;-</span> <span class="fu">minimal_html</span>(</span>
+<span id="cb98-5"><a href="day3.html#cb98-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;&lt;p&gt;This is a paragraph.</span></span>
+<span id="cb98-6"><a href="day3.html#cb98-6" aria-hidden="true" tabindex="-1"></a><span class="st">    This is another sentence.&lt;br&gt;This should start on a new line&quot;</span></span>
+<span id="cb98-7"><a href="day3.html#cb98-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb99"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb99-1"><a href="day3.html#cb99-1" aria-hidden="true" tabindex="-1"></a><span class="co"># html_text() returns the raw underlying text, which includes white space</span></span>
+<span id="cb99-2"><a href="day3.html#cb99-2" aria-hidden="true" tabindex="-1"></a><span class="co"># that would be ignored by a browser, and ignores the &lt;br&gt;</span></span>
+<span id="cb99-3"><a href="day3.html#cb99-3" aria-hidden="true" tabindex="-1"></a>html <span class="sc">%&gt;%</span> <span class="fu">html_element</span>(<span class="st">&quot;p&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">html_text</span>() <span class="sc">%&gt;%</span> <span class="fu">writeLines</span>()</span></code></pre></div>
 <pre><code>## This is a paragraph.
 ##     This is another sentence.This should start on a new line</code></pre>
-<div class="sourceCode" id="cb97"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb97-1"><a href="day3.html#cb97-1" aria-hidden="true" tabindex="-1"></a><span class="co"># html_text2() simulates what a browser would display. Non-significant</span></span>
-<span id="cb97-2"><a href="day3.html#cb97-2" aria-hidden="true" tabindex="-1"></a><span class="co"># white space is collapsed, and &lt;br&gt; is turned into a line break</span></span>
-<span id="cb97-3"><a href="day3.html#cb97-3" aria-hidden="true" tabindex="-1"></a>html <span class="sc">%&gt;%</span> <span class="fu">html_element</span>(<span class="st">&quot;p&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">html_text2</span>() <span class="sc">%&gt;%</span> <span class="fu">writeLines</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb101"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb101-1"><a href="day3.html#cb101-1" aria-hidden="true" tabindex="-1"></a><span class="co"># html_text2() simulates what a browser would display. Non-significant</span></span>
+<span id="cb101-2"><a href="day3.html#cb101-2" aria-hidden="true" tabindex="-1"></a><span class="co"># white space is collapsed, and &lt;br&gt; is turned into a line break</span></span>
+<span id="cb101-3"><a href="day3.html#cb101-3" aria-hidden="true" tabindex="-1"></a>html <span class="sc">%&gt;%</span> <span class="fu">html_element</span>(<span class="st">&quot;p&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">html_text2</span>() <span class="sc">%&gt;%</span> <span class="fu">writeLines</span>()</span></code></pre></div>
 <pre><code>## This is a paragraph. This is another sentence.
 ## This should start on a new line</code></pre>
 <p>A “real example” would then look like this:</p>
-<div class="sourceCode" id="cb99"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb99-1"><a href="day3.html#cb99-1" aria-hidden="true" tabindex="-1"></a>us_senators <span class="ot">&lt;-</span> <span class="fu">read_html</span>(<span class="st">&quot;https://en.wikipedia.org/wiki/List_of_current_United_States_senators&quot;</span>)</span>
-<span id="cb99-2"><a href="day3.html#cb99-2" aria-hidden="true" tabindex="-1"></a>text <span class="ot">&lt;-</span> us_senators <span class="sc">%&gt;%</span></span>
-<span id="cb99-3"><a href="day3.html#cb99-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_element</span>(<span class="at">css =</span> <span class="st">&quot;p:nth-child(6)&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb99-4"><a href="day3.html#cb99-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_text2</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb103"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb103-1"><a href="day3.html#cb103-1" aria-hidden="true" tabindex="-1"></a>us_senators <span class="ot">&lt;-</span> <span class="fu">read_html</span>(<span class="st">&quot;https://en.wikipedia.org/wiki/List_of_current_United_States_senators&quot;</span>)</span>
+<span id="cb103-2"><a href="day3.html#cb103-2" aria-hidden="true" tabindex="-1"></a>text <span class="ot">&lt;-</span> us_senators <span class="sc">%&gt;%</span></span>
+<span id="cb103-3"><a href="day3.html#cb103-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_element</span>(<span class="at">css =</span> <span class="st">&quot;p:nth-child(6)&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb103-4"><a href="day3.html#cb103-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_text2</span>()</span></code></pre></div>
 </div>
 <div id="extracting-tables" class="section level3 hasAnchor" number="3.3.2">
 <h3><span class="header-section-number">3.3.2</span> Extracting tables<a href="day3.html#extracting-tables" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>The general output format we strive for is a tibble. Oftentimes, data is already stored online in a table format, basically ready for us to analyze them. In the next example, I want to get a table from the Wikipedia page that contains the senators of different States in the United States I have used before. For this first, basic example, I do not use selectors for extracting the right table. You can use <code>rvest::html_table()</code>. It will give you a list containing all tables on this particular page. We can inspect it using <code>str()</code> which returns an overview of the list and the tibbles it contains.</p>
-<div class="sourceCode" id="cb100"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb100-1"><a href="day3.html#cb100-1" aria-hidden="true" tabindex="-1"></a>tables <span class="ot">&lt;-</span> us_senators <span class="sc">%&gt;%</span> </span>
-<span id="cb100-2"><a href="day3.html#cb100-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_table</span>()</span>
-<span id="cb100-3"><a href="day3.html#cb100-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb100-4"><a href="day3.html#cb100-4" aria-hidden="true" tabindex="-1"></a><span class="co"># str(tables)</span></span></code></pre></div>
+<div class="sourceCode" id="cb104"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb104-1"><a href="day3.html#cb104-1" aria-hidden="true" tabindex="-1"></a>tables <span class="ot">&lt;-</span> us_senators <span class="sc">%&gt;%</span> </span>
+<span id="cb104-2"><a href="day3.html#cb104-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_table</span>()</span>
+<span id="cb104-3"><a href="day3.html#cb104-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-4"><a href="day3.html#cb104-4" aria-hidden="true" tabindex="-1"></a><span class="co"># str(tables)</span></span></code></pre></div>
 <p>Here, the table I want is the sixth one. We can grab it by either using double square brackets – <code>[[6]]</code> – or <code>purrr</code>’s <code>pluck(6)</code>.</p>
-<div class="sourceCode" id="cb101"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb101-1"><a href="day3.html#cb101-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor)</span>
-<span id="cb101-2"><a href="day3.html#cb101-2" aria-hidden="true" tabindex="-1"></a>senators <span class="ot">&lt;-</span> tables <span class="sc">%&gt;%</span> </span>
-<span id="cb101-3"><a href="day3.html#cb101-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pluck</span>(<span class="dv">6</span>)</span>
-<span id="cb101-4"><a href="day3.html#cb101-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb101-5"><a href="day3.html#cb101-5" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(senators)</span></code></pre></div>
+<div class="sourceCode" id="cb105"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb105-1"><a href="day3.html#cb105-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor)</span>
+<span id="cb105-2"><a href="day3.html#cb105-2" aria-hidden="true" tabindex="-1"></a>senators <span class="ot">&lt;-</span> tables <span class="sc">%&gt;%</span> </span>
+<span id="cb105-3"><a href="day3.html#cb105-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pluck</span>(<span class="dv">6</span>)</span>
+<span id="cb105-4"><a href="day3.html#cb105-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb105-5"><a href="day3.html#cb105-5" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(senators)</span></code></pre></div>
 <pre><code>## Rows: 100
 ## Columns: 12
 ## $ State                        &lt;chr&gt; &quot;Alabama&quot;, &quot;Alabama&quot;, &quot;Alaska&quot;, &quot;Alaska&quot;,…
@@ -475,56 +476,56 @@ My cat is <b> very </b> grumpy
 ## $ `Assumed office`             &lt;chr&gt; &quot;January 3, 1987&quot;, &quot;January 3, 2021&quot;, &quot;De…
 ## $ Class                        &lt;chr&gt; &quot;2022Class 3&quot;, &quot;2026Class 2&quot;, &quot;2022Class …
 ## $ `Residence[2]`               &lt;chr&gt; &quot;Tuscaloosa&quot;, &quot;Auburn[3]&quot;, &quot;Girdwood&quot;, &quot;A…</code></pre>
-<div class="sourceCode" id="cb103"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb103-1"><a href="day3.html#cb103-1" aria-hidden="true" tabindex="-1"></a><span class="do">## alternative approach using css</span></span>
-<span id="cb103-2"><a href="day3.html#cb103-2" aria-hidden="true" tabindex="-1"></a>senators <span class="ot">&lt;-</span> us_senators <span class="sc">%&gt;%</span> </span>
-<span id="cb103-3"><a href="day3.html#cb103-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_elements</span>(<span class="st">&quot;#senators&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb103-4"><a href="day3.html#cb103-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_table</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb103-5"><a href="day3.html#cb103-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pluck</span>(<span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb103-6"><a href="day3.html#cb103-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clean_names</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb107"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb107-1"><a href="day3.html#cb107-1" aria-hidden="true" tabindex="-1"></a><span class="do">## alternative approach using css</span></span>
+<span id="cb107-2"><a href="day3.html#cb107-2" aria-hidden="true" tabindex="-1"></a>senators <span class="ot">&lt;-</span> us_senators <span class="sc">%&gt;%</span> </span>
+<span id="cb107-3"><a href="day3.html#cb107-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_elements</span>(<span class="st">&quot;#senators&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb107-4"><a href="day3.html#cb107-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_table</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb107-5"><a href="day3.html#cb107-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pluck</span>(<span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb107-6"><a href="day3.html#cb107-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clean_names</span>()</span></code></pre></div>
 <p>You can see that the tibble contains “dirty” names and that the party column appears twice – which will make it impossible to work with the tibble later on. Hence, I use <code>clean_names()</code> from the <code>janitor</code> package to fix that.</p>
 </div>
 <div id="extracting-attributes" class="section level3 hasAnchor" number="3.3.3">
 <h3><span class="header-section-number">3.3.3</span> Extracting attributes<a href="day3.html#extracting-attributes" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>You can also extract attributes such as links using <code>html_attrs()</code>. An example would be to extract the headlines and their corresponding links from r-bloggers.com.</p>
-<div class="sourceCode" id="cb104"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb104-1"><a href="day3.html#cb104-1" aria-hidden="true" tabindex="-1"></a>rbloggers <span class="ot">&lt;-</span> <span class="fu">read_html</span>(<span class="st">&quot;https://www.r-bloggers.com&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb108"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb108-1"><a href="day3.html#cb108-1" aria-hidden="true" tabindex="-1"></a>rbloggers <span class="ot">&lt;-</span> <span class="fu">read_html</span>(<span class="st">&quot;https://www.r-bloggers.com&quot;</span>)</span></code></pre></div>
 <p>A quick check with the SelectorGadget told me that the element I am looking for is of class “.loop-title” and the child of it is “a”, standing for normal text. With <code>html_attrs()</code> I can extract the attributes. This gives me a list of named vectors containing the name of the attribute and the value:</p>
-<div class="sourceCode" id="cb105"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb105-1"><a href="day3.html#cb105-1" aria-hidden="true" tabindex="-1"></a>r_blogger_postings <span class="ot">&lt;-</span> rbloggers <span class="sc">%&gt;%</span> <span class="fu">html_elements</span>(<span class="at">css =</span> <span class="st">&quot;.loop-title a&quot;</span>)</span>
-<span id="cb105-2"><a href="day3.html#cb105-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb105-3"><a href="day3.html#cb105-3" aria-hidden="true" tabindex="-1"></a>r_blogger_postings <span class="sc">%&gt;%</span> <span class="fu">html_attrs</span>() <span class="sc">%&gt;%</span> .[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>] </span></code></pre></div>
+<div class="sourceCode" id="cb109"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb109-1"><a href="day3.html#cb109-1" aria-hidden="true" tabindex="-1"></a>r_blogger_postings <span class="ot">&lt;-</span> rbloggers <span class="sc">%&gt;%</span> <span class="fu">html_elements</span>(<span class="at">css =</span> <span class="st">&quot;.loop-title a&quot;</span>)</span>
+<span id="cb109-2"><a href="day3.html#cb109-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb109-3"><a href="day3.html#cb109-3" aria-hidden="true" tabindex="-1"></a>r_blogger_postings <span class="sc">%&gt;%</span> <span class="fu">html_attrs</span>() <span class="sc">%&gt;%</span> .[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>] </span></code></pre></div>
 <pre><code>## [[1]]
-##                                                                                          href 
-## &quot;https://www.r-bloggers.com/2022/06/how-to-join-data-frames-for-different-column-names-in-r/&quot; 
-##                                                                                           rel 
-##                                                                                    &quot;bookmark&quot; 
+##                                                                                                 href 
+## &quot;https://www.r-bloggers.com/2022/06/offload-shinys-workload-covid-19-processing-for-the-who-europe/&quot; 
+##                                                                                                  rel 
+##                                                                                           &quot;bookmark&quot; 
 ## 
 ## [[2]]
-##                                                                href 
-## &quot;https://www.r-bloggers.com/2022/06/next-today-i-learnt-about-r-2/&quot; 
-##                                                                 rel 
-##                                                          &quot;bookmark&quot;</code></pre>
+##                                                                                              href 
+## &quot;https://www.r-bloggers.com/2022/06/bind-together-two-data-frames-by-their-rows-or-columns-in-r/&quot; 
+##                                                                                               rel 
+##                                                                                        &quot;bookmark&quot;</code></pre>
 <p>Links are stored as attribute “href” – hyperlink reference. <code>html_attr()</code> allows me to extract the attribute’s value. Hence, building a tibble with the article’s title and its corresponding hyperlink is straight-forward now:</p>
-<div class="sourceCode" id="cb107"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb107-1"><a href="day3.html#cb107-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
-<span id="cb107-2"><a href="day3.html#cb107-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> r_blogger_postings <span class="sc">%&gt;%</span> <span class="fu">html_text2</span>(),</span>
-<span id="cb107-3"><a href="day3.html#cb107-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">link =</span> r_blogger_postings <span class="sc">%&gt;%</span> <span class="fu">html_attr</span>(<span class="at">name =</span> <span class="st">&quot;href&quot;</span>)</span>
-<span id="cb107-4"><a href="day3.html#cb107-4" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span> </span>
-<span id="cb107-5"><a href="day3.html#cb107-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">glimpse</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb111"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb111-1"><a href="day3.html#cb111-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
+<span id="cb111-2"><a href="day3.html#cb111-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> r_blogger_postings <span class="sc">%&gt;%</span> <span class="fu">html_text2</span>(),</span>
+<span id="cb111-3"><a href="day3.html#cb111-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">link =</span> r_blogger_postings <span class="sc">%&gt;%</span> <span class="fu">html_attr</span>(<span class="at">name =</span> <span class="st">&quot;href&quot;</span>)</span>
+<span id="cb111-4"><a href="day3.html#cb111-4" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span> </span>
+<span id="cb111-5"><a href="day3.html#cb111-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">glimpse</span>()</span></code></pre></div>
 <pre><code>## Rows: 20
 ## Columns: 2
-## $ title &lt;chr&gt; &quot;How to Join Data Frames for different column names in R&quot;, &quot;Next…
-## $ link  &lt;chr&gt; &quot;https://www.r-bloggers.com/2022/06/how-to-join-data-frames-for-…</code></pre>
+## $ title &lt;chr&gt; &quot;Offload Shiny’s Workload: COVID-19 processing for the WHO/Europ…
+## $ link  &lt;chr&gt; &quot;https://www.r-bloggers.com/2022/06/offload-shinys-workload-covi…</code></pre>
 <p>Another approach for this would be using the <code>polite</code> package and its function <code>html_attrs_dfr()</code> which binds together all the different attributes column-wise and the different elements row-wise.</p>
-<div class="sourceCode" id="cb109"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb109-1"><a href="day3.html#cb109-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(polite)</span>
-<span id="cb109-2"><a href="day3.html#cb109-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb109-3"><a href="day3.html#cb109-3" aria-hidden="true" tabindex="-1"></a>rbloggers <span class="sc">%&gt;%</span> </span>
-<span id="cb109-4"><a href="day3.html#cb109-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_elements</span>(<span class="at">css =</span> <span class="st">&quot;.loop-title a&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb109-5"><a href="day3.html#cb109-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_attrs_dfr</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb109-6"><a href="day3.html#cb109-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="at">title =</span> <span class="dv">3</span>, </span>
-<span id="cb109-7"><a href="day3.html#cb109-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">link =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb109-8"><a href="day3.html#cb109-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">glimpse</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb113"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb113-1"><a href="day3.html#cb113-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(polite)</span>
+<span id="cb113-2"><a href="day3.html#cb113-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb113-3"><a href="day3.html#cb113-3" aria-hidden="true" tabindex="-1"></a>rbloggers <span class="sc">%&gt;%</span> </span>
+<span id="cb113-4"><a href="day3.html#cb113-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_elements</span>(<span class="at">css =</span> <span class="st">&quot;.loop-title a&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb113-5"><a href="day3.html#cb113-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_attrs_dfr</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb113-6"><a href="day3.html#cb113-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="at">title =</span> <span class="dv">3</span>, </span>
+<span id="cb113-7"><a href="day3.html#cb113-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">link =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb113-8"><a href="day3.html#cb113-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">glimpse</span>()</span></code></pre></div>
 <pre><code>## Rows: 20
 ## Columns: 2
-## $ title &lt;chr&gt; &quot;How to Join Data Frames for different column names in R&quot;, &quot;Next…
-## $ link  &lt;chr&gt; &quot;https://www.r-bloggers.com/2022/06/how-to-join-data-frames-for-…</code></pre>
+## $ title &lt;chr&gt; &quot;Offload Shiny’s Workload: COVID-19 processing for the WHO/Europ…
+## $ link  &lt;chr&gt; &quot;https://www.r-bloggers.com/2022/06/offload-shinys-workload-covi…</code></pre>
 </div>
 </div>
 <div id="automating-scraping" class="section level2 hasAnchor" number="3.4">
@@ -535,47 +536,55 @@ My cat is <b> very </b> grumpy
 <div id="looping-over-pages" class="section level3 hasAnchor" number="3.4.1">
 <h3><span class="header-section-number">3.4.1</span> Looping over pages<a href="day3.html#looping-over-pages" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>For the first approach, we need to check the URLs first. How do they change as we navigate through the pages?</p>
-<div class="sourceCode" id="cb111"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb111-1"><a href="day3.html#cb111-1" aria-hidden="true" tabindex="-1"></a>url_1 <span class="ot">&lt;-</span> <span class="st">&quot;https://www.r-bloggers.com/page/2/&quot;</span></span>
-<span id="cb111-2"><a href="day3.html#cb111-2" aria-hidden="true" tabindex="-1"></a>url_2 <span class="ot">&lt;-</span> <span class="st">&quot;https://www.r-bloggers.com/page/3/&quot;</span></span>
-<span id="cb111-3"><a href="day3.html#cb111-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb111-4"><a href="day3.html#cb111-4" aria-hidden="true" tabindex="-1"></a>initial_dist <span class="ot">&lt;-</span> <span class="fu">adist</span>(url_1, url_2, <span class="at">counts =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb111-5"><a href="day3.html#cb111-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">attr</span>(<span class="st">&quot;trafos&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb111-6"><a href="day3.html#cb111-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">diag</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb111-7"><a href="day3.html#cb111-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">str_locate_all</span>(<span class="st">&quot;[^M]&quot;</span>)</span>
-<span id="cb111-8"><a href="day3.html#cb111-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb111-9"><a href="day3.html#cb111-9" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb111-10"><a href="day3.html#cb111-10" aria-hidden="true" tabindex="-1"></a><span class="fu">str_sub</span>(url_1, <span class="at">start =</span> initial_dist[[<span class="dv">1</span>]][<span class="dv">1</span>]<span class="sc">-</span><span class="dv">5</span>, <span class="at">end =</span> initial_dist[[<span class="dv">1</span>]][<span class="dv">1</span>]<span class="sc">+</span><span class="dv">5</span>) <span class="co"># makes sense for longer urls</span></span></code></pre></div>
+<div class="sourceCode" id="cb115"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb115-1"><a href="day3.html#cb115-1" aria-hidden="true" tabindex="-1"></a>url_1 <span class="ot">&lt;-</span> <span class="st">&quot;https://www.r-bloggers.com/page/2/&quot;</span></span>
+<span id="cb115-2"><a href="day3.html#cb115-2" aria-hidden="true" tabindex="-1"></a>url_2 <span class="ot">&lt;-</span> <span class="st">&quot;https://www.r-bloggers.com/page/3/&quot;</span></span>
+<span id="cb115-3"><a href="day3.html#cb115-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb115-4"><a href="day3.html#cb115-4" aria-hidden="true" tabindex="-1"></a>initial_dist <span class="ot">&lt;-</span> <span class="fu">adist</span>(url_1, url_2, <span class="at">counts =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb115-5"><a href="day3.html#cb115-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">attr</span>(<span class="st">&quot;trafos&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb115-6"><a href="day3.html#cb115-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">diag</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb115-7"><a href="day3.html#cb115-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">str_locate_all</span>(<span class="st">&quot;[^M]&quot;</span>)</span>
+<span id="cb115-8"><a href="day3.html#cb115-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb115-9"><a href="day3.html#cb115-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb115-10"><a href="day3.html#cb115-10" aria-hidden="true" tabindex="-1"></a><span class="fu">str_sub</span>(url_1, <span class="at">start =</span> initial_dist[[<span class="dv">1</span>]][<span class="dv">1</span>]<span class="sc">-</span><span class="dv">5</span>, <span class="at">end =</span> initial_dist[[<span class="dv">1</span>]][<span class="dv">1</span>]<span class="sc">+</span><span class="dv">5</span>) <span class="co"># makes sense for longer urls</span></span></code></pre></div>
 <pre><code>## [1] &quot;page/2/&quot;</code></pre>
-<div class="sourceCode" id="cb113"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb113-1"><a href="day3.html#cb113-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str_sub</span>(url_2, <span class="at">start =</span> initial_dist[[<span class="dv">1</span>]][<span class="dv">1</span>]<span class="sc">-</span><span class="dv">5</span>, <span class="at">end =</span> initial_dist[[<span class="dv">1</span>]][<span class="dv">1</span>]<span class="sc">+</span><span class="dv">5</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb117"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb117-1"><a href="day3.html#cb117-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str_sub</span>(url_2, <span class="at">start =</span> initial_dist[[<span class="dv">1</span>]][<span class="dv">1</span>]<span class="sc">-</span><span class="dv">5</span>, <span class="at">end =</span> initial_dist[[<span class="dv">1</span>]][<span class="dv">1</span>]<span class="sc">+</span><span class="dv">5</span>)</span></code></pre></div>
 <pre><code>## [1] &quot;page/3/&quot;</code></pre>
 <p>There is some sort of underlying pattern and we can harness that. <code>url_1</code> refers to the second page, <code>url_2</code> to the third. Hence, if we just combine the basic URL and, say, the numbers from 1 to 10, we could then visit all the pages (exercise 3a) and extract the content we want.</p>
-<div class="sourceCode" id="cb115"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb115-1"><a href="day3.html#cb115-1" aria-hidden="true" tabindex="-1"></a>urls <span class="ot">&lt;-</span> <span class="fu">str_c</span>(<span class="st">&quot;https://www.r-bloggers.com/page/&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="st">&quot;/&quot;</span>)</span>
-<span id="cb115-2"><a href="day3.html#cb115-2" aria-hidden="true" tabindex="-1"></a>urls</span></code></pre></div>
+<div class="sourceCode" id="cb119"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb119-1"><a href="day3.html#cb119-1" aria-hidden="true" tabindex="-1"></a>urls <span class="ot">&lt;-</span> <span class="fu">str_c</span>(<span class="st">&quot;https://www.r-bloggers.com/page/&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="st">&quot;/&quot;</span>) <span class="co"># this is the stringr equivalent of paste()</span></span>
+<span id="cb119-2"><a href="day3.html#cb119-2" aria-hidden="true" tabindex="-1"></a>urls</span></code></pre></div>
 <pre><code>##  [1] &quot;https://www.r-bloggers.com/page/1/&quot;  &quot;https://www.r-bloggers.com/page/2/&quot; 
 ##  [3] &quot;https://www.r-bloggers.com/page/3/&quot;  &quot;https://www.r-bloggers.com/page/4/&quot; 
 ##  [5] &quot;https://www.r-bloggers.com/page/5/&quot;  &quot;https://www.r-bloggers.com/page/6/&quot; 
 ##  [7] &quot;https://www.r-bloggers.com/page/7/&quot;  &quot;https://www.r-bloggers.com/page/8/&quot; 
 ##  [9] &quot;https://www.r-bloggers.com/page/9/&quot;  &quot;https://www.r-bloggers.com/page/10/&quot;</code></pre>
 <p>You can run this in a for-loop, here’s a quick revision. For the loop to run efficiently, space for every object should be pre-allocated (i.e., you create a list beforehand, and its length can be determined by an educated guess).</p>
-<div class="sourceCode" id="cb117"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb117-1"><a href="day3.html#cb117-1" aria-hidden="true" tabindex="-1"></a>result_list <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="at">mode =</span> <span class="st">&quot;list&quot;</span>, <span class="at">length =</span> <span class="fu">length</span>(urls))</span>
-<span id="cb117-2"><a href="day3.html#cb117-2" aria-hidden="true" tabindex="-1"></a>starting_link <span class="ot">&lt;-</span> </span>
-<span id="cb117-3"><a href="day3.html#cb117-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(urls)){</span>
-<span id="cb117-4"><a href="day3.html#cb117-4" aria-hidden="true" tabindex="-1"></a>  read <span class="cf">in</span> urls[[i]]</span>
-<span id="cb117-5"><a href="day3.html#cb117-5" aria-hidden="true" tabindex="-1"></a>  store page <span class="cf">in</span> result_list</span>
-<span id="cb117-6"><a href="day3.html#cb117-6" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb121"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb121-1"><a href="day3.html#cb121-1" aria-hidden="true" tabindex="-1"></a><span class="do">## THIS IS PSEUDO CODE!!!</span></span>
+<span id="cb121-2"><a href="day3.html#cb121-2" aria-hidden="true" tabindex="-1"></a>result_list <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="at">mode =</span> <span class="st">&quot;list&quot;</span>, <span class="at">length =</span> <span class="fu">length</span>(urls)) <span class="co"># pre-allocate space!!!</span></span>
+<span id="cb121-3"><a href="day3.html#cb121-3" aria-hidden="true" tabindex="-1"></a>starting_link <span class="ot">&lt;-</span> </span>
+<span id="cb121-4"><a href="day3.html#cb121-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(urls)){</span>
+<span id="cb121-5"><a href="day3.html#cb121-5" aria-hidden="true" tabindex="-1"></a>  read <span class="cf">in</span> urls[[i]]</span>
+<span id="cb121-6"><a href="day3.html#cb121-6" aria-hidden="true" tabindex="-1"></a>  store page <span class="cf">in</span> result_list</span>
+<span id="cb121-7"><a href="day3.html#cb121-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 </div>
 <div id="letting-the-scraper-navigate-on-its-own" class="section level3 hasAnchor" number="3.4.2">
 <h3><span class="header-section-number">3.4.2</span> Letting the scraper navigate on its own<a href="day3.html#letting-the-scraper-navigate-on-its-own" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>Extracting the link on the fly is the same thing, but in the end, you need to replace the link argument with the one you extracted. You will do this in exercise 3. It is probably easiest to perform those things in a <code>while</code> loop, hence here is a quick revision:</p>
 <p>Hence, our <code>while</code> loop in pseudo-code will look like this:</p>
-<div class="sourceCode" id="cb118"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb118-1"><a href="day3.html#cb118-1" aria-hidden="true" tabindex="-1"></a>output_list <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="at">mode =</span> <span class="st">&quot;list&quot;</span>, <span class="at">length =</span> 10L)</span>
-<span id="cb118-2"><a href="day3.html#cb118-2" aria-hidden="true" tabindex="-1"></a>i <span class="ot">&lt;-</span> <span class="dv">0</span></span>
-<span id="cb118-3"><a href="day3.html#cb118-3" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> (session<span class="sc">$</span>response<span class="sc">$</span>status_code <span class="sc">==</span> <span class="dv">200</span> <span class="sc">&amp;&amp;</span> i <span class="sc">&lt;=</span> <span class="dv">10</span>) {</span>
-<span id="cb118-4"><a href="day3.html#cb118-4" aria-hidden="true" tabindex="-1"></a>  i <span class="ot">&lt;-</span> i <span class="sc">+</span> <span class="dv">1</span></span>
-<span id="cb118-5"><a href="day3.html#cb118-5" aria-hidden="true" tabindex="-1"></a>  read <span class="cf">in</span> r<span class="sc">-</span>bloggers results list</span>
-<span id="cb118-6"><a href="day3.html#cb118-6" aria-hidden="true" tabindex="-1"></a>  get all stuff and store it <span class="cf">in</span> output_list[[i]]</span>
-<span id="cb118-7"><a href="day3.html#cb118-7" aria-hidden="true" tabindex="-1"></a>  go to <span class="cf">next</span> page</span>
-<span id="cb118-8"><a href="day3.html#cb118-8" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb122"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb122-1"><a href="day3.html#cb122-1" aria-hidden="true" tabindex="-1"></a><span class="do">## THIS IS PSEUDO CODE!!!</span></span>
+<span id="cb122-2"><a href="day3.html#cb122-2" aria-hidden="true" tabindex="-1"></a>output_list <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="at">mode =</span> <span class="st">&quot;list&quot;</span>, <span class="at">length =</span> 10L)</span>
+<span id="cb122-3"><a href="day3.html#cb122-3" aria-hidden="true" tabindex="-1"></a>i <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb122-4"><a href="day3.html#cb122-4" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> (session<span class="sc">$</span>response<span class="sc">$</span>status_code <span class="sc">==</span> <span class="dv">200</span> <span class="sc">&amp;&amp;</span> i <span class="sc">&lt;=</span> <span class="dv">10</span>) {</span>
+<span id="cb122-5"><a href="day3.html#cb122-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">session</span>(start<span class="sc">-</span>url)</span>
+<span id="cb122-6"><a href="day3.html#cb122-6" aria-hidden="true" tabindex="-1"></a>  i <span class="ot">&lt;-</span> i <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb122-7"><a href="day3.html#cb122-7" aria-hidden="true" tabindex="-1"></a>  read <span class="cf">in</span> r<span class="sc">-</span>bloggers results list</span>
+<span id="cb122-8"><a href="day3.html#cb122-8" aria-hidden="true" tabindex="-1"></a>  get all stuff and store it <span class="cf">in</span> output_list[[i]]</span>
+<span id="cb122-9"><a href="day3.html#cb122-9" aria-hidden="true" tabindex="-1"></a>  move session to <span class="cf">next</span> page</span>
+<span id="cb122-10"><a href="day3.html#cb122-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb122-11"><a href="day3.html#cb122-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb122-12"><a href="day3.html#cb122-12" aria-hidden="true" tabindex="-1"></a><span class="do">### reminder: how to click a button in rvest</span></span>
+<span id="cb122-13"><a href="day3.html#cb122-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb122-14"><a href="day3.html#cb122-14" aria-hidden="true" tabindex="-1"></a><span class="fu">session</span>(<span class="st">&quot;https://www.scrapethissite.com/&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb122-15"><a href="day3.html#cb122-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">session_follow_link</span>(<span class="at">css =</span> <span class="st">&quot;.btn-default&quot;</span>) <span class="co"># just use selectorgadget to check for css selector of button</span></span></code></pre></div>
 </div>
 </div>
 <div id="conclusion" class="section level2 hasAnchor" number="3.5">
@@ -586,106 +595,112 @@ My cat is <b> very </b> grumpy
 <li>If 1. == FALSE: Is there an API where I can get the data (if TRUE, use it)</li>
 <li>If 1. == FALSE &amp; 2. == FALSE: Is screen scraping an option and any structure in the data that you can harness?</li>
 </ol>
+<p>If you have to rely on screen scraping, also ask yourself the question how you can minimize the number of requests you make to the server. Going back and forth on web pages or navigating through them might not be the best option since it requires multiple requests. The most efficient way is usually to try to get a list of URLs of some sort which you can then just loop over.</p>
 </div>
 <div id="further-links-2" class="section level2 hasAnchor" number="3.6">
 <h2><span class="header-section-number">3.6</span> Further links<a href="day3.html#further-links-2" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>[to be added]</p>
+<ul>
+<li><a href="https://www.w3schools.com/html/default.asp">More on HTML</a></li>
+<li><a href="https://www.w3schools.com/css/css_selectors.asp">More on CSS selectors</a></li>
+<li>The <a href="https://rvest.tidyverse.org"><code>rvest</code> vignette</a></li>
+<li>A “laymen’s guide” on web scraping (<a href="https://towardsdatascience.com/functions-with-r-and-rvest-a-laymens-guide-acda42325a77">blog post</a>)</li>
+</ul>
 </div>
 <div id="exercises-1" class="section level2 hasAnchor" number="3.7">
 <h2><span class="header-section-number">3.7</span> Exercises<a href="day3.html#exercises-1" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <ol style="list-style-type: decimal">
-<li>Scrape the (British MPs Wikipedia page)[<a href="https://en.wikipedia.org/wiki/List_of_MPs_elected_in_the_2019_United_Kingdom_general_election" class="uri">https://en.wikipedia.org/wiki/List_of_MPs_elected_in_the_2019_United_Kingdom_general_election</a>].</li>
-</ol>
-<ol style="list-style-type: lower-alpha">
-<li>Scrape the table containing data on all individual MPs. (Hint: you can select and remove single lines using <code>slice()</code>, e.g., <code>tbl %&gt;% slice(1)</code> retains only the first line, <code>tbl %&gt;% slice(-1)</code> removes only the first line.)</li>
-<li>Extract the links linking to individual pages. Make them readable using <code>url_absolute()</code> – <code>url_absolute("/kdfnndfkok", base = "https://wikipedia.com")</code> –&gt; <code>"https://wikipedia.com/kdfnndfkok"</code>. Add the links to the table from 1a.</li>
-<li>Scrape the textual content of the <strong>first</strong> MP’s Wikipedia page.</li>
-<li>(ADVANCED – feel free to move on to task 2.) Wrap 1c. in a function called <code>scrape_mp_wiki()</code>.</li>
-</ol>
-<details>
-<summary>
-Solution. Click to expand!
-</summary>
-<div class="sourceCode" id="cb119"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb119-1"><a href="day3.html#cb119-1" aria-hidden="true" tabindex="-1"></a><span class="co"># scrape uk mps</span></span>
-<span id="cb119-2"><a href="day3.html#cb119-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb119-3"><a href="day3.html#cb119-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rvest)</span>
-<span id="cb119-4"><a href="day3.html#cb119-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor)</span>
-<span id="cb119-5"><a href="day3.html#cb119-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb119-6"><a href="day3.html#cb119-6" aria-hidden="true" tabindex="-1"></a><span class="co">#a</span></span>
-<span id="cb119-7"><a href="day3.html#cb119-7" aria-hidden="true" tabindex="-1"></a>mp_table <span class="ot">&lt;-</span> <span class="fu">read_html</span>(<span class="st">&quot;https://en.wikipedia.org/wiki/List_of_MPs_elected_in_the_2019_United_Kingdom_general_election&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb119-8"><a href="day3.html#cb119-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_element</span>(<span class="st">&quot;#elected-mps&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb119-9"><a href="day3.html#cb119-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_table</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb119-10"><a href="day3.html#cb119-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="sc">-</span><span class="dv">6</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb119-11"><a href="day3.html#cb119-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="sc">-</span><span class="dv">651</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb119-12"><a href="day3.html#cb119-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clean_names</span>()</span>
-<span id="cb119-13"><a href="day3.html#cb119-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb119-14"><a href="day3.html#cb119-14" aria-hidden="true" tabindex="-1"></a><span class="co">#b  </span></span>
-<span id="cb119-15"><a href="day3.html#cb119-15" aria-hidden="true" tabindex="-1"></a>mp_names <span class="ot">&lt;-</span> <span class="fu">read_html</span>(<span class="st">&quot;https://en.wikipedia.org/wiki/List_of_MPs_elected_in_the_2019_United_Kingdom_general_election&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb119-16"><a href="day3.html#cb119-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_elements</span>(<span class="st">&quot;#elected-mps b a&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb119-17"><a href="day3.html#cb119-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_attr</span>(<span class="st">&quot;href&quot;</span>)</span>
-<span id="cb119-18"><a href="day3.html#cb119-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb119-19"><a href="day3.html#cb119-19" aria-hidden="true" tabindex="-1"></a>table_w_link <span class="ot">&lt;-</span> mp_table <span class="sc">%&gt;%</span> </span>
-<span id="cb119-20"><a href="day3.html#cb119-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">link =</span> mp_names <span class="sc">%&gt;%</span> </span>
-<span id="cb119-21"><a href="day3.html#cb119-21" aria-hidden="true" tabindex="-1"></a>           <span class="fu">url_absolute</span>(<span class="st">&quot;https://en.wikipedia.org/&quot;</span>))</span>
-<span id="cb119-22"><a href="day3.html#cb119-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb119-23"><a href="day3.html#cb119-23" aria-hidden="true" tabindex="-1"></a><span class="co">#c</span></span>
-<span id="cb119-24"><a href="day3.html#cb119-24" aria-hidden="true" tabindex="-1"></a>link <span class="ot">&lt;-</span> table_w_link <span class="sc">%&gt;%</span> </span>
-<span id="cb119-25"><a href="day3.html#cb119-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb119-26"><a href="day3.html#cb119-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(link) </span>
-<span id="cb119-27"><a href="day3.html#cb119-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb119-28"><a href="day3.html#cb119-28" aria-hidden="true" tabindex="-1"></a>link <span class="sc">%&gt;%</span> </span>
-<span id="cb119-29"><a href="day3.html#cb119-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">read_html</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb119-30"><a href="day3.html#cb119-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_elements</span>(<span class="st">&quot;p&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb119-31"><a href="day3.html#cb119-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_text2</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb119-32"><a href="day3.html#cb119-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">str_c</span>(<span class="at">collapse =</span> <span class="st">&quot; &quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb119-33"><a href="day3.html#cb119-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">enframe</span>(<span class="at">name =</span> <span class="cn">NULL</span>, <span class="at">value =</span> <span class="st">&quot;wiki_article&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb119-34"><a href="day3.html#cb119-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">link =</span> link)</span>
-<span id="cb119-35"><a href="day3.html#cb119-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb119-36"><a href="day3.html#cb119-36" aria-hidden="true" tabindex="-1"></a><span class="co">#d</span></span>
-<span id="cb119-37"><a href="day3.html#cb119-37" aria-hidden="true" tabindex="-1"></a>scrape_page <span class="ot">&lt;-</span> <span class="cf">function</span>(link){</span>
-<span id="cb119-38"><a href="day3.html#cb119-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">Sys.sleep</span>(<span class="fl">0.5</span>)</span>
-<span id="cb119-39"><a href="day3.html#cb119-39" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb119-40"><a href="day3.html#cb119-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">read_html</span>(link) <span class="sc">%&gt;%</span> </span>
-<span id="cb119-41"><a href="day3.html#cb119-41" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_elements</span>(<span class="st">&quot;p&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb119-42"><a href="day3.html#cb119-42" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_text2</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb119-43"><a href="day3.html#cb119-43" aria-hidden="true" tabindex="-1"></a>    <span class="fu">str_c</span>(<span class="at">collapse =</span> <span class="st">&quot; &quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb119-44"><a href="day3.html#cb119-44" aria-hidden="true" tabindex="-1"></a>    <span class="fu">enframe</span>(<span class="at">name =</span> <span class="cn">NULL</span>, <span class="at">value =</span> <span class="st">&quot;wiki_article&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb119-45"><a href="day3.html#cb119-45" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">link =</span> link)</span>
-<span id="cb119-46"><a href="day3.html#cb119-46" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb119-47"><a href="day3.html#cb119-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb119-48"><a href="day3.html#cb119-48" aria-hidden="true" tabindex="-1"></a>mp_wiki_entries <span class="ot">&lt;-</span> table_w_link<span class="sc">$</span>link[[<span class="dv">1</span>]] <span class="sc">%&gt;%</span> </span>
-<span id="cb119-49"><a href="day3.html#cb119-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(<span class="sc">~</span>{<span class="fu">scrape_page</span>(.x)})</span>
-<span id="cb119-50"><a href="day3.html#cb119-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb119-51"><a href="day3.html#cb119-51" aria-hidden="true" tabindex="-1"></a>mp_wiki_entries_tbl <span class="ot">&lt;-</span> table_w_link <span class="sc">%&gt;%</span> </span>
-<span id="cb119-52"><a href="day3.html#cb119-52" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(mp_wiki_entries <span class="sc">%&gt;%</span> <span class="fu">bind_rows</span>())</span></code></pre></div>
-</details>
-<ol start="2" style="list-style-type: decimal">
 <li>Download all movies from the (IMDb Top250 best movies of all time list)[<a href="https://www.imdb.com/chart/top/?ref_=nv_mv_250" class="uri">https://www.imdb.com/chart/top/?ref_=nv_mv_250</a>]. Put them in a tibble with the columns <code>rank</code> – in numeric format, <code>title</code>, <code>url</code> to IMDb entry, <code>rating</code> – in numeric format.</li>
 </ol>
 <details>
 <summary>
 Solution. Click to expand!
 </summary>
-<div class="sourceCode" id="cb120"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb120-1"><a href="day3.html#cb120-1" aria-hidden="true" tabindex="-1"></a>imdb_top250 <span class="ot">&lt;-</span> <span class="fu">read_html</span>(<span class="st">&quot;https://www.imdb.com/chart/top/?ref_=nv_mv_250&quot;</span>)</span>
-<span id="cb120-2"><a href="day3.html#cb120-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb120-3"><a href="day3.html#cb120-3" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
-<span id="cb120-4"><a href="day3.html#cb120-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">rank =</span> imdb_top250 <span class="sc">%&gt;%</span> </span>
-<span id="cb120-5"><a href="day3.html#cb120-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_elements</span>(<span class="st">&quot;.titleColumn&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb120-6"><a href="day3.html#cb120-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_text2</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb120-7"><a href="day3.html#cb120-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">str_extract</span>(<span class="st">&quot;^[0-9]+(?=</span><span class="sc">\\</span><span class="st">.)&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb120-8"><a href="day3.html#cb120-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">parse_integer</span>(),</span>
-<span id="cb120-9"><a href="day3.html#cb120-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> imdb_top250 <span class="sc">%&gt;%</span> </span>
-<span id="cb120-10"><a href="day3.html#cb120-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_elements</span>(<span class="st">&quot;.titleColumn a&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb120-11"><a href="day3.html#cb120-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_text2</span>(),</span>
-<span id="cb120-12"><a href="day3.html#cb120-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">url =</span> imdb_top250 <span class="sc">%&gt;%</span> </span>
-<span id="cb120-13"><a href="day3.html#cb120-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_elements</span>(<span class="st">&quot;.titleColumn a&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb120-14"><a href="day3.html#cb120-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_attr</span>(<span class="st">&quot;href&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb120-15"><a href="day3.html#cb120-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">str_c</span>(<span class="st">&quot;https://www.imdb.com&quot;</span>, .),</span>
-<span id="cb120-16"><a href="day3.html#cb120-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">rating =</span> imdb_top250 <span class="sc">%&gt;%</span> </span>
-<span id="cb120-17"><a href="day3.html#cb120-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_elements</span>(<span class="st">&quot;strong&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb120-18"><a href="day3.html#cb120-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_text</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb120-19"><a href="day3.html#cb120-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">parse_double</span>()</span>
-<span id="cb120-20"><a href="day3.html#cb120-20" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb123"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb123-1"><a href="day3.html#cb123-1" aria-hidden="true" tabindex="-1"></a>imdb_top250 <span class="ot">&lt;-</span> <span class="fu">read_html</span>(<span class="st">&quot;https://www.imdb.com/chart/top/?ref_=nv_mv_250&quot;</span>)</span>
+<span id="cb123-2"><a href="day3.html#cb123-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb123-3"><a href="day3.html#cb123-3" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(</span>
+<span id="cb123-4"><a href="day3.html#cb123-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">rank =</span> imdb_top250 <span class="sc">%&gt;%</span> </span>
+<span id="cb123-5"><a href="day3.html#cb123-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_elements</span>(<span class="st">&quot;.titleColumn&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb123-6"><a href="day3.html#cb123-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_text2</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb123-7"><a href="day3.html#cb123-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">str_extract</span>(<span class="st">&quot;^[0-9]+(?=</span><span class="sc">\\</span><span class="st">.)&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb123-8"><a href="day3.html#cb123-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">parse_integer</span>(),</span>
+<span id="cb123-9"><a href="day3.html#cb123-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> imdb_top250 <span class="sc">%&gt;%</span> </span>
+<span id="cb123-10"><a href="day3.html#cb123-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_elements</span>(<span class="st">&quot;.titleColumn a&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb123-11"><a href="day3.html#cb123-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_text2</span>(),</span>
+<span id="cb123-12"><a href="day3.html#cb123-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">url =</span> imdb_top250 <span class="sc">%&gt;%</span> </span>
+<span id="cb123-13"><a href="day3.html#cb123-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_elements</span>(<span class="st">&quot;.titleColumn a&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb123-14"><a href="day3.html#cb123-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_attr</span>(<span class="st">&quot;href&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb123-15"><a href="day3.html#cb123-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">str_c</span>(<span class="st">&quot;https://www.imdb.com&quot;</span>, .),</span>
+<span id="cb123-16"><a href="day3.html#cb123-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">rating =</span> imdb_top250 <span class="sc">%&gt;%</span> </span>
+<span id="cb123-17"><a href="day3.html#cb123-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_elements</span>(<span class="st">&quot;strong&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb123-18"><a href="day3.html#cb123-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_text</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb123-19"><a href="day3.html#cb123-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">parse_double</span>()</span>
+<span id="cb123-20"><a href="day3.html#cb123-20" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+</details>
+<ol start="2" style="list-style-type: decimal">
+<li>Scrape the (British MPs Wikipedia page)[<a href="https://en.wikipedia.org/wiki/List_of_MPs_elected_in_the_2019_United_Kingdom_general_election" class="uri">https://en.wikipedia.org/wiki/List_of_MPs_elected_in_the_2019_United_Kingdom_general_election</a>].</li>
+</ol>
+<ol style="list-style-type: lower-alpha">
+<li>Scrape the table containing data on all individual MPs. (Hint: you can select and remove single lines using <code>slice()</code>, e.g., <code>tbl %&gt;% slice(1)</code> retains only the first line, <code>tbl %&gt;% slice(-1)</code> removes only the first line.)</li>
+<li>Extract the links linking to individual pages. Make them readable using <code>url_absolute()</code> – <code>url_absolute("/kdfnndfkok", base = "https://wikipedia.com")</code> –&gt; <code>"https://wikipedia.com/kdfnndfkok"</code>. Add the links to the table from 1a.</li>
+<li>Scrape the textual content of the <strong>first</strong> MP’s Wikipedia page.</li>
+<li>(ADVANCED!) Wrap 1c. in a function called <code>scrape_mp_wiki()</code>.</li>
+</ol>
+<details>
+<summary>
+Solution. Click to expand!
+</summary>
+<div class="sourceCode" id="cb124"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb124-1"><a href="day3.html#cb124-1" aria-hidden="true" tabindex="-1"></a><span class="co"># scrape uk mps</span></span>
+<span id="cb124-2"><a href="day3.html#cb124-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb124-3"><a href="day3.html#cb124-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rvest)</span>
+<span id="cb124-4"><a href="day3.html#cb124-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor)</span>
+<span id="cb124-5"><a href="day3.html#cb124-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb124-6"><a href="day3.html#cb124-6" aria-hidden="true" tabindex="-1"></a><span class="co">#a</span></span>
+<span id="cb124-7"><a href="day3.html#cb124-7" aria-hidden="true" tabindex="-1"></a>mp_table <span class="ot">&lt;-</span> <span class="fu">read_html</span>(<span class="st">&quot;https://en.wikipedia.org/wiki/List_of_MPs_elected_in_the_2019_United_Kingdom_general_election&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb124-8"><a href="day3.html#cb124-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_element</span>(<span class="st">&quot;#elected-mps&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb124-9"><a href="day3.html#cb124-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_table</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb124-10"><a href="day3.html#cb124-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="sc">-</span><span class="dv">6</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb124-11"><a href="day3.html#cb124-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="sc">-</span><span class="dv">651</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb124-12"><a href="day3.html#cb124-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clean_names</span>()</span>
+<span id="cb124-13"><a href="day3.html#cb124-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb124-14"><a href="day3.html#cb124-14" aria-hidden="true" tabindex="-1"></a><span class="co">#b  </span></span>
+<span id="cb124-15"><a href="day3.html#cb124-15" aria-hidden="true" tabindex="-1"></a>mp_names <span class="ot">&lt;-</span> <span class="fu">read_html</span>(<span class="st">&quot;https://en.wikipedia.org/wiki/List_of_MPs_elected_in_the_2019_United_Kingdom_general_election&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb124-16"><a href="day3.html#cb124-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_elements</span>(<span class="st">&quot;#elected-mps b a&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb124-17"><a href="day3.html#cb124-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_attr</span>(<span class="st">&quot;href&quot;</span>)</span>
+<span id="cb124-18"><a href="day3.html#cb124-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb124-19"><a href="day3.html#cb124-19" aria-hidden="true" tabindex="-1"></a>table_w_link <span class="ot">&lt;-</span> mp_table <span class="sc">%&gt;%</span> </span>
+<span id="cb124-20"><a href="day3.html#cb124-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">link =</span> mp_names <span class="sc">%&gt;%</span> </span>
+<span id="cb124-21"><a href="day3.html#cb124-21" aria-hidden="true" tabindex="-1"></a>           <span class="fu">url_absolute</span>(<span class="st">&quot;https://en.wikipedia.org/&quot;</span>))</span>
+<span id="cb124-22"><a href="day3.html#cb124-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb124-23"><a href="day3.html#cb124-23" aria-hidden="true" tabindex="-1"></a><span class="co">#c</span></span>
+<span id="cb124-24"><a href="day3.html#cb124-24" aria-hidden="true" tabindex="-1"></a>link <span class="ot">&lt;-</span> table_w_link <span class="sc">%&gt;%</span> </span>
+<span id="cb124-25"><a href="day3.html#cb124-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb124-26"><a href="day3.html#cb124-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(link) </span>
+<span id="cb124-27"><a href="day3.html#cb124-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb124-28"><a href="day3.html#cb124-28" aria-hidden="true" tabindex="-1"></a>link <span class="sc">%&gt;%</span> </span>
+<span id="cb124-29"><a href="day3.html#cb124-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">read_html</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb124-30"><a href="day3.html#cb124-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_elements</span>(<span class="st">&quot;p&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb124-31"><a href="day3.html#cb124-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_text2</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb124-32"><a href="day3.html#cb124-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">str_c</span>(<span class="at">collapse =</span> <span class="st">&quot; &quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb124-33"><a href="day3.html#cb124-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">enframe</span>(<span class="at">name =</span> <span class="cn">NULL</span>, <span class="at">value =</span> <span class="st">&quot;wiki_article&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb124-34"><a href="day3.html#cb124-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">link =</span> link)</span>
+<span id="cb124-35"><a href="day3.html#cb124-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb124-36"><a href="day3.html#cb124-36" aria-hidden="true" tabindex="-1"></a><span class="co">#d</span></span>
+<span id="cb124-37"><a href="day3.html#cb124-37" aria-hidden="true" tabindex="-1"></a>scrape_page <span class="ot">&lt;-</span> <span class="cf">function</span>(link){</span>
+<span id="cb124-38"><a href="day3.html#cb124-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">Sys.sleep</span>(<span class="fl">0.5</span>)</span>
+<span id="cb124-39"><a href="day3.html#cb124-39" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb124-40"><a href="day3.html#cb124-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">read_html</span>(link) <span class="sc">%&gt;%</span> </span>
+<span id="cb124-41"><a href="day3.html#cb124-41" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_elements</span>(<span class="st">&quot;p&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb124-42"><a href="day3.html#cb124-42" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_text2</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb124-43"><a href="day3.html#cb124-43" aria-hidden="true" tabindex="-1"></a>    <span class="fu">str_c</span>(<span class="at">collapse =</span> <span class="st">&quot; &quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb124-44"><a href="day3.html#cb124-44" aria-hidden="true" tabindex="-1"></a>    <span class="fu">enframe</span>(<span class="at">name =</span> <span class="cn">NULL</span>, <span class="at">value =</span> <span class="st">&quot;wiki_article&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb124-45"><a href="day3.html#cb124-45" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">link =</span> link)</span>
+<span id="cb124-46"><a href="day3.html#cb124-46" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb124-47"><a href="day3.html#cb124-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb124-48"><a href="day3.html#cb124-48" aria-hidden="true" tabindex="-1"></a>mp_wiki_entries <span class="ot">&lt;-</span> table_w_link<span class="sc">$</span>link[[<span class="dv">1</span>]] <span class="sc">%&gt;%</span> </span>
+<span id="cb124-49"><a href="day3.html#cb124-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(<span class="sc">~</span>{<span class="fu">scrape_page</span>(.x)})</span>
+<span id="cb124-50"><a href="day3.html#cb124-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb124-51"><a href="day3.html#cb124-51" aria-hidden="true" tabindex="-1"></a>mp_wiki_entries_tbl <span class="ot">&lt;-</span> table_w_link <span class="sc">%&gt;%</span> </span>
+<span id="cb124-52"><a href="day3.html#cb124-52" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(mp_wiki_entries <span class="sc">%&gt;%</span> <span class="fu">bind_rows</span>())</span></code></pre></div>
 </details>
 <ol start="3" style="list-style-type: decimal">
 <li>Scrape the 10 first pages of <a href="https://www.r-bloggers.com">R-bloggers</a> in an automated fashion. Make sure to take breaks between requests by including <code>Sys.sleep(2)</code>.</li>
@@ -699,53 +714,53 @@ Solution. Click to expand!
 <summary>
 Solution. Click to expand!
 </summary>
-<div class="sourceCode" id="cb121"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb121-1"><a href="day3.html#cb121-1" aria-hidden="true" tabindex="-1"></a><span class="co"># a: check running number in URL, create new URLs, map()</span></span>
-<span id="cb121-2"><a href="day3.html#cb121-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb121-3"><a href="day3.html#cb121-3" aria-hidden="true" tabindex="-1"></a>urls <span class="ot">&lt;-</span> <span class="fu">str_c</span>(<span class="st">&quot;https://www.r-bloggers.com/page/&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="st">&quot;/&quot;</span>)</span>
-<span id="cb121-4"><a href="day3.html#cb121-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb121-5"><a href="day3.html#cb121-5" aria-hidden="true" tabindex="-1"></a>scrape_r_bloggers <span class="ot">&lt;-</span> <span class="cf">function</span>(url){</span>
-<span id="cb121-6"><a href="day3.html#cb121-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">Sys.sleep</span>(<span class="dv">2</span>)</span>
-<span id="cb121-7"><a href="day3.html#cb121-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">read_html</span>(url) <span class="sc">%&gt;%</span> </span>
-<span id="cb121-8"><a href="day3.html#cb121-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_elements</span>(<span class="at">css =</span> <span class="st">&quot;.loop-title a&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb121-9"><a href="day3.html#cb121-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_attrs_dfr</span>()</span>
-<span id="cb121-10"><a href="day3.html#cb121-10" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb121-11"><a href="day3.html#cb121-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb121-12"><a href="day3.html#cb121-12" aria-hidden="true" tabindex="-1"></a><span class="fu">map</span>(urls, scrape_r_bloggers)</span>
-<span id="cb121-13"><a href="day3.html#cb121-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb121-14"><a href="day3.html#cb121-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb121-15"><a href="day3.html#cb121-15" aria-hidden="true" tabindex="-1"></a><span class="co"># b: extract the next page and move forward in the loop</span></span>
-<span id="cb121-16"><a href="day3.html#cb121-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb121-17"><a href="day3.html#cb121-17" aria-hidden="true" tabindex="-1"></a>rbloggers <span class="sc">%&gt;%</span> <span class="fu">html_elements</span>(<span class="at">css =</span> <span class="st">&quot;.next&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">html_attr</span>(<span class="st">&quot;href&quot;</span>)</span>
-<span id="cb121-18"><a href="day3.html#cb121-18" aria-hidden="true" tabindex="-1"></a>url <span class="ot">&lt;-</span> <span class="st">&quot;https://www.r-bloggers.com/&quot;</span></span>
-<span id="cb121-19"><a href="day3.html#cb121-19" aria-hidden="true" tabindex="-1"></a>content <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="at">mode =</span> <span class="st">&quot;list&quot;</span>, <span class="at">length =</span> 10L)</span>
-<span id="cb121-20"><a href="day3.html#cb121-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb121-21"><a href="day3.html#cb121-21" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>){</span>
-<span id="cb121-22"><a href="day3.html#cb121-22" aria-hidden="true" tabindex="-1"></a>  page <span class="ot">&lt;-</span> <span class="fu">read_html</span>(url)</span>
-<span id="cb121-23"><a href="day3.html#cb121-23" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb121-24"><a href="day3.html#cb121-24" aria-hidden="true" tabindex="-1"></a>  content[[i]] <span class="ot">&lt;-</span> page <span class="sc">%&gt;%</span> </span>
-<span id="cb121-25"><a href="day3.html#cb121-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_elements</span>(<span class="at">css =</span> <span class="st">&quot;.loop-title a&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb121-26"><a href="day3.html#cb121-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_attrs_dfr</span>()</span>
-<span id="cb121-27"><a href="day3.html#cb121-27" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb121-28"><a href="day3.html#cb121-28" aria-hidden="true" tabindex="-1"></a>  url <span class="ot">&lt;-</span> page <span class="sc">%&gt;%</span> <span class="fu">html_elements</span>(<span class="at">css =</span> <span class="st">&quot;.next&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">html_attr</span>(<span class="st">&quot;href&quot;</span>)</span>
-<span id="cb121-29"><a href="day3.html#cb121-29" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb121-30"><a href="day3.html#cb121-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">Sys.sleep</span>(<span class="dv">2</span>)</span>
-<span id="cb121-31"><a href="day3.html#cb121-31" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb121-32"><a href="day3.html#cb121-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb121-33"><a href="day3.html#cb121-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb121-34"><a href="day3.html#cb121-34" aria-hidden="true" tabindex="-1"></a><span class="co"># c: session()</span></span>
-<span id="cb121-35"><a href="day3.html#cb121-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb121-36"><a href="day3.html#cb121-36" aria-hidden="true" tabindex="-1"></a><span class="fu">session</span>(url) <span class="sc">%&gt;%</span> <span class="fu">session_follow_link</span>(<span class="at">css =</span> <span class="st">&quot;.next&quot;</span>)</span>
-<span id="cb121-37"><a href="day3.html#cb121-37" aria-hidden="true" tabindex="-1"></a>content <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="at">mode =</span> <span class="st">&quot;list&quot;</span>, <span class="at">length =</span> 10L)</span>
-<span id="cb121-38"><a href="day3.html#cb121-38" aria-hidden="true" tabindex="-1"></a>session_page <span class="ot">&lt;-</span> <span class="fu">session</span>(url)</span>
-<span id="cb121-39"><a href="day3.html#cb121-39" aria-hidden="true" tabindex="-1"></a>session_page<span class="sc">$</span>response<span class="sc">$</span>status_code</span>
-<span id="cb121-40"><a href="day3.html#cb121-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb121-41"><a href="day3.html#cb121-41" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>){</span>
-<span id="cb121-42"><a href="day3.html#cb121-42" aria-hidden="true" tabindex="-1"></a>  content[[i]] <span class="ot">&lt;-</span> session_page <span class="sc">%&gt;%</span> </span>
-<span id="cb121-43"><a href="day3.html#cb121-43" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_elements</span>(<span class="at">css =</span> <span class="st">&quot;.loop-title a&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb121-44"><a href="day3.html#cb121-44" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_attrs_dfr</span>()</span>
-<span id="cb121-45"><a href="day3.html#cb121-45" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb121-46"><a href="day3.html#cb121-46" aria-hidden="true" tabindex="-1"></a>  session_page <span class="ot">&lt;-</span> session_page <span class="sc">%&gt;%</span> <span class="fu">session_follow_link</span>(<span class="at">css =</span> <span class="st">&quot;.next&quot;</span>)</span>
-<span id="cb121-47"><a href="day3.html#cb121-47" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb125"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb125-1"><a href="day3.html#cb125-1" aria-hidden="true" tabindex="-1"></a><span class="co"># a: check running number in URL, create new URLs, map()</span></span>
+<span id="cb125-2"><a href="day3.html#cb125-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb125-3"><a href="day3.html#cb125-3" aria-hidden="true" tabindex="-1"></a>urls <span class="ot">&lt;-</span> <span class="fu">str_c</span>(<span class="st">&quot;https://www.r-bloggers.com/page/&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="st">&quot;/&quot;</span>)</span>
+<span id="cb125-4"><a href="day3.html#cb125-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb125-5"><a href="day3.html#cb125-5" aria-hidden="true" tabindex="-1"></a>scrape_r_bloggers <span class="ot">&lt;-</span> <span class="cf">function</span>(url){</span>
+<span id="cb125-6"><a href="day3.html#cb125-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">Sys.sleep</span>(<span class="dv">2</span>)</span>
+<span id="cb125-7"><a href="day3.html#cb125-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">read_html</span>(url) <span class="sc">%&gt;%</span> </span>
+<span id="cb125-8"><a href="day3.html#cb125-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_elements</span>(<span class="at">css =</span> <span class="st">&quot;.loop-title a&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb125-9"><a href="day3.html#cb125-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_attrs_dfr</span>()</span>
+<span id="cb125-10"><a href="day3.html#cb125-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb125-11"><a href="day3.html#cb125-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb125-12"><a href="day3.html#cb125-12" aria-hidden="true" tabindex="-1"></a><span class="fu">map</span>(urls, scrape_r_bloggers)</span>
+<span id="cb125-13"><a href="day3.html#cb125-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb125-14"><a href="day3.html#cb125-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb125-15"><a href="day3.html#cb125-15" aria-hidden="true" tabindex="-1"></a><span class="co"># b: extract the next page and move forward in the loop</span></span>
+<span id="cb125-16"><a href="day3.html#cb125-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb125-17"><a href="day3.html#cb125-17" aria-hidden="true" tabindex="-1"></a>rbloggers <span class="sc">%&gt;%</span> <span class="fu">html_elements</span>(<span class="at">css =</span> <span class="st">&quot;.next&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">html_attr</span>(<span class="st">&quot;href&quot;</span>)</span>
+<span id="cb125-18"><a href="day3.html#cb125-18" aria-hidden="true" tabindex="-1"></a>url <span class="ot">&lt;-</span> <span class="st">&quot;https://www.r-bloggers.com/&quot;</span></span>
+<span id="cb125-19"><a href="day3.html#cb125-19" aria-hidden="true" tabindex="-1"></a>content <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="at">mode =</span> <span class="st">&quot;list&quot;</span>, <span class="at">length =</span> 10L)</span>
+<span id="cb125-20"><a href="day3.html#cb125-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb125-21"><a href="day3.html#cb125-21" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>){</span>
+<span id="cb125-22"><a href="day3.html#cb125-22" aria-hidden="true" tabindex="-1"></a>  page <span class="ot">&lt;-</span> <span class="fu">read_html</span>(url)</span>
+<span id="cb125-23"><a href="day3.html#cb125-23" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb125-24"><a href="day3.html#cb125-24" aria-hidden="true" tabindex="-1"></a>  content[[i]] <span class="ot">&lt;-</span> page <span class="sc">%&gt;%</span> </span>
+<span id="cb125-25"><a href="day3.html#cb125-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_elements</span>(<span class="at">css =</span> <span class="st">&quot;.loop-title a&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb125-26"><a href="day3.html#cb125-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_attrs_dfr</span>()</span>
+<span id="cb125-27"><a href="day3.html#cb125-27" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb125-28"><a href="day3.html#cb125-28" aria-hidden="true" tabindex="-1"></a>  url <span class="ot">&lt;-</span> page <span class="sc">%&gt;%</span> <span class="fu">html_elements</span>(<span class="at">css =</span> <span class="st">&quot;.next&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">html_attr</span>(<span class="st">&quot;href&quot;</span>)</span>
+<span id="cb125-29"><a href="day3.html#cb125-29" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb125-30"><a href="day3.html#cb125-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">Sys.sleep</span>(<span class="dv">2</span>)</span>
+<span id="cb125-31"><a href="day3.html#cb125-31" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb125-32"><a href="day3.html#cb125-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb125-33"><a href="day3.html#cb125-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb125-34"><a href="day3.html#cb125-34" aria-hidden="true" tabindex="-1"></a><span class="co"># c: session()</span></span>
+<span id="cb125-35"><a href="day3.html#cb125-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb125-36"><a href="day3.html#cb125-36" aria-hidden="true" tabindex="-1"></a><span class="fu">session</span>(url) <span class="sc">%&gt;%</span> <span class="fu">session_follow_link</span>(<span class="at">css =</span> <span class="st">&quot;.next&quot;</span>)</span>
+<span id="cb125-37"><a href="day3.html#cb125-37" aria-hidden="true" tabindex="-1"></a>content <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="at">mode =</span> <span class="st">&quot;list&quot;</span>, <span class="at">length =</span> 10L)</span>
+<span id="cb125-38"><a href="day3.html#cb125-38" aria-hidden="true" tabindex="-1"></a>session_page <span class="ot">&lt;-</span> <span class="fu">session</span>(url)</span>
+<span id="cb125-39"><a href="day3.html#cb125-39" aria-hidden="true" tabindex="-1"></a>session_page<span class="sc">$</span>response<span class="sc">$</span>status_code</span>
+<span id="cb125-40"><a href="day3.html#cb125-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb125-41"><a href="day3.html#cb125-41" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>){</span>
+<span id="cb125-42"><a href="day3.html#cb125-42" aria-hidden="true" tabindex="-1"></a>  content[[i]] <span class="ot">&lt;-</span> session_page <span class="sc">%&gt;%</span> </span>
+<span id="cb125-43"><a href="day3.html#cb125-43" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_elements</span>(<span class="at">css =</span> <span class="st">&quot;.loop-title a&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb125-44"><a href="day3.html#cb125-44" aria-hidden="true" tabindex="-1"></a>    <span class="fu">html_attrs_dfr</span>()</span>
+<span id="cb125-45"><a href="day3.html#cb125-45" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb125-46"><a href="day3.html#cb125-46" aria-hidden="true" tabindex="-1"></a>  session_page <span class="ot">&lt;-</span> session_page <span class="sc">%&gt;%</span> <span class="fu">session_follow_link</span>(<span class="at">css =</span> <span class="st">&quot;.next&quot;</span>)</span>
+<span id="cb125-47"><a href="day3.html#cb125-47" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 </details>
 
 </div>
