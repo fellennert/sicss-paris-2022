@@ -18,7 +18,7 @@ This is mirrored in the `workflow()` function from the `workflows` [@vaughan_wor
 
 In the next part, other approaches such as Support Vector Machines (SVM), penalized logistic regression models (penalized here means, loosely speaking, that insignificant predictors which contribute little will be shrunk and ignored -- as the text contains many tokens that might not contribute much, those models lend themselves nicely to such tasks), random forest models, or XGBoost will be introduced. Those approaches are not to be explained in-depth, third-party articles will be linked though, but their intuition and the particularities of their implementation will be described. Since we use the `tidymodels` [@kuhn_tidymodels_2020] framework for implementation, trying out different approaches is straightforward. Also, the pre-processing differs, `recipes` and `textrecipes` facilitate this task decisively. Third, the evaluation of different classifiers will be described. Finally, the entire workflow will be demonstrated using the abortion Tweet data set.
 
-## Split data 
+## Supervised Classification
 
 The example for today's session is the IMDb data set. First, we load a whole bunch of packages and the data set.
 
@@ -34,6 +34,9 @@ library(tidyverse)
 imdb_data <- read_csv("https://www.dropbox.com/s/0cfr4rkthtfryyp/imdb_reviews.csv?dl=1")
 ```
 
+
+### Split the data
+
 The first step is to divide the data into training and test sets using `initial_split()`. You need to make sure that the test and training set are fairly balanced which is achieved by using `strata =`. `prop =` refers to the proportion of rows that make it into the training set.
 
 ```{r}
@@ -46,7 +49,7 @@ glimpse(imdb_train)
 imdb_train %>% count(sentiment)
 ```
 
-## Pre-processing and featurization
+### Pre-processing and featurization
 
 In the `tidymodels` framework, pre-processing and featurization are performed through so-called `recipes`. For text data, so-called `textrecipes` are available. 
 
@@ -101,7 +104,7 @@ More steps exist. These always follow the same structure: their first two argume
 * `themis::step_upsample()` takes care of unbalanced dependent variables (which need to be specified in the call)
   + `over_ratio =` ratio of desired minority-to-minority frequencies
 
-## Model specification
+### Model specification
 
 Now that the data is ready, the model can be specified. The `parsnip` package is used for this. It contains a model specification, the type, and the engine. For Naïve Bayes, this would look like the following (note that you will need to install the relevant packages -- here: `discrim` -- before using them): 
 
@@ -153,7 +156,7 @@ xg_spec <- boost_tree(trees = 20) %>%
   set_mode("regression") # can also be classification
 ```
 
-## Model training -- `workflows`
+### Model training -- `workflows`
 
 A workflow can be defined to train the model. It will contain the recipe, hence taking care of the pre-processing, and the model specification. In the end, it can be used to fit the model.
 
@@ -170,7 +173,7 @@ imdb_nb_basic <- imdb_nb_wf %>% fit(data = imdb_train)
 ```
 
 
-## Model evaluation
+### Model evaluation
 
 Now that a first model has been trained, its performance can be evaluated. In theory, we have a test set for this. However, the test set is precious and should only be used once we are sure that we have found a good model. Hence, for these intermediary tuning steps, we need to come up with another solution. So-called cross-validation lends itself nicely to this task. The rationale behind it is that chunks from the training set are used as test sets. So, in the case of 10-fold cross-validation, the test set is divided into 10 distinctive chunks of data. Then, 10 models are trained on the respective 9/10 of the training set that is not used for evaluation. Finally, each model is evaluated against the respective held-out "test set" and the performance metrics averaged.
 
@@ -310,7 +313,7 @@ show_best(tune_lasso_rs, "accuracy")
 final_lasso_imdb <- finalize_workflow(lasso_tune_wf, select_by_pct_loss(tune_lasso_rs, metric = "accuracy", -penalty))
 ```
 
-## Final fit
+### Final fit
 
 Now we can finally fit our model to the training data and predict on the test data. `last_fit()` is the way to go. It takes the workflow and the split (as defined by `initial_split()`) as parameters.
 
@@ -325,7 +328,7 @@ collect_predictions(final_fitted) %>%
 ```
 
 
-## Latent Dirichlet Allocation (LDA)
+## Topic Models
 
 In the former section, I, first, explored how the sentiment in the SOTU addresses has evolved over the 20th century. Then, we looked at the decade-specific vocabulary. This, paired with previous knowledge of what happened throughout the 20th century, sufficed to gain some sort of insight. However, another approach to infer meaning from text is to search it for topics. This is also possible with the SOTU corpus which we have at hand.
 
@@ -484,7 +487,7 @@ topic_list <- sotu_lda_k16_tidied %>%
   set_names(str_c("topic", 1:16, sep = "_"))
 ```
 
-### Document-topic probabilities
+#### Document-topic probabilities
 
 Another thing to assess is document-topic probabilities `gamma`: which document belongs to which topic. By doing so, you can choose the documents that have the highest probability of belonging to a topic and then read these specifically. This might give you a better understanding of what the different topics might imply. 
 
@@ -534,14 +537,6 @@ prep_lda_output <- function(dtm, lda_output){
                      mds.method = svd_tsne
   )
 }
-
-json_lda <- prep_lda_output(sotu_dtm, sotu_lda_k16)
-```
-
-```{r eval=FALSE}
-serVis(json_lda, out.dir = 'vis', open.browser = TRUE)
-
-servr::daemon_stop(1)
 ```
 
 ### Structural Topic Models
@@ -595,17 +590,21 @@ sotu_content_fit <- stm(documents = prepped_docs$documents,
 Let's look at a summary of the topics and their prevalence. For this, we can use a [shiny app developed by Carsten Schwemmer](https://github.com/cschwem2er/stminsights)
 
 ```{r eval=FALSE, include=FALSE}
-sotu_stm <- read_rds("https://www.dropbox.com/s/65bukmm42byq0dy/sotu_stm_k16.rds?dl=1")
+sotu_content_fit <- read_rds("https://www.dropbox.com/s/65bukmm42byq0dy/sotu_stm_k16.rds?dl=1")
 ```
 
 ```{r eval=FALSE}
 library(stminsights)
 
+out <- list(documents = prepped_docs$documents,
+            vocab = prepped_docs$vocab,
+            meta = prepped_docs$meta)
+
 prepped_docs$meta$party <- as.factor(prepped_docs$meta$party)
 prep <- estimateEffect(1:16 ~ party + s(year), sotu_content_fit, meta = prepped_docs$meta, uncertainty = "Global")
 map(1:16, ~summary(prep, topics = .x))
 
-save(prepped_docs, sotu_stm, prep, file = "stm_insights.RData")
+save(prepped_docs, sotu_stm, prep, out, file = "stm_insights.RData")
 
 run_stminsights()
 ```
@@ -617,4 +616,124 @@ run_stminsights()
 * Basic [descriptions of ML models](https://www.simplilearn.com/10-algorithms-machine-learning-engineers-need-to-know-article)
 * More on prediction with text using [tidymodels](https://www.tidymodels.org/learn/work/tune-text/)
 * A `shiny` [introduction to STM](https://warin.ca/shiny/stm/#section-the-structural-topic-model) by Thierry Warin
+
+## Exercises
+
+### Supervised Machine Learning
+
+1. Measuring polarization of language through a "fake prediction." Download Twitter data for British and U.S.-American MPs (`timelines_gb <- read_csv("https://www.dropbox.com/s/n60co1u4ml40kvv/timelines.csv?dl=1")`, `timelines_us <- read_csv("https://www.dropbox.com/s/dpu5m3xqz4u4nv7/tweets_house_rep_party.csv?dl=1")`). Split the data into training and test set (`prop = 0.3` should suffice, make sure that you set `strata = party`). Train a model (whatever type you want, NB or RF should be reasonably fast) on it that predicts partisanship based on the Tweets' text. Predict on the test set and compare the models' accuracy. 
+
+```{r}
+set.seed(1)
+timelines_gb <- read_csv("https://www.dropbox.com/s/1lrv3i655u5d7ps/timelines_gb_2022.csv?dl=1")
+timelines_us <- read_csv("https://www.dropbox.com/s/iglayccyevgvume/timelines_us.csv?dl=1")
+
+split_gb <- initial_split(timelines_gb, prop = 0.3, strata = party)
+party_tweets_train_gb <- training(split_gb)
+party_tweets_test_gb <- testing(split_gb)
+
+split_us <- initial_split(timelines_us, prop = 0.3, strata = party)
+party_tweets_train_us <- training(split_us)
+party_tweets_test_us <- testing(split_us)
+
+twitter_recipe <- recipe(party ~ text, data = party_tweets_train_gb) %>% 
+  step_tokenize(text) %>% # tokenize text
+  themis::step_upsample(party) %>% 
+  step_tokenfilter(text, max_tokens = 1000) %>%
+  step_tfidf(text) 
+
+rf_spec <- rand_forest(trees = 50) %>%
+  set_engine("ranger") %>%
+  set_mode("classification") 
+
+twitter_party_rf_workflow <- workflow() %>% 
+  add_recipe(twitter_recipe) %>% 
+  add_model(rf_spec)
+
+party_gb <- twitter_party_rf_workflow %>% fit(data = party_tweets_train_gb)
+party_us <- twitter_party_rf_workflow %>% fit(data = party_tweets_train_us)
+
+accuracy_gb <- augment(party_gb, party_tweets_test_gb)
+mean(accuracy_gb$party == accuracy_gb$.pred_class)
+
+accuracy_us <- augment(party_us, party_tweets_test_us)
+mean(accuracy_us$party == accuracy_us$.pred_class)
+```
+
+2. Extract Tweets from U.S. timelines that are about abortion by using yesterday's approach (`keywords <- c("abortion", "prolife", " roe ", " wade ", "roevswade", "baby", "fetus", "womb", "prochoice", "leak")`). Perform the same prediction task (but now with `initial_split(prop = 0.8)`). How does the accuracy change with an RF model?
+
+```{r}
+keywords <- c("abortion", "prolife", " roe ", " wade ", "roevswade", "baby", "fetus", "womb", "prochoice", "leak")
+timelines_us_abortion <- timelines_us %>% filter(str_detect(text, keywords %>% str_c(collapse = "|")))
+
+split_us_abortion <- initial_split(timelines_us_abortion, prop = 0.8, strata = party)
+abortion_tweets_train_us <- training(split_us_abortion)
+abortion_tweets_test_us <- testing(split_us_abortion)
+
+abortion_us <- twitter_party_rf_workflow %>% fit(data = abortion_tweets_train_us)
+
+accuracy_abortion_us <- augment(abortion_us, abortion_tweets_test_us)
+mean(accuracy_abortion_us$party == accuracy_abortion_us$.pred_class)
+```
+
+### Topic Models
+
+1. Check out `LDAvis` and how it orders the topics. Try to make some sense of how they are related etc. 
+
+```{r eval=FALSE}
+json_lda <- prep_lda_output(sotu_dtm, sotu_lda_k16)
+
+serVis(json_lda, out.dir = 'vis', open.browser = TRUE)
+
+servr::daemon_stop(1)
+```
+
+2. Do the same thing for `stminsights`. The trained stm model can be downloaded `sotu_stm <- read_rds("https://www.dropbox.com/s/65bukmm42byq0dy/sotu_stm_k16.rds?dl=1")`.
+
+```{r eval=FALSE}
+library(sotu)
+library(tidytext)
+library(SnowballC)
+library(stminsights)
+
+sotu_clean <- sotu_meta %>% 
+  mutate(text = sotu_text %>% 
+           str_replace_all("[,.]", " ")) %>% 
+  filter(between(year, 1900, 2000)) %>% 
+  unnest_tokens(output = token, input = text) %>% 
+  anti_join(get_stopwords(), by = c("token" = "word")) %>% 
+  filter(!str_detect(token, "[:digit:]")) %>% 
+  mutate(token = wordStem(token, language = "en"))
+
+sotu_dtm <- sotu_clean %>% 
+  filter(str_length(token) > 1) %>% 
+  count(year, token) %>% 
+  #filter(between(year, 1900, 2000)) %>% 
+  group_by(token) %>% 
+  filter(n() < 95) %>% 
+  cast_dtm(document = year, term = token, value = n)
+
+sotu_stm <- sotu_meta %>% 
+  mutate(text = sotu_text) %>% 
+  distinct(text, .keep_all = TRUE) %>% 
+  filter(between(year, 1900, 2000))
+
+processed <- textProcessor(sotu_stm$text, metadata = sotu_stm %>% select(-text))
+#, custompunctuation = "-")
+#?textProcessor() # check out the different arguments 
+
+#?prepDocuments()
+
+plotRemoved(processed$documents, lower.thresh = seq(1, 50, by = 2))
+
+prepped_docs <- prepDocuments(processed$documents, processed$vocab, processed$meta, lower.thresh = 3, upper.thresh = 80)
+
+prepped_docs$meta$party <- as.factor(prepped_docs$meta$party)
+prep <- estimateEffect(1:16 ~ party + s(year), sotu_content_fit, meta = prepped_docs$meta, uncertainty = "Global")
+map(1:16, ~summary(prep, topics = .x))
+
+save(prepped_docs, sotu_stm, prep, file = "stm_insights.RData")
+
+run_stminsights()
+```
 

@@ -370,7 +370,7 @@ imdb_raw %>%
   filter(str_detect(Genre, "Action"))
 ```
 
-If you want to know whether there are multiple matches present in each string, you can use `str_count`. Here, it might by advisable to set the `ignore_case` option to `TRUE`:
+If you want to know whether there are multiple matches present in each string, you can use `str_count`. Here, it might be advisable to set the `ignore_case` option to `TRUE`:
 
 ```{r}
 str_count(shortened_sentences, regex("the\\b", ignore_case = TRUE))
@@ -437,7 +437,7 @@ Another use case here would have been to split it into two columns: manufacturer
 
 ```{r}
 manufacturer_model <- rownames(mtcars)
-str_split(manufacturer_model, "\\b") %>% 
+str_split(manufacturer_model, " ") %>% 
   head()
 ```
 
@@ -573,8 +573,11 @@ To decrease the complexity of the vocabulary even further, we can reduce the tok
 ```{r message=FALSE, warning=FALSE}
 library(SnowballC)
 
+love_vec <- c("loves", "loved", "lover")
+wordStem(love_vec)
+
 sotu_20cent_tokenized_nostopwords_nonumbers_stemmed <- sotu_20cent_tokenized_nostopwords_nonumbers %>% 
-  mutate(token = wordStem(token, language = "en"))
+  mutate(token_stemmed = wordStem(token, language = "en"))
 
 #SnowballC::getStemLanguages() # if you want to know the abbreviations for other languages as well
 ```
@@ -584,7 +587,7 @@ Maybe we should also remove insignificant words, i.e., ones that appear less tha
 ```{r}
 sotu_20cent_tokenized_nostopwords_nonumbers_stemmed %>% 
   group_by(token) %>% 
-  filter(n() > nrow(.)/1000)
+  filter(n() > nrow(.)/10000)
 ```
 
 These steps have brought down the vocabulary from `r sotu_20cent_tokenized_nostopwords_nonumbers %>% distinct(token) %>% nrow()` to `r sotu_20cent_tokenized_nostopwords_nonumbers_stemmed %>% distinct(token) %>% nrow()`.
@@ -785,7 +788,7 @@ fairytales_top10_nostop %>%
   geom_col(aes(x = n, y = reorder_within(token, n, book))) +
   scale_y_reordered() +
   labs(y = "token") +
-  facet_wrap(vars(book), scales = "free") +
+  facet_wrap(vars(book), scales = "free_y") +
   scale_x_continuous(breaks = scales::pretty_breaks()) +
   theme(strip.text.x = element_blank())
 ```
@@ -866,7 +869,7 @@ The tokens are far too specific to make any sense. Introducing a lower threshold
 
 ```{r}
 tfidf_vs_full %>% 
-  group_by(token) %>% 
+  #group_by(token) %>% 
   filter(n > 3) %>% 
   ungroup() %>% 
   plot_tf_idf(book)

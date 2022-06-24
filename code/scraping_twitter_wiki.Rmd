@@ -107,7 +107,7 @@ mp_list <- lists_members(list_id = "217199644")
 
 ```{r}
 library(lubridate)
-timelines <- read_csv("data/timelines.csv") %>% 
+timelines <- read_csv("https://www.dropbox.com/s/n60co1u4ml40kvv/timelines.csv?dl=1") %>% 
   left_join(mp_meta %>% mutate(twitter_handle = twitter_handle %>% str_remove("@")), by = c("screen_name" = "twitter_handle")) %>%
   filter(is_retweet == FALSE) %>% 
   drop_na(party) %>% 
@@ -217,6 +217,8 @@ timelines_party <- timelines_2022 %>%
 
 timelines_party %>% count(party)
 
+timelines_party %>% write_csv("timelines_gb_2022.csv")
+
 
 split <- initial_split(timelines_party, prop = 0.3, strata = party)
 
@@ -225,6 +227,7 @@ party_tweets_test <- testing(split)
 
 party_tweets_basic_recipe <- recipe(party ~ text, data = party_tweets_train) %>% 
   step_tokenize(text) %>% # tokenize text
+  themis::step_upsample(party) %>% 
   step_tokenfilter(text, max_tokens = 1000) %>%
   step_tfidf(text) 
 
