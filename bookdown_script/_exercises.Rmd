@@ -97,7 +97,131 @@ example_tbl
 
 ## Day 5
 
+### Supervised Machine Learning
 
+1. Measuring polarization of language through a "fake prediction." Train the same model that we trained on British MPs earlier on `timelines_us <- read_csv("https://www.dropbox.com/s/dpu5m3xqz4u4nv7/tweets_house_rep_party.csv?dl=1")` (which I included below for your convenience). 
+First, split the new data into training and test set (`prop = 0.3` should suffice, make sure that you set `strata = party`). Train the model using the same workflow but new training data that predicts partisanship based on the Tweets' text. Predict on the test set and compare the models' accuracy. 
+
+```{r}
+set.seed(1)
+timelines_gb <- read_csv("https://www.dropbox.com/s/1lrv3i655u5d7ps/timelines_gb_2022.csv?dl=1")
+timelines_us <- read_csv("https://www.dropbox.com/s/iglayccyevgvume/timelines_us.csv?dl=1")
+
+split_gb <- initial_split(timelines_gb, prop = 0.3, strata = party)
+party_tweets_train_gb <- training(split_gb)
+party_tweets_test_gb <- testing(split_gb)
+
+twitter_recipe <- recipe(party ~ text, data = party_tweets_train_gb) %>% 
+  step_tokenize(text) %>% # tokenize text
+  themis::step_upsample(party) %>% 
+  step_tokenfilter(text, max_tokens = 1000) %>%
+  step_tfidf(text) 
+
+rf_spec <- rand_forest(trees = 50) %>%
+  set_engine("ranger") %>%
+  set_mode("classification") 
+
+twitter_party_rf_workflow <- workflow() %>% 
+  add_recipe(twitter_recipe) %>% 
+  add_model(rf_spec)
+
+party_gb <- twitter_party_rf_workflow %>% fit(data = party_tweets_train_gb)
+
+predictions_gb <- augment(party_gb, party_tweets_test_gb)
+mean(predictions_gb$party == predictions_gb$.pred_class)
+```
+
+2. Extract Tweets from U.S. timelines that are about abortion by using the approach outlined below. You can also add your own keywords. How does the accuracy change?
+
+```{r}
+keywords <- c("abortion", "prolife", " roe ", " wade ", "roevswade", "baby", "fetus", "womb", "prochoice", "leak")
+timelines_us_abortion <- timelines_us %>% 
+  filter(str_detect(text, keywords %>% str_c(collapse = "|")))
+```
+
+### Topic Models
+
+1. Check out `LDAvis` and how it orders the topics. Try to make some sense of how they are related etc. 
+
+```{r eval=FALSE}
+library(tidyverse)
+library(sotu)
+library(tidytext)
+library(SnowballC)
+library(LDAvis)
+
+prep_lda_output <- function(dtm, lda_output){
+  doc_length <- dtm %>% 
+    as.matrix() %>% 
+    as_tibble() %>% 
+    rowwise() %>% 
+    summarize(doc_sum = c_across() %>% sum()) %>% 
+    pull(doc_sum)
+  phi <- posterior(lda_output)$terms %>% as.matrix()
+  theta <- posterior(lda_output)$topics %>% as.matrix()
+  vocab <- colnames(dtm)
+  term_sums <- dtm %>% 
+    as.matrix() %>% 
+    as_tibble() %>% 
+    summarize(across(everything(), ~sum(.x))) %>% 
+    as.matrix()
+  svd_tsne <- function(x) tsne::tsne(svd(x)$u)
+  LDAvis::createJSON(phi = phi, 
+                     theta = theta,
+                     vocab = vocab,
+                     doc.length = doc_length,
+                     term.frequency = term_sums[1,],
+                     mds.method = svd_tsne
+  )
+}
+
+sotu_lda_k16 <- read_rds("https://www.dropbox.com/s/vt1ctaah5gdp0xj/lda_16.rds?dl=1")
+
+sotu_clean <- sotu_meta %>% 
+  mutate(text = sotu_text %>% 
+           str_replace_all("[,.]", " ")) %>% 
+  filter(between(year, 1900, 2000)) %>% 
+  unnest_tokens(output = token, input = text) %>% 
+  anti_join(get_stopwords(), by = c("token" = "word")) %>% 
+  filter(!str_detect(token, "[:digit:]")) %>% 
+  mutate(token = wordStem(token, language = "en"))
+
+sotu_dtm <- sotu_clean %>% 
+  filter(str_length(token) > 1) %>% 
+  count(year, token) %>% 
+  group_by(token) %>% 
+  filter(n() < 95) %>% # remove tokens that appear in more than 95 documents (i.e., years)
+  cast_dtm(document = year, term = token, value = n)
+
+
+json_lda <- prep_lda_output(sotu_dtm, sotu_lda_k16)
+
+serVis(json_lda, out.dir = 'vis', open.browser = TRUE)
+
+servr::daemon_stop(1)
+```
+
+2. Do the same thing for `stminsights`. The trained stm model can be downloaded `sotu_stm <- read_rds("https://www.dropbox.com/s/65bukmm42byq0dy/sotu_stm_k16.rds?dl=1")`.
+
+```{r eval=FALSE, include=FALSE}
+sotu_content_fit <- read_rds("https://www.dropbox.com/s/65bukmm42byq0dy/sotu_stm_k16.rds?dl=1")
+```
+
+```{r eval=FALSE}
+library(stminsights)
+
+out <- list(documents = prepped_docs$documents,
+            vocab = prepped_docs$vocab,
+            meta = prepped_docs$meta)
+
+prepped_docs$meta$party <- as.factor(prepped_docs$meta$party)
+prep <- estimateEffect(1:16 ~ party + s(year), sotu_content_fit, meta = prepped_docs$meta, uncertainty = "Global")
+map(1:16, ~summary(prep, topics = .x))
+
+save(prepped_docs, sotu_content_fit, prep, out, file = "stm_insights.RData")
+
+run_stminsights()
+```
 
 ## Day 6
 

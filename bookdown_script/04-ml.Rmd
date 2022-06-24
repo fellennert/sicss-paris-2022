@@ -1,6 +1,10 @@
 # Machine Learning {#day5}
 
-In the following script, we will introduce you to the supervised and unsupervised classification of text. Supervised means that we will need to "show" the machine a data set that already contains the value or label we want to predict (the "dependent variable") as well as all the variables that are used to predict the class/value (the independent variables or, in ML lingo, *features*). In the examples we will showcase, the features are the tokens that are contained in a document. Dependent variables are in our example sentiment.
+In the following script, we will introduce you to the supervised and unsupervised classification of text. Supervised means that we will need to "show" the machine a data set that already contains the value or label we want to predict (the "dependent variable") as well as all the variables that are used to predict the class/value (the independent variables or, in ML lingo, *features*). In the examples we will showcase, the features are the tokens that are contained in a document. Dependent variables are in our examples sentiment or party affiliation.
+
+Unsupervised Learning, on the other hand, implies that the machine is fed with a corpus of different documents and asked to find a new organization for them based on their content. In our examples, we deal with so-called topic models, models that are organizing the documents with regard to their content. Documents which deal with the same set of tokens, i.e., tokens that come from the same topic, are classified as being similar. Moreover, the model learns how different tokens are related to one another. Again, the rationale is that if tokens often appear together in documents, they are probably related to one another and, hence, stem from the same topic.
+
+## Supervised Classification
 
 Overall, the process of supervised classification using text in R encompasses the following steps: 
 
@@ -16,11 +20,9 @@ This is mirrored in the `workflow()` function from the `workflows` [@vaughan_wor
 
 ![Workflow overview](figures/workflow.png)
 
-In the next part, other approaches such as Support Vector Machines (SVM), penalized logistic regression models (penalized here means, loosely speaking, that insignificant predictors which contribute little will be shrunk and ignored -- as the text contains many tokens that might not contribute much, those models lend themselves nicely to such tasks), random forest models, or XGBoost will be introduced. Those approaches are not to be explained in-depth, third-party articles will be linked though, but their intuition and the particularities of their implementation will be described. Since we use the `tidymodels` [@kuhn_tidymodels_2020] framework for implementation, trying out different approaches is straightforward. Also, the pre-processing differs, `recipes` and `textrecipes` facilitate this task decisively. Third, the evaluation of different classifiers will be described. Finally, the entire workflow will be demonstrated using the abortion Tweet data set.
+In the next part, other approaches such as Support Vector Machines (SVM), penalized logistic regression models (penalized here means, loosely speaking, that insignificant predictors which contribute little will be shrunk and ignored -- as the text contains many tokens that might not contribute much, those models lend themselves nicely to such tasks), random forest models, or XGBoost will be introduced. Those approaches are not to be explained in-depth, third-party articles will be linked though, but their intuition and the particularities of their implementation will be described. Since we use the `tidymodels` [@kuhn_tidymodels_2020] framework for implementation, trying out different approaches is straightforward. Also, the pre-processing differs, `recipes` and `textrecipes` facilitate this task decisively. Third, the evaluation of different classifiers will be described. Finally, the entire workflow will be demonstrated using a Twitter data set.
 
-## Supervised Classification
-
-The example for today's session is the IMDb data set. First, we load a whole bunch of packages and the data set.
+The first example for today's session is the IMDb data set. First, we load a whole bunch of packages and the data set.
 
 ```{r message=FALSE, warning=FALSE}
 library(tidymodels)
@@ -189,16 +191,18 @@ imdb_folds <- vfold_cv(imdb_train)
 
 `fit_resamples()` trains models on the respective samples. (Note that for this to work, no model must have been fit to this workflow before. Hence, you either need to define a new workflow first or restart the session and skip the fit-line from before.)
 
-```{r eval=FALSE}
+```{r eval=TRUE}
 imdb_nb_resampled <- fit_resamples(
   imdb_nb_wf,
   imdb_folds,
   control = control_resamples(save_pred = TRUE),
   metrics = metric_set(accuracy, recall, precision)
 )
+
+#imdb_nb_resampled %>% write_rds("imdb_nb_resampled.rds")
 ```
 
-```{r eval=TRUE, include=FALSE}
+```{r eval=FALSE, include=FALSE}
 imdb_nb_resampled <- read_rds("https://www.dropbox.com/s/hulz4m6g3xrkemv/imdb_nb_resampled.rds?dl=1")
 ```
 
@@ -245,7 +249,7 @@ lasso_tune_spec <- logistic_reg(penalty = tune(), mixture = 1) %>%
   set_engine("glmnet")
 ```
 
-we will also play with the numbers of tokens to be included:
+We will also play with the numbers of tokens to be included:
 
 ```{r}
 imdb_tune_basic_recipe <- recipe(sentiment ~ text, data = imdb_train) %>% 
@@ -272,9 +276,9 @@ lasso_tune_wf <- workflow() %>%
   add_model(lasso_tune_spec)
 ```
 
-For the resampling, we can use tune_grid() which will use the workflow, a set of folds (we use the ones we created earlier), and a grid containing the different parameters. 
+For the resampling, we can use `tune_grid()` which will use the workflow, a set of folds (we use the ones we created earlier), and a grid containing the different parameters. 
 
-```{r eval=FALSE}
+```{r eval=TRUE}
 set.seed(123)
 
 tune_lasso_rs <- tune_grid(
@@ -286,9 +290,8 @@ tune_lasso_rs <- tune_grid(
 ```
 
 ```{r include=FALSE}
-tune_lasso_rs <- read_rds("https://www.dropbox.com/s/pbkeugsbzw7pgh2/tuned_lasso.rds?dl=1")
+#tune_lasso_rs <- read_rds("https://www.dropbox.com/s/pbkeugsbzw7pgh2/tuned_lasso.rds?dl=1")
 ```
-
 
 Again, we can access the resulting metrics using `collect_metrics()`:
 
@@ -327,23 +330,69 @@ collect_predictions(final_fitted) %>%
   autoplot(type = "heatmap")
 ```
 
+### Supervised ML with `tidymodels` in a nutshell
 
-## Topic Models
+Here, we give you the condensed version of how you would train a model on a number of documents and predict on a certain test set. To exemplify this, I use Tweets from British MPs from the two largest parties.
 
-In the former section, I, first, explored how the sentiment in the SOTU addresses has evolved over the 20th century. Then, we looked at the decade-specific vocabulary. This, paired with previous knowledge of what happened throughout the 20th century, sufficed to gain some sort of insight. However, another approach to infer meaning from text is to search it for topics. This is also possible with the SOTU corpus which we have at hand.
+First, you take your data and split it into training and test set:
 
-The two main assumptions of LDA are as follows:
+```{r}
+set.seed(1)
+timelines_gb <- read_csv("https://www.dropbox.com/s/1lrv3i655u5d7ps/timelines_gb_2022.csv?dl=1")
+
+split_gb <- initial_split(timelines_gb, prop = 0.3, strata = party)
+party_tweets_train_gb <- training(split_gb)
+party_tweets_test_gb <- testing(split_gb)
+```
+
+Second, define your text pre-processing steps. In this case, we want to predict partisanship based on textual content. We tokenize the text, upsample to have balanced classed in terms of party in the training set, and retain only the 1,000 most commonly appearing tokens.
+
+```{r}
+twitter_recipe <- recipe(party ~ text, data = party_tweets_train_gb) %>% 
+  step_tokenize(text) %>% # tokenize text
+  themis::step_upsample(party) %>% 
+  step_tokenfilter(text, max_tokens = 1000) %>%
+  step_tfidf(text) 
+```
+
+Third, the model specification needs to be defined. In this case, we go with a random forest classifier containing 50 decision trees.
+```{r}
+rf_spec <- rand_forest(trees = 50) %>%
+  set_engine("ranger") %>%
+  set_mode("classification") 
+```
+
+Finally, the pre-processing "recipe" and the model specification can be summarized in one workflow and the model can be fit to the training data.
+
+```{r}
+twitter_party_rf_workflow <- workflow() %>% 
+  add_recipe(twitter_recipe) %>% 
+  add_model(rf_spec)
+
+party_gb <- twitter_party_rf_workflow %>% fit(data = party_tweets_train_gb)
+```
+
+Now we have arrived at a model we can apply to make predictions using `augment()`. Finally, we can evaluate its accuracy on the test data by taking the share of correctly predicted values.
+
+```{r}
+predictions_gb <- augment(party_gb, party_tweets_test_gb)
+mean(predictions_gb$party == predictions_gb$.pred_class)
+```
+
+## Unsupervised Learning: Topic Models
+
+The two main assumptions of the most commonly used topic model, Latent Dirichlet Allocation (LDA) [@blei_latent_2003], are as follows:
 
 -   Every document is a mixture of topics.
 -   Every topic is a mixture of words.
 
-Hence, singular documents do not necessarily be distinct in terms of their content. They can be related -- if they contain the same topics. This is more in line with natural language use.
+Hence, singular documents do not necessarily be distinct in terms of their content. They can be related if they contain the same topics. This is fairly in line with natural language use.
 
 The following graphic depicts a flowchart of text analysis with the `tidytext` package.
 
 ![Text analysis flowchart](https://www.tidytextmining.com/images/tmwr_0601.png)
 
-What becomes evident is that the actual topic modeling does not happen within `tidytext`. For this, the text needs to be transformed into a document-term-matrix and then passed on to the `topicmodels` package [@grun_topicmodels_2020], which will take care of the modeling process. Thereafter, the results are turned back into a tidy format, using `broom` so that they can be visualized using `ggplot2`.
+What becomes evident is that the actual topic modeling will not happen within `tidytext`. For this, the text needs to be transformed into a document-term-matrix and then passed on to the `topicmodels` package [@grun_topicmodels_2020], which will take care of the modeling process. Thereafter, the results are turned back into a tidy format, using `broom` so that they can be visualized using `ggplot2`.
 
 ### Document-term matrix
 
@@ -366,13 +415,12 @@ sotu_clean <- sotu_meta %>%
 sotu_dtm <- sotu_clean %>% 
   filter(str_length(token) > 1) %>% 
   count(year, token) %>% 
-  #filter(between(year, 1900, 2000)) %>% 
   group_by(token) %>% 
-  filter(n() < 95) %>% 
+  filter(n() < 95) %>% # remove tokens that appear in more than 95 documents (i.e., years)
   cast_dtm(document = year, term = token, value = n)
 ```
 
-A DTM contains  Documents (rows) and Terms (columns) and specifies how often a term appears in a document.
+A DTM contains Documents (rows) and Terms (columns), and specifies how often a term appears in a document.
 
 ```{r}
 sotu_dtm %>% as.matrix() %>% .[1:5, 1:5]
@@ -380,55 +428,11 @@ sotu_dtm %>% as.matrix() %>% .[1:5, 1:5]
 
 ### Inferring the number of topics
 
-We need to tell the model in advance how many topics we assume to be present within the document. Since we have neither read all the SOTU addresses (if so, we would hardly need to use the topic model), we cannot make an educated guess on how many topics are in there.
+We need to tell the model in advance how many topics we assume to be present within the document. Since we have neither read all the SOTU addresses (if so, we would probably also not have to use the topic model), we cannot make an educated guess on how many topics are in there.
 
-#### Making guesses
+#### `ldatuning`
 
-One approach might be to just provide it with wild guesses on how many topics might be in there and then try to make sense of them afterward.
-
-```{r include=FALSE}
-sotu_lda_k10_tidied <- read_rds("https://www.dropbox.com/s/lxrcy44aqz16sgb/sotu_lda_k10.rds?dl=1")
-```
-
-```{r eval=FALSE}
-library(topicmodels)
-library(broom)
-
-sotu_lda_k10 <- LDA(sotu_dtm, k = 10, control = list(seed = 123))
-
-sotu_lda_k10_tidied <- tidy(sotu_lda_k10)
-```
-
-The `tidy()` function from the `broom` package [@robinson_broom_2020] brings the LDA output back into a tidy format. It consists of three columns: the topic, the term, and `beta`, which is the probability that the term stems from this topic. 
-
-```{r}
-sotu_lda_k10_tidied %>% glimpse()
-```
-
-Now, we can wrangle it a bit, and then visualize it with `ggplot2`.
-
-```{r}
-top_terms_k10 <- sotu_lda_k10_tidied %>%
-  group_by(topic) %>%
-  slice_max(beta, n = 5, with_ties = FALSE) %>%
-  ungroup() %>%
-  arrange(topic, -beta)
-
-top_terms_k10 %>%
-  mutate(topic = factor(topic),
-         term = reorder_within(term, beta, topic)) %>%
-  ggplot(aes(term, beta, fill = topic)) +
-  geom_bar(stat = "identity", show.legend = FALSE) +
-  scale_x_reordered() +
-  facet_wrap(~topic, scales = "free", ncol = 2) +
-  coord_flip()
-```
-
-Now the hard part begins: inductively making sense of it. But, of course, there is a large probability that we just chose the wrong number of topics. Therefore, before scratching our heads trying to come to meaningful conclusions, we should first assess what the optimal number of topics is.
-
-#### More elaborate methods
-
-LDA offers a couple of parameters to tune, but the most crucial one probably is `k`, the number of topics. 
+LDA offers a couple of parameters to tune, but the most crucial one probably is `k`, the number of topics. One approach might be to just provide it with wild guesses on how many topics might be in there and then try to make sense of them afterward. `ldatuning` offers a more structured approach to finding the optimal number of `k`. It trains multiple models with varying `k`s and compares them with regard to certain performance metrics.
 
 ```{r}
 library(ldatuning)
@@ -445,12 +449,14 @@ determine_k <- FindTopicsNumber(
   verbose = TRUE
 )
 
-determine_k %>% write_rds("lda_tuning.rds")
+#determine_k %>% write_rds("lda_tuning.rds")
 ```
 
 ```{r include=FALSE}
 determine_k <- read_rds("https://www.dropbox.com/s/1jtehujx1b6f0rp/lda_tuning.rds?dl=1")
 ```
+
+Then we can plot the results and determine which maximizes/minimizes the respctive metrics: 
 
 ```{r}
 FindTopicsNumber_plot(determine_k)
@@ -463,31 +469,52 @@ sotu_lda_k16 <- LDA(sotu_dtm, k = 16, control = list(seed = 77))
 
 sotu_lda_k16_tidied <- tidy(sotu_lda_k16)
 
-write_rds(sotu_lda_k16, "lda_16.rds")
+#write_rds(sotu_lda_k16, "lda_16.rds")
+```
+
+Then we can learn a model with this parameter `k` using the `LDA()` function.
+
+```{r eval=FALSE}
+library(topicmodels)
+library(broom)
+
+sotu_lda_k16 <- LDA(sotu_dtm, k = 16, control = list(seed = 77))
+
+sotu_lda_k16_tidied <- tidy(sotu_lda_k16)
 ```
 
 ```{r include=FALSE}
 library(topicmodels)
-sotu_lda_k16 <- read_rds("https://www.dropbox.com/s/ffq762eq7ytzyb8/lda_16.rds?dl=1")
+library(broom)
+
+sotu_lda_k16 <- read_rds("https://www.dropbox.com/s/vt1ctaah5gdp0xj/lda_16.rds?dl=1")
 sotu_lda_k16_tidied <- tidy(sotu_lda_k16)
 ```
 
-### Sense-making
-
-Now, the harder part begins: making sense of the different topics. In LDA, words can exist across topics, making them not perfectly distinguishable. Also, as the number of topics becomes greater, plotting them doesn't make too much sense anymore. 
+The `tidy()` function from the `broom` package [@robinson_broom_2020] brings the LDA output back into a tidy format. It consists of three columns: the topic, the term, and `beta`, which is the probability that the term stems from this topic. 
 
 ```{r}
-topic_list <- sotu_lda_k16_tidied %>% 
-  group_by(topic) %>% 
-  group_split() %>% 
-  map_dfc(~.x %>% 
-            slice_max(beta, n = 20, with_ties = FALSE) %>%
-            arrange(-beta) %>% 
-            select(term)) %>% 
-  set_names(str_c("topic", 1:16, sep = "_"))
+sotu_lda_k16_tidied %>% glimpse()
 ```
 
-#### Document-topic probabilities
+Now, we can wrangle it a bit, and then visualize it with `ggplot2`.
+
+```{r}
+top_terms_k16 <- sotu_lda_k16_tidied %>%
+  group_by(topic) %>%
+  slice_max(beta, n = 5, with_ties = FALSE) %>%
+  ungroup() %>%
+  arrange(topic, -beta)
+
+top_terms_k16 %>%
+  mutate(topic = factor(topic),
+         term = reorder_within(term, beta, topic)) %>%
+  ggplot(aes(term, beta, fill = topic)) +
+  geom_bar(stat = "identity", show.legend = FALSE) +
+  scale_x_reordered() +
+  facet_wrap(~topic, scales = "free", ncol = 4) +
+  coord_flip()
+```
 
 Another thing to assess is document-topic probabilities `gamma`: which document belongs to which topic. By doing so, you can choose the documents that have the highest probability of belonging to a topic and then read these specifically. This might give you a better understanding of what the different topics might imply. 
 
@@ -505,6 +532,21 @@ sotu_lda_k16_document %>%
 ```
 
 An interesting pattern is that the topics show some time-dependency. This intuitively makes sense, as they might represent some sort of deeper underlying issue.
+
+### Sense-making
+
+Now, the harder part begins: making sense of the different topics. In LDA, words can exist across topics, making them not perfectly distinguishable. Also, as the number of topics becomes greater, plotting them doesn't make too much sense anymore. 
+
+```{r}
+topic_list <- sotu_lda_k16_tidied %>% 
+  group_by(topic) %>% 
+  group_split() %>% 
+  map_dfc(~.x %>% 
+            slice_max(beta, n = 20, with_ties = FALSE) %>%
+            arrange(-beta) %>% 
+            select(term)) %>% 
+  set_names(str_c("topic", 1:16, sep = "_"))
+```
 
 #### `LDAvis`
 
@@ -539,6 +581,15 @@ prep_lda_output <- function(dtm, lda_output){
 }
 ```
 
+Thereafter, getting the data into format and running the app works as follows.
+```{r eval=FALSE}
+json_lda <- prep_lda_output(sotu_dtm, sotu_lda_k16)
+
+serVis(json_lda, out.dir = 'vis', open.browser = TRUE)
+
+servr::daemon_stop(2)
+```
+
 ### Structural Topic Models
 
 Structural Topic Models offer a framework for incorporating metadata into topic models. In particular, you can have these metadata affect the *topical prevalence*, i.e., the frequency a certain *topic* is discussed can vary depending on some observed non-textual property of the document. On the other hand, the topical content, i.e., the terms that constitute topics, may vary depending on certain covariates.
@@ -561,14 +612,10 @@ The package requires a particular data structure and has included several functi
 
 ```{r}
 processed <- textProcessor(sotu_stm$text, metadata = sotu_stm %>% select(-text))
-#, custompunctuation = "-")
-#?textProcessor() # check out the different arguments 
-
-#?prepDocuments()
 
 plotRemoved(processed$documents, lower.thresh = seq(1, 50, by = 2))
 
-prepped_docs <- prepDocuments(processed$documents, processed$vocab, processed$meta, lower.thresh = 3, upper.thresh = 80)
+prepped_docs <- prepDocuments(processed$documents, processed$vocab, processed$meta, lower.thresh = 3, upper.thresh = 95)
 ```
 
 Now that the data is properly preprocessed and prepared, we can estimate the actual model. As mentioned before, covariates can influence topical prevalence as well as their content. I assume topical prevalence to be influenced by the party of the speaker as well as the year the SOTU was held. The latter is assumed to influence the topical prevalence in a non-linear way (SOTU addresses usually deal with acute topics which do not gradually build over time) and is therefore estimated with a spline through the `s()` function that comes from the `stm` package. It defaults to a spline with 10 degrees of freedom. Moreover, I assume the content of topics to be influenced by party affiliation. Both `prevalence =` and `content =` take their arguments in formula notation.
@@ -604,7 +651,7 @@ prepped_docs$meta$party <- as.factor(prepped_docs$meta$party)
 prep <- estimateEffect(1:16 ~ party + s(year), sotu_content_fit, meta = prepped_docs$meta, uncertainty = "Global")
 map(1:16, ~summary(prep, topics = .x))
 
-save(prepped_docs, sotu_stm, prep, out, file = "stm_insights.RData")
+save(prepped_docs, sotu_content_fit, prep, out, file = "stm_insights.RData")
 
 run_stminsights()
 ```
@@ -621,9 +668,9 @@ run_stminsights()
 
 ### Supervised Machine Learning
 
-1. Measuring polarization of language through a "fake prediction." Download Twitter data for British and U.S.-American MPs (`timelines_gb <- read_csv("https://www.dropbox.com/s/n60co1u4ml40kvv/timelines.csv?dl=1")`, `timelines_us <- read_csv("https://www.dropbox.com/s/dpu5m3xqz4u4nv7/tweets_house_rep_party.csv?dl=1")`). Split the data into training and test set (`prop = 0.3` should suffice, make sure that you set `strata = party`). Train a model (whatever type you want, NB or RF should be reasonably fast) on it that predicts partisanship based on the Tweets' text. Predict on the test set and compare the models' accuracy. 
+1. Measuring polarization of language through a "fake prediction." Train the same model that we trained on British MPs earlier on `timelines_us <- read_csv("https://www.dropbox.com/s/dpu5m3xqz4u4nv7/tweets_house_rep_party.csv?dl=1")`. First, split the new data into training and test set (`prop = 0.3` should suffice, make sure that you set `strata = party`). Train the model using the same workflow but new training data that predicts partisanship based on the Tweets' text. Predict on the test set and compare the models' accuracy. 
 
-```{r}
+```{r eval=FALSE}
 set.seed(1)
 timelines_gb <- read_csv("https://www.dropbox.com/s/1lrv3i655u5d7ps/timelines_gb_2022.csv?dl=1")
 timelines_us <- read_csv("https://www.dropbox.com/s/iglayccyevgvume/timelines_us.csv?dl=1")
@@ -653,16 +700,16 @@ twitter_party_rf_workflow <- workflow() %>%
 party_gb <- twitter_party_rf_workflow %>% fit(data = party_tweets_train_gb)
 party_us <- twitter_party_rf_workflow %>% fit(data = party_tweets_train_us)
 
-accuracy_gb <- augment(party_gb, party_tweets_test_gb)
-mean(accuracy_gb$party == accuracy_gb$.pred_class)
+predictions_gb <- augment(party_gb, party_tweets_test_gb)
+mean(predictions_gb$party == predictions_gb$.pred_class)
 
-accuracy_us <- augment(party_us, party_tweets_test_us)
-mean(accuracy_us$party == accuracy_us$.pred_class)
+predictions_us <- augment(party_us, party_tweets_test_us)
+mean(predictions_us$party == predictions_us$.pred_class)
 ```
 
-2. Extract Tweets from U.S. timelines that are about abortion by using yesterday's approach (`keywords <- c("abortion", "prolife", " roe ", " wade ", "roevswade", "baby", "fetus", "womb", "prochoice", "leak")`). Perform the same prediction task (but now with `initial_split(prop = 0.8)`). How does the accuracy change with an RF model?
+2. Extract Tweets from U.S. timelines that are about abortion by using yesterday's approach (`keywords <- c("abortion", "prolife", " roe ", " wade ", "roevswade", "baby", "fetus", "womb", "prochoice", "leak")`, `timelines_us_abortion <- timelines_us %>% filter(str_detect(text, keywords %>% str_c(collapse = "|")))`). Perform the same prediction task (but now with `initial_split(prop = 0.8)`). How does the accuracy change?
 
-```{r}
+```{r eval=FALSE}
 keywords <- c("abortion", "prolife", " roe ", " wade ", "roevswade", "baby", "fetus", "womb", "prochoice", "leak")
 timelines_us_abortion <- timelines_us %>% filter(str_detect(text, keywords %>% str_c(collapse = "|")))
 
@@ -672,8 +719,8 @@ abortion_tweets_test_us <- testing(split_us_abortion)
 
 abortion_us <- twitter_party_rf_workflow %>% fit(data = abortion_tweets_train_us)
 
-accuracy_abortion_us <- augment(abortion_us, abortion_tweets_test_us)
-mean(accuracy_abortion_us$party == accuracy_abortion_us$.pred_class)
+predictions_abortion_us <- augment(abortion_us, abortion_tweets_test_us)
+mean(predictions_abortion_us$party == predictions_abortion_us$.pred_class)
 ```
 
 ### Topic Models
