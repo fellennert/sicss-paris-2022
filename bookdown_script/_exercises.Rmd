@@ -99,7 +99,7 @@ example_tbl
 
 ### Supervised Machine Learning
 
-1. Measuring polarization of language through a "fake prediction." Train the same model that we trained on British MPs earlier on `timelines_us <- read_csv("https://www.dropbox.com/s/dpu5m3xqz4u4nv7/tweets_house_rep_party.csv?dl=1")` (which I included below for your convenience). 
+1. Measuring polarization of language through a "fake prediction." Train the same model that we trained on British MPs earlier on (which I included below for your convenience). 
 First, split the new data into training and test set (`prop = 0.3` should suffice, make sure that you set `strata = party`). Train the model using the same workflow but new training data that predicts partisanship based on the Tweets' text. Predict on the test set and compare the models' accuracy. 
 
 ```{r}
