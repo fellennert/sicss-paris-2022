@@ -1,1 +1,150 @@
 # Word Embeddings {#day6}
+
+In the following script we will first train some word embeddings from scratch and perform basic analyses on them. Since training your own embeddings is very costly, pretrained models exist. We will showcase how to use them in the second part, using a large model that was trained on a Google News corpus.
+
+## Training your own embeddings
+
+For the training process, we will use the `word2vec` algorithm [@mikolov_distributed_2013] and data on elected politicians' Tweets which are kindly provided by Chris Bail. The `word2vec()` function takes as argument a vector of documents (in our case, each document is a tweet) and some parameters. They are subject to tuning^[In the real world, you would probably do this using a set of realworld analogies that you will want the model to perform well on.], but for our basic application, I just go with an arbitrarily chosen set. 
+
+```{r}
+library(word2vec)
+library(fs)
+library(tidyverse) 
+library(lsa)
+
+load(url("https://cbail.github.io/Elected_Official_Tweets.Rdata")) 
+
+embeddings_tweets <- word2vec(elected_official_tweets$text %>% 
+                                str_to_lower() %>% 
+                                str_remove_all("[:punct:]"), 
+                              dim = 100, 
+                              iter = 20)
+
+# write.word2vec(embeddings_tweets, "embeddings_tweets.bin") # save model
+
+# model <- read.word2vec("embeddings_tweets.bin") # read in model
+
+embedding_mat <- as.matrix(embeddings_tweets)
+```
+
+We can get the vectors of singular terms by using the predict function and `type = "embedding"`. If we want to do calculations with them, we need to simply extract the vectors and then perform the calculation. We can then provide the `predict()` function our new vector and ask it to give us the names of the vectors that are close based on cosine similarity. However, bear in mind that those things might not work out so well given the size of our corpus. At least, Clinton is in the top 5 here.
+
+```{r}
+trump <- predict(embeddings_tweets, c("trump"), type = "embedding")
+
+wv <- predict(embeddings_tweets, newdata = c("trump", "republican", "democrat"), type = "embedding")
+wv <- wv["trump", ] - wv["republican", ] + wv["democrat", ]
+
+predict(embeddings_tweets, newdata = wv, type = "nearest", top_n = 10)
+```
+
+We can also create new axes by taking the difference between two words and then project other words on these axes using cosine similarity. For this endeavor we first normalize all our vectors to make them equal in length. Moreover, I use multiple "seed words" for each end of the axis. Finally, we take the average of the axes that result from subtracting the seed words. This is equivalent to how @kozlowski_geometry_2019 construct their "class" axes. 
+
+```{r}
+# define function for normalizing vector
+normalize_vec <- function(x) {x / sqrt(sum(x^2))}
+
+# define function for getting an axis from … to … -- can also be multiple terms, but they need to be of same length; axis will then be averaged
+get_frame_normal <- function(model, left_terms, right_terms){
+  frames <- vector(mode = "list", length = length(left_terms))
+  right_vec <- vector(mode = "list", length = length(right_terms))
+  left_vec <- vector(mode = "list", length = length(left_terms))
+  
+  for (i in seq_along(left_terms)){
+    right_vec[[i]] <- predict(model, newdata = right_terms[[i]], type = "embedding") %>% normalize_vec()
+    left_vec[[i]] <- predict(model, newdata = left_terms[[i]], type = "embedding") %>% normalize_vec()
+  }
+  
+  output <- map2(right_vec, left_vec, ~.x - .y) %>% 
+    pluck(1) 
+  rownames(output) <- NULL
+  
+  if (nrow(output) > 1){
+    return(map_dbl(array_tree(output, nrow(output)), mean))
+  }else{
+    return(output[1, ])
+  }
+}
+
+
+l_r_frame <- get_frame_normal(embeddings_tweets, 
+                              left_terms = c("democrat", "democratic", "democrats"), 
+                              right_terms = c("republican", "republican", "republicans"))
+
+trump <- predict(embeddings_tweets, newdata = c("trump"), type = "embedding") 
+clinton <- predict(embeddings_tweets, newdata = c("clinton"), type = "embedding")
+cruz <- predict(embeddings_tweets, newdata = c("cruz"), type = "embedding") 
+obama <- predict(embeddings_tweets, newdata = c("obama"), type = "embedding")
+
+cosine(l_r_frame,
+       trump %>% normalize_vec() %>% as.numeric())
+cosine(l_r_frame,
+       clinton %>% normalize_vec() %>% as.numeric())
+cosine(l_r_frame,
+       cruz %>% normalize_vec() %>% as.numeric())
+cosine(l_r_frame,
+       obama %>% normalize_vec() %>% as.numeric())
+```
+
+## Using pre-trained models
+
+We can also use pre-trained models such as the one you can [download from Google](https://www.kaggle.com/datasets/leadbest/googlenewsvectorsnegative300). The model is very big (~4GB), hence I need to load it from my own hard drive and cannot store it online. 
+
+```{r}
+google_news <- word2vec::read.word2vec("/Users/felixlennert/Downloads/GoogleNews-vectors-negative300.bin", normalize = TRUE)
+
+wv <- predict(google_news, newdata = c("king", "man", "woman"), type = "embedding")
+wv <- wv["king", ] - wv["man", ] + wv["woman", ]
+predict(google_news, newdata = wv, type = "nearest", top_n = 3)
+
+## gender bias
+female_job <- predict(google_news, newdata = c("doctor", "man", "woman"), type = "embedding")
+jobs <- female_job["doctor", ] - female_job["man", ] + female_job["woman", ]
+predict(google_news, newdata = jobs, type = "nearest", top_n = 3)
+
+male_female <- female_job["woman", ] - female_job["man", ]
+
+cosine(male_female, 
+       predict(google_news, newdata = c("professor"), type = "embedding") %>% as.numeric()) 
+cosine(male_female, 
+       predict(google_news, newdata = c("locksmith"), type = "embedding") %>% as.numeric())
+cosine(male_female, 
+       predict(google_news, newdata = c("nurse"), type = "embedding") %>% as.numeric())
+cosine(male_female, 
+       predict(google_news, newdata = c("waitress"), type = "embedding") %>% as.numeric())
+cosine(male_female, 
+       predict(google_news, newdata = c("waiter"), type = "embedding") %>% as.numeric())
+```
+
+Also, let's try our left--right thing again:
+
+```{r}
+left_right <- predict(google_news, newdata = c("republican", "democrat"), type = "embedding")
+left_right_axis <- left_right["republican", ] - left_right["democrat", ]
+
+cosine(left_right_axis, 
+       predict(google_news, newdata = c("trump"), type = "embedding") %>% as.numeric()) 
+cosine(left_right_axis, 
+       predict(google_news, newdata = c("clinton"), type = "embedding") %>% as.numeric()) 
+cosine(left_right_axis, 
+       predict(google_news, newdata = c("obama"), type = "embedding") %>% as.numeric()) 
+cosine(left_right_axis, 
+       predict(google_news, newdata = c("cruz"), type = "embedding") %>% as.numeric()) 
+
+cosine(left_right_axis, 
+       predict(google_news, newdata = c("prolife"), type = "embedding") %>% as.numeric()) 
+cosine(left_right_axis, 
+       predict(google_news, newdata = c("prochoice"), type = "embedding") %>% as.numeric()) 
+```
+
+Doesn't work so well for the politicians and Trump in particular. However, when it comes to jobs and their male--female gender, the model is picking up some real-world implications (see @garg_word_2018 for more on this). 
+
+## Further links
+
+This is just a quick demonstration of what you can do with word embeddings. In case you want to use your embeddings as new features for your supervised machine learning classifier, look at `?textmodels::step_word_embeddings()`. You may want to use pre-trained models for such tasks.
+
+You can also train embeddings on multiple corpora and identify their different biases. You may want to have a look at @stoltz_cultural_2021 before going down this road.
+
+* See the [word2vec vignette](https://cran.r-project.org/web/packages/word2vec/readme/README.html) for more information
+* The first of a series [blog posts on word embeddings](https://ruder.io/word-embeddings-1/)
+* An approachable [lecture by Richard Socher, one of the founding fathers of GloVe](https://www.youtube.com/watch?v=T8tQZChniMk&%20index=2&list=PLo0lw6BstMGYXGeVpJyOyHOAdEUE7BsUp)
