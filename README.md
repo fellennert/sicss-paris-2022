@@ -1,6 +1,6 @@
 # Intro
 
-This repository contains the code and slides used for teaching the 2022 edition of the Summer Institute in Computational Social Science in Paris. The R script can also be found in bookdown form [here](https://bookdown.org/f_lennert/bookdown_script/). Relevant data sets are distributed via Dropbox, code for directly loading them into the session is included in the scripts. Hence, no data needs to be downloaded upfront.
+This repository contains the code and slides used for teaching the 2022 edition of the Summer Institute in Computational Social Science at Institut Polytechnique de Paris. The R script can also be found in bookdown form [here](https://bookdown.org/f_lennert/bookdown_script/). Relevant data sets are distributed via Dropbox, code for directly loading them into the session is included in the scripts. Hence, no data needs to be downloaded upfront.
 
 Make sure that you have installed a current version of R and RStudio before running the scripts. Start with the [index file](bookdown_script/index.Rmd) and run the first chunk. This will install all packages you require for running the code. We assume familiarity with R and mostly follow the "tidy dialect." If you are entirely unfamiliar with this, you can find introductory material in the final section of the [index file](bookdown_script/index.Rmd).
 
@@ -13,7 +13,7 @@ The following list connects the corresponding files:
 * Day 3: scraping unstructured content from the web ([slides](slides/sicss2022-day3_structured.pdf), [R material](bookdown_script/02-scraping_unstructured.Rmd))
 * Day 4: text preprocessing ([slides on regexes](sicss2022-day4.1_unstructured), [slides on text as data](slides/sicss2022-day4.2_text-as-data.pdf), [R material](bookdown_script/03-text_preprocessing.Rmd))
 * Day 5: classification and prediction with text ([slides](slides/sicss2022-day5_nlp.pdf), [R material](bookdown_script/04-ml.Rmd))
-* Day 6: advanced language modeling ([slides](), [R material]())
+* Day 6: advanced language modeling ([slides](slides/sicss2022-day6_nlp.pdf), [R material]())
 
 The solutions to the exercises are included in the script. You can use [this RMD file](bookdown_script/_exercises.Rmd) to get the "raw exercises" without solutions. 
 
