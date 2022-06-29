@@ -64,7 +64,7 @@ imdb_basic_recipe <- recipe(sentiment ~ text, data = imdb_train) %>%
   step_tokenize(text) %>% # tokenize text
   step_tokenfilter(text, max_tokens = 1000) %>% # only retain 1000 most common words
   # additional pre-processing steps can be added, see next chapter
-  step_tf(text) # final step: add term frequencies
+  step_tfidf(text) # final step: add term frequencies
 ```
 
 In case you want to know what the data set for the classification task looks like, you can `prep()` and finally `bake()` the recipe. Note that we need to specify the data set we want to pre-process in the recipe's manner. In our case, we want to perform the operations on the data specified in the `basic_recipe` and, hence, need to specify `new_data = NULL`.
@@ -104,7 +104,7 @@ More steps exist. These always follow the same structure: their first two argume
 * `step_normalize()`: performs unicode normalization as a preprocessing step
   + `normalization_form =` which Unicode Normalization to use, overview in [`stringi::stri_trans_nfc()`](https://www.rdocumentation.org/packages/stringi/versions/1.7.6/topics/stri_trans_nfc)
 * `themis::step_upsample()` takes care of unbalanced dependent variables (which need to be specified in the call)
-  + `over_ratio =` ratio of desired minority-to-minority frequencies
+  + `over_ratio =` ratio of desired minority-to-majority frequencies
 
 ### Model specification
 
@@ -587,7 +587,7 @@ json_lda <- prep_lda_output(sotu_dtm, sotu_lda_k16)
 
 serVis(json_lda, out.dir = 'vis', open.browser = TRUE)
 
-servr::daemon_stop(2)
+servr::daemon_stop(1)
 ```
 
 ### Structural Topic Models
