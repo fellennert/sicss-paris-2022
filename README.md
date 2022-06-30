@@ -15,6 +15,8 @@ The following list connects the corresponding files:
 * Day 5: classification and prediction with text ([slides](slides/sicss2022-day5_nlp.pdf), [R material](bookdown_script/04-ml.Rmd))
 * Day 6: advanced language modeling ([slides](slides/sicss2022-day6_nlp.pdf), [R material](bookdown_script/05-word_embeddings.Rmd))
 * Day 7: measuring polarization with Text (Lucas Girard; [slides](slides/sicss2022-day7_polarization-text.pdf))
+* Day 8: agent-based modeling (Gianluca Manzo)
+* Day 9: social experiments in the digital world (Marc Keuschnigg; [slides -- direct download](https://www.dropbox.com/s/y644eibq04vrt8y/Social%20Experiments%20in%20a%20Digital%20World_MKeuschnigg.pdf?dl=1))
 
 The solutions to the exercises are included in the script. You can use [this RMD file](bookdown_script/_exercises.Rmd) to get the "raw exercises" without solutions. 
 
